@@ -1,0 +1,21 @@
+# configuration for https://ohi-science.nceas.ucsb.edu/bhi
+study_area:       Baltic
+git_owner:        OHI-Science
+git_repo:         bhi
+git_slug:         OHI-Science/bhi
+git_url:          https://github.com/OHI-Science/bhi
+app_url:          http://ohi-science.nceas.ucsb.edu/bhi
+default_branch:   published
+default_scenario: baltic2015
+debug:            False
+last_updated:     2015-04-20
+ohicore_app:
+  git_owner: ohi-science
+  git_repo: ohicore
+  git_branch: dev
+  git_commit: a1e9d2cdd8ddefb0e9c359dbae62baef08e28ecd
+
+tabs_hide:        
+- Calculate
+- Report
+
