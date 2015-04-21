@@ -85,12 +85,12 @@ Data sources:
 
 Data sources:
 
-- United Nations - World Conservation Monitoring Centreâs World Database on Protected Areas (WDPA) through [Protected Planet](http://www.protectedplanet.net)","area_km2","km^2","lsp_prot_area_inland1km_gl2014.csv","raster | area_inland1km","","lsp_prot_area_inland1km","~/github/ohi-global/eez2014/layers/lsp_prot_area_inland1km.csv","global","rgn_id",,,"year","area_km2",,TRUE,2005,2015,,,FALSE,,,,25,TRUE
+- United Nations - World Conservation Monitoring Centreâs World Database on Protected Areas (WDPA) through [Protected Planet](http://www.protectedplanet.net)","area_km2","km^2","lsp_prot_area_inland1km_gl2014.csv","raster | area_inland1km","","lsp_prot_area_inland1km","~/github/ohi-global/eez2014/layers/lsp_prot_area_inland1km.csv","global","rgn_id",,,"year","area_km2",,TRUE,2005,2015,10,10,FALSE,,,,25,FALSE
 "LSP","lsp_prot_area_offshore3nm","Coastal marine protected areas offshore 3km","Coastal protected areas offshore to 3nm from the UN WDPA. 
 
 Data sources:
 
-- United Nations - World Conservation Monitoring Centreâs World Database on Protected Areas (WDPA) through [Protected Planet](http://www.protectedplanet.net)","area_km2","km^2","lsp_prot_area_offshore3nm_gl2014.csv","raster | area_offshore3nm","","lsp_prot_area_offshore3nm","~/github/ohi-global/eez2014/layers/lsp_prot_area_offshore3nm.csv","global","rgn_id",,,"year","area_km2",,TRUE,2005,2015,,,FALSE,,,,25,TRUE
+- United Nations - World Conservation Monitoring Centreâs World Database on Protected Areas (WDPA) through [Protected Planet](http://www.protectedplanet.net)","area_km2","km^2","lsp_prot_area_offshore3nm_gl2014.csv","raster | area_offshore3nm","","lsp_prot_area_offshore3nm","~/github/ohi-global/eez2014/layers/lsp_prot_area_offshore3nm.csv","global","rgn_id",,,"year","area_km2",,TRUE,2005,2015,10,10,FALSE,,,,25,FALSE
 "MAR","mar_coastalpopn_inland25km","Coastal population inland 25 kilometers","Coastal population, defined as the total population inland of 25 kilometers, extracted from Gridded Population of the World (GPW) Population Density Grid Future Estimates.
 
 Data sources:
