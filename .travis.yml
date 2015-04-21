@@ -6,7 +6,7 @@ branches:
 
 env:
   global:
-  - default_branch_scenario="published/subcountry2014"
+  - default_branch_scenario="published/baltic2015"
   - study_area=""
 
 matrix:
