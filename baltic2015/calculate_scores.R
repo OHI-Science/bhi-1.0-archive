@@ -2,7 +2,7 @@
 suppressWarnings(require(ohicore))
 
 # set working directory to the scenario directory, ie containing conf and layers directories
-setwd('/Users/jstewart/github/clip-n-ship/bhi/baltic2015')
+setwd('~/github/bhi/baltic2015')
 
 # load scenario configuration
 conf = Conf('conf')
