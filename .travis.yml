@@ -6,8 +6,8 @@ branches:
 
 env:
   global:
-  - default_branch_scenario="published/baltic2015"
-  - study_area=""
+  - default_branch_scenario: "published/baltic2015"
+  - study_area: ""
 
 matrix:
   fast_finish: true # finish at first failure
