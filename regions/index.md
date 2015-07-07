@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "Regions"
-excerpt: "OHI regions for "
+excerpt: "OHI regions for Baltic"
 share: false
 ads: false
 branch_scenario: published/baltic2015

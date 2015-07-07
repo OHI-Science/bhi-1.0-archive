@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "Goals"
-excerpt: "OHI goals for "
+excerpt: "OHI goals for Baltic"
 share: false
 ads: false
 branch_scenario: published/baltic2015

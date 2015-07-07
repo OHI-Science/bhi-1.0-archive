@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "Layers"
-excerpt: "OHI layers for "
+excerpt: "OHI layers for Baltic"
 share: false
 ads: false
 branch_scenario: published/baltic2015
@@ -48,7 +48,7 @@ Fisheries management effectiveness and opportunity
 <p>Data sources:</p>
 
 <ul>
-<li>Mora, C., Myers, R.A., Coll, M., Libralato, S., Pitcher, T.J., Sumaila, R.U., Worm, B. (2009). <strong>Management Effectiveness of the Worldï¿s Marine Fisheries</strong>. <em>PLoS Biol</em>, 7(6), e1000131. <a href="http://dx.doi.org/10.1371/journal.pbio.1000131">doi:10.1371/journal.pbio.1000131</a></li>
+<li>Mora, C., Myers, R.A., Coll, M., Libralato, S., Pitcher, T.J., Sumaila, R.U., Worm, B. (2009). <strong>Management Effectiveness of the World<cc><f8><e5><c0><e5><a5>s Marine Fisheries</strong>. <em>PLoS Biol</em>, 7(6), e1000131. <a href="http://dx.doi.org/10.1371/journal.pbio.1000131">doi:10.1371/journal.pbio.1000131</a></li>
 </ul>
 
 
@@ -251,7 +251,7 @@ Fertilizer consumption as a proxy for trend in nutrient pollution
 <p>Data sources:</p>
 
 <ul>
-<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAOâs statistical database FAOSTAT</a>.</li>
+<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAO̢<e5><db><e5><aa>s statistical database FAOSTAT</a>.</li>
 </ul>
 
 
@@ -293,7 +293,7 @@ Pesticide consumption as a proxy for trend in chemical pollution
 <p>Data sources:</p>
 
 <ul>
-<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAOâs statistical database FAOSTAT</a>.</li>
+<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAO̢<e5><db><e5><aa>s statistical database FAOSTAT</a>.</li>
 </ul>
 
 
@@ -975,7 +975,7 @@ Coastal protected areas inland 1km
 
 | metadata          | value                                                                |
 |-------------------|----------------------------------------------------------------------|
-| filename          | lsp_prot_area_inland1km_gl2014.csv                                                   |
+| filename          | lsp_prot_area_inland1km_placeholder.csv                                                   |
 | value units       | km^2                                                      |
 | value range       | 10 to 10                               |
 | global extraction | raster | area_inland1km:  |
@@ -985,7 +985,7 @@ Coastal protected areas inland 1km
 <p>Data sources:</p>
 
 <ul>
-<li>United Nations - World Conservation Monitoring Centreâs World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
+<li>United Nations - World Conservation Monitoring Centre̢<e5><db><e5><aa>s World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
 </ul>
 
 
@@ -996,7 +996,7 @@ Coastal marine protected areas offshore 3km
 
 | metadata          | value                                                                |
 |-------------------|----------------------------------------------------------------------|
-| filename          | lsp_prot_area_offshore3nm_gl2014.csv                                                   |
+| filename          | lsp_prot_area_offshore3nm_placeholder.csv                                                   |
 | value units       | km^2                                                      |
 | value range       | 10 to 10                               |
 | global extraction | raster | area_offshore3nm:  |
@@ -1006,7 +1006,7 @@ Coastal marine protected areas offshore 3km
 <p>Data sources:</p>
 
 <ul>
-<li>United Nations - World Conservation Monitoring Centreâs World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
+<li>United Nations - World Conservation Monitoring Centre̢<e5><db><e5><aa>s World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
 </ul>
 
 
@@ -1091,7 +1091,7 @@ Mariculture sustainability score
 <p>Data sources:</p>
 
 <ul>
-<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countriesâ performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countriesâ Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28â56.</li>
+<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries̢<e5><db><e5><aa> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries̢<e5><db><e5><aa> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28̢<e5><db><e5><d2>56.</li>
 </ul>
 
 
@@ -1148,7 +1148,7 @@ CBD survey: mariculture
 <p>Data sources:</p>
 
 <ul>
-<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countriesâ performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countriesâ Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28â56.</li>
+<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries̢<e5><db><e5><aa> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries̢<e5><db><e5><aa> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28̢<e5><db><e5><d2>56.</li>
 </ul>
 
 
@@ -1455,7 +1455,7 @@ Region area 1 km inland
 |-------------------|----------------------------------------------------------------------|
 | filename          | rgn_area_inland1km_gl2014.csv                                                   |
 | value units       | km^2                                                      |
-| value range       | NA to NA                               |
+| value range       | 5 to 5                               |
 | global extraction | raster: spatial data was extracted for each region. |
 
 <p>inland area 1 km from shore.</p>
@@ -1470,7 +1470,7 @@ Region area offshore 3nm
 |-------------------|----------------------------------------------------------------------|
 | filename          | rgn_area_offshore3nm_gl2014.csv                                                   |
 | value units       | km^2                                                      |
-| value range       | NA to NA                               |
+| value range       | 5 to 5                               |
 | global extraction | raster: spatial data was extracted for each region. |
 
 <p>Area of Ocean Health Index regions to 3nm (VLIZ 2012). </p>
@@ -1592,7 +1592,7 @@ Introduced species as a proxy for genetic escapes
 <p>Data sources:</p>
 
 <ul>
-<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countriesâ performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countriesâ Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28â56.</li>
+<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries̢<e5><db><e5><aa> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries̢<e5><db><e5><aa> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28̢<e5><db><e5><d2>56.</li>
 </ul>
 
 
