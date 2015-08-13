@@ -1,9 +1,0 @@
----
-title: "README"
-author: "Lena"
-date: "Tuesday, August 11, 2015"
-output: html_document
----
-
-In this folder raw_data that is not open for public access without permission from BHI-core team is stored.
-Please contact us if you want access.
