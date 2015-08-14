@@ -64,7 +64,7 @@ if (file.exists('app.yml')){
   git_slug                <<- sprintf('%s/%s', git_owner, git_repo)
   git_url                 <<- sprintf('https://github.com/%s', git_slug)
   app_url                 <<- sprintf('http://ohi-science.nceas.ucsb.edu/%s', git_repo)
-  default_branch          <<- dirname(default_branch_scenario)
+  default_branch          <<- 'draft' # manually set by JSL from dirname(default_branch_scenario)
   default_scenario        <<- basename(default_branch_scenario)
   #debug                   <<- FALSE
   last_updated            <<- 2015-04-23
