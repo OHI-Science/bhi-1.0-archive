@@ -3,14 +3,14 @@
 
 # SGNAme = taxon_name_key
  rm(list = ls())
-#
+
 # library(dplyr)    # install.packages('dplyr')   for data manipulation
 # library(tidyr)    # install.packages('tidyr')   for data manipulation
 # library(stringr)  # install.packages('stringr') for string manipulation
 #
 # # set working directory
 # getwd()
-# setwd('baltic2015/prep/8_CW')
+# setwd('~/github/bhi/baltic2015/prep/8_CW')
 # list.files()
 #
 # # reading data ####
@@ -30,7 +30,7 @@ dip =
          BP = Baltic_Proper,
          GF = Gulf_of_Finland,
          GR = Gulf_of_Riga,
-         AA = Aland_Sea,
+         AS = Aland_Sea,
          BS = Bothnian_Sea,
          BB = Bothnian_Bay,
          AR = Arkona_Basin,
@@ -51,7 +51,7 @@ targets =
   rename(KT = Kattegat,
          GF = Gulf_of_Finland,
          GR = Gulf_of_Riga,
-         AA = Aland_Sea,
+         AS = Aland_Sea,
          BS = Bothnian_Sea,
          BB = Bothnian_Bay,
          AR = Arkona_Sea,        #from here down different names than in nu_poll-file
@@ -101,7 +101,9 @@ results =
  ## make final data tables for layers output ####
 
  trend_score =
-   select(future, basin, future_status)
+   future %>%
+   mutate(trend_score = future_status) %>%
+   select(basin, future_status)
  status_score =
    results %>% filter(!is.na(status)) %>% group_by(basin) %>%
    filter(status == last(status)) %>%
@@ -109,12 +111,22 @@ results =
 
  # join calculated scores to rgn_ids to get values for each region
  tmp = mutate(rgn_id, basin = as.table(matrix(unlist(strsplit(rgn_id$label, "_")), ncol = 2, byrow= T))[,2])
+
  status_score = full_join(tmp, status_score, by = "basin") %>%
-   select(rgn_id, label, status) %>%
-   filter(!is.na(label))
+   mutate(score = pmin(status, 1)) %>%
+   select(rgn_id, score) %>%
+   filter(!is.na(rgn_id))
+
  trend_score = full_join(tmp, trend_score, by = "basin") %>%
-   select(rgn_id, label, future_status) %>%
-   filter(!is.na(label))
+   mutate(score = pmin(future_status, 1)) %>%
+   select(rgn_id, score) %>%
+   filter(!is.na(rgn_id))
+
+ dir = getwd()
+ setwd("../../layers")
+ write.csv(status_score, "cw_nu_status.csv", row.names = F)
+ write.csv(trend_score, "cw_nu_trend.csv", row.names = F)
+ setwd(dir)
 
 #### Plot to check data ####
 

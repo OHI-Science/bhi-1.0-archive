@@ -3,7 +3,7 @@
 
 Data sources:
 
-- Mora, C., Myers, R.A., Coll, M., Libralato, S., Pitcher, T.J., Sumaila, R.U., Worm, B. (2009). **Management Effectiveness of the WorldÃ¯Â¿Â•s Marine Fisheries**. _PLoS Biol_, 7(6), e1000131. [doi:10.1371/journal.pbio.1000131](http://dx.doi.org/10.1371/journal.pbio.1000131)","value","value","ao_access_gl2014.csv","equal","global management effectiveness scores were applied equally to all regions.","ao_access","~/github/ohi-global/eez2014/layers/ao_access.csv","global","rgn_id",,,,"value",,TRUE,,,0.484,0.704592,TRUE,,,,25,FALSE
+- Mora, C., Myers, R.A., Coll, M., Libralato, S., Pitcher, T.J., Sumaila, R.U., Worm, B. (2009). **Management Effectiveness of the WorldÃ¯Â¿Â•s Marine Fisheries**. _PLoS Biol_, 7(6), e1000131. [doi:10.1371/journal.pbio.1000131](http://dx.doi.org/10.1371/journal.pbio.1000131)","value","value","ao_access_gl2014.csv","equal","global management effectiveness scores were applied equally to all regions.","ao_access","~/github/ohi-global/eez2014/layers/ao_access.csv","global","rgn_id",,,,"value",,TRUE,,,0.5,0.5,TRUE,,,,25,FALSE
 "AO","ao_need","Purchasing power parity as a proxy for subsistence fishing need, by region","The per capita purchasing power parity (PPP) adjusted gross domestic product (GDP): GDPpcPPP.
 
 Data sources:
@@ -32,6 +32,8 @@ Data sources:
 
 - [FAOÃ¢Â€Â™s statistical database FAOSTAT](http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E).
 ","trend.score","trend score","cw_pesticide_trend_gl2014.csv","equal","global trends were applied equally to all regions.","cw_pesticide_trend","~/github/ohi-global/eez2014/layers/cw_pesticide_trend.csv","global","rgn_id",,,,"trend.score",,TRUE,,,-0.440675,0.218233,FALSE,,,,25,FALSE
+"CW","cw_nu_status","Nutrient pollution status based on winter DIP concentrations","Winter DIP levels normalised to HELCOM target level","score","status score","cw_nu_status.csv","equal","","","~/github/bhi/baltic2015/layers/nu_status.csv","global","rgn_id",,,,"score",,TRUE,,,0.776657314285714,1,TRUE,,,,25,FALSE
+"CW","cw_nu_trend","Nutrient pollution trend based on winter DIP concentrations","Trend in winter DIP levels normalised to HELCOM target level 1970-2011","score","trend score","cw_nu_trend.csv","equal","","","~/github/bhi/baltic2015/layers/nu_trend.csv","global","rgn_id",,,,"score",,TRUE,,,0.439541676529285,1,TRUE,,,,25,FALSE
 "FIS","fis_b_bmsy","B/Bmsy estimates obtained using the catch-MSY method","The ratio of population abundance compared to the abundance required to deliver maximum sustainable yield, obtained from the catch-MSY model (Martell & Froese, 2013).
 
 Data sources:

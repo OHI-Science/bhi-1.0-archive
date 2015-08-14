@@ -1435,11 +1435,11 @@ CW = function(layers){
 
   # layers
   lyrs = c('po_pathogens' = 'a',                  # 1 year only: from WHO
-           'po_nutrients' = 'u',                  # 1 year only, *spatial*: Halpern et al 2008
+           'cw_nu_status' = 'u',                  # status from HELCOM DIP data and target
            'po_chemicals' = 'l',                  # 1 year only, *spatial*: Halpern et al 2008
            'po_trash'     = 'd',                  # 1 year only: Ocean Conservancy
            'cw_pesticide_trend'   = 'pest_trend', # many years: from FAO
-           'cw_fertilizer_trend'  = 'fert_trend', # many years: from FAO
+           'cw_nu_trend'          = 'nu_trend',   # many years: from status data (HELCOM)
            'cw_coastalpopn_trend' = 'popn_trend', # many years: from CESIN
            'cw_pathogen_trend'    = 'path_trend') # many years: from population proxy
 
@@ -1450,7 +1450,7 @@ CW = function(layers){
 
   # invert pressures
   r$a = 1 - r$a
-  r$u = 1 - r$u
+#   r$u = 1 - r$u
   r$l = 1 - r$l
   r$d = 1 - r$d
 
@@ -1458,13 +1458,13 @@ CW = function(layers){
   r$popn_trend = -1 * r$popn_trend
   r$path_trend = -1 * r$path_trend
   r$pest_trend = -1 * r$pest_trend
-  r$fert_trend = -1 * r$fert_trend
+#   r$fert_trend = -1 * r$fert_trend
 
   # status
   r$status = psych::geometric.mean(t(r[,c('a','u','l','d')]), na.rm=T) * 100
 
   # trend
-  r$trend = rowMeans(r[,c('pest_trend','fert_trend','popn_trend','path_trend')], na.rm=T)
+  r$trend = rowMeans(r[,c('pest_trend','nu_trend','popn_trend','path_trend')], na.rm=T)
 
   # return scores
   scores = rbind(
