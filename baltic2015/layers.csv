@@ -32,8 +32,8 @@ Data sources:
 
 - [FAOÌ¢åÛåªs statistical database FAOSTAT](http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E).
 ","trend.score","trend score","cw_pesticide_trend_gl2014.csv","equal","global trends were applied equally to all regions.","cw_pesticide_trend","~/github/ohi-global/eez2014/layers/cw_pesticide_trend.csv","global","rgn_id",,,,"trend.score",,TRUE,,,-0.440675,0.218233,FALSE,,,,25,FALSE
-"CW","cw_nu_status","Nutrient pollution status based on winter DIP concentrations","Winter DIP levels normalised to HELCOM target level","score","status score","cw_nu_status.csv","equal","","","~/github/bhi/baltic2015/layers/nu_status.csv","global","rgn_id",,,,"score",,TRUE,,,0.776657314285714,1,TRUE,,,,25,FALSE
-"CW","cw_nu_trend","Nutrient pollution trend based on winter DIP concentrations","Trend in winter DIP levels normalised to HELCOM target level 1970-2011","score","trend score","cw_nu_trend.csv","equal","","","~/github/bhi/baltic2015/layers/nu_trend.csv","global","rgn_id",,,,"score",,TRUE,,,0.439541676529285,1,TRUE,,,,25,FALSE
+"CW","cw_nu_status","Nutrient pollution status based on winter DIP concentrations","Winter DIP levels normalised to HELCOM target level","score","status score","cw_nu_status.csv","equal","","","~/github/bhi/baltic2015/layers/nu_status.csv","global","rgn_id",,,,"score",,TRUE,,,0.113182334137281,0.940673390949565,TRUE,,,,25,FALSE
+"CW","cw_nu_trend","Nutrient pollution trend based on winter DIP concentrations from year 2000 to latest available data","Trend in winter DIP levels, slope of normalized status","score","trend score","cw_nu_trend.csv","equal","","","~/github/bhi/baltic2015/layers/nu_trend.csv","global","rgn_id",,,,"score",,TRUE,,,-0.022735645702309,0.03973117551993,FALSE,,,,25,FALSE
 "FIS","fis_b_bmsy","B/Bmsy estimates obtained using the catch-MSY method","The ratio of population abundance compared to the abundance required to deliver maximum sustainable yield, obtained from the catch-MSY model (Martell & Froese, 2013).
 
 Data sources:

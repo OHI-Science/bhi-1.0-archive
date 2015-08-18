@@ -1433,6 +1433,8 @@ SP = function(scores){
 
 CW = function(layers){
 
+# Data pre-process in file nutrient_pollution_prep.R
+
   # layers
   lyrs = c('po_pathogens' = 'a',                  # 1 year only: from WHO
            'cw_nu_status' = 'u',                  # status from HELCOM DIP data and target
