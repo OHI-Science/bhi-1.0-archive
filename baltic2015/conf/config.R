@@ -25,7 +25,7 @@ goal_beta = 0.67
 default_trend = 0
 
 # map configuration
-map_lat=54.5709; map_lon=9.05; map_zoom=5
+map_lat=59.7814; map_lon=19.2261; map_zoom=4
 
 # extra descriptions not covered by goals.description or layers.description, used in ohigui
 index_description = 'The overall Index represents the weighted average of all goal scores.'
