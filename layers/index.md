@@ -48,7 +48,7 @@ Fisheries management effectiveness and opportunity
 <p>Data sources:</p>
 
 <ul>
-<li>Mora, C., Myers, R.A., Coll, M., Libralato, S., Pitcher, T.J., Sumaila, R.U., Worm, B. (2009). <strong>Management Effectiveness of the World<cc><f8><e5><c0><e5><a5>s Marine Fisheries</strong>. <em>PLoS Biol</em>, 7(6), e1000131. <a href="http://dx.doi.org/10.1371/journal.pbio.1000131">doi:10.1371/journal.pbio.1000131</a></li>
+<li>Mora, C., Myers, R.A., Coll, M., Libralato, S., Pitcher, T.J., Sumaila, R.U., Worm, B. (2009). <strong>Management Effectiveness of the World�����s Marine Fisheries</strong>. <em>PLoS Biol</em>, 7(6), e1000131. <a href="http://dx.doi.org/10.1371/journal.pbio.1000131">doi:10.1371/journal.pbio.1000131</a></li>
 </ul>
 
 
@@ -82,7 +82,7 @@ Ocean acidification
 |-------------------|----------------------------------------------------------------------|
 | filename          | cc_acid_gl2014.csv                                                   |
 | value units       | pressure score                                                      |
-| value range       | 0.0135662 to 0.562285                               |
+| value range       | 0.0135662 to 0.564895                               |
 | global extraction | raster | equal:  |
 
 <p>Modeled distribution of the aragonite saturation state (AAS) of the ocean in pre-industrial (~1870) and modern times (2000-2009) (Halpern et al. 2008).</p>
@@ -148,7 +148,7 @@ UV radiation
 |-------------------|----------------------------------------------------------------------|
 | filename          | cc_uv_gl2014.csv                                                   |
 | value units       | pressure score                                                      |
-| value range       | 0.798918 to 0.901569                               |
+| value range       | 0.0587046 to 0.901569                               |
 | global extraction | raster | equal:  |
 
 <p>Modeled UV radiation (Halpern et al. 2008) based on Erythemal UV Irradiance data provided by GES DISC.</p>
@@ -251,8 +251,38 @@ Fertilizer consumption as a proxy for trend in nutrient pollution
 <p>Data sources:</p>
 
 <ul>
-<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAO̢<e5><db><e5><aa>s statistical database FAOSTAT</a>.</li>
+<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAO<cc><ce><e5><a2>̴<cc><dd>̴<e5><bb>s statistical database FAOSTAT</a>.</li>
 </ul>
+
+
+
+## cw_nu_status
+
+Nutrient pollution status based on winter DIP concentrations
+
+| metadata          | value                                                                |
+|-------------------|----------------------------------------------------------------------|
+| filename          | cw_nu_status_placeholder.csv                                                   |
+| value units       | status score                                                      |
+| value range       | 0.5 to 0.5                               |
+| global extraction | equal:  |
+
+<p>Winter DIP levels normalised to HELCOM target level</p>
+
+
+
+## cw_nu_trend
+
+Nutrient pollution trend based on winter DIP concentrations from year 2000 to latest available data
+
+| metadata          | value                                                                |
+|-------------------|----------------------------------------------------------------------|
+| filename          | cw_nu_trend_placeholder.csv                                                   |
+| value units       | trend score                                                      |
+| value range       | 0 to 0                               |
+| global extraction | equal:  |
+
+<p>Trend in winter DIP levels, slope of normalized status</p>
 
 
 
@@ -293,7 +323,7 @@ Pesticide consumption as a proxy for trend in chemical pollution
 <p>Data sources:</p>
 
 <ul>
-<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAO̢<e5><db><e5><aa>s statistical database FAOSTAT</a>.</li>
+<li><a href="http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E">FAO̢���s statistical database FAOSTAT</a>.</li>
 </ul>
 
 
@@ -348,7 +378,7 @@ area of each saup/total OHI reporting region
 |-------------------|----------------------------------------------------------------------|
 | filename          | fis_proparea_saup2rgn_sc2014-area-offshore.csv                                                   |
 | value units       | proportion of area                                                      |
-| value range       | 1.23126e-05 to 1                               |
+| value range       | 3.35312e-07 to 1                               |
 | global extraction | area_offshore: global proportional area were applied to each region after weighting by each region's offshore area. |
 
 <p>Lookup table of Sea Around Us Project regions to Ocean Health Index region identifiers.</p>
@@ -830,7 +860,7 @@ GDP
 |-------------------|----------------------------------------------------------------------|
 | filename          | le_gdp_sc2014-popn-inland25km.csv                                                   |
 | value units       | 2010 USD                                                      |
-| value range       | 187353000 to 1.00463e+12                               |
+| value range       | 142211000 to 1.22571e+12                               |
 | global extraction | population_inland25km: global GDP data were applied to each region after weighting by each region's coastal population. |
 
 <p>Gross Domestic Product (GDP) data (reported in 2012 US dollars) from The World Bank.</p>
@@ -926,7 +956,7 @@ Modeled Livelihoods & Economies data
 |-------------------|----------------------------------------------------------------------|
 | filename          | le_workforcesize_adj_sc2014-popn-inland25km.csv                                                   |
 | value units       | jobs                                                      |
-| value range       | 16597.3 to 14542100                               |
+| value range       | 12598.3 to 14542100                               |
 | global extraction | population_inland25km: global workforce data were applied to each region after weighting by each region's coastal population. |
 
 <p>adjusted workforce size</p>
@@ -985,7 +1015,7 @@ Coastal protected areas inland 1km
 <p>Data sources:</p>
 
 <ul>
-<li>United Nations - World Conservation Monitoring Centre̢<e5><db><e5><aa>s World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
+<li>United Nations - World Conservation Monitoring Centre<cc><ce><e5><a2>̴<cc><dd>̴<e5><bb>s World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
 </ul>
 
 
@@ -1006,7 +1036,7 @@ Coastal marine protected areas offshore 3km
 <p>Data sources:</p>
 
 <ul>
-<li>United Nations - World Conservation Monitoring Centre̢<e5><db><e5><aa>s World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
+<li>United Nations - World Conservation Monitoring Centre<cc><ce><e5><a2>̴<cc><dd>̴<e5><bb>s World Database on Protected Areas (WDPA) through <a href="http://www.protectedplanet.net">Protected Planet</a></li>
 </ul>
 
 
@@ -1019,7 +1049,7 @@ Coastal population inland 25 kilometers
 |-------------------|----------------------------------------------------------------------|
 | filename          | mar_coastalpopn_inland25km_sc2014-raster.csv                                                   |
 | value units       | people                                                      |
-| value range       | 15610.8 to 1682780                               |
+| value range       | 11849.5 to 2290750                               |
 | global extraction | raster: spatial data was extracted for each region.  |
 
 <p>Coastal population, defined as the total population inland of 25 kilometers, extracted from Gridded Population of the World (GPW) Population Density Grid Future Estimates.</p>
@@ -1091,7 +1121,7 @@ Mariculture sustainability score
 <p>Data sources:</p>
 
 <ul>
-<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries̢<e5><db><e5><aa> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries̢<e5><db><e5><aa> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28̢<e5><db><e5><d2>56.</li>
+<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries<cc><ce><e5><a2>̴<cc><dd>̴<e5><bb> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries<cc><ce><e5><a2>̴<cc><dd>̴<e5><bb> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28<cc><ce><e5><a2>̴<cc><dd>̴<cc><d5>56.</li>
 </ul>
 
 
@@ -1148,7 +1178,7 @@ CBD survey: mariculture
 <p>Data sources:</p>
 
 <ul>
-<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries̢<e5><db><e5><aa> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries̢<e5><db><e5><aa> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28̢<e5><db><e5><d2>56.</li>
+<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries̢��� performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries̢��� Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28̢����56.</li>
 </ul>
 
 
@@ -1201,9 +1231,9 @@ Ratio of product peak harvest value (in 2010 USD) divided by sum of all product 
 
 | metadata          | value                                                                |
 |-------------------|----------------------------------------------------------------------|
-| filename          | np_harvest_product_weight_gl2014.csv                                                   |
+| filename          | np_harvest_product_weight_placeholder.csv                                                   |
 | value units       | score                                                      |
-| value range       | 0.000331465 to 0.96731                               |
+| value range       | 0.2 to 0.2                               |
 | global extraction | equal: global weights were applied equally to each region.  |
 
 <p>Ratio of harvest of of six marine products (coral, fish oil, seaweed and plants, shells, sponges, ornamental fish) from FAO.</p>
@@ -1413,7 +1443,7 @@ Trash pollution
 |-------------------|----------------------------------------------------------------------|
 | filename          | po_trash_gl2014.csv                                                   |
 | value units       | pressure score                                                      |
-| value range       | 0.511927 to 0.559469                               |
+| value range       | 0.482173 to 0.559469                               |
 | global extraction | equal: global pressures data were applied equally to all regions. |
 
 <p>Density of trash from coastal land and sea (Ocean Conservancy). </p>
@@ -1434,7 +1464,7 @@ Region area of total EEZ ocean
 |-------------------|----------------------------------------------------------------------|
 | filename          | rgn_area_sc2014-area.csv                                                   |
 | value units       | km^2                                                      |
-| value range       | 943.798 to 87672.6                               |
+| value range       | 98.6209 to 31239.7                               |
 | global extraction | raster: spatial data was extracted for each region. |
 
 <p>Area of Ocean Health Index regions based on exclusive economic zones (VLIZ 2012). </p>
@@ -1512,7 +1542,7 @@ Georegion ids per region, at 3 georegion levels
 |-------------------|----------------------------------------------------------------------|
 | filename          | rgn_georegions_gl2014.csv                                                   |
 | value units       | georegion id                                                      |
-| value range       | 1 to 155                               |
+| value range       | 1 to 154                               |
 | global extraction | raster: spatial data was extracted for each region. |
 
 <p>Lookup table of Ocean Health Index regions and UN georegion identifiers at 3 georegion levels.</p>
@@ -1592,7 +1622,7 @@ Introduced species as a proxy for genetic escapes
 <p>Data sources:</p>
 
 <ul>
-<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries̢<e5><db><e5><aa> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries̢<e5><db><e5><aa> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28̢<e5><db><e5><d2>56.</li>
+<li>Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries<cc><ce><e5><a2>̴<cc><dd>̴<e5><bb> performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries<cc><ce><e5><a2>̴<cc><dd>̴<e5><bb> Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 28<cc><ce><e5><a2>̴<cc><dd>̴<cc><d5>56.</li>
 </ul>
 
 
@@ -1731,7 +1761,7 @@ Total labor force
 |-------------------|----------------------------------------------------------------------|
 | filename          | tr_jobs_total_sc2014-popn-inland25km.csv                                                   |
 | value units       | jobs                                                      |
-| value range       | 16597.3 to 14542100                               |
+| value range       | 12598.3 to 14542100                               |
 | global extraction | population_inland25km: global total labor force data were applied to each region after weighting by each region's coastal population. |
 
 <p>Total labor force (number of people 15 years old and older who can supply labor for the production of goods and services) from World Bank assessments.</p>
@@ -1752,7 +1782,7 @@ Direct employment in tourism
 |-------------------|----------------------------------------------------------------------|
 | filename          | tr_jobs_tourism_sc2014-popn-inland25km.csv                                                   |
 | value units       | jobs                                                      |
-| value range       | 0 to 355122                               |
+| value range       | 0 to 356393                               |
 | global extraction | population_inland25km: global tourism employee data were applied to each region after weighting by each region's coastal population. |
 
 <p>Direct employment in tourism (WTTC).</p>
