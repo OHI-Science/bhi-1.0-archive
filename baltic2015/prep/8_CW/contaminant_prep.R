@@ -35,11 +35,72 @@ pcb_data =
   full_join(stat_to_rgn, rgn_labels, by = "label") %>%
   full_join(., pcb, by = c("Latitude" = "Latitude", "Longitude" = "Longitude")) %>%
   rename(country = Name_1, basin = Name) %>%
-  select(rgn_id, label, MYEAR, DATE, Species, STATN, Latitude, Longitude, Value, MUNIT)
+  select(rgn_id, label, basin, country, MYEAR, DATE, Species, STATN, Latitude, Longitude, Value, MUNIT)
 
-write.csv(pcb_data, "~/github/BHI-issues/raw_data/Contaminants/pcb_data.csv", row.names = F)
+# write.csv(pcb_data, "~/github/BHI-issues/raw_data/Contaminants/pcb_data.csv", row.names = F)
 
 
 #### calculating status and trend values ####
+
+pcb_data <- read.table(file = '~/github/BHI-issues/raw_data/Contaminants/pcb_data.csv', header = T, sep = ",")
+pcb_data$DATE <- as.Date(levels(pcb_data$DATE)[as.numeric(pcb_data$DATE)], "%d/%m/%Y")
+
+count(pcb_data, Species)
+df <- count(pcb_data, MUNIT, Species)
+
+pcb_data = pcb_data %>%
+  mutate(Value.new = ifelse(MUNIT == "ng/g", Value,
+                            ifelse(MUNIT == "%", NA,                      #This should be Value*10^7 but gives to high value
+                                   ifelse(MUNIT == "ug/kg", Value,
+                                          ifelse(MUNIT == "mg/kg", Value*10^3, NA)))))
+
+#### Plot to check data ####
+
+library(ggplot2)
+
+pcb_data %>%
+filter(Species == "Clupea harengus", MUNIT %in% c("ug/kg", "ng/g", "pg/g", "mg/kg"), rgn_id == 30) %>%
+  ggplot(aes(x=DATE, y=Value.new, colour = STATN)) +
+  geom_point(aes(group = rgn_id, shape = MUNIT)) +
+  ggtitle("Clupea harengus, rgn 30") + ylab("ug/kg") +
+  xlim(as.Date(c('2000-01-01', '2014-01-01'))) + ylim(0, 10)
+
+windows()
+pcb_data %>%
+  filter(MUNIT %in% c("ug/kg", "ng/g", "pg/g", "mg/kg"), DATE > as.Date('2000-01-01')) %>%
+  ggplot(aes(x=DATE, y=Value.new, colour = Species, shape = MUNIT)) + geom_point(aes(group = Species)) +
+  ylab("ug/kg") + xlim(as.Date(c('2000-01-01', '2014-01-01'))) +
+  facet_wrap(~ basin, ncol = 3, scales = "free_y")
+
+# It seems that the variation at each measurement can be very large.
+# But that this is not due to sampling from different station.
+# Create timeseries for each region by avereging by sample date
+
+pcb_avg = pcb_data %>%
+  filter(MUNIT %in% c("ug/kg", "ng/g", "pg/g", "mg/kg")) %>%
+  group_by(basin, rgn_id, Species, DATE) %>%
+  summarise(Value.avg = mean(Value.new, na.rm=T))
+
+windows()
+pcb_avg %>%
+  filter(DATE > as.Date('2000-01-01')) %>%
+  ggplot(aes(x=DATE, y=Value.avg, colour = Species)) + geom_point(aes(group = Species)) +
+  ylab("ug/kg") + xlim(as.Date(c('2000-01-01', '2014-01-01'))) +
+  facet_wrap(~ basin, ncol = 3, scales = "free_y")
+
+pcb_trend_basin = pcb_avg %>%
+  group_by(basin, Species) %>%
+  filter(!is.na(Value.avg)) %>% filter(DATE > as.Date('2000-01-01')) %>%
+  do(mod = lm(Value.avg ~ DATE, data = .)) %>%
+  mutate(slope = summary(mod)$coeff[2]) %>%
+  select(-mod)
+
+pcb_trend_rgn = pcb_avg %>%
+  group_by(basin, rgn_id, Species) %>%
+  filter(!is.na(Value.avg)) %>% filter(DATE > as.Date('2000-01-01')) %>%
+  do(mod = lm(Value.avg ~ DATE, data = .)) %>%
+  mutate(slope = summary(mod)$coeff[2], intercept = summary(mod)$coeff[1]) %>%
+#   summarise(status) %>%
+  select(-mod)
 
 
