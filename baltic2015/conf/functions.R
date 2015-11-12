@@ -20,6 +20,28 @@ FIS = function(layers, status_year){
   c$stock_id <- paste(as.character(c$TaxonName),
                       as.character(c$fao_id), sep="_")
 
+  # equations (Halpern et al 2012 suppl, and the Halpern et al 2014 PlosONE US assessment)
+  # xFIS=sum w(i)*((F´+B´)/2)
+  #
+  # B´=(B(i)/BMSY(i)/0.8)   if B/BMSY < 0.8
+  #   = 1                   if 0.8 <= B/BMSY  <1.5
+  #   = (3.35-(B/BMSY)/1.8) if B/BMSY => 1.5 , note not sure if formula is correct as 3.35 ??
+  #  in Schwermer = ((B/BMSY)/1.8) if B/BMSY => 1.5
+  #
+  # F´= 0                        if B/BMSY<0.8 and F/FMSY>B/BMSY+1.5
+  #   = ((F/FMSY)/(B/BMSY)-0.2)  if  B/BMSY<0.8 and F/FMSY<B/BMSY-0.2
+  #   = ((B/BMSY)+1.5-(F/FMSY))/1.5 if B/BMSY<0.8 and B/BMSY+0.2 < F/FMSY<B/BMSY+1.5
+  #   = 1                            if B/BMSY<0.8 and B/BMSY-0.2 <= F/FMSY<B/BMSY+0.2
+  #   = (F/FMSY)/0.8                if B/BMSY =>0.8 and F/FMSY<0.8
+  #   = 1                           if B/BMSY=>0.8 and 0.8<=F/FMSY<1.2
+  #   = (2.5-(F/FMSY)/1.3           if B/BMSY=>0.8 and F/FMSY=>1.2
+  #  in Schwermer =  = (2.5-(F/FMSY)/0.8           if B/BMSY=>0.8 and F/FMSY=>1.2
+  #
+  # w(i)= (mean B(i))/(Sum (B))     mean spawning stock biomass odf species i in relation to total Spawning stock bioass within the region 
+  
+  
+##########################################################    
+  
   # b_bmsy data
   b = SelectLayersData(layers, layer='fis_b_bmsy', narrow=T) %>%
     select(
