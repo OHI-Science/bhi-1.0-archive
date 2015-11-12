@@ -68,7 +68,7 @@ filter(Species == "Clupea harengus", MUNIT %in% c("ug/kg", "ng/g", "pg/g", "mg/k
 windows()
 pcb_data %>%
   filter(MUNIT %in% c("ug/kg", "ng/g", "pg/g", "mg/kg"), DATE > as.Date('2000-01-01')) %>%
-  ggplot(aes(x=DATE, y=Value.new, colour = Species, shape = MUNIT)) + geom_point(aes(group = Species)) +
+  ggplot(aes(x=DATE, y=Value.new, colour = rgn_id, shape = MUNIT)) + geom_point(aes(group = Species)) +
   ylab("ug/kg") + xlim(as.Date(c('2000-01-01', '2014-01-01'))) +
   facet_wrap(~ basin, ncol = 3, scales = "free_y")
 

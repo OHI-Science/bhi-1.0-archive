@@ -6,15 +6,21 @@ library(stringr)  # install.packages('stringr') for string manipulation
 library(ggplot2)  #                             for plotting
 library(zoo)      #                             for timeseries
 
-## READING DATA #### yyyy.mm.ddThh.mm)
+## READING DATA ####
 
-ICES <- read.table(file = '~/Jobb/data/ICES/baltic_20151007/BALTIC_20151007.txt', header = TRUE, sep = ";")
+# ICES <- read.table(file = '~/github/BHI-issues/raw_data/ICES/BALTIC_20151007.txt', header = TRUE, sep = ";")
+#
+# secchi <- ICES %>%
+#    select(1:13, starts_with('Secchi')) %>%
+#   rename(secchi = Secchi.Depth..m..METAVAR.DOUBLE) %>%
+# #   mutate(date =  as.Date(yyyy.mm.ddThh.mm), month = format(date, "%m")) %>%
+#   filter(!is.na(secchi))
+#
+# write.table(secchi, file = '~/github/BHI-issues/raw_data/ICES/ICES_secchi.csv', sep = ",", row.names = F)
 
-secchi <- ICES %>%
-  select(1:13, starts_with('Secchi')) %>%
-  rename(secchi = Secchi.Depth..m..METAVAR.DOUBLE) %>%
-  mutate(date =  as.Date(yyyy.mm.ddThh.mm), month = format(date, "%m")) %>%
-  filter(!is.na(secchi))
+secchi <- read.table(file = '~/github/BHI-issues/raw_data/ICES/ICES_secchi.csv', header = T, sep = ",")
+secchi <- secchi %>%
+  mutate(date =  as.Date(yyyy.mm.ddThh.mm), month = format(date, "%m")) #%>%
 
 windows()
 secchi %>%

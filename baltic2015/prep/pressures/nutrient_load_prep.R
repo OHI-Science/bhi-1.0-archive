@@ -15,18 +15,6 @@ p_ceiling <- read.table(file = '~/github/BHI-issues/raw_data/Nutrientload/P_ceil
 n_ceiling <- read.table(file = '~/github/BHI-issues/raw_data/Nutrientload/N_ceilings.csv', header = TRUE, sep = ",", na.strings = 0)
 rgn_id <- read.table(file = "~/github/bhi/baltic2015/layers/rgn_global_gl2014.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 
-ceilings =
-  p_ceiling %>%
-  gather(key = basin, value = p_ceiling, 2:8) %>%
-  mutate(label = paste(substring(Country,1,3), "-", gsub("_", " ", basin)))
-ceiling =
-  n_ceiling %>%
-  gather(key = basin, value = n_ceiling, 2:8) %>%
-  mutate(label = paste(substring(Country,1,3), "-", gsub("_", " ", basin)))
-
-ref_point = select(full_join(ceiling, ceilings, by = "label"), label, p_ceiling, n_ceiling)
-
-
 # Adding columns for country and basin based in rgn labels to be able to associate pressure for each basin to with rgn_id (using join)
 rgn_labels = mutate(rgn_id, country = substring(label,1,3), basin = gsub(" ", "_", substring(label,7,)))
 
@@ -40,6 +28,8 @@ river =
   mutate(label = paste(substring(country,1,3), "-", gsub("_", " ", basin))) %>%
   filter(Year == 2010) %>%
   select(label, Year, TN_tons, TP_tons, TN_norm_tons, TP_norm_tons)
+
+loads = full_join(river, point, by = "label")
 
 # Replacing finer resolution basin names (HOLAS) with coarser resolution name (PLC)
 # which basin load to use for Aland Sea and the Quark?
@@ -69,5 +59,25 @@ rgn_labels$basin = sub("Great_Belt", "Danish_Straits", rgn_labels$basin)
 rgn_labels$basin = sub("Kiel_Bay", "Danish_Straits", rgn_labels$basin)
 rgn_labels$basin = sub("Bay_of_Mecklenburg", "Danish_Straits", rgn_labels$basin)
 
-nu_pressure = full_join(river, rgn_labels, by = "label")
+# N and P ceilings
+Pceiling =
+  p_ceiling %>%
+  gather(key = basin, value = p_ceiling, 2:8) %>%
+  mutate(label = paste(substring(Country,1,3), "-", gsub("_", " ", basin)))
+Nceiling =
+  n_ceiling %>%
+  gather(key = basin, value = n_ceiling, 2:8) %>%
+  mutate(label = paste(substring(Country,1,3), "-", gsub("_", " ", basin)))
+
+
+ref_point = select(full_join(Nceiling, Pceilings, by = "label"), label, p_ceiling, n_ceiling)
+
+
+nu_pressure = full_join(loads, rgn_labels, by = "label")
+nu_pressure = full_join(nu_pressure, ref_point, by = "label")
+nu_pressure =
+  nu_pressure %>%
+  mutate(p = TP_norm_tons/p_ceiling, n = TN_norm_tons/n_ceiling) %>%
+  select(rgn_id, Year.x, label, n, p)
+
 
