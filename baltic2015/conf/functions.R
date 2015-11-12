@@ -25,7 +25,7 @@ FIS = function(layers, status_year){
   #
   # B´=(B(i)/BMSY(i)/0.8)   if B/BMSY < 0.8
   #   = 1                   if 0.8 <= B/BMSY  <1.5
-  #   = (3.35-(B/BMSY)/1.8) if B/BMSY => 1.5 , note not sure if formula is correct as 3.35 ??
+  #   = (Max(B/BMSY)-(B/BMSY))/1.8) if B/BMSY => 1.5 , max B/BMSY is the maximum B/BMSY value observed of a particular species over the entire time series
   #  in Schwermer = ((B/BMSY)/1.8) if B/BMSY => 1.5
   #
   # F´= 0                        if B/BMSY<0.8 and F/FMSY>B/BMSY+1.5
