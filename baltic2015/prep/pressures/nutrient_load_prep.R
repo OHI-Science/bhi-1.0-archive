@@ -70,14 +70,26 @@ Nceiling =
   mutate(label = paste(substring(Country,1,3), "-", gsub("_", " ", basin)))
 
 
-ref_point = select(full_join(Nceiling, Pceilings, by = "label"), label, p_ceiling, n_ceiling)
+ref_point = select(full_join(Nceiling, Pceiling, by = "label"), label, p_ceiling, n_ceiling)
 
 
 nu_pressure = full_join(loads, rgn_labels, by = "label")
 nu_pressure = full_join(nu_pressure, ref_point, by = "label")
 nu_pressure =
   nu_pressure %>%
-  mutate(p = TP_norm_tons/p_ceiling, n = TN_norm_tons/n_ceiling) %>%
-  select(rgn_id, Year.x, label, n, p)
+  mutate(p = pmin(1, TP_norm_tons/p_ceiling), n = pmin(1, TN_norm_tons/n_ceiling)) %>%
+  select(rgn_id, Year.x, label, n, p) %>%
+  filter(!is.na(rgn_id)) %>%
+  rename(year = Year.x) %>%
+  arrange(rgn_id)
 
+pload_pressure <- nu_pressure %>%
+  select(rgn_id, p) %>%
+  rename(pressure_score = p)
+nload_pressure <- nu_pressure %>%
+  select(rgn_id, n) %>%
+  rename(pressure_score = n)
+
+write.csv(pload_pressure, file = "~/github/bhi/baltic2015/layers/po_pload.csv", row.names = F)
+write.csv(nload_pressure, file = "~/github/bhi/baltic2015/layers/po_nload.csv", row.names = F)
 
