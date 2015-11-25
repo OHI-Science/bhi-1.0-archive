@@ -1,5 +1,6 @@
 # load required libraries
 suppressWarnings(require(ohicore))
+library(tidyr)
 
 # set working directory to the scenario directory, ie containing conf and layers directories
 setwd('~/github/bhi/baltic2015')

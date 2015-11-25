@@ -20,6 +20,29 @@ FIS = function(layers, status_year){
   c$stock_id <- paste(as.character(c$TaxonName),
                       as.character(c$fao_id), sep="_")
 
+  # equations (Halpern et al 2012 suppl, and the Halpern et al 2014 PlosONE US assessment)
+  # xFIS=sum w(i)*((F´+B´)/2)
+  #
+  # B´=(B(i)/BMSY(i)/0.8)   if B/BMSY < 0.8
+  #   = 1                   if 0.8 <= B/BMSY  <1.5
+  #   = (Max(B/BMSY)-(B/BMSY))/1.8) if B/BMSY => 1.5 , max B/BMSY is the maximum B/BMSY value observed of a particular species over the entire time series
+  #  in Schwermer = ((B/BMSY)/1.8) if B/BMSY => 1.5
+  #
+  # F´= 0                        if B/BMSY<0.8 and F/FMSY>B/BMSY+1.5
+  #   = ((F/FMSY)/(B/BMSY)-0.2)  if  B/BMSY<0.8 and F/FMSY<B/BMSY-0.2
+  #   = ((B/BMSY)+1.5-(F/FMSY))/1.5 if B/BMSY<0.8 and B/BMSY+0.2 < F/FMSY<B/BMSY+1.5
+  #   = 1                            if B/BMSY<0.8 and B/BMSY-0.2 <= F/FMSY<B/BMSY+0.2
+  #   = (F/FMSY)/0.8                if B/BMSY =>0.8 and F/FMSY<0.8
+  #   = 1                           if B/BMSY=>0.8 and 0.8<=F/FMSY<1.2
+  #   = (Max(F/FMSY)-(F/FMSY)/1.3           if B/BMSY=>0.8 and F/FMSY=>1.2, max F/FMSY is the maximum F/FMSY value observed of a particular species over the entire time series, 
+  #                                          The 1.3 value was chosen because the lowest possible value for F/Fmsy is 1.2 (ffmsy>=1.2), and (2.5 - 1.2)/1.3 = 1, establishing the high score of 1.  
+  #  
+  #
+  # w(i)= (mean B(i))/(Sum (B))     mean spawning stock biomass odf species i in relation to total Spawning stock bioass within the region 
+  
+  
+##########################################################    
+  
   # b_bmsy data
   b = SelectLayersData(layers, layer='fis_b_bmsy', narrow=T) %>%
     select(
