@@ -24,8 +24,9 @@ merge_branches = F
 
 if (merge_branches) {
   # switch to draft branch and get latest
-  system('git checkout draft; git pull')
-
+  system('git checkout draft')
+  system('git commit -m "committing draft branch"')
+  system('git pull')
   # merge published with the draft branch
   system('git checkout published')
   system('git merge draft')
