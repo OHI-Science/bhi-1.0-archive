@@ -77,7 +77,7 @@ nu_pressure = full_join(loads, rgn_labels, by = "label")
 nu_pressure = full_join(nu_pressure, ref_point, by = "label")
 nu_pressure =
   nu_pressure %>%
-  mutate(p = pmin(1, TP_norm_tons/p_ceiling), n = pmin(1, TN_norm_tons/n_ceiling)) %>%
+  mutate(p = 1 - pmin(1, TP_norm_tons/p_ceiling), n = 1 - pmin(1, TN_norm_tons/n_ceiling)) %>%
   select(rgn_id, Year.x, label, n, p) %>%
   filter(!is.na(rgn_id)) %>%
   rename(year = Year.x) %>%
@@ -90,6 +90,6 @@ nload_pressure <- nu_pressure %>%
   select(rgn_id, n) %>%
   rename(pressure_score = n)
 
-write.csv(pload_pressure, file = "~/github/bhi/baltic2015/layers/po_pload.csv", row.names = F)
-write.csv(nload_pressure, file = "~/github/bhi/baltic2015/layers/po_nload.csv", row.names = F)
+# write.csv(pload_pressure, file = "~/github/bhi/baltic2015/layers/po_pload.csv", row.names = F)
+# write.csv(nload_pressure, file = "~/github/bhi/baltic2015/layers/po_nload.csv", row.names = F)
 
