@@ -2,7 +2,6 @@ goal,component,component_name,po_chemicals,po_chemicals_3nm,po_pathogens,po_ploa
 FIS,,,1,,,,,,2,2,1,1,1,3,1,1,2,,,,,,1
 MAR,,,2,,,3,3,,,,,,,,,,,,,,,1,1
 AO,,,,1,,1,1,,1,3,1,1,,2,1,,3,,,,,,1
-NP,corals,,1,,,,,,,3,,1,,,,,,,3,1,1,1,1
 NP,fish_oil,,2,,,,,,2,,,1,,,2,,,,1,,,,1
 NP,ornamentals,,2,,,,,,,3,,1,,,,1,3,,1,,,,1
 NP,seaweeds,,2,,,,,,,,1,1,,,,,,,1,,,,1

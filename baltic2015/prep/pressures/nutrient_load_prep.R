@@ -90,6 +90,6 @@ nload_pressure <- nu_pressure %>%
   select(rgn_id, n) %>%
   rename(pressure_score = n)
 
-# write.csv(pload_pressure, file = "~/github/bhi/baltic2015/layers/po_pload.csv", row.names = F)
-# write.csv(nload_pressure, file = "~/github/bhi/baltic2015/layers/po_nload.csv", row.names = F)
+write.csv(pload_pressure, file = "~/github/bhi/baltic2015/layers/po_pload.csv", row.names = F)
+write.csv(nload_pressure, file = "~/github/bhi/baltic2015/layers/po_nload.csv", row.names = F)
 
