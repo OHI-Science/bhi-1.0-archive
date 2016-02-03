@@ -15,7 +15,7 @@ CheckLayers('layers.csv', 'layers', flds_id=conf$config$layers_id_fields)
 layers = Layers('layers.csv', 'layers')
 
 # calculate scenario scores
-scores = CalculateAll(conf, layers, debug=F)
+scores = CalculateAll(conf, layers, debug=T)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
 # merge to published branch (to display on app)

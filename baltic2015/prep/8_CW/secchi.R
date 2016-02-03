@@ -10,7 +10,7 @@ conf<-as.matrix(conf)
 
 ### MySQL commands
 ### IMPORTANT: whenever you open a MySQL connection with 'dbConnect' make sure that you close it directly after your querry!!!
-con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI",host=conf[,3], port=3306) # sets up the connection
+con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
 
 t<-dbSendQuery(con, "select `secchi`, `BHI_ID`, `Month`, `Year`, `Assessment_unit`, `HELCOM_COASTAL_CODE`, `HELCOM_ID` from ICES_secchi_ID_assigned;") #  where `HELCOM_COASTAL_CODE` > 0
 data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
