@@ -16,3 +16,5 @@ library(plyr)
 
 #test 5 - Jennifer reinstall Git & Rstudio
 
+#test 6 - try to set local rather than global git username and email
+
