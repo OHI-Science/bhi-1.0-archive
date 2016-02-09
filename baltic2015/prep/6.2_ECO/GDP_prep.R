@@ -65,8 +65,9 @@ glimpse(bhi.nuts3.join)
 bhi.na = bhi.nuts3.join%>%  group_by(BHI_ID,YEAR) %>%
   summarise(NUM_NA = sum(is.na(GDP)))%>%
   arrange(BHI_ID)%>%
-  spread(key=YEAR, value=NUM_NA)
-bhi.na
+  spread(key=YEAR, value=NUM_NA)%>%
+  print(n=100)
+print(bhi.na,n=100)
 
 
 #any years no NAs in GDP for all BHI_ID?
@@ -76,7 +77,7 @@ bhi.na.year = bhi.nuts3.join%>%  group_by(BHI_ID,YEAR) %>%
   group_by(YEAR)%>%
   summarise(YEAR_NA=sum(NUM_NA))
 bhi.na.year
-#only 3 years with no NaA
+#only 3 years with no NA
 
 #get NUTS3_ID which have NAS 2000-2009
 nuts3.na.names=bhi.nuts3.join%>% filter(YEAR>=2000 & YEAR <=2012)%>%
@@ -85,6 +86,40 @@ nuts3.na.names=bhi.nuts3.join%>% filter(YEAR>=2000 & YEAR <=2012)%>%
   filter(NUM_NA!=0)
 nuts3.na.names
 
+#look at BHI_ID for each of the NUTS3 regions in nuts3.na.names
+bhi.nuts3.join%>%filter(NUTS3_ID%in% nuts3.na.names$NUTS3_ID)%>%
+  expand(nesting(BHI_ID,NUTS3_ID))%>%
+  print(n=100)
+
+#look at data for BHI_ID_23
+bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_23")%>%
+  arrange(YEAR,NUTS3_ID)
+    #Has data from two countries LT00, LT003, LV00, LV003
+
+#BHI_ID_10
+bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_10")%>%
+  arrange(YEAR,NUTS3_ID)%>%
+  arrange(NUTS3_ID)
+    #data missing for all years prior to 2010
+
+bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_13")%>%
+  arrange(YEAR,NUTS3_ID)%>%
+  arrange(NUTS3_ID)
+  #data missing for all years prior to 2010
+
+bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_16")%>%
+  arrange(YEAR,NUTS3_ID)%>%
+  arrange(NUTS3_ID)
+  #data missing for all years prior to 2010
+
+bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_3")%>%
+  arrange(YEAR,NUTS3_ID)
+  #DE & DK NUTS3_ID
+  #data missing for all years prior to 2010 for DE only
+
+bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_4")%>%
+  arrange(YEAR,NUTS3_ID)
+  #data missing for all years prior to 2010
 
 
 
@@ -101,9 +136,12 @@ bhi.gdp
 colnames(bhi.gdp)=c("rgn_id","year","gdp_mio_euro")
 
 #write csv to layers
-write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv", row.names = F)
+##Commented out so don't export every time
+#write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv", row.names = F)
 
 
+
+##################################################################
 ###TESTS / EXPLORARTORY ###
 #calculate BHI_ID GDP, for subset of BHI_ID (no missing years of data) 2000-2012
 #use for testing the scores
