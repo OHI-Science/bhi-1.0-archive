@@ -16,6 +16,7 @@ if (!"ohicore" %in% (.packages())) {
 suppressWarnings(require(ohicore))
 
 library(tidyr)
+library(dplyr)
 
 # set working directory to the scenario directory, ie containing conf and layers directories
 setwd('~/github/bhi/baltic2015')
