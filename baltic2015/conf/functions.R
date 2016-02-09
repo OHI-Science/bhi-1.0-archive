@@ -1460,7 +1460,7 @@ CW = function(layers){
 
   # layers
   lyrs = c('po_pathogens' = 'a',                  # 1 year only: from WHO
-           'cw_nu_status' = 'u',                  # status from HELCOM DIP data and target
+           'cw_nu_status' = 'u',                  # status from ICES secchi depths and HELCOM open sea target levels
            'po_chemicals' = 'l',                  # 1 year only, *spatial*: Halpern et al 2008
            'po_trash'     = 'd',                  # 1 year only: Ocean Conservancy
            'cw_pesticide_trend'   = 'pest_trend', # many years: from FAO
