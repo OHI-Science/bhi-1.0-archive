@@ -1,3 +1,10 @@
+## Note that some of the commands used below are from older R packages that we don't recommend using anymore (dcast, etc). Instead, use
+## dplyr and tydr packages that have more streamlined functions to manipulate data. To learn those funtions:
+## http://ohi-science.org/manual/#appendix-5-r-tutorials-for-ohi
+
+## See functions.R of CHN (OHI-China) for how those functions are used in OHI+ assessments
+
+
 FIS = function(layers, status_year){
   # layers used: fis_meancatch, fis_b_bmsy, fis_proparea_saup2rgn
 
@@ -34,15 +41,15 @@ FIS = function(layers, status_year){
   #   = 1                            if B/BMSY<0.8 and B/BMSY-0.2 <= F/FMSY<B/BMSY+0.2
   #   = (F/FMSY)/0.8                if B/BMSY =>0.8 and F/FMSY<0.8
   #   = 1                           if B/BMSY=>0.8 and 0.8<=F/FMSY<1.2
-  #   = (Max(F/FMSY)-(F/FMSY)/1.3           if B/BMSY=>0.8 and F/FMSY=>1.2, max F/FMSY is the maximum F/FMSY value observed of a particular species over the entire time series, 
-  #                                          The 1.3 value was chosen because the lowest possible value for F/Fmsy is 1.2 (ffmsy>=1.2), and (2.5 - 1.2)/1.3 = 1, establishing the high score of 1.  
-  #  
+  #   = (Max(F/FMSY)-(F/FMSY)/1.3           if B/BMSY=>0.8 and F/FMSY=>1.2, max F/FMSY is the maximum F/FMSY value observed of a particular species over the entire time series,
+  #                                          The 1.3 value was chosen because the lowest possible value for F/Fmsy is 1.2 (ffmsy>=1.2), and (2.5 - 1.2)/1.3 = 1, establishing the high score of 1.
   #
-  # w(i)= (mean B(i))/(Sum (B))     mean spawning stock biomass odf species i in relation to total Spawning stock bioass within the region 
-  
-  
-##########################################################    
-  
+  #
+  # w(i)= (mean B(i))/(Sum (B))     mean spawning stock biomass odf species i in relation to total Spawning stock bioass within the region
+
+
+##########################################################
+
   # b_bmsy data
   b = SelectLayersData(layers, layer='fis_b_bmsy', narrow=T) %>%
     select(
