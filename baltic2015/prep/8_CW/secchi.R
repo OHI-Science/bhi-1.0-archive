@@ -1,12 +1,11 @@
+library(package = plyr)
 library(package = dplyr)
 library(package = tidyr)
 library(RMySQL)
 library(ggplot2)
 
 ### read mysql config
-
-conf<-read.csv("C:/Users/lvikt/Documents/Jobb/BHI/Data and goal descriptions/Database/mysql_conf.txt") # set your path to your mysql_conf
-conf<-as.matrix(conf)
+# run your personal mysql config script to read in passcode
 
 ### MySQL commands
 ### IMPORTANT: whenever you open a MySQL connection with 'dbConnect' make sure that you close it directly after your querry!!!
@@ -17,12 +16,12 @@ data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
 dbClearResult(t) # clears selection (IMPORTANT!)
 dbDisconnect(con) # closes connection (IMPORTANT!)
 
-# Load secchi data from database
+# Load rgn_id file from repository
 rgn_id <- read.table(file = "~/github/bhi/baltic2015/layers/rgn_global_gl2014.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 rgn_id <- rename(rgn_id, BHI_ID = rgn_id) %>%
   mutate(basin = gsub(" ", "_", substring(label,7)))
 
-# load target levels set by HELCOM
+# load target levels set by HELCOM ????MOVE THIS DATA TO SERVER????
 target <- read.table(file = "~/github/bhi/baltic2015/prep/8_CW/eutro_targets.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 target <- full_join(target, rgn_id, by = 'basin')
 
@@ -40,15 +39,17 @@ summer_secchi_all <-
   summarise(secchi = mean(secchi, na.rm = T), year = mean(Year, na.rm = T), target = max(target), HELCOM_ID = max(HELCOM_ID), country = max(country), label =max(label), basin = max(basin)) %>%
   mutate(score = pmin(1, secchi/target))
 
-  val_basin = filter(summer_secchi_all, BHI_ID == 5)
-  val_basin$BHI_ID = 6
+# val_basin = filter(summer_secchi_all, BHI_ID == 5)
+# val_basin$BHI_ID = 6
 
+# function to gapfill region (nodata_BHI_ID) with NA using adjecent region (value_BHI_ID & val_df)
   duplicate.data <- function(value_BHI_ID, val_df, nodata_BHI_ID) {
     temp = filter(val_df, BHI_ID == value_BHI_ID)
     temp$BHI_ID = nodata_BHI_ID
     return(temp)
   }
 
+# Give NA regions data from adjecent basin
   summer_secchi_all = bind_rows(summer_secchi_all,
                                 duplicate.data(5, summer_secchi_all, 6),     # DK Sound = SE Sound
                                 duplicate.data(36, summer_secchi_all, 35),   # SE Aland Sea = FI Aland Sea
@@ -61,10 +62,66 @@ summer_secchi_all <-
     summarise_each(funs(last), BHI_ID, score) %>%
     rename(rgn_id = BHI_ID)
 
-  #  write csv files to layers folder ####
-   write.csv(status_score, "~/github/bhi/baltic2015/layers/cw_nu_status.csv", row.names = F)
+#### TEST SECTION TO PREPARE THE TREND CALCULATION TO BE DONE IN FUNCTIONS.R ####
+  # Trying to get it to work with dplyr instead of plyr package
 
-#### plot ####
+ # First as in AO goal in functions.R using plyr
+  test = ddply(subset(summer_secchi_all, year >= 2005), .(BHI_ID), function(x)
+  {
+   if (length(na.omit(x$score)) > 1) {
+     # creates data frame d with status score and year only, by BHI_ID
+     # tail tells it to use only the last x(5) years of status data in each BHI_ID
+     d = data.frame(statusData = x$score, year = x$year)[tail(which(!is.na(x$score)), 5), ]
+     # calculates linear trend over the 5 years in d and sets trend score to the extrapolated status score in 5 years from last year of d
+     trend = coef(lm(statusData ~ year, d))[['year']] * 5
+     } else {
+       trend = NA
+     }
+   return(data.frame(trend = trend))
+   })
+
+  # Second trying to do the same thing with dplyr, the code does not build a data frame in test2 (as plyr is doing in test). Instead I only get the last value
+ test2 =
+   summer_secchi_all %>%
+   group_by(BHI_ID) %>%
+   filter(year >= 2005) %>%
+   (function(x)
+     {
+     if (length(na.omit(x$score)) > 1) {
+       # creates data frame d with status score and year only, by BHI_ID
+       # tail tells it to use only the last x(5) years of status data in each BHI_ID
+       d = data.frame(statusData = x$score, year = x$year)[tail(which(!is.na(x$score)), 5), ]
+       # calculates linear trend over the 5 years in d and sets trend score to the extrapolated status score in 5 years from last year of d
+       trend = coef(lm(statusData ~ year, d))[['year']] * 5
+     } else {
+       trend = NA
+     }
+     return(data.frame(trend = trend))
+   })
+
+
+########################### EXAMPLE CODE FROM AO IN FUNCTIONS.R #######################################
+#     # trend
+#     r.trend = ddply(subset(ry, year >= year_min), .(region_id), function(x)
+#     {
+#       if (length(na.omit(x$statusData))>1) {
+#         # use only last valid 5 years worth of status data since year_min
+#         d = data.frame(statusData=x$statusData, year=x$year)[tail(which(!is.na(x$statusData)), 5),]
+#         trend = coef(lm(statusData ~ year, d))[['year']]*5
+#       } else {
+#         trend = NA
+#       }
+#       return(data.frame(trend=trend))
+#     })
+#######################################################################################################
+
+#  write csv files to layers folder ####
+ spara = F
+ if (spara == T)
+ {write.csv(status_score, "~/github/bhi/baltic2015/layers/cw_nu_status.csv", row.names = F)
+   write.csv(summer_secchi_all, "~/github/bhi/baltic2015/prep/8_CW/cw_nu_status.csv", row.names = F)}
+
+#### plot to check data ####
 
 summer_secchi_coastal <-
   data2 %>%
