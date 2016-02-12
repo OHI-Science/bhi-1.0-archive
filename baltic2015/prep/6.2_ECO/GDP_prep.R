@@ -12,8 +12,8 @@ library(RMySQL)
 con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
 dbListTables(con) # shows all tables in the DB
 
-#fetch GPD data from database
-t<-dbSendQuery(con, paste("select * from nama_10r_3gdp_ID_assigned where BHI_relevant =1;",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
+#fetch GPD data from database, use BHI_relevant = 'NUTS3' should draw only NUTS3 data with is associated with a BHI region (database also contains some NUTS2)
+t<-dbSendQuery(con, paste("select * from nama_10r_3gdp_ID_assigned where BHI_relevant = 'NUTS3';",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
 data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
 head(data) #GPD data
 dbClearResult(t) # clears selection (IMPORTANT!)
@@ -55,12 +55,19 @@ bhi.factor=data %>%select(EUROSTAT_unit,NUTS3_ID,starts_with("BHI"))%>%
   arrange(NUTS3_ID,BHI_ID)
 glimpse(bhi.factor)
 
+#get a df of all BHI_ID so that at very end can make sure all BHI included
+unique.bhi.id =data %>%select(EUROSTAT_unit,NUTS3_ID,starts_with("BHI"))%>%
+  select(-BHI_relevant)%>%
+  gather(BHI_ID,FACTOR_NUTS3,-EUROSTAT_unit, -NUTS3_ID)%>%
+  select(BHI_ID)%>%
+  distinct(BHI_ID)
 
 #join data.nuts3, bhi.factor to calculate GDP value per BHI_ID
 bhi.nuts3.join = full_join(data.nuts3, bhi.factor, by=c("NUTS3_ID","EUROSTAT_unit"))
 glimpse(bhi.nuts3.join)
 
-
+################
+####Data exploration of NA, assignment of NUTS3_ID to BHI_ID
 #assess number of NAS for each BHI_ID for each year - non-associated removed, so NAs only reflect missing data
 bhi.na = bhi.nuts3.join%>%  group_by(BHI_ID,YEAR) %>%
   summarise(NUM_NA = sum(is.na(GDP)))%>%
@@ -68,7 +75,6 @@ bhi.na = bhi.nuts3.join%>%  group_by(BHI_ID,YEAR) %>%
   spread(key=YEAR, value=NUM_NA)%>%
   print(n=100)
 print(bhi.na,n=100)
-
 
 #any years no NAs in GDP for all BHI_ID?
 bhi.na.year = bhi.nuts3.join%>%  group_by(BHI_ID,YEAR) %>%
@@ -121,19 +127,50 @@ bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_4")%>%
   arrange(YEAR,NUTS3_ID)
   #data missing for all years prior to 2010
 
+bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_8")%>%
+  arrange(YEAR,NUTS3_ID)
+#data missing for all years prior to 2010
 
+###########################
+####calculate BHI_ID GDP, years 2000-2012 BHI_ID regions with missing NUTS3 data get NA####
+#BHI_ID3 - will have NAs prior to 2010 - but there are DK, missing DE data causes this.  DE should not be assigned to this
+#this should be fixed when new map created, will need to rerun
+#BHI_ID_23- Has both LV and LT assigned, LT is missing data, LV should not be assigned, problem from map join,
+#will hopefully be fixed with new map
 
-#####calculate BHI_ID GDP, only 2010-2012 because no missing NUTS3 data#####
-
-bhi.gdp= bhi.nuts3.join %>% filter(YEAR%in%c(2010,2011,2012))%>%
+bhi.gdp= bhi.nuts3.join %>% filter(YEAR<2013)%>%
   group_by(BHI_ID,YEAR) %>%
-  summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=TRUE)) %>%
+  summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=FALSE)) %>%
   arrange(BHI_ID)
 
-bhi.gdp
+print(bhi.gdp, n=1000)
+
+#join to unique.bhi.id (because some BHI_ID have no NUTS3_ID associated, e.g. Russia)
+
+bhi.gdp =full_join(bhi.gdp, unique.bhi.id,by="BHI_ID")
+print(bhi.gdp,n=1000)
+
+#where YEAR is NA (because add BHI_ID without data) make 2012
+bhi.gdp[is.na(bhi.gdp$YEAR),"YEAR"] =2012
 
 #bhi.gdp correct column headers
 colnames(bhi.gdp)=c("rgn_id","year","gdp_mio_euro")
+print(bhi.gdp,n=1000)
+
+#write to temp cvs to check calculations here in the prep folder
+bhi.gdp.temp=bhi.gdp
+write.csv(bhi.gdp.temp, "~/github/bhi/baltic2015/prep/6.2_ECO/le_gdp_tempbhi2015.csv", row.names = F)
+
+#####calculate BHI_ID GDP, only 2010-2012 because no missing NUTS3 data#####
+
+# bhi.gdp= bhi.nuts3.join %>% filter(YEAR%in%c(2010,2011,2012))%>%
+#   group_by(BHI_ID,YEAR) %>%
+#   summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=TRUE)) %>%
+#   arrange(BHI_ID)
+#
+# bhi.gdp
+
+
 
 #write csv to layers
 ##Commented out so don't export every time
@@ -143,39 +180,44 @@ colnames(bhi.gdp)=c("rgn_id","year","gdp_mio_euro")
 
 ##################################################################
 ###TESTS / EXPLORARTORY ###
+
 #calculate BHI_ID GDP, for subset of BHI_ID (no missing years of data) 2000-2012
 #use for testing the scores
 #will export csv only to prep folder
+#
+# #get BHI_ID which do not have NAs, restrict to before 2013
+# bhi.no.na.names=bhi.nuts3.join%>% filter(YEAR<2013)%>%
+#   group_by(BHI_ID) %>%
+#   summarise(NUM_NA = sum(is.na(GDP)))%>%
+#   filter(NUM_NA==0)
+# bhi.no.na.names
+#
+# bhi.gdp.temp= bhi.nuts3.join %>% filter(YEAR<2013)%>%
+#   filter(BHI_ID%in% bhi.no.na.names$BHI_ID)%>%
+#   group_by(BHI_ID,YEAR) %>%
+#   summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=TRUE)) %>%
+#   arrange(BHI_ID)
+#
+# bhi.gdp.temp
+# #bhi.gdp correct column headers
+# colnames(bhi.gdp.temp)=c("rgn_id","year","gdp_mio_euro")
+#
+# #write to csv in prep folder
+# write.csv(bhi.gdp.temp, "~/github/bhi/baltic2015/prep/6.2_ECO/le_gdp_tempbhi2015.csv", row.names = F)
+#
 
-#get BHI_ID which do not have NAs, restrict to before 2013
-bhi.no.na.names=bhi.nuts3.join%>% filter(YEAR<2013)%>%
-  group_by(BHI_ID) %>%
-  summarise(NUM_NA = sum(is.na(GDP)))%>%
-  filter(NUM_NA==0)
-bhi.no.na.names
 
-bhi.gdp.temp= bhi.nuts3.join %>% filter(YEAR<2013)%>%
-  filter(BHI_ID%in% bhi.no.na.names$BHI_ID)%>%
-  group_by(BHI_ID,YEAR) %>%
-  summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=TRUE)) %>%
-  arrange(BHI_ID)
-
-bhi.gdp.temp
-#bhi.gdp correct column headers
-colnames(bhi.gdp.temp)=c("rgn_id","year","gdp_mio_euro")
-
-#write to csv in prep folder
-write.csv(bhi.gdp.temp, "~/github/bhi/baltic2015/prep/6.2_ECO/le_gdp_tempbhi2015.csv", row.names = F)
 
 ##---##
 #Test ECO status, trend calc
 
 
-head(bhi.gdp.temp)
+head(bhi.gdp.temp) #will call whatever csv was last exported - could have all BHI_ID, could have subset
 
 
 le_gdp=read.csv("~/github/bhi/baltic2015/prep/6.2_ECO/le_gdp_tempbhi2015.csv")
 head(le_gdp)
+
 
 #from Functions.r
 # ECO calculations ----
@@ -190,7 +232,7 @@ eco
 # ECO status
 eco_status = eco %>%
   filter(!is.na(rev_adj)) %>%
-  filter(year >= max(year, na.rm=T) - 4) %>% # reference point is 5 years ago
+  filter(year >= max(year, na.rm=T) - 4) %>% # reference point is 5 years ago, #selects data for up to past 5 years
   # across sectors, revenue is summed
   group_by(rgn_id, year) %>%
   summarize(
@@ -215,6 +257,8 @@ eco_status = eco %>%
     region_id = rgn_id,
     score)
 eco_status
+
+print(eco_status, n=100)
 
 # ECO trend
 eco_trend = eco %>%
@@ -248,7 +292,7 @@ eco_trend = eco %>%
     score)
 
 eco_trend
-
+print(eco_trend,n=100)
 
 
 
@@ -261,16 +305,9 @@ eco_trend
 unique(bhi.nuts3.join$NUTS3_ID) #81 unique NUTS3 regions
 
 #plot each BHI_ID, plot for each all NUTS3
-bhi.id = sort(unique(bhi.nuts3.join$BHI_ID))
-windows(40,20)
-par(mfrow=c(5,8), mar=c(2,2,1,.5),oma=c(2,2,2,2))
-for(ID in bhi.id){
-  bhi.nuts3.join%>%filter(BHI_ID==ID)%>%
-    group_by(NUTS3_ID)%>%
-    arrange(YEAR)%>%
-    with(plot(GDP~YEAR, type='p',pch=19, col="gray",
-              xlim=c(2000,2013),main=ID))
-   }
+windows(50,30)
+ggplot(bhi.nuts3.join, aes(YEAR, GDP, colour=NUTS3_ID)) +
+  geom_point(aes(group =GDP)) + facet_wrap(~BHI_ID,scales = "free")
 
 
 

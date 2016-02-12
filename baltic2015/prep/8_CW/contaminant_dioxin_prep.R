@@ -14,10 +14,10 @@ library(RMySQL)
 con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
 dbListTables(con) # shows all tables in the DB
 
-#fetch GPD data from database
+#fetch dioxin data from database
 t<-dbSendQuery(con, paste("select * from filtered_merged_dioxins_ID_assigned;",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
 data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
-head(data) #GPD data
+head(data) #dioxin data
 dbClearResult(t) # clears selection (IMPORTANT!)
 dbDisconnect(con) # closes connection (IMPORTANT!)
 

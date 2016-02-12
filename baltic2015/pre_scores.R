@@ -5,7 +5,7 @@
 ## layers in the "conf" folder, and check that all data layers are registered
 ## properly.
 
-## It is sourced from calculate_scores.r as well, but you are encouraged to use it when
+## It is sourced from calculate_scores.r as well, but you are encouraged to use this script when
 ## you're working on individual goal models. After you register data layers for
 ## a goal, or make any changes to the data layers, source this script before
 ## running model-specific functions in functions.R.
