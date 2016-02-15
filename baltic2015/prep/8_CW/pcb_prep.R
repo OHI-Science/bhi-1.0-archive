@@ -21,8 +21,10 @@ dbDisconnect(con) # closes connection (IMPORTANT!)
 # set date format, filter and select columns
 pcb = data %>%
   mutate(Date2 = as.Date(Date, "%Y-%m-%d")) %>%
-  filter(Year > 2000) %>%
-  select(Source, Country, Station, Year, Date2, BHI_ID, Species, Variable, Value, Unit)
+  # filter(Year > 2000) %>%
+  select(Source, Country, Station, Year, Date2, BHI_ID, Species, Variable, Value, Unit, TEF.adjusted.value)
+
+# write.csv(pcb, "~/github/bhi/baltic2015/prep/8_CW/pcb_temp.csv", row.names = F)
 
 #### Plot to check data ####
 # NOTES and QUESTIONS:
@@ -37,7 +39,20 @@ pcb %>% #filter(Source == "ICES") %>% #!grepl('P', Variable),
 ggplot() +
   aes(x = Date2, y = Value, colour = Variable, shape = Unit) +
   geom_point() +
-  facet_wrap(~BHI_ID)
+  facet_wrap(~BHI_ID, scales = "free_y")
 
+windows()
+pcb %>%
+  ggplot() +
+  aes(x = Date2, y = Value, colour = as.factor(BHI_ID), shape = Unit) +
+  geom_point() +
+  facet_wrap(~Variable, scales = "free_y")
+
+windows()
+pcb %>% filter(!is.na(TEF.adjusted.value), Year >= 2000) %>%
+  ggplot() +
+  aes(x = Date2, y = TEF.adjusted.value, colour = Country) +
+  geom_point() +
+  facet_wrap(~BHI_ID) #, scales = "free_y")
 
 

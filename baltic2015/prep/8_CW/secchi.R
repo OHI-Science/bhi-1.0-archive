@@ -22,52 +22,53 @@ data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
 dbClearResult(t) # clears selection (IMPORTANT!)
 dbDisconnect(con) # closes connection (IMPORTANT!)
 
+#### preparing data for functions.R ####
+values <- data %>%
+  rename(rgn_id = BHI_ID) %>%
+  group_by(rgn_id, Year) %>%
+  filter(Month %in% c(6:9)) %>%
+  summarise(summer_secchi = mean(secchi, na.rm = F), year = mean(Year, na.rm = F)) %>%
+  select(rgn_id, year, values = summer_secchi) %>%
+  filter(year >= min_year) %>%
+  ungroup(.)
+
+# write(values, "~/github/bhi/baltic2015/layers/cw_nu_values.csv")
+
+# Load target levels set by HELCOM ????MOVE THIS DATA TO SERVER???? and make normalisation in functions.R
 # Load rgn_id file from repository
 rgn_id <- read.table(file = "~/github/bhi/baltic2015/layers/rgn_global_gl2014.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 rgn_id <- rgn_id %>% mutate(basin = gsub(" ", "_", substring(label,7)))
 
-# load target levels set by HELCOM ????MOVE THIS DATA TO SERVER???? and make normalisation in functions.R
-# target <- read.table(file = "~/github/bhi/baltic2015/prep/8_CW/eutro_targets_HELCOM.csv", header = TRUE, sep = ",", stringsAsFactors = F)
-# target <- full_join(target, rgn_id, by = 'basin') %>%
-#   rename(rgn_id = BHI_ID) %>%
-#   select(rgn_id, summer_secchi) %>%
-#   filter(!is.na(rgn_id))
-# write.csv(target, "~/github/bhi/baltic2015/prep/8_CW/secchi_targets.csv", row.names = F)
+target <- read.table(file = "~/github/bhi/baltic2015/prep/8_CW/eutro_targets_HELCOM.csv", header = TRUE, sep = ",", stringsAsFactors = F)
+target <- full_join(target, rgn_id, by = 'basin') %>%
+  rename(ref_point = summer_secchi) %>%
+  select(rgn_id, ref_point) %>%
+  filter(!is.na(rgn_id))
 
-data <- data %>%
+# write.csv(target, "~/github/bhi/baltic2015/layers/cw_nu_secchi_targets.csv", row.names = F)
+
+#### preparing data for plotting and analysing ####
+
+# adding country column to data from server
+data2 <- data %>%
   rename(rgn_id = BHI_ID) %>%
   mutate(country = paste(substring(Assessment_unit, 1, 3))) %>%
   filter(!is.na(rgn_id))
-sort(unique(data$rgn_id))
 
-data2 = full_join(data, rgn_id, by = 'rgn_id') #%>%
-  # select(-basin, -label)
 sort(unique(data2$rgn_id))
 
+# data2 = full_join(data2, rgn_id, by = 'rgn_id') #%>%
+#   # select(-basin, -label)
+# sort(unique(data2$rgn_id))
+
 summer_secchi_all <-
-  data2 %>%
+  data2 %>%     # or if you want to use labels in plotting use, full_join(data2, rgn_id, by = 'rgn_id') %>%
   filter(Month %in% c(6:9)) %>%
-  mutate(country = substring(label,1,3)) %>%
+  # mutate(country = substring(label,1,3)) %>%
   group_by(rgn_id, Year) %>%
-  summarise(summer_secchi = mean(secchi, na.rm = F), year = mean(Year, na.rm = F), HELCOM_ID = max(HELCOM_ID), country = max(country), label =max(label), basin = max(basin)) #%>%
-  # mutate(status = pmin(1, secchi/target))
+  summarise(summer_secchi = mean(secchi, na.rm = F), year = mean(Year, na.rm = F), HELCOM_ID = max(HELCOM_ID), country = max(country)) #, basin = max(basin) label =max(label)) #%>%
+
 sort(unique(summer_secchi_all$rgn_id))
-
-summer_secchi = summer_secchi_all %>%
-    group_by(rgn_id) %>%
-    # summarise_each(funs(last), BHI_ID, status) %>%  # leaves only the last status score in the data frame
-    select(rgn_id, year, summer_secchi) %>%
-    filter(year >= min_year) %>%
-    ungroup(.)
-
-unique(status_score$rgn_id)
-
-#  write csv files to layers folder ####
- spara = F
- if (spara == T){
-   # write.csv(status_score, "~/github/bhi/baltic2015/layers/cw_nu_status.csv", row.names = F)
-   write.csv(summer_secchi, "~/github/bhi/baltic2015/prep/8_CW/cw_nu_values.csv", row.names = F)
-   }
 
 #### calculate coastal and open sea summer secchi ####
 
@@ -77,13 +78,13 @@ summer_secchi_coastal <-
   # mutate(country = paste(substring(Assessment_unit, 1, 3))) %>%
   # mutate(country = substring(label,1,3), target = summer_secchi) %>%
   group_by(rgn_id, Year) %>%
-  summarise(secchi = mean(secchi, na.rm = T), year = mean(Year, na.rm = T), HELCOM_ID = max(HELCOM_ID), country = max(country), label =max(label), basin = max(basin))
+  summarise(secchi = mean(secchi, na.rm = T), year = mean(Year, na.rm = T), HELCOM_ID = max(HELCOM_ID), country = max(country)) #, basin = max(basin) label =max(label)) #%>%
 
 summer_secchi_opensea <-
   data2 %>%
   filter(Month %in% c(6:9), HELCOM_COASTAL_CODE <= 0) %>%
   group_by(rgn_id, Year) %>%
-  summarise(secchi = mean(secchi, na.rm = T), year = mean(Year, na.rm = T), HELCOM_ID = max(HELCOM_ID), country = max(country), label =max(label), basin = max(basin))
+  summarise(secchi = mean(secchi, na.rm = T), year = mean(Year, na.rm = T), HELCOM_ID = max(HELCOM_ID), country = max(country)) #, basin = max(basin) label =max(label)) #%>%
 
 # write.csv(summer_secchi,'~/github/BHI-issues/raw_data/ICES/summer_secchi.csv')
 # write.csv(summer_secchi_opensea,'~/github/BHI-issues/raw_data/ICES/summer_secchi_opensea.csv')
@@ -91,11 +92,11 @@ summer_secchi_opensea <-
 #### plot to check data ####
 windows()
 ggplot(summer_secchi_coastal) +
-  geom_point(aes(x = year, y = secchi, color = label)) +
+  geom_point(aes(x = year, y = secchi, color = as.factor(rgn_id))) +
 #   geom_point(data = filter(data, HELCOM_COASTAL_CODE > 0), aes(x = Year, y = secchi, color = country)) +
   xlim(1995, 2015) +
   ylim(2,12) +
-  facet_wrap(~label) +
+  facet_wrap(~rgn_id) +
   ggtitle("Coastal areas")
 
 windows()
@@ -105,7 +106,7 @@ ggplot() +
   geom_point(data = summer_secchi_all, aes(x = year, y = summer_secchi), color = 'green') +
   xlim(1995, 2015) +
   ylim(2,12) +
-  facet_wrap(~label, ncol = 6, drop = F)
+  facet_wrap(~rgn_id, ncol = 6, drop = F)
 
 windows()
 ggplot() +
@@ -113,7 +114,7 @@ ggplot() +
   geom_point(data = summer_secchi_coastal, aes(x = year, y = secchi, color = country)) +
   xlim(1995, 2015) +
   ylim(2,12) +
-  facet_wrap(~basin, ncol = 6, drop = F)
+  facet_wrap(~HELCOM_ID, ncol = 6, drop = F)
 
 # Cannot plot score before combining secchi depth and target
 # windows()

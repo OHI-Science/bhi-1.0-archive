@@ -1,4 +1,4 @@
-# Loading and scaling eutrophication indicator data from HELCOM
+# Loading and scaling eutrophication indicator data (winter nutrient concentration) from HELCOM
 # to be used as status and trend in functions.R
 rm(list = ls())
 

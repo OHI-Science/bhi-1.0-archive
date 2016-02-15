@@ -1462,41 +1462,48 @@ SP = function(scores){
 
 
 CW = function(layers){
+  ## UPDATED 2016-02-15, Lena
+  ## TODO ##
+  # make new ref point csv file with correct header.
+  # add contaminants, trash and secchi depth as subgoals and then calculate CW scores as arithmetric mean of those scores.
+  ##
 
-# Data pre-process in file nutrient_pollution_prep.R
+  min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
+  regr_length = 10       # number of years to use for regression
+  future_year = 5        # the year at which we want the likely future status
+  min_regr_length = 5    # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!
+  n_rgns = 42            # Number of regions used
 
-  # layers
-  lyrs = c('po_pathogens' = 'a',                  # 1 year only: from WHO
-           'cw_nu_status' = 'u',                  # status from ICES secchi depths and HELCOM open sea target levels
-           'po_chemicals' = 'l',                  # 1 year only, *spatial*: Halpern et al 2008
-           'po_trash'     = 'd',                  # 1 year only: Ocean Conservancy
-           'cw_pesticide_trend'   = 'pest_trend', # many years: from FAO
-           'cw_nu_trend'          = 'nu_trend',   # many years: from status data (HELCOM)
-           'cw_coastalpopn_trend' = 'popn_trend', # many years: from CESIN
-           'cw_pathogen_trend'    = 'path_trend') # many years: from population proxy
+ s = layers$data[['cw_nu_values']]
+ r = layers$data[['cw_nu_secchi_targets']]
 
-  # cast data
-  d = SelectLayersData(layers, layers=names(lyrs))
-  r = rename(dcast(d, id_num ~ layer, value.var='val_num', subset = .(layer %in% names(lyrs))),
-              c('id_num'='region_id', lyrs)); head(r); summary(r)
+# normalize data #
+status_score =
+  full_join(s, r, by = 'rgn_id') %>%
+  mutate(., status =  pmin(1, values/ref_point)) %>%
+  select(rgn_id, year, status)
 
-  # invert pressures
-  r$a = 1 - r$a
-#   r$u = 1 - r$u
-  r$l = 1 - r$l
-  r$d = 1 - r$d
+# select last year of data in timeseries for status
+status = status_score %>%
+  group_by(rgn_id) %>%
+  summarise_each(funs(last), rgn_id, status) %>%  #UPDATE set summarise to give status for a set year instead of last in timeseries
+  mutate(status = pmin(100, status*100))
 
-  # invert trends for CW
-  r$popn_trend = -1 * r$popn_trend
-  r$path_trend = -1 * r$path_trend
-  r$pest_trend = -1 * r$pest_trend
-#   r$fert_trend = -1 * r$fert_trend
+# calculate trend based on status timeseries
+trend =
+  status_score %>%
+  group_by(rgn_id) %>%
+  do(tail(. , n = regr_length)) %>%
+  # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+  do({if(sum(!is.na(.$status)) >= min_regr_length)
+    data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
+    # data.frame(slope = coef(lm(status ~ year, .))['year'])
+    else data.frame(trend_score = NA)}) #%>%
+  # mutate(trend_score = pmin(100, trend_score*100))
 
-  # status
-  r$status = psych::geometric.mean(t(r[,c('a','u','l','d')]), na.rm=T) * 100
-
-  # trend
-  r$trend = rowMeans(r[,c('pest_trend','nu_trend','popn_trend','path_trend')], na.rm=T)
+# join status and trend to one dataframe
+r = full_join(status, trend, by = 'rgn_id') %>%
+  dplyr::rename(region_id = rgn_id)
 
   # return scores
   scores = rbind(
@@ -1507,7 +1514,7 @@ CW = function(layers){
     within(r, {
       goal      = 'CW'
       dimension = 'trend'
-      score     = trend}))[,c('region_id','goal','dimension','score')]
+      score     = trend_score}))[,c('region_id','goal','dimension','score')]
   return(scores)
 }
 
