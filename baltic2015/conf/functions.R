@@ -6,6 +6,7 @@
 
 
 FIS = function(layers, status_year){
+  # status_year is defined in goals.csv
   # layers used: fis_meancatch, fis_b_bmsy, fis_proparea_saup2rgn
 
   # catch data
@@ -235,6 +236,7 @@ FIS = function(layers, status_year){
 }
 
 MAR = function(layers, status_years){
+  # status_years is defined in goals.csv
   # layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score, mar_coastalpopn_inland25km, mar_trend_years
   harvest_tonnes = rename(
     SelectLayersData(layers, layers='mar_harvest_tonnes', narrow=T),

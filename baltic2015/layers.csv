@@ -33,7 +33,7 @@ Data sources:
 - [FAO̢���s statistical database FAOSTAT](http://faostat3.fao.org/faostat-gateway/go/to/browse/R/*/E).
 ","trend.score","trend score","cw_pesticide_trend_gl2014.csv","equal","global trends were applied equally to all regions.","cw_pesticide_trend","~/github/ohi-global/eez2014/layers/cw_pesticide_trend.csv","global","rgn_id",,,,"trend.score",,TRUE,,,-0.440675,0.218233,FALSE,,,,42,FALSE
 "CW","cw_nu_values","Eutrophication status based on secchi depth","Secchi depths from ICES data base normalised to HELCOM target level","values","meters","cw_nu_values.csv","equal","","","~/github/bhi/baltic2015/layers/cw_nu_secchi.csv","global","rgn_id",,,"year","values",,TRUE,2000,2014,0.960714285714286,10.2910447761194,FALSE,,,,42,FALSE
-"CW","cw_nu_secchi_targets","Secchi depth targets as set by HELCOM","Secchi depth targets as set by HELCOM","summer_secchi","meters","cw_nu_secchi_targets.csv","equal","","","~/github/bhi/baltic2015/layers/cw_nu_secchi_targets.csv","global","rgn_id",,,,"summer_secchi",,TRUE,,,5,8.5,FALSE,,,,42,FALSE
+"CW","cw_nu_secchi_targets","Secchi depth targets as set by HELCOM","Secchi depth targets as set by HELCOM","ref_point","meters","cw_nu_secchi_targets.csv","equal","","","~/github/bhi/baltic2015/layers/cw_nu_secchi_targets.csv","global","rgn_id",,,,"ref_point",,TRUE,,,5,8.5,FALSE,,,,42,FALSE
 "FIS","fis_b_bmsy","B/Bmsy estimates obtained using the catch-MSY method","The ratio of population abundance compared to the abundance required to deliver maximum sustainable yield, obtained from the catch-MSY model (Martell & Froese, 2013).
 
 Data sources:
