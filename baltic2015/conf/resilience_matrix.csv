@@ -12,7 +12,6 @@ FIS,,,,,,fishing_v2_eez,,,,,habitat_combo_eez,,,,,species_diversity,,,,wgi_all
 MAR,,,,,,,,,,,,,,mariculture,msi_gov,,,,water,wgi_all
 ECO,,,,,,,,,,,,li_gci,,,,,,,,wgi_all
 LIV,,,,,,,,,,,,li_gci,li_sector_evenness,,,,,,,wgi_all
-NP,corals,,cites,,,,,,,habitat_combo,,,,,,,species_diversity_3nm,,water,wgi_all
 NP,fish_oil,,cites,fishing_v1,,,,,,habitat_combo,,,,,,,species_diversity_3nm,,water,wgi_all
 NP,ornamentals,,cites,,,,fishing_v3,,,habitat_combo,,,,,,,species_diversity_3nm,,water,wgi_all
 NP,seaweeds,,cites,,,,,,,,,,,,,,species_diversity_3nm,,water,wgi_all
