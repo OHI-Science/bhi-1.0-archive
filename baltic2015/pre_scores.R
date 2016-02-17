@@ -12,17 +12,17 @@
 
 if (!"ohicore" %in% (.packages())) {
 
-# load required libraries
-suppressWarnings(require(ohicore))
+  # load required libraries
+  suppressWarnings(require(ohicore))
 
-library(tidyr)
-library(dplyr)
-library(reshape2)
+  library(tidyr)
+  library(dplyr)
+  library(reshape2)
+
+}
 
 # set working directory to the scenario directory, ie containing conf and layers directories
 setwd('~/github/bhi/baltic2015')
-
-}
 
 # load scenario configuration. "Conf" is an ohicore function that loads all materials from "conf" folder
 conf = Conf('conf')
