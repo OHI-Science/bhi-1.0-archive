@@ -1,3 +1,6 @@
+##Prepping Eurostat regional (NUTS3) GDP data for Eco sub-goal
+##current data (02/19/2016) are nominal GDP data - are not appropriate for status calc until corrected
+
 library(package = dplyr)
 library(package = tidyr)
 library(package = ggplot2)
