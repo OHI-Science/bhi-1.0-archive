@@ -4,8 +4,9 @@
 #have data on Total nights in accommodations by NUTS2 regions
 #have percent coastal stays by NUTS1 regions
 #get this percentage (averaged from 2012-2014) and apply to the NUTS2 data #have not done
-# Divide this by the coastal area of the NUTS2 region (km2 with 1km buffer inland?), call this Nac  #have not done
-#create Accom value for BHI region by taking:  sum [ Nac(nuts associated) * area (nuts associated)] #have not done
+# Divide this by the coastal area of the NUTS2 region (km2 with 5km buffer inland ?), call this NAC  #have not done
+#create Accom value (BHI_ID_value) for each region (r). contributions from NUTS2_ID (n)
+##BHI_ID_value_r   =sum [ NAC_n * CoastalArea_n / CoastalPopDen_n] #have not done
 
 library(package = dplyr)
 library(package = tidyr)
@@ -161,8 +162,22 @@ accom.coast.bhi  #this can be used to convert NUTS2 data into the fraction that 
 
 
 #################################
-####Apply the average percent coastal to all the
+####Apply the average percent coastal to all the NUTS2_ID data
 
 glimpse(bhi.accom.join)
 accom.coast.bhi
+
+
+total.night.coast =left_join(bhi.accom.join, accom.coast.bhi, by="NUTS2_ID" )%>% #join the bhi.accom.join to accom.coast.bhi
+  mutate(TotalNightsCoast = TotalNights*PERCENT_CST_MEAN) #Calculate the coastal percentage of total Nights
+
+windows(50,30)
+ggplot(total.night.coast)+geom_point(aes(YEAR,TotalNightsCoast,color=NUTS2_ID)) +
+  facet_wrap(~BHI_ID, scales="free")
+
+
+#####Divide by NUTS2_ID coastal area (calculating NAC from equation at top of script)
+
+
+####Calculate BHI region value
 
