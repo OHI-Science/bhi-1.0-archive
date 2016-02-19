@@ -181,3 +181,80 @@ ggplot(total.night.coast)+geom_point(aes(YEAR,TotalNightsCoast,color=NUTS2_ID)) 
 
 ####Calculate BHI region value
 
+
+
+#save as
+#tr_accom.csv
+
+
+
+#################################
+#Prep and test TR function for Functions.r
+
+TR = function(layers, year_max){
+
+
+  # SETTING CONSTANTS
+  min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
+  regr_length = 10       # number of years to use for regression
+  future_year = 5        # the year at which we want the likely future status
+  min_regr_length = 5    # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!
+
+
+
+  #CoastalAccommodationNights data
+  # gdp, wages, jobs and workforce_size data
+  tr_accom  =  layers$data[['tr_accom']]
+
+#this is Lena's CW code
+#adapt to TR
+
+  #calculate status
+  #Ref level is value five years previous for each region
+
+  # normalize data #
+
+#   #this is CW
+#   status_score =
+#     full_join(s, r, by = 'rgn_id') %>%
+#     mutate(., status =  pmin(1, values/ref_point)) %>%
+#     select(rgn_id, year, status)
+#
+#
+#   # select last year of data in timeseries for status
+#   status = status_score %>%
+#     group_by(rgn_id) %>%
+#     summarise_each(funs(last), rgn_id, status) %>%  #UPDATE set summarise to give status for a set year instead of last in timeseries
+#     mutate(status = pmin(100, status*100))
+#   # calculate trend based on status timeseries
+#   trend =
+#     status_score %>%
+#     group_by(rgn_id) %>%
+#     do(tail(. , n = regr_length)) %>%
+#     # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+#     do({if(sum(!is.na(.$status)) >= min_regr_length)
+#       data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
+#       # data.frame(slope = coef(lm(status ~ year, .))['year'])
+#       else data.frame(trend_score = NA)}) #%>%
+#   # mutate(trend_score = pmin(100, trend_score*100))
+#
+#   # join status and trend to one dataframe
+#   r = full_join(status, trend, by = 'rgn_id') %>%
+#     dplyr::rename(region_id = rgn_id)
+#
+#   # return scores
+#   scores = rbind(
+#     within(r, {
+#       goal      = 'CW'
+#       dimension = 'status'
+#       score     = status}),
+#     within(r, {
+#       goal      = 'CW'
+#       dimension = 'trend'
+#       score     = trend_score}))[,c('region_id','goal','dimension','score')]
+#   return(scores)
+# }
+
+
+
+
