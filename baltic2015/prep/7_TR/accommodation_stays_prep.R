@@ -68,7 +68,8 @@ head(accom.data.bhi)
 accom.data.bhi=accom.data.bhi%>%arrange(NUTS2_ID,YEAR)
 
 
-#Select BHI_ID Factors and NUTS3_ID, long data format, if factor is NA exlude because not BHI_ID & NUTS3 not associated
+#Select BHI_ID Factors and NUTS2_ID, long data format, if factor is NA exlude because not BHI_ID & NUTS2 not associated
+#because of map errors - some NUTS2_ID are erroneously associated with BHI_ID (e.g. region 27 has both LV00 and EE00, should only be LV00)
 bhi.factor=accom.data %>%select(GEO,starts_with("BHI"))%>%
   select(-BHI_relevant)%>%
   gather(BHI_ID,FACTOR_NUTS2,-GEO)%>%
@@ -78,9 +79,10 @@ glimpse(bhi.factor)
 
 colnames(bhi.factor)[1]="NUTS2_ID"
 
-#join data.nuts3, bhi.factor to calculate GDP value per BHI_ID
+#join accom.data.bhi, bhi.factor to calculate GDP value per BHI_ID
 bhi.accom.join = full_join(accom.data.bhi, bhi.factor, by="NUTS2_ID")
 glimpse(bhi.accom.join)
+
 
 
 #Plotting accommodation stays from the accomm.data (this does not separate coastal v. non-coastal)
@@ -129,8 +131,6 @@ head(NUTS.levels)
 
 #get coast-no coast accomm data associated with the NUTS1_IDs that are BHI relevant
 #will apply the % coastal from NUTS1 regions to the NUTS2 data
-
-
 accom.coast.data$Value = as.numeric(accom.coast.data$Value) #make Value numeric
 
 accom.coast.bhi = left_join(NUTS.levels,
@@ -176,6 +176,10 @@ ggplot(total.night.coast)+geom_point(aes(YEAR,TotalNightsCoast,color=NUTS2_ID)) 
   facet_wrap(~BHI_ID, scales="free")
 
 
+
+#####For DK and SE (southwest) -- Need to reduce the # of stays because covering non-Baltic & Baltic Coasts?  Take 50%?
+
+
 #####Divide by NUTS2_ID coastal area (calculating NAC from equation at top of script)
 
 
@@ -183,77 +187,91 @@ ggplot(total.night.coast)+geom_point(aes(YEAR,TotalNightsCoast,color=NUTS2_ID)) 
 
 
 
-#save as
+#column labels need to be:  rgn_id, year, value
+
+#save as CSV
 #tr_accom.csv
 
 
 
 #################################
-#Prep and test TR function for Functions.r
+##Prep and test TR function for Functions.r
+#based on ECO functions and Lena CW code
 
-TR = function(layers, year_max){
-
-
-  # SETTING CONSTANTS
-  min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
-  regr_length = 10       # number of years to use for regression
-  future_year = 5        # the year at which we want the likely future status
-  min_regr_length = 5    # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!
+##QUESTIONS about function developed below that are not solved
+#What time frame should be used?  If want to do trend on longer ts, also need status for longer ts
+#If use a temporal ref pt (by region) what should it be?  If use t-5 value, then can't use a longer ts for status/trend
+#Does it make sense to have a temporal ref pt? will this result in a 100 score and no trend?
 
 
+#temp file for testing code
+tr_accom = as.data.frame(matrix(NA,24,3))
+tr_accom[,1]= rep(seq(1,4,1),6)
+tr_accom[,2]= rep(seq(2010,2015,1),each=4)
+tr_accom[,3]= unique(total.night.coast$TotalNightsCoast)[2:25]
+colnames(tr_accom)=c("rgn_id","year","value")
+
+TR = function(layers){
 
   #CoastalAccommodationNights data
-  # gdp, wages, jobs and workforce_size data
   tr_accom  =  layers$data[['tr_accom']]
 
-#this is Lena's CW code
-#adapt to TR
+  # SETTING CONSTANTS
+  #min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
+  regr_length = 5       # number of years to use for regression
+  future_year = 5        # the year at which we want the likely future status
+  min_regr_length = 5    # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!
+  ref_year = 4            #using a temporal reference point, use five year previous as a reference value
+  #status_year = 2014    #select status of a particular year rather than arbitrary last year for each region
 
-  #calculate status
-  #Ref level is value five years previous for each region
+  #calculate status score for all years from annual values (this is based on the ECO function)
 
-  # normalize data #
+  tr_status_score = tr_accom %>%
+    filter(!is.na(value)) %>%
+    filter(year >= max(year, na.rm=FALSE) - ref_year) %>% # reference point is 5 years ago
+    arrange(rgn_id, year) %>%
+    group_by(rgn_id) %>%
+    mutate(
+      ref_year_value  = first(value)) %>%  #this selects the reference year value
+    ungroup() %>%
+    mutate(
+      status  = pmin(value / ref_year_value, 1)) #calculate status
 
-#   #this is CW
-#   status_score =
-#     full_join(s, r, by = 'rgn_id') %>%
-#     mutate(., status =  pmin(1, values/ref_point)) %>%
-#     select(rgn_id, year, status)
+ # select last year of data in timeseries for status
+  tr_status = tr_status_score %>%
+    group_by(rgn_id) %>%
+    summarise_each(funs(last), rgn_id, status) %>%  #this will be all same year because of code above selecting the max year
+    mutate(status = pmin(100, status*100))
 #
-#
-#   # select last year of data in timeseries for status
-#   status = status_score %>%
-#     group_by(rgn_id) %>%
-#     summarise_each(funs(last), rgn_id, status) %>%  #UPDATE set summarise to give status for a set year instead of last in timeseries
-#     mutate(status = pmin(100, status*100))
-#   # calculate trend based on status timeseries
-#   trend =
-#     status_score %>%
-#     group_by(rgn_id) %>%
-#     do(tail(. , n = regr_length)) %>%
-#     # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
-#     do({if(sum(!is.na(.$status)) >= min_regr_length)
-#       data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
-#       # data.frame(slope = coef(lm(status ~ year, .))['year'])
-#       else data.frame(trend_score = NA)}) #%>%
-#   # mutate(trend_score = pmin(100, trend_score*100))
-#
-#   # join status and trend to one dataframe
-#   r = full_join(status, trend, by = 'rgn_id') %>%
-#     dplyr::rename(region_id = rgn_id)
-#
+  # calculate trend based on status timeseries
+  tr_trend =
+     tr_status_score %>%
+     group_by(rgn_id) %>%
+      do(tail(. , n = regr_length)) %>% # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+      #for TR because have a temporal ref. point - this is a bit more difficult to implement than in CW
+      #have to know ref year is included in the data
+    do({if(sum(!is.na(.$status)) >= min_regr_length)
+       data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
+          #data.frame(slope = coef(lm(status ~ year, .))['year'])
+       else data.frame(trend_score = NA)})# %>%
+    #mutate(trend_score = pmin(100, trend_score*100))
+
+   # join status and trend to one dataframe
+     r = full_join(tr_status, tr_trend, by = 'rgn_id') %>%
+     dplyr::rename(region_id = rgn_id)
+
 #   # return scores
-#   scores = rbind(
-#     within(r, {
-#       goal      = 'CW'
-#       dimension = 'status'
-#       score     = status}),
-#     within(r, {
-#       goal      = 'CW'
-#       dimension = 'trend'
-#       score     = trend_score}))[,c('region_id','goal','dimension','score')]
-#   return(scores)
-# }
+  scores = rbind(
+    within(r, {
+      goal      = 'TR'
+      dimension = 'status'
+      score     = status}),
+    within(r, {
+      goal      = 'CW'
+      dimension = 'trend'
+      score     = trend_score}))[,c('region_id','goal','dimension','score')]
+  return(scores)
+}
 
 
 
