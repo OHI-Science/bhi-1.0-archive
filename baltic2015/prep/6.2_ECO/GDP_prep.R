@@ -49,6 +49,14 @@ data.nuts3 =data %>%select(-starts_with("BHI"))%>%
 data.nuts3 =data.nuts3%>%mutate(YEAR=as.numeric(YEAR), GDP=as.numeric(GDP))
 glimpse(data.nuts3)
 
+#Load GDP deflator (price index) and calculate real GDP
+# Ref year is:
+#Equation:  Real_GDP = Nominal_GDP / (Price_Index * 100)  ##need to check
+
+#CALCULATE REAL GDP
+
+
+
 #Select BHI_ID Factors and NUTS3_ID, long data format, only MIO_EUR units, if factor is NA exlude because not BHI_ID & NUTS3 not associated
 bhi.factor=data %>%select(EUROSTAT_unit,NUTS3_ID,starts_with("BHI"))%>%
   select(-BHI_relevant)%>%
