@@ -23,6 +23,7 @@ dbClearResult(t) # clears selection (IMPORTANT!)
 dbDisconnect(con) # closes connection (IMPORTANT!)
 
 # Load rgn_id file from repository
+
 rgn_id <- read.table(file = "~/github/bhi/baltic2015/layers/rgn_global_gl2014.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 rgn_id <- rename(rgn_id, BHI_ID = rgn_id) %>%
   mutate(basin = gsub(" ", "_", substring(label,7)))
@@ -37,7 +38,8 @@ data <- data %>%
 sort(unique(data$BHI_ID))
 
 data2 = full_join(data, rgn_id, by = 'BHI_ID') %>%
-  full_join(., select(target, -basin, -label), by = 'BHI_ID')
+  mutate(country = paste(substring(label, 1, 3)))
+  # full_join(., select(target, -basin, -label), by = 'BHI_ID')
 sort(unique(data2$BHI_ID))
 
 summer_secchi_all <-
@@ -267,3 +269,10 @@ ggplot() +
   xlim(2005, 2015) +
   ylim(0,1) +
   facet_wrap(~BHI_ID, ncol = 6, drop = F)
+
+windows()
+ggplot() +
+  geom_point(data = data2, aes(x = Year, y = secchi, color = as.factor(BHI_ID))) +
+  xlim(1995, 2015) +
+  ylim(0,1) +
+  facet_wrap(~country, ncol = 3, drop = F)
