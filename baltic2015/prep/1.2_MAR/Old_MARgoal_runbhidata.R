@@ -26,14 +26,17 @@ popn_inland25mi = read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/layer
                            header=TRUE)
 #colnames(popn_inland25mi)= c('id_num','year','val_num')
 
+##this sets the number of years used to calculate the trend  ##update to set in code?f
 trend_years =  read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_trend_years_gl2014.csv",
                         header=TRUE)
 #colnames(trend_years)= c('id_num','val_chr')
 
 
 #MAR = function(layers, status_years){
-  status_years= 2007:2012 #this was original range - change to explore
-  # layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score, mar_coastalpopn_inland25km, mar_trend_years
+  status_years= 2005:2014 #this was original range - change to explore
+  status_years_names= "2005-2014" #use this to name output files for Ginnette
+
+   # layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score, mar_coastalpopn_inland25km, mar_trend_years
 #   harvest_tonnes = rename(
 #     SelectLayersData(layers, layers='mar_harvest_tonnes', narrow=T),
 #     c('id_num'='rgn_id', 'category'='species_code', 'year'='year', 'val_num'='tonnes'))
@@ -139,6 +142,9 @@ trend_years =  read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/m
   # species where the last year of the time-series was 2010, and the same value was copied over to 2011
   # i.e. it was gapfilled using the previous year
 
+  #if read in csv for trend_years and have #4_yrs - this removes the last year from the trend calculation (and trend calculation is over a 5 year period)
+  #if have 5_yrs - then it does not remove the last year (is for 6 years)
+
   # get MAR trend
   ry = merge(ry, trend_years, all.x=T)
   yr_max = max(status_years)
@@ -174,4 +180,27 @@ trend_years =  read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/m
 
 
 #save as csv as old score & trend
-#write.csv(scores, "C:/Users/jgrif/Documents/github/bhi/baltic2015/prep/1.2_MAR/ScoreTrendCalcFromOldCode20052014.csv")
+  filename1= paste("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/MAR_forGinnette/ScoreTrendOutput",status_years_names,".csv",sep="")
+write.csv(scores, filename1)
+
+##save as csv ry from line 111
+
+#write.csv(ry,"C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/MAR_forGinnette/StatusOutput_2005-2014.csv")
+
+####Plot Status for all years
+
+  #ry has status from 0-1
+  filename2 = paste("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/MAR_forGinnette/mar_status_allyears_",status_years_names,".pdf",sep="")
+  pdf(filename2)
+  ggplot(ry )+geom_point(aes(factor(year),status*100)) +
+    facet_wrap(~rgn_id)
+  dev.off()
+####Plot Status year and trend value
+  filename3= paste("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/MAR_forGinnette/mar_status_trend_",status_years_names,".pdf",sep="")
+  pdf(filename3)
+  ggplot(scores)+geom_point(aes(region_id,score, color=factor(region_id),size=3)) +
+    facet_wrap(~dimension, scales="free")
+    dev.off()
+
+
+
