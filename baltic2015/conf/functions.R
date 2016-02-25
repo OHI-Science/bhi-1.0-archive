@@ -711,7 +711,7 @@ CS = function(layers){
               c('id_num'='region_id', 'category'='habitat', lyrs[['rk']]))
 
   # limit to CS habitats
-  rk = subset(rk, habitat %in% c('mangrove','saltmarsh','seagrass'))
+  rk = subset(rk, habitat %in% c('seagrass'))
 
   # assign extent of 0 as NA
   rk$extent[rk$extent==0] = NA
@@ -1324,15 +1324,15 @@ LIV_ECO = function(layers, subgoal){
 LE = function(scores, layers){
 
   # calculate LE scores
-  scores.LE = scores %.%
-    filter(goal %in% c('LIV','ECO') & dimension %in% c('status','trend','score','future')) %.%
-    dcast(region_id + dimension ~ goal, value.var='score') %.%
-    mutate(score = rowMeans(cbind(ECO, LIV), na.rm=T)) %.%
-    select(region_id, dimension, score) %.%
+  scores.LE = scores %>%
+    filter(goal %in% c('LIV','ECO') & dimension %in% c('status','trend','score','future')) %>%
+    dcast(region_id + dimension ~ goal, value.var='score') %>%
+    mutate(score = rowMeans(cbind(ECO, LIV), na.rm=T)) %>%
+    select(region_id, dimension, score) %>%
     mutate(goal  = 'LE')
 
   # rbind to all scores
-  scores = scores %.%
+  scores = scores %>%
     rbind(scores.LE)
 
   # return scores

@@ -13,9 +13,9 @@ Data sources:
 
 Data sources:
 
-- Center for International Earth Science Information Network (CIESIN)/Columbia University 
+- Center for International Earth Science Information Network (CIESIN)/Columbia University
 - CIESIN & CIAT (Center for International Earth Science Information Network (CIESIN)/Columbia University, & Centro Internacional de Agricultura Tropical (CIAT)) (2005). **Gridded Population of the World, Version 3 (GPWv3): Population Density Grid, Future Estimates**. Palisades, NY. [NASA Socioeconomic Data and Applications Center (SEDAC)](http://sedac.ciesin.columbia.edu/data/set/gpw-v3-population-density-future-estimates)","trend","trend score","cw_coastalpopn_trend_gl2014.csv","equal","global trends were applied equally to all regions.","cw_coastalpopn_trend","~/github/ohi-global/eez2014/layers/cw_coastalpopn_trend.csv","global","rgn_id",,,,"trend",,TRUE,,,-0.127109,0.00634518,FALSE,,,,42,FALSE
-"CW","cw_fertilizer_trend","Fertilizer consumption as a proxy for trend in nutrient pollution","Statistics on fertilizer consumption from the Food and Agricultural Organization (FAO). 
+"CW","cw_fertilizer_trend","Fertilizer consumption as a proxy for trend in nutrient pollution","Statistics on fertilizer consumption from the Food and Agricultural Organization (FAO).
 
 Data sources:
 
@@ -26,7 +26,7 @@ Data sources:
 
 - [World Health Organization and United Nations Children's Fund's Joint Monitoring Programme (WHO/UNICEF's JMP)](http://www.wssinfo.org/data-estimates/table)
 ","trend","trend score","cw_pathogen_trend_gl2014.csv","equal","global trends were applied equally to all regions.","cw_pathogen_trend","~/github/ohi-global/eez2014/layers/cw_pathogen_trend.csv","global","rgn_id",,,,"trend",,TRUE,,,-0.0150988,0.0029483,FALSE,,,,42,FALSE
-"CW","cw_pesticide_trend","Pesticide consumption as a proxy for trend in chemical pollution","Statistics on pesticide consumption from the Food and Agricultural Organization (FAO). 
+"CW","cw_pesticide_trend","Pesticide consumption as a proxy for trend in chemical pollution","Statistics on pesticide consumption from the Food and Agricultural Organization (FAO).
 
 Data sources:
 
@@ -59,13 +59,13 @@ Data sources:
 "HAB CS CP","hab_extent","Habitat extent","Modeled combined habitat extent","km2","km^2","hab_extent_gl2014.csv","raster | area_offshore","","hab_extent","~/github/ohi-global/eez2014/layers/hab_extent.csv","global","rgn_id",,"habitat",,"km2",,TRUE,,,0,3804040,FALSE,,,,42,FALSE
 "HAB CS CP","hab_health","Habitat health","Modeled combined habitat health condition trend","health","value","hab_health_gl2014.csv","equal","global habitat health was applied equally to all regions. ","hab_health","~/github/ohi-global/eez2014/layers/hab_health.csv","global","rgn_id",,"habitat",,"health",,TRUE,,,0.0915825,1,TRUE,,,,42,FALSE
 "HAB CS CP","hab_trend","Habitat health trend","Modeled combined habitat health trend","trend","trend score","hab_trend_gl2014.csv","equal","global trends were applied equally to all regions.","hab_trend","~/github/ohi-global/eez2014/layers/hab_trend.csv","global","rgn_id",,"habitat",,"trend",,TRUE,,,-0.07201,0.5,FALSE,,,,42,FALSE
-"ICO","ico_spp_extinction_status","IUCN extinction risk category for iconic species","International Union for Conservation of Nature (IUCN) Red List threat categories with aggregated species lists 
+"ICO","ico_spp_extinction_status","IUCN extinction risk category for iconic species","International Union for Conservation of Nature (IUCN) Red List threat categories with aggregated species lists
 
 Data sources:
 
 - [International Union for Conservation of Nature (IUCN)](http://www.iucnredlist.org/technical-documents/classification-schemes/threats-classification-scheme)
 ","category","category","ico_spp_extinction_status_gl2014.csv","equal","global status was applied equally to all regions. ","ico_spp_extinction_status","~/github/ohi-global/eez2014/layers/ico_spp_extinction_status.csv","global","rgn_id",,"sciname",,,"category",TRUE,,,,,FALSE,,,,42,
-"ICO","ico_spp_popn_trend","IUCN population trend as a proxy for iconic species trend","International Union for Conservation of Nature (IUCN) Red List threat categories with aggregated species lists 
+"ICO","ico_spp_popn_trend","IUCN population trend as a proxy for iconic species trend","International Union for Conservation of Nature (IUCN) Red List threat categories with aggregated species lists
 
 Data sources:
 
@@ -83,12 +83,12 @@ Data sources:
 "LE","le_workforcesize_adj","Modeled Livelihoods & Economies data","adjusted workforce size","jobs","jobs","le_workforcesize_adj_sc2014-popn-inland25km.csv","population_inland25km","global workforce data were applied to each region after weighting by each region's coastal population.","le_workforcesize_adj","~/github/ohi-global/eez2014/layers/le_workforcesize_adj.csv","global","rgn_id",,,"year","jobs",,TRUE,1990,2012,12598.3,14542100,FALSE,,,,42,FALSE
 "LE pressures","le_sector_weight","Jobs weighting","Jobs weighting by sector (defaulting to 1)","weight","value","le_sector_weight_gl2014.csv","equal","","le_sector_weight","~/github/ohi-global/eez2014/layers/le_sector_weight.csv","global","rgn_id",,"sector",,"weight",,TRUE,,,1,1,TRUE,,,,42,FALSE
 "LIV ECO","le_popn","Total population by subregion","Population data from The World Bank","count","count","le_popn_gl2014.csv","equal","","le_popn","~/github/ohi-global/eez2014/layers/le_popn.csv","global","rgn_id",,,"year","count",,TRUE,1960,2012,1215650,148689000,FALSE,,,,42,FALSE
-"LSP","lsp_prot_area_inland1km","Coastal protected areas inland 1km","Coastal protected areas inland to 1km from the UN WDPA. 
+"LSP","lsp_prot_area_inland1km","Coastal protected areas inland 1km","Coastal protected areas inland to 1km from the UN WDPA.
 
 Data sources:
 
 - United Nations - World Conservation Monitoring Centres World Database on Protected Areas (WDPA) through [Protected Planet](http://www.protectedplanet.net)","area_km2","km^2","lsp_prot_area_inland1km_placeholder.csv","raster | area_inland1km","","lsp_prot_area_inland1km","~/github/ohi-global/eez2014/layers/lsp_prot_area_inland1km.csv","global","rgn_id",,,"year","area_km2",,TRUE,2010,2015,10,10,FALSE,,,,42,FALSE
-"LSP","lsp_prot_area_offshore3nm","Coastal marine protected areas offshore 3km","Coastal protected areas offshore to 3nm from the UN WDPA. 
+"LSP","lsp_prot_area_offshore3nm","Coastal marine protected areas offshore 3km","Coastal protected areas offshore to 3nm from the UN WDPA.
 
 Data sources:
 
@@ -97,19 +97,19 @@ Data sources:
 
 Data sources:
 
-- Center for International Earth Science Information Network (CIESIN)/Columbia University 
+- Center for International Earth Science Information Network (CIESIN)/Columbia University
 - CIESIN & CIAT (Center for International Earth Science Information Network (CIESIN)/Columbia University, & Centro Internacional de Agricultura Tropical (CIAT)) (2005). **Gridded Population of the World, Version 3 (GPWv3): Population Density Grid, Future Estimates**. Palisades, NY. [NASA Socioeconomic Data and Applications Center (SEDAC)](http://sedac.ciesin.columbia.edu/data/set/gpw-v3-population-density-future-estimates)","popsum","people","mar_coastalpopn_inland25km_sc2014-raster.csv","raster","spatial data was extracted for each region. ","mar_coastalpopn_inland25mi","/Volumes/data_edit/git-annex/clip-n-ship/bhi-deu/layers/mar_coastalpopn_inland25km_lyr.csv","subcountry","rgn_id",,,"year","popsum",,TRUE,2005,2015,11849.5,2290750,FALSE,,,,42,FALSE
-"MAR","mar_harvest_species","Mariculture species harvested","Lookup table for mariculture: species Latin names and species code. 
+"MAR","mar_harvest_species","Mariculture species harvested","Lookup table for mariculture: species Latin names and species code.
 
 Data sources:
 
 - [FAO global aquaculture production](http://www.fao.org/fishery/statistics/global-aquaculture-production/en)","species","species name","mar_harvest_species_gl2014.csv","equal","global mariculture species were applied equally to each region.","mar_harvest_species","~/github/ohi-global/eez2014/layers/mar_harvest_species.csv","global",,,"species_code",,,"species",TRUE,,,,,FALSE,,,,42,
-"MAR","mar_harvest_tonnes","Mariculture harvest","Mariculture harvest from the FAO. 
+"MAR","mar_harvest_tonnes","Mariculture harvest","Mariculture harvest from the FAO.
 
 Data sources:
 
 - [FAO global aquaculture production](http://www.fao.org/fishery/statistics/global-aquaculture-production/en)","tonnes","tons","mar_harvest_tonnes_gl2014.csv","area_offshore_3nm","global mariculture harvest (tonnes) data were applied to each region after weighting by each region's offshore area to 3nm. ","mar_harvest_tonnes","~/github/ohi-global/eez2014/layers/mar_harvest_tonnes.csv","global","rgn_id",,"species_code","year","tonnes",,TRUE,2003,2012,0,3948817,FALSE,,,,42,FALSE
-"MAR","mar_sustainability_score","Mariculture sustainability score","Mariculture sustainability and mariculture regulations indicated by the Mariculture Sustainability Index (MSI). 
+"MAR","mar_sustainability_score","Mariculture sustainability score","Mariculture sustainability and mariculture regulations indicated by the Mariculture Sustainability Index (MSI).
 
 Data sources:
 
@@ -119,13 +119,13 @@ Data sources:
 
 Data sources:
 
-- [Reefs at Risk Revisited](http://www.wri.org/publication/reefs-at-risk-revisited) 
+- [Reefs at Risk Revisited](http://www.wri.org/publication/reefs-at-risk-revisited)
 ","score","pressure score","np_blast_gl2014.csv","equal","global scores were applied equally to each region. ","np_blast","~/github/ohi-global/eez2014/layers/np_blast.csv","global","rgn_id",,,,"score",,TRUE,,,0.182184,0.182184,TRUE,,,,42,FALSE
 "NP","np_cyanide","Areas of observed poison fishing","The presence of destructive artisanal poison (cyanide) fishing (Reefs at Risk Revisited).
 
 Data sources:
 
-- [Reefs at Risk Revisited](www.wri.org/publication/reefs-at-risk-revisited) 
+- [Reefs at Risk Revisited](www.wri.org/publication/reefs-at-risk-revisited)
 ","score","pressure score","np_cyanide_gl2014.csv","equal","global scores were applied equally to each region. ","np_cyanide","~/github/ohi-global/eez2014/layers/np_cyanide.csv","global","rgn_id",,,,"score",,TRUE,,,0.168335,0.168335,TRUE,,,,42,FALSE
 "NP","np_harvest_product_weight","Ratio of product peak harvest value (in 2010 USD) divided by sum of all product peak harvest values, per region","Ratio of harvest of of six marine products (coral, fish oil, seaweed and plants, shells, sponges, ornamental fish) from FAO.
 
@@ -194,14 +194,14 @@ Data sources:
 
 Data sources:
 
-- Nicholls R.J. and Cazenave A. (2010). **Sea-level rise and its impact on coastal zones**. _Science_ 328: 1517-1520. [doi:10.1126/science.1185782](http://dx.doi.org/10.1126/science.1185782). 
+- Nicholls R.J. and Cazenave A. (2010). **Sea-level rise and its impact on coastal zones**. _Science_ 328: 1517-1520. [doi:10.1126/science.1185782](http://dx.doi.org/10.1126/science.1185782).
 - [AVISO Satellite Altimetry Data](http://www.aviso.oceanobs.com/en/news/ocean-indicators/mean-sea-level/processing-corrections.html)","pressure_score","pressure score","cc_slr_gl2014.csv","raster | equal","","cc_slr","~/github/ohi-global/eez2014/layers/cc_slr.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.130349,0.452863,TRUE,,,,42,FALSE
 "pressures","cc_sst","Sea surface temperature (SST) anomalies","Modeled sea surface temperature (Halpern et al. 2008) based on temperature anomolies provided by GHRSST and the US National Oceanographic Data Center.
 
 Data sources:
 
 - Halpern, B.S., Walbridge S., Selkoe, K.A., Kappel, C.V., Micheli, F., D'Agrosa, C., Bruno, J.F., Casey, K.S., Ebert, C., Fox, H.E., Fujita, R., Heinemann, D., Lenihan, H.S., Madin, E.M.P., Perry, M.T., Selig, E.R., Spalding, M., Steneck, R., Watson, R. (2008) **A global map of human impact on marine ecosystems**. _Science_, 3199(5865): 948-952. [doi:10.1126/science.1149345](http://dx.doi.org/10.1126/science.1149345)
-- [AVHRR Pathfinder Version 5.0 SST data](http://pathfinder.nodc.noaa.gov) 
+- [AVHRR Pathfinder Version 5.0 SST data](http://pathfinder.nodc.noaa.gov)
 - Casey, K.S., Brandon, T.B., Cornillon, P., and Evans, R. (2010). **The Past, Present and Future of the AVHRR Pathfinder SST Program**, _Oceanography from Space: Revisited_, eds. V. Barale, J.F.R. Gower, and L. Alberotanza, Springer. [doi:10.1007/978-90-481-8681-5_16](http://dx.doi.org/10.1007/978-90-481-8681-5_16) ","pressure_score","pressure score","cc_sst_gl2014.csv","raster | equal","","cc_sst","~/github/ohi-global/eez2014/layers/cc_sst.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.0873233,0.230379,TRUE,,,,42,FALSE
 "pressures","cc_uv","UV radiation","Modeled UV radiation (Halpern et al. 2008) based on Erythemal UV Irradiance data provided by GES DISC.
 
@@ -242,7 +242,7 @@ Data sources:
 
 Data sources:
 
-- Center for International Earth Science Information Network (CIESIN)/Columbia University 
+- Center for International Earth Science Information Network (CIESIN)/Columbia University
 - CIESIN & CIAT (Center for International Earth Science Information Network (CIESIN)/Columbia University, & Centro Internacional de Agricultura Tropical (CIAT)) (2005). **Gridded Population of the World, Version 3 (GPWv3): Population Density Grid, Future Estimates**. Palisades, NY. [NASA Socioeconomic Data and Applications Center (SEDAC)](http://sedac.ciesin.columbia.edu/data/set/gpw-v3-population-density-future-estimates)
 ","pressure_score","pressure score","hd_intertidal_sc2014-popn-inland25km.csv","population_inland25km","global intertidal pressures were applied to each region after weighting by each region's coastal population.","hd_intertidal","~/github/ohi-global/eez2014/layers/hd_intertidal.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.00115885,0.131684,TRUE,,,,42,FALSE
 "pressures","hd_subtidal_hb","High bycatch artisanal fishing practices as a proxy for subtidal hard bottom habitat destruction","The presence of destructive artisanal blast and poison (cyanide) fishing (Reefs at Risk Revisited).
@@ -263,13 +263,13 @@ Data sources:
 - Halpern, B.S., Walbridge S., Selkoe, K.A., Kappel, C.V., Micheli, F., D'Agrosa, C., Bruno, J.F., Casey, K.S., Ebert, C., Fox, H.E., Fujita, R., Heinemann, D., Lenihan, H.S., Madin, E.M.P., Perry, M.T., Selig, E.R., Spalding, M., Steneck, R., Watson, R. (2008) **A global map of human impact on marine ecosystems**. _Science_, 3199(5865): 948-952. [doi:10.1126/science.1149345](http://dx.doi.org/10.1126/science.1149345)
 ","pressure_score","pressure score","po_chemicals_3nm_gl2014.csv","raster | equal","","po_chemicals_3nm","~/github/ohi-global/eez2014/layers/po_chemicals_3nm.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.0371493,0.462487,TRUE,,,,42,FALSE
 "pressures","po_nload","nitrogen pollution","nitrogen load from HELCOM data normalized to ceilings set by HELCOM for each HOLAS basin","pressure_score","pressure score","po_nload.csv","","","po_nload","~/github/ohi-global/eez2014/layers/nload.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0,0.82056384323641,TRUE,,,,42,FALSE
-"pressures","sp_alien","Alien species","The number and type of invasive and harmful invasive species in each marine ecoregion (Molnar et al. 2008). 
+"pressures","sp_alien","Alien species","The number and type of invasive and harmful invasive species in each marine ecoregion (Molnar et al. 2008).
 
 Data sources:
 
 - Molnar, J.L., Gamboa, R.L., Revenga C., Spalding, M. (2008). **Assessing the global threat of invasive species to marine biodiversity**. _Frontiers in Ecology and the Environment_ 6(485). [doi:10.1890/070064](http://dx.doi.org/10.1890/070064)
 ","pressures.score","pressure score","sp_alien_gl2014.csv","equal","global pressures data were applied equally to all regions.","sp_alien","~/github/ohi-global/eez2014/layers/sp_alien.csv","global","rgn_id",,,,"pressures.score",,TRUE,,,0.00177656,0.044364,TRUE,,,,42,FALSE
-"pressures","sp_genetic","Introduced species as a proxy for genetic escapes ","Statistics on native or introduced species from the Mariculture Sustainibility Index (MSI). 
+"pressures","sp_genetic","Introduced species as a proxy for genetic escapes ","Statistics on native or introduced species from the Mariculture Sustainibility Index (MSI).
 
 Data sources:
 
@@ -288,20 +288,20 @@ Data sources:
 - Halpern, B.S., Walbridge S., Selkoe, K.A., Kappel, C.V., Micheli, F., D'Agrosa, C., Bruno, J.F., Casey, K.S., Ebert, C., Fox, H.E., Fujita, R., Heinemann, D., Lenihan, H.S., Madin, E.M.P., Perry, M.T., Selig, E.R., Spalding, M., Steneck, R., Watson, R. (2008) **A global map of human impact on marine ecosystems**. _Science_, 3199(5865): 948-952. [doi:10.1126/science.1149345](http://dx.doi.org/10.1126/science.1149345)
 ","pressure_score","pressure score","po_chemicals_gl2014.csv","raster","spatial data was extracted for each region. ","po_chemicals","~/github/ohi-global/eez2014/layers/po_chemicals.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.0194018,0.231829,TRUE,,,,42,FALSE
 "pressures CW","po_pload","Phosphorus pollution","phosphorus load from HELCOM data normalized to ceilings set by HELCOM for each HOLAS basin","pressure_score","pressure score","po_pload.csv","","spatial data was extracted for each region. ","po_pload","~/github/ohi-global/eez2014/layers/pload.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0,0.403569523809524,TRUE,,,,42,FALSE
-"pressures CW","po_pathogens","Access to improved sanitation as a proxy for pathogen pollution","Percent of population with access to improved sanitation facilities. 
+"pressures CW","po_pathogens","Access to improved sanitation as a proxy for pathogen pollution","Percent of population with access to improved sanitation facilities.
 
 Data sources:
 
 - [World Health Organization and United Nations Children's Fund's Joint Monitoring Programme (WHO/UNICEF's JMP)](http://www.wssinfo.org/data-estimates/table)
 ","pressure_score","pressure score","po_pathogens_gl2014.csv","raster","spatial data was extracted for each region. ","po_pathogens","~/github/ohi-global/eez2014/layers/po_pathogens.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0,0.400922,TRUE,,,,42,FALSE
-"pressures CW","po_trash","Trash pollution","Density of trash from coastal land and sea (Ocean Conservancy). 
+"pressures CW","po_trash","Trash pollution","Density of trash from coastal land and sea (Ocean Conservancy).
 
 Data sources:
 
 - [Ocean Conservancy International Coastal Cleanup 2012](http://www.oceanconservancy.org/our-work/international-coastal-cleanup/2012-ocean-trash-index.html)
 ","pressure_score","pressure score","po_trash_gl2014.csv","equal","global pressures data were applied equally to all regions.","po_trash","~/github/ohi-global/eez2014/layers/po_trash.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.482173,0.559469,TRUE,,,,42,FALSE
 "pressures HAB","hab_presence","Habitat presence","Modeled combined habitat presence","boolean","boolean","hab_presence_gl2014.csv","equal","global pressures data were applied equally to all regions.","hab_presence","~/github/ohi-global/eez2014/layers/hab_presence.csv","global","rgn_id",,"habitat",,"boolean",,TRUE,,,1,1,TRUE,,,,42,FALSE
-"resilience","alien_species","Alien species","The number and type of invasive and harmful invasive species in each marine ecoregion (Molnar et al. 2008). 
+"resilience","alien_species","Alien species","The number and type of invasive and harmful invasive species in each marine ecoregion (Molnar et al. 2008).
 
 Data sources:
 
@@ -314,49 +314,49 @@ Data sources:
 - [CITES List of Contracting Parties](http://www.cites.org/eng/disc/parties/chronolo.php)
 
 ","resilience score","resilience score","cites_gl2014.csv","equal","global resilience data were applied equally to all regions.","cites","~/github/ohi-global/eez2014/layers/cites.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,1,1,TRUE,,,,42,FALSE
-"resilience","fishing_v1","CBD survey: coastal fishing v1","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","fishing_v1","CBD survey: coastal fishing v1","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","fishing_v1_gl2014.csv","equal","global resilience data were applied equally to all regions.","fishing_v1","~/github/ohi-global/eez2014/layers/fishing_v1.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.700905,0.835015,TRUE,,,,42,FALSE
-"resilience","fishing_v1_eez","CBD survey: ocean fishing v1","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","fishing_v1_eez","CBD survey: ocean fishing v1","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","fishing_v1_eez_gl2014.csv","equal","global resilience data were applied equally to all regions.","fishing_v1_eez","~/github/ohi-global/eez2014/layers/fishing_v1_eez.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.700905,0.835015,TRUE,,,,42,FALSE
-"resilience","fishing_v2_eez","CBD survey: ocean fishing v2","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","fishing_v2_eez","CBD survey: ocean fishing v2","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","fishing_v2_eez_gl2014.csv","equal","global resilience data were applied equally to all regions.","fishing_v2_eez","~/github/ohi-global/eez2014/layers/fishing_v2_eez.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.683679,0.765761,TRUE,,,,42,FALSE
-"resilience","fishing_v3","CBD survey: coastal fishing v3","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","fishing_v3","CBD survey: coastal fishing v3","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","fishing_v3_gl2014.csv","equal","global resilience data were applied equally to all regions.","fishing_v3","~/github/ohi-global/eez2014/layers/fishing_v3.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.723794,0.84703,TRUE,,,,42,FALSE
-"resilience","fishing_v3_eez","CBD survey: ocean fishing v3","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","fishing_v3_eez","CBD survey: ocean fishing v3","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","fishing_v3_eez_gl2014.csv","equal","global resilience data were applied equally to all regions.","fishing_v3_eez","~/github/ohi-global/eez2014/layers/fishing_v3_eez.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.723794,0.84703,TRUE,,,,42,FALSE
-"resilience","habitat","CBD survey: habitat","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","habitat","CBD survey: habitat","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","habitat_gl2014.csv","equal","global resilience data were applied equally to all regions.","habitat","~/github/ohi-global/eez2014/layers/habitat.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.727273,0.954545,TRUE,,,,42,FALSE
-"resilience","habitat_combo","CBD survey: coastal habitat","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","habitat_combo","CBD survey: coastal habitat","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","habitat_combo_gl2014.csv","equal","global resilience data were applied equally to all regions.","habitat_combo","~/github/ohi-global/eez2014/layers/habitat_combo.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.769691,0.977273,TRUE,,,,42,FALSE
-"resilience","habitat_combo_eez","CBD survey: ocean habitat","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","habitat_combo_eez","CBD survey: ocean habitat","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
@@ -369,13 +369,13 @@ Data sources:
 - [World Economic Forum](http://www.weforum.org/issues/global-competitiveness)
 ","score","resilience score","li_gci_gl2014.csv","equal","global resilience data were applied equally to all regions.","li_gci","~/github/ohi-global/eez2014/layers/li_gci.csv","global","rgn_id",,,,"score",,TRUE,,,0.607143,0.791429,TRUE,,,,42,FALSE
 "resilience","li_sector_evenness","Sector evenness as a measure of economic diversity","Shannon's Diversity Index calculated sector evenness based on the total number of sectors and the proportion of jobs belonging to any sector.","resilience score","resilience score","li_sector_evenness_gl2014.csv","equal","global resilience data were applied equally to all regions.","li_sector_evenness","~/github/ohi-global/eez2014/layers/li_sector_evenness.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.0130472,0.518765,TRUE,,,,42,FALSE
-"resilience","mariculture","CBD survey: mariculture","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","mariculture","CBD survey: mariculture","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","mariculture_gl2014.csv","equal","global resilience data were applied equally to all regions.","mariculture","~/github/ohi-global/eez2014/layers/mariculture.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.625,0.958333,TRUE,,,,42,FALSE
-"resilience","msi_gov"," MSI sustainability and regulations","Mariculture practice assessment criteria from the Mariculture Sustainability Index (MSI). 
+"resilience","msi_gov"," MSI sustainability and regulations","Mariculture practice assessment criteria from the Mariculture Sustainability Index (MSI).
 
 Data sources:
 
@@ -392,13 +392,13 @@ Data sources:
 
 - [International Union for Conservation of Nature (IUCN)](http://www.iucnredlist.org/technical-documents/classification-schemes/threats-classification-scheme)
 ","score","resilience score","species_diversity_3nm_gl2014.csv","equal","global resilience data were applied equally to all regions.","species_diversity_3nm","~/github/ohi-global/eez2014/layers/species_diversity_3nm.csv","global","rgn_id",,,,"score",,TRUE,,,0.865451,0.932633,TRUE,,,,42,FALSE
-"resilience","tourism","CBD survey: tourism","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","tourism","CBD survey: tourism","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 ","resilience score","resilience score","tourism_gl2014.csv","equal","global resilience data were applied equally to all regions.","tourism","~/github/ohi-global/eez2014/layers/tourism.csv","global","rgn_id",,,,"resilience.score",,TRUE,,,0.555556,0.833333,TRUE,,,,42,FALSE
-"resilience","water","CBD survey: water","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005) 
+"resilience","water","CBD survey: water","Survey responses by country to the Convention on Biological Diversity (CBD) Third National Report (2005)
 
 Data sources:
 
@@ -409,14 +409,14 @@ Data sources:
 Data sources:
 
 - [Worldwide Governance Indicators (WGI)](http://info.worldbank.org/governance/wgi/index.asp)","score","resilience score","wgi_all_gl2014.csv","equal","global resilience data were applied equally to all regions.","wgi_all","~/github/ohi-global/eez2014/layers/wgi_all.csv","global","rgn_id",,,,"score",,TRUE,,,0.353228,0.873367,TRUE,,,,42,FALSE
-"spatial","rgn_area","Region area of total EEZ ocean","Area of Ocean Health Index regions based on exclusive economic zones (VLIZ 2012). 
+"spatial","rgn_area","Region area of total EEZ ocean","Area of Ocean Health Index regions based on exclusive economic zones (VLIZ 2012).
 
 Data sources:
 
 - [VLIZ Maritime Boundaries Geodatabase, version 7](http://www.marineregions.org/)
 ","area_km2","km^2","rgn_area_sc2014-area.csv","raster","spatial data was extracted for each region.","rgn_area","/Volumes/data_edit/git-annex/clip-n-ship/bhi-deu/spatial/rgn_offshore_data.csv","subcountry","rgn_id",,"rgn_name",,"area_km2",,TRUE,,,98.6209,31239.7,FALSE,,,,42,FALSE
 "spatial","rgn_area_inland1km","Region area 1 km inland","inland area 1 km from shore.","area_km2","km^2","rgn_area_inland1km_gl2014.csv","raster","spatial data was extracted for each region.","rgn_area_inland1km","~/github/ohi-global/eez2014/layers/rgn_area_inland1km.csv","global","rgn_id",,,,"area_km2",,TRUE,,,5,5,FALSE,,,,42,FALSE
-"spatial","rgn_area_offshore3nm","Region area offshore 3nm","Area of Ocean Health Index regions to 3nm (VLIZ 2012). 
+"spatial","rgn_area_offshore3nm","Region area offshore 3nm","Area of Ocean Health Index regions to 3nm (VLIZ 2012).
 
 Data sources:
 
