@@ -17,38 +17,63 @@ min_regr_length = 5    # min actual number of years with data to use for regress
 ### IMPORTANT: whenever you open a MySQL connection with 'dbConnect' make sure that you close it directly after your querry!!!
 con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
 
+# load ICES data
 t<-dbSendQuery(con, "select `secchi`, `BHI_ID`, `Month`, `Year`, `Assessment_unit`, `HELCOM_COASTAL_CODE`, `HELCOM_ID` from ICES_secchi_ID_assigned;") #  where `HELCOM_COASTAL_CODE` > 0
-data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+data1<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
 dbClearResult(t) # clears selection (IMPORTANT!)
+# load SMHI data
+t<-dbSendQuery(con, "select `value`, `BHI_ID`, `Month`, `Year`, `unit` from Sharkweb_data_secchi_ID_assigned;")
+data2<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+
+
 dbDisconnect(con) # closes connection (IMPORTANT!)
+
+# Load SMHI data locally
+smhi_secchi = read.table(file = "~/sharkweb_data.csv", header = TRUE, sep = ",", stringsAsFactors = F)
+# smhi_data = smhi_secchi %>%
+#   filter(!grepl('OSPAR', HELCOM.OSPAR.omrade)) %>%
+#   select(year, date, stationName, Latitud, Long, value, unit, coast_opensea_code, HELCOM.OSPAR.omrade)
+# unique(smhi_data$stationName)
 
 # Load rgn_id file from repository
 
 rgn_id <- read.table(file = "~/github/bhi/baltic2015/layers/rgn_global_gl2014.csv", header = TRUE, sep = ",", stringsAsFactors = F)
-rgn_id <- rename(rgn_id, BHI_ID = rgn_id) %>%
-  mutate(basin = gsub(" ", "_", substring(label,7)))
+rgn_id <- rgn_id %>%
+  rename(BHI_ID = rgn_id) %>%
+  mutate(basin = gsub(" ", "_", substring(label,7)), country = paste(substring(label, 1, 3)))
 
 # load target levels set by HELCOM ????MOVE THIS DATA TO SERVER????
 target <- read.table(file = "~/github/bhi/baltic2015/prep/8_CW/eutro_targets.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 target <- full_join(target, rgn_id, by = 'basin')
 
-data <- data %>%
-  mutate(country = paste(substring(Assessment_unit, 1, 3))) %>%
-  filter(!is.na(BHI_ID))
-sort(unique(data$BHI_ID))
+# filter data and bind rows for ices and smhi data
+ices <- data1 %>%
+  filter(!is.na(BHI_ID)) %>%
+  select(BHI_ID, secchi, Year, Month) %>%
+  mutate(supplier = 'ices')
+sort(unique(ices$BHI_ID))
 
-data2 = full_join(data, rgn_id, by = 'BHI_ID') %>%
-  mutate(country = paste(substring(label, 1, 3)))
+smhi <- data2 %>%
+  filter(!is.na(BHI_ID)) %>%
+  rename(secchi = value) %>%
+  mutate(supplier = 'smhi') %>%
+  select(BHI_ID, secchi, Year, Month, supplier)
+sort(unique(smhi$BHI_ID))
+
+allData = bind_rows(ices, smhi)
+
+allData = left_join(rgn_id, allData, by = 'BHI_ID') %>%
+  mutate(id_label = paste(.$label, .$BHI_ID))
   # full_join(., select(target, -basin, -label), by = 'BHI_ID')
-sort(unique(data2$BHI_ID))
+sort(unique(allData$BHI_ID))
 
 summer_secchi_all <-
-  data2 %>%
+  allData %>%
   filter(Month %in% c(6:9)) %>%
-  mutate(country = substring(label,1,3), target = summer_secchi) %>%
+  # mutate(target = summer_secchi) %>%
   group_by(BHI_ID, Year) %>%
-  summarise(secchi = mean(secchi, na.rm = F), year = mean(Year, na.rm = F), target = max(target), HELCOM_ID = max(HELCOM_ID), country = max(country), label =max(label), basin = max(basin)) %>%
-  mutate(status = pmin(1, secchi/target))
+  summarise(secchi = mean(secchi, na.rm = F), year = mean(Year, na.rm = F), country = max(country), id_label =max(id_label), label =max(label), basin = max(basin))
+  # mutate(status = pmin(1, secchi/target))
 sort(unique(summer_secchi_all$BHI_ID))
 
 # val_basin = filter(summer_secchi_all, BHI_ID == 5)
@@ -220,7 +245,7 @@ plot(x = test$trend, y = test3$trend_score)
 #### plot to check data ####
 
 summer_secchi_coastal <-
-  data2 %>%
+  allData %>%
   filter(Month %in% c(6:9), HELCOM_COASTAL_CODE > 0) %>%
   # mutate(country = paste(substring(Assessment_unit, 1, 3))) %>%
   mutate(country = substring(label,1,3), target = summer_secchi) %>%
@@ -228,7 +253,7 @@ summer_secchi_coastal <-
   summarise(secchi = mean(secchi, na.rm = T), year = mean(Year, na.rm = T), target = max(target), HELCOM_ID = max(HELCOM_ID), country = max(country), label =max(label), basin = max(basin))
 
 summer_secchi_opensea <-
-  data2 %>%
+  allData %>%
   filter(Month %in% c(6:9), HELCOM_COASTAL_CODE <= 0) %>%
   mutate(country = substring(label,1,3), target = summer_secchi) %>%
   group_by(BHI_ID, Year) %>%
@@ -240,7 +265,7 @@ summer_secchi_opensea <-
 windows()
 ggplot(summer_secchi_coastal) +
   geom_point(aes(x = year, y = secchi, color = label)) +
-#   geom_point(data = filter(data, HELCOM_COASTAL_CODE > 0), aes(x = Year, y = secchi, color = country)) +
+#   geom_point(data = filter(ices, HELCOM_COASTAL_CODE > 0), aes(x = Year, y = secchi, color = country)) +
   xlim(1995, 2015) +
   ylim(2,12) +
   facet_wrap(~label) +
@@ -272,7 +297,19 @@ ggplot() +
 
 windows()
 ggplot() +
-  geom_point(data = data2, aes(x = Year, y = secchi, color = as.factor(BHI_ID))) +
+  geom_point(data = allData, aes(x = Year, y = secchi, color = as.factor(BHI_ID))) +
   xlim(1995, 2015) +
-  ylim(0,1) +
   facet_wrap(~country, ncol = 3, drop = F)
+
+windows()
+ggplot() +
+  geom_point(data = allData, aes(x = Year, y = secchi, color = as.factor(country), shape = supplier)) +
+  xlim(1995, 2015) +
+  facet_wrap(~id_label, drop = F)
+
+windows()
+ggplot() +
+  geom_point(data = filter(allData, country == 'Swe', supplier == 'smhi'), aes(x = Year, y = secchi), color = 'grey', size = 2) +
+  geom_point(data = filter(allData, country == 'Swe', supplier == 'ices'), aes(x = Year, y = secchi), color = 'black') +
+  xlim(1995, 2015) +
+  facet_wrap(~id_label, drop = F)
