@@ -235,141 +235,120 @@ FIS = function(layers, status_year){
   return(scores)
 }
 
-MAR = function(layers, status_years){
-  # status_years is defined in goals.csv
-  # layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score, mar_coastalpopn_inland25km, mar_trend_years
-  harvest_tonnes = rename(
-    SelectLayersData(layers, layers='mar_harvest_tonnes', narrow=T),
-    c('id_num'='rgn_id', 'category'='species_code', 'year'='year', 'val_num'='tonnes'))
-  harvest_species = rename(
-    SelectLayersData(layers, layers='mar_harvest_species', narrow=T),
-    c('category'='species_code', 'val_chr'='species'))
-  sustainability_score = rename(
-    SelectLayersData(layers, layers='mar_sustainability_score', narrow=T),
-    c('id_num'='rgn_id', 'category'='species', 'val_num'='sust_coeff'))
-  popn_inland25mi = rename(
-    SelectLayersData(layers, layers='mar_coastalpopn_inland25km', narrow=T),
-    c('id_num'='rgn_id', 'year'='year', 'val_num'='popsum'))
-  trend_years = rename(
-    SelectLayersData(layers, layers='mar_trend_years', narrow=T),
-    c('id_num'='rgn_id', 'val_chr'='trend_yrs'))
+MAR = function(layers){
+  #updated by Jennifer Griffiths 25Feb2016
 
-  rky = harvest_tonnes %>%
-    merge(harvest_species     , all.x=TRUE, by='species_code') %>%
-    merge(sustainability_score, all.x=TRUE, by=c('rgn_id', 'species')) %>%
-    dcast(rgn_id + species + species_code + sust_coeff ~ year, value.var='tonnes', mean, na.rm=T) %>%
-    arrange(rgn_id, species)
+  #layers used: mar_harvest_tonnes_bhi2015, mar_harvest_species_bhi2015, mar_sustainability_score_bhi2015, mar_coastalpopn2005_inland25km_bhi2015
 
- # x = csv_compare(rky, '1-rky')
+  #call the layers in the function
+  # I removed the renaming from Select Layers, didn't make sense, had: c('id_num'='rgn_id', 'category'='species_code', 'year'='year', 'val_num'='tonnes') ??
 
-  # smooth each species-country time-series using a running mean with 4-year window, excluding NAs from the 4-year mean calculation
-  # TODO: simplify below with dplyr::group_by()
-  yrs_smooth <- names(rky)[!names(rky) %in% c('rgn_id','species','species_code','sust_coeff')]
-  rky_smooth = zoo::rollapply(t(rky[,yrs_smooth]), 4, mean, na.rm = TRUE, partial=T)
-  rownames(rky_smooth) = as.character(yrs_smooth)
-  rky_smooth = t(rky_smooth)
-  rky = as.data.frame(cbind(rky[, c('rgn_id','species','species_code','sust_coeff')], rky_smooth)); head(rky)
-#  x = csv_compare(rky, '2-rky-smooth')  # DEBUG
+  harvest_tonnes = SelectLayersData(layers, layers='mar_harvest_tonnes_bhi2015', narrow=T)
+  harvest_species = SelectLayersData(layers, layers='mar_harvest_species_bhi2015', narrow=T)
+  sustainability_score =SelectLayersData(layers, layers='mar_sustainability_score_bhi2015', narrow=T)
+  popn_inland25km =SelectLayersData(layers, layers='mar_coastalpopn2005_inland25km_bhi2015', narrow=T) #this is data only from 2005 for Baltic Region, Lena/Erik say ok to use one year data for all
 
-  # melt
-  m = melt(rky,
-           id=c('rgn_id', 'species', 'species_code', 'sust_coeff'),
-           variable.name='year', value.name='sm_tonnes'); head(m)
-#   m <- m %>%
-#     arrange(rgn_id, species)
-#   x = csv_compare(m, '3-m-melt')  # DEBUG
-  # "Component “year”: 'current' is not a factor"
+   # SETTING CONSTANTS
+  rm_year = 4              #number of years to use when calculating the running mean smoother
+  regr_length =5          # number of years to use for regression for trend.  Use this to replace reading in the csv file "mar_trend_years_gl2014"
+  future_year = 5          # the year at which we want the likely future status
+  min_regr_length = 4      # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!  4 is the value in the old code
+  status_years = 2005:2014 #this was originally set in goals.csv  #global set to 2007:2012 originally
 
-  # for each species-country-year, smooth mariculture harvest times the sustainability coefficient
-  m = within(m, {
-    sust_tonnes = sust_coeff * sm_tonnes
-    year        = as.numeric(as.character(m$year))
-  })
-#   m <- m %>%
-#     arrange(rgn_id, species)
-#   x = csv_compare(m, '4-m-within')  # DEBUG
 
-  # merge the MAR and coastal human population data
-  m = merge(m, popn_inland25mi, by=c('rgn_id','year'), all.x=T)
-#   m <- m %>%
-#     arrange(rgn_id, species, species_code)
-#   m_a = csv_compare(m, '5-m-merge')  # DEBUG
+  #####----------------------######
+  #harvest_tonnes has years without data but those years not present with NAs
+  #spread and gather data again which will result in all years present for all regions
+  harvest_tonnes=harvest_tonnes%>%spread(key=year,value=tonnes)%>%
+    gather(year, tonnes, -rgn_id,-species_code)%>%
+    mutate(year=as.numeric(year))%>%  #make sure year is not a character
+    arrange(rgn_id,year)
 
-  # must first aggregate all weighted timeseries per region, before dividing by total population
-#   ry = ddply(m, .(rgn_id, year, popsum), summarize,
-#              sust_tonnes_sum = sum(sust_tonnes),
-#              mar_pop         = sum(sust_tonnes) / popsum[1]) # <-- PROBLEM using popsum[1] with ddply!!!
+  # Merge harvest (production) data with sustainability score
+  #calculate 4 year running mean
+  #this code updated by Lena to use dplyr functions not reshape2
+  temp = left_join(harvest_tonnes, harvest_species, by = 'species_code') %>%
+    left_join(., sustainability_score, by = c('rgn_id', 'species')) %>%
+    arrange(rgn_id, species) %>%
+    group_by(rgn_id, species_code) %>%    # doing the 4 year running mean in the same chain
+    mutate(rm = zoo::rollapply(data=tonnes, width=rm_year,FUN= mean, na.rm = TRUE, partial=TRUE),    #rm = running mean  #rm_year defined with constants (4 is value from original code)     # better done with zoo::rollmean? how to treat Na with that?
+           sust_tonnes = rm * sust_coeff)
 
-  # aggregate all weighted timeseries per region, and divide by coastal human population
-  ry = m %>%
+  # now calculate total sust_tonnes per year  #only matters if multiple species
+  #relate to pop density
+  temp2 = temp %>%    # temp2 is ry in the original version
     group_by(rgn_id, year) %>%
-    summarize(
-      sust_tonnes_sum = sum(sust_tonnes)) %>%
-    merge(
-      popn_inland25mi, by=c('rgn_id','year'), all.x=T) %>%
-    mutate(
-      mar_pop         = sust_tonnes_sum / popsum) %>%
-    select(rgn_id, year, popsum, sust_tonnes_sum, mar_pop)
-#  ry_b = csv_compare(ry, '6-ry-ddply')  # RIGHT
-#   ry_a = ry
-#   eq = all.equal(ry_a, ry_b)
-#   if (class(eq) == 'character') browser()
+    summarise(sust_tonnes_sum = sum(sust_tonnes)) %>% #this sums the harvest(production) across all species in a given region if multiple spp are present
+    left_join(., popn_inland25km, by=c('rgn_id')) %>%  #apply 2005 pop data to all years
+    mutate(mar_pop = sust_tonnes_sum/popsum) #tonnes per capita
+
+  #####----------------------######
+  ###Baltic Wide Spatial Ref Pt
+  # get reference quantile, searches for ref pt across all basins & all years defined in status_years
+  ref_95pct = temp2%>% ungroup()%>%
+    select(rgn_id,year,mar_pop)%>%
+    filter(year<=max(status_years))%>%
+    summarise(ref_95pct=quantile(mar_pop,probs=0.95, na.rm=TRUE))%>%
+    as.numeric(.)
+  #ref_95pct
+
+  #find ID associated with the ref_95pct
+  ref_id = temp2%>%ungroup()%>%
+    filter(year<=max(status_years))%>%
+    arrange(mar_pop) %>%
+    filter(mar_pop >= ref_95pct)
+  cat(sprintf('95th percentile rgn_id for MAR ref pt is: %s\n', ref_id$rgn_id[1]))
 
 
-  # get reference quantile based on argument years
-  ref_95pct = quantile(subset(ry, year <= max(status_years), mar_pop, drop=T), 0.95, na.rm=T)
-#  x = csv_compare(ref_95pct, '7-ref95pct-quantile')  # DEBUG
+  #####----------------------######
+  # Calculate the status for each year (year_value / ref_value)
+  mar_status_score = temp2%>%
+    mutate(.,status =  pmin(1, mar_pop/ref_95pct)) %>%
+    select(rgn_id, year, status)
 
-# identify reference rgn_id
-ry_ref = ry %>%
-  filter(year <=max(status_years)) %>%
-  arrange(mar_pop) %>%
-  filter(mar_pop >= ref_95pct)
-  cat(sprintf('95th percentile rgn_id for MAR ref pt is: %s\n', ry_ref$rgn_id[1])) # rgn_id 25 = Thailand
+  #give mar_status_score all BHI regions, regions with no data receive NA for last year
+  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(mar_status_score$year)))
 
-  ry = within(ry, {
-    status = ifelse(mar_pop / ref_95pct > 1,
-                    1,
-                    mar_pop / ref_95pct)})
-  status <- subset(ry, year == max(status_years), c('rgn_id', 'status'))
-  status$status <- round(status$status*100, 2)
-#   x = csv_compare(ry, '8-ry-within')  # DEBUG
+  mar_status_score = mar_status_score%>%ungroup()%>%
+    full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%
+    arrange(rgn_id,year)
 
-  # get list where trend is only to be calculated up to second-to-last-year
-  # species where the last year of the time-series was 2010, and the same value was copied over to 2011
-  # i.e. it was gapfilled using the previous year
+  # select last year of data in timeseries for status
+  mar_status = mar_status_score %>%
+    group_by(rgn_id) %>%
+    summarise_each(funs(last), rgn_id, status) %>%
+    mutate(status = round(status*100,2))  #took away pmin piece that Lena has used in this code in CW func
 
-  # get MAR trend
-  ry = merge(ry, trend_years, all.x=T)
-  yr_max = max(status_years)
-  trend = ddply(ry, .(rgn_id), function(x){  # x = subset(ry, rgn_id==5)
-    yrs = ifelse(x$trend_yrs=='4_yr',
-                 (yr_max-5):(yr_max-1), # 4_yr
-                 (yr_max-5):(yr_max))   # 5_yr
-    y = subset(x, year %in% yrs & !is.na(status))
-    # added condition for aus repo since rgns 7 & 9 have no data
-    if (nrow(y) > 1){
-      trend = round(max(min(lm(status ~ year, data=y)$coefficients[['year']] * 5, 1), -1), 2)
-    } else {
-      trend = NA
-    }
-    return(data.frame(trend))
-  })
 
-  # return scores
-  scores = status %>%
+  #calulate trend - update MAR code based on Lena template code
+  #original code has option to exclude last year status year from the trend calculation
+  #if exclude last year, trend calc was for 5 status years, but if did not was for 6
+  # if I sent regr_length = 6, then I can reproduce the old code results for trend_years = '5_yrs
+  #but to me this is very inconsistent with the other approach, so will set regr_length = 5
+  mar_trend= mar_status_score%>%group_by(rgn_id)%>%
+    do(tail(. , n = regr_length)) %>% #select the years for trend calculate (regr_length # years from the end of the time series)
+    #regr_length replaces the need to read in the trend_yrs from the csv file
+    do({if(sum(!is.na(.$status)) >= min_regr_length)      #calculate trend only if X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+      data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year))) #future_year set in contants, this is the value 5 in the old code
+      else data.frame(trend_score = NA)}) %>%
+    ungroup()%>%
+    mutate(trend_score=round(trend_score,3))  #change round to 3 decimal places because trend values are very small
+
+  #####----------------------######
+  # return MAR scores
+  scores = mar_status %>%
     select(region_id = rgn_id,
            score     = status) %>%
     mutate(dimension='status') %>%
     rbind(
-      trend %>%
+      mar_trend %>%
         select(region_id = rgn_id,
-               score     = trend) %>%
+               score     = trend_score) %>%
         mutate(dimension = 'trend')) %>%
     mutate(goal='MAR')
-
   return(scores)
-  # NOTE: some differences to www2013 are due to 4_yr species only previously getting trend calculated to 4 years (instead of 5)
+
+
 }
 
 FP = function(layers, scores){
