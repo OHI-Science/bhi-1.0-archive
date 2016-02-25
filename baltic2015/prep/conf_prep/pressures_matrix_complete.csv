@@ -1,0 +1,14 @@
+goal,component,component_name,po_cont,po_pload,po_nload,po_trash,hd_anoxia_opens,sp_invasive,fp_com_x,cc_sst,cc_acid,cc_sal,ss_wgi
+DATA_STATUS,,,in progress,x,x,in progress,at SMHI,at HELCOM,in progress,ask BNI,ask BNI,ask BNI,x
+FIS,,,2,2,2,2,2,,2,2,2,2,1
+MAR,,,2,2,2,,,,,2,2,2,1
+CS,,,2,2,2,,,,,2,,2,1
+TR,,,,,,2,,,,2,,,1
+ECO,,,,,,2,,,2,,,,1
+LIV,,,,,,2,,,2,,,,1
+ICO,,,2,,,,2,2,2,,,,1
+LSP,,,,,,2,,,,,,,1
+NUT,,,,2,2,,2,,,,,,1
+CON,,,,,,,,,,,,,1
+TRA,,,,,,,,,,,,,1
+BD,,,2,2,2,2,2,2,2,2,2,2,1

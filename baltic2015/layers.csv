@@ -82,6 +82,10 @@ LSP,lsp_prot_area_offshore3nm,Coastal marine protected areas offshore 3km,"Coast
 Data sources:
 
 - United Nations - World Conservation Monitoring Centre̢���s World Database on Protected Areas (WDPA) through [Protected Planet](http://www.protectedplanet.net)",area_km2,km^2,lsp_prot_area_offshore3nm_placeholder.csv,raster | area_offshore3nm,,lsp_prot_area_offshore3nm,~/github/ohi-global/eez2014/layers/lsp_prot_area_offshore3nm.csv,global,rgn_id,,,year,area_km2,,TRUE,2010,2015,10,10,FALSE,,,,42,FALSE
+MAR,mar_coastal_popn2005_inland25k_bhi2015,Coastal population inland 25 kilometers,"Coastal 25 km buffer population, from 2005. Source HYDE",popsum,people,mar_coastal_popn2005_inland25k_bhi2015.csv,,,,~/github/bhi/baltic2015/layers/mar_coastal_popn2005_inland25k_bhi2015.csv,,,,,,,,,,,,,,,,,,
+MAR,mar_harvest_species_bhi2015,Mariculture species harvested,"Mariculture species harvested, from national databases",species,species name,mar_harvest_species_bhi2015.csv,,,,~/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv,,,,,,,,,,,,,,,,,,
+MAR,mar_sustainability_score_bhi2015,Mariculture sustainability score,Mariculture sustainability score,sust_coeff,sustainability,mar_sustainability_score_bhi2015.csv,,,,~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv,,,,,,,,,,,,,,,,,,
+MAR,mar_harvest_tonnes_bhi2015,Mariculture harvest,Mariculture harvest,tonnes,tons,mar_harvest_tonnes_bhi2015.csv,,,,~/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv,,,,,,,,,,,,,,,,,,
 MAR,mar_coastalpopn_inland25km,Coastal population inland 25 kilometers,"Coastal population, defined as the total population inland of 25 kilometers, extracted from Gridded Population of the World (GPW) Population Density Grid Future Estimates.
 
 Data sources:
