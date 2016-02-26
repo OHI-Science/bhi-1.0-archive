@@ -19,10 +19,16 @@ dbClearResult(t) # clears selection (IMPORTANT!)
 dbDisconnect(con) # closes connection (IMPORTANT!)
 
 # set date format, filter and select columns
+map_data_pcb = filter(data, Year > 2000) %>%
+  distinct(Latitude, Longitude) %>%
+  select(BHI_ID, Source, Country, Station, Longitude, Latitude, Year, Date, Species, Variable, Value, Unit, TEF.adjusted.value)
+
 pcb = data %>%
   mutate(Date2 = as.Date(Date, "%Y-%m-%d")) %>%
   # filter(Year > 2000) %>%
   select(Source, Country, Station, Year, Date2, BHI_ID, Species, Variable, Value, Unit, TEF.adjusted.value)
+
+
 
 # write.csv(pcb, "~/github/bhi/baltic2015/prep/8_CW/pcb_temp.csv", row.names = F)
 
@@ -34,11 +40,28 @@ pcb = data %>%
 
 unique(pcb$Variable)
 
+cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+
+# plot data in map
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
+
+
+windows()
+ggmap(map) +
+  # ggplot() +  # also produces map, but unprojected points and no background.
+  geom_point(data = filter(map_data), aes(x = Longitude, y = Latitude, color = Source), size = 3) +
+  ggtitle('PCB data, from 2000-') +
+  theme(title = element_text(size = 14),
+        plot.title = element_text(size = 14, face = "bold")) +
+  ggsave(file="C:/Users/lvikt/Dropbox/Baltic Health Index/Presentations, ppts/figures/figuresMarch2016_WS/CW_CON_map_pcb.pdf",
+         width = 210, height = 297, units = "mm")
+
 windows()
 pcb %>% #filter(Source == "ICES") %>% #!grepl('P', Variable),
 ggplot() +
-  aes(x = Date2, y = Value, colour = Variable, shape = Unit) +
-  geom_point() +
+  geom_point(aes(x = Date2, y = Value, colour = Variable, shape = Unit)) +
   facet_wrap(~BHI_ID, scales = "free_y")
 
 windows()
@@ -48,11 +71,23 @@ pcb %>%
   geom_point() +
   facet_wrap(~Variable, scales = "free_y")
 
+## plot tef adjusted values
+temp = filter(pcb, Year >= 2000)
+if (anyNA(match(c(1:42), unique(temp$BHI_ID))) == T)
+{    missing_id = data.frame(BHI_ID = which(is.na(match(c(1:42), unique(temp$BHI_ID))))) }
+temp = bind_rows(missing_id, temp)
+
 windows()
-pcb %>% filter(!is.na(TEF.adjusted.value), Year >= 2000) %>%
   ggplot() +
-  aes(x = Date2, y = TEF.adjusted.value, colour = Country) +
-  geom_point() +
-  facet_wrap(~BHI_ID) #, scales = "free_y")
-
-
+  geom_point(data = filter(pcb, Year >= 2000),
+             aes(x = Year, y = TEF.adjusted.value, colour = Source), size = 2) +
+#     geom_point(data = filter(pcb, Year >= 2000),
+#                aes(x = Date2, y = Value, colour = 'Value'), shape = 1, size = 1) +
+#     scale_color_manual('Type', values = c('tef' = cbPalette[2], 'value' = cbPalette[3])) +
+    ylim(0, 0.03) +
+    facet_wrap(~BHI_ID, ncol = 7) +
+    ggtitle('PCB data, TEF adjusted') +
+    theme(title = element_text(size = 14),
+          plot.title = element_text(size = 14, face = "bold")) +
+    ggsave(file="C:/Users/lvikt/Dropbox/Baltic Health Index/Presentations, ppts/figures/figuresMarch2016_WS/CW_CON_pcb_time_series_zoomY.pdf",
+           width = 210, height = 297, units = "mm")
