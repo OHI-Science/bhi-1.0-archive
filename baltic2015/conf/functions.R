@@ -240,13 +240,38 @@ MAR = function(layers){
 
   #layers used: mar_harvest_tonnes_bhi2015, mar_harvest_species_bhi2015, mar_sustainability_score_bhi2015, mar_coastalpopn2005_inland25km_bhi2015
 
-  #call the layers in the function
-  # I removed the renaming from Select Layers, didn't make sense, had: c('id_num'='rgn_id', 'category'='species_code', 'year'='year', 'val_num'='tonnes') ??
 
-  harvest_tonnes = SelectLayersData(layers, layers='mar_harvest_tonnes_bhi2015', narrow=T)
-  harvest_species = SelectLayersData(layers, layers='mar_harvest_species_bhi2015', narrow=T)
-  sustainability_score =SelectLayersData(layers, layers='mar_sustainability_score_bhi2015', narrow=T)
-  popn_inland25km =SelectLayersData(layers, layers='mar_coastalpopn2005_inland25km_bhi2015', narrow=T) #this is data only from 2005 for Baltic Region, Lena/Erik say ok to use one year data for all
+  ## Hi Jennifer, it's Julie. Re your comment ...
+        # 'I removed the renaming from Select Layers, didn't make sense, had: c('id_num'='rgn_id', 'category'='species_code', 'year'='year', 'val_num'='tonnes') ??'
+  ## ...I have changed the column names using dplyr::select() as you can see below.
+  ## What's happening here is that when all of your .csv files are put into the `layers` Tbx variable,
+  ## their column names are stored elsewhere and they are given the generic ('id_num', 'category', 'val_num', etc)
+  ## so they can all be stored together. So for each function here, like MAR, when you want to use the layer, you need to rename to what they
+  ## were originally. Seems like extra work but making that `layers` Tbx variable saves a lot of pain that would otherwise
+  ## occur due to misnamed/missing columns (we've been through that pain so put in these 'mistakeproofs' for ourselves and you.
+  ## I used the dplyr::select command and renamed all the columns in your variables.
+  ## I did this when error checking Lena's error because your first `spread` command just after setting constants gave an error; there was no
+  ## 'tonnes' column in the `harvest_tonnes` variable, only 'val_num'.
+
+  # select layers for MAR
+  harvest_tonnes = SelectLayersData(layers, layers='mar_harvest_tonnes_bhi2015', narrow=T) %>%
+    select(rgn_id = id_num,
+           species_code = category,
+           year,
+           tonnes = val_num)
+
+  harvest_species = SelectLayersData(layers, layers='mar_harvest_species_bhi2015', narrow=T) %>%
+    select(species_code = category,
+           species = val_chr)
+
+  sustainability_score = SelectLayersData(layers, layers='mar_sustainability_score_bhi2015', narrow=T) %>%
+    select(rgn_id = id_num,
+           species = category,
+           sust_coeff = val_num)
+
+  popn_inland25km =SelectLayersData(layers, layers='mar_coastalpopn2005_inland25km_bhi2015', narrow=T) %>% #this is data only from 2005 for Baltic Region, Lena/Erik say ok to use one year data for all
+    select(rgn_id = id_num,
+           popsum = val_num)
 
    # SETTING CONSTANTS
   rm_year = 4              #number of years to use when calculating the running mean smoother
