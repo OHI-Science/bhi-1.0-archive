@@ -28,10 +28,10 @@ ohi_dimensions <<- c('score','status','trend','pressures','resilience','future')
 ohi_goals      <<- c('Index','FIS','FP','MAR','AO','NP','CS','CP','TR','LIV','LE','ECO','ICO','SP','LSP','CW','HAB','BD','SPP')
 
 # adding chunk for stand-alone shinyapp.io vs from ohicore::launch_app() function----
-if (file.exists('app.yml')){
+if (file.exists('shiny/app.yml')){
 
   # load configuration
-  y = yaml.load_file('app.yml')
+  y = yaml.load_file('shiny/app.yml')
   for (o in ls(y)){
     assign(o, y[[o]], globalenv())
   }
@@ -40,63 +40,67 @@ if (file.exists('app.yml')){
 
   dir_wd <<- getwd()
 
-} else {
-  # assuming launching from draft branch having .travis.yml with env$global$default_branch_scenario & env$global$study_area
-
-  # dir_scenario should be set in launch_app() when running locally (vs as standalone Shiny app)
-  stopifnot(exists('dir_scenario'))
-
-  # load configuration
-  dir_wd <<- dirname(dir_scenario)
-  y = yaml.load_file(file.path(dir_wd, '.travis.yml'))
-  # TODO!!!: change all .travis.yml from = to indented:
-
-  # extract default_branch_scenario, study_area from .travis.yml$env$global
-  y = yaml.load_file(file.path(dir_wd, '.travis.yml'))
-  v = unlist(y$env$global)
-  for (n in names(v)){ # var = travis_yaml$env$global[[2]]
-    assign(n, v[[n]])
-  }
-
-  # set defaults otherwise set in app.yml of app branch
-  git_owner               <<- 'OHI-Science'
-  git_repo                <<- basename(dir_wd)
-  git_slug                <<- sprintf('%s/%s', git_owner, git_repo)
-  git_url                 <<- sprintf('https://github.com/%s', git_slug)
-  app_url                 <<- sprintf('http://ohi-science.nceas.ucsb.edu/%s', git_repo)
-  default_branch          <<- dirname(default_branch_scenario)
-  default_scenario        <<- basename(default_branch_scenario)
-  #debug                   <<- FALSE
-  last_updated            <<- 2015-04-23
-  ohicore_app             <<- list(git_owner='ohi-science', git_repo='ohicore', git_branch='dev', git_commit='local')
-  tabs_hide               <<- ''
-}
+# } else {
+#   # assuming launching from draft branch having .travis.yml with env$global$default_branch_scenario & env$global$study_area
+#
+#   # dir_scenario should be set in launch_app() when running locally (vs as standalone Shiny app)
+#   stopifnot(exists('dir_scenario'))
+#
+#   # load configuration
+#   dir_wd <<- dirname(dir_scenario)
+#   y = yaml.load_file(file.path(dir_wd, '.travis.yml'))
+#   # TODO!!!: change all .travis.yml from = to indented:
+#
+#   # extract default_branch_scenario, study_area from .travis.yml$env$global
+#   y = yaml.load_file(file.path(dir_wd, '.travis.yml'))
+#   v = unlist(y$env$global)
+#   for (n in names(v)){ # var = travis_yaml$env$global[[2]]
+#     assign(n, v[[n]])
+#   }
+#
+#   # set defaults otherwise set in app.yml of app branch
+#   git_owner               <<- 'OHI-Science'
+#   git_repo                <<- basename(dir_wd)
+#   git_slug                <<- sprintf('%s/%s', git_owner, git_repo)
+#   git_url                 <<- sprintf('https://github.com/%s', git_slug)
+#   app_url                 <<- sprintf('http://ohi-science.nceas.ucsb.edu/%s', git_repo)
+#   default_branch          <<- dirname(default_branch_scenario)
+#   default_scenario        <<- basename(default_branch_scenario)
+#   #debug                   <<- FALSE
+#   last_updated            <<- 2015-04-23
+#   ohicore_app             <<- list(git_owner='ohi-science', git_repo='ohicore', git_branch='dev', git_commit='local')
+#   tabs_hide               <<- ''
+# }
 
 #browser()
 setwd(dir_wd)
 
 # clone or update github repository
 dir_repo  <<- 'github'
-if ( !file.exists(dir_repo) ){
-  repo = git2r::clone(git_url, dir_repo)
-  cfg  = git2r::config(repo, user.name='OHI ShinyApps', user.email='bbest@nceas.ucsb.edu')
-} else {
-  repo = repository(dir_repo)
-  cfg  = git2r::config(repo, user.name='OHI ShinyApps', user.email='bbest@nceas.ucsb.edu')
-  fetch(repo, 'origin')
-  pull(repo)
-}
-if (file.exists('app.yml')){
-  #system(sprintf('chmod -R --silent g+w %s', dir_repo))
-  Sys.chmod(dir_repo, mode = "0777", use_umask = TRUE)
-}
+repo = repository('~/github/bhi')
+
+# if ( !file.exists(dir_repo) ){
+#   repo = git2r::clone(git_url, dir_repo)
+#   cfg  = git2r::config(repo, user.name='OHI ShinyApps', user.email='bbest@nceas.ucsb.edu')
+# } else {
+#   repo = repository(dir_repo)
+#   cfg  = git2r::config(repo, user.name='OHI ShinyApps', user.email='bbest@nceas.ucsb.edu')
+#   fetch(repo, 'origin')
+#   pull(repo)
+# }
+# ## JSL not sure this is necessary: delete
+# if (file.exists('app.yml')){
+#   #system(sprintf('chmod -R --silent g+w %s', dir_repo))
+#   Sys.chmod(dir_repo, mode = "0777", use_umask = TRUE)
+# }
 repo <<- repo
 
-# ensure temp folders not checked back into github
-missing_ignores = setdiff(c(dir_repo, git_repo), readLines('.gitignore'))
-if (length(missing_ignores) > 0){
-  cat(missing_ignores, file='.gitignore', sep='\n', append=T)
-}
+# JSL probably not necessary
+# # ensure temp folders not checked back into github
+# missing_ignores = setdiff(c(dir_repo, git_repo), readLines('.gitignore'))
+# if (length(missing_ignores) > 0){
+#   cat(missing_ignores, file='.gitignore', sep='\n', append=T)
+# }
 
 # archive to repository/branch/scenario
 dir_archive <<- git_repo
