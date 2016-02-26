@@ -107,25 +107,27 @@ dir_archive <<- git_repo
 unlink(dir_archive, recursive=T)
 git_branches = setdiff(sapply(git2r::branches(repo, flags='remote'), function(x) str_replace(x@name, 'origin/', '')), c('gh-pages','app'))
 branch_commits = list()
-for (branch in git_branches){ # branch = 'published'
+# JSL don't think we want any of this
+# for (branch in git_branches){ # branch = 'published'
+#
+#   checkout(repo, branch=branch, force=T)
+#   branch_commits[[branch]] = commits(repo)
+#
+#   dir_branch = file.path(dir_archive, branch)
+#
+#   files = list.files(dir_repo, recursive=T)
+#   for (f in files){ # f = shiny_files[1]
+#     dir.create(dirname(file.path(dir_branch, f)), showWarnings=F, recursive=T)
+#     file.copy(file.path(dir_repo, f), file.path(dir_branch, f), overwrite = T, copy.mode=T, copy.date=T) # suppressWarnings)
+#   }
+# }
+# checkout(repo, default_branch)
 
-  checkout(repo, branch=branch, force=T)
-  branch_commits[[branch]] = commits(repo)
-
-  dir_branch = file.path(dir_archive, branch)
-
-  files = list.files(dir_repo, recursive=T)
-  for (f in files){ # f = shiny_files[1]
-    dir.create(dirname(file.path(dir_branch, f)), showWarnings=F, recursive=T)
-    file.copy(file.path(dir_repo, f), file.path(dir_branch, f), overwrite = T, copy.mode=T, copy.date=T) # suppressWarnings)
-  }
-}
-checkout(repo, default_branch)
-branch_commits     <<- branch_commits
+branch_commits     <<- commits(repo)
 git_head           <<- commits(repo)[[1]]
-dir_scenario       <<- file.path(dir_archive, default_branch, default_scenario)
-branches_scenarios <<- dirname(list.files(dir_archive, 'scores\\.csv$', recursive=T))
-repo_head          <<- branch_commits[['draft']][[1]]
+dir_scenario       <<- file.path(dir_archive, default_scenario) # file.path(dir_archive, default_branch, default_scenario)
+# branches_scenarios <<- dirname(list.files(dir_archive, 'scores\\.csv$', recursive=T))
+repo_head          <<- branch_commits[[1]]
 
 # check for files/directories
 stopifnot(file.exists(sprintf('%s/conf'      , dir_scenario)))

@@ -17,14 +17,14 @@ shinyUI(bootstrapPage(div(
     class= "row-fluid",
     customHeaderPanel(sprintf('OHI App for %s', study_area))),
 
-  div(
-    class = "row-fluid",
-    HTML('<table><tr><td>Branch/Scenario:</td><td>'),
-    selectInput(
-      'sel_branch_scenario', label='',
-      choices=branches_scenarios,
-      selected=sprintf('%s/%s', default_branch, default_scenario), multiple=F, selectize=T),
-    HTML('</td></tr></table>')),
+  # div(
+  #   class = "row-fluid",
+  #   HTML('<table><tr><td>Branch/Scenario:</td><td>'),
+  #   selectInput(
+  #     'sel_branch_scenario', label='',
+  #     choices=branches_scenarios,
+  #     selected=sprintf('%s/%s', default_branch, default_scenario), multiple=F, selectize=T),
+  #   HTML('</td></tr></table>')),
 
   htmlOutput('git_commit'),
   htmlOutput('ls_files'),
