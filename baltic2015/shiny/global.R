@@ -10,7 +10,7 @@ suppressPackageStartupMessages({
   require(markdown)
   require(yaml)
   require(ohicore)
-  require(ggvis) # needed this line here to install on shinyapps
+  require(ggvis)
   rename = plyr::rename
   require(stringr)
   require(git2r)
@@ -27,106 +27,23 @@ debug = F
 ohi_dimensions <<- c('score','status','trend','pressures','resilience','future')
 ohi_goals      <<- c('Index','FIS','FP','MAR','AO','NP','CS','CP','TR','LIV','LE','ECO','ICO','SP','LSP','CW','HAB','BD','SPP')
 
-# adding chunk for stand-alone shinyapp.io vs from ohicore::launch_app() function----
-if (file.exists('shiny/app.yml')){
-
-  # load configuration
+## load configuration
   y = yaml.load_file('shiny/app.yml')
   for (o in ls(y)){
     assign(o, y[[o]], globalenv())
   }
-  # paste(names(y), collapse=', '): git_owner, git_repo, git_slug, git_url, default_branch, default_scenario, debug, last_updated, ohicore_app, tabs_hide
   tabs_hide <<- tolower(tabs_hide)
-
   dir_wd <<- getwd()
-}
-# } else {
-#   # assuming launching from draft branch having .travis.yml with env$global$default_branch_scenario & env$global$study_area
-#
-#   # dir_scenario should be set in launch_app() when running locally (vs as standalone Shiny app)
-#   stopifnot(exists('dir_scenario'))
-#
-#   # load configuration
-#   dir_wd <<- dirname(dir_scenario)
-#   y = yaml.load_file(file.path(dir_wd, '.travis.yml'))
-#   # TODO!!!: change all .travis.yml from = to indented:
-#
-#   # extract default_branch_scenario, study_area from .travis.yml$env$global
-#   y = yaml.load_file(file.path(dir_wd, '.travis.yml'))
-#   v = unlist(y$env$global)
-#   for (n in names(v)){ # var = travis_yaml$env$global[[2]]
-#     assign(n, v[[n]])
-#   }
-#
-#   # set defaults otherwise set in app.yml of app branch
-#   git_owner               <<- 'OHI-Science'
-#   git_repo                <<- basename(dir_wd)
-#   git_slug                <<- sprintf('%s/%s', git_owner, git_repo)
-#   git_url                 <<- sprintf('https://github.com/%s', git_slug)
-#   app_url                 <<- sprintf('http://ohi-science.nceas.ucsb.edu/%s', git_repo)
-#   default_branch          <<- dirname(default_branch_scenario)
-#   default_scenario        <<- basename(default_branch_scenario)
-#   #debug                   <<- FALSE
-#   last_updated            <<- 2015-04-23
-#   ohicore_app             <<- list(git_owner='ohi-science', git_repo='ohicore', git_branch='dev', git_commit='local')
-#   tabs_hide               <<- ''
-# }
 
-#browser()
 setwd(dir_wd)
 
-# clone or update github repository
+# identify github repository, access commits
 dir_repo  <<- 'github'
 repo = repository('~/github/bhi')
-
-# if ( !file.exists(dir_repo) ){
-#   repo = git2r::clone(git_url, dir_repo)
-#   cfg  = git2r::config(repo, user.name='OHI ShinyApps', user.email='bbest@nceas.ucsb.edu')
-# } else {
-#   repo = repository(dir_repo)
-#   cfg  = git2r::config(repo, user.name='OHI ShinyApps', user.email='bbest@nceas.ucsb.edu')
-#   fetch(repo, 'origin')
-#   pull(repo)
-# }
-# ## JSL not sure this is necessary: delete
-# if (file.exists('app.yml')){
-#   #system(sprintf('chmod -R --silent g+w %s', dir_repo))
-#   Sys.chmod(dir_repo, mode = "0777", use_umask = TRUE)
-# }
 repo <<- repo
-
-# JSL probably not necessary
-# # ensure temp folders not checked back into github
-# missing_ignores = setdiff(c(dir_repo, git_repo), readLines('.gitignore'))
-# if (length(missing_ignores) > 0){
-#   cat(missing_ignores, file='.gitignore', sep='\n', append=T)
-# }
-
-# archive to repository/branch/scenario
-dir_archive <<- git_repo
-unlink(dir_archive, recursive=T)
-git_branches = setdiff(sapply(git2r::branches(repo, flags='remote'), function(x) str_replace(x@name, 'origin/', '')), c('gh-pages','app'))
-branch_commits = list()
-# JSL don't think we want any of this
-# for (branch in git_branches){ # branch = 'published'
-#
-#   checkout(repo, branch=branch, force=T)
-#   branch_commits[[branch]] = commits(repo)
-#
-#   dir_branch = file.path(dir_archive, branch)
-#
-#   files = list.files(dir_repo, recursive=T)
-#   for (f in files){ # f = shiny_files[1]
-#     dir.create(dirname(file.path(dir_branch, f)), showWarnings=F, recursive=T)
-#     file.copy(file.path(dir_repo, f), file.path(dir_branch, f), overwrite = T, copy.mode=T, copy.date=T) # suppressWarnings)
-#   }
-# }
-# checkout(repo, default_branch)
-
 branch_commits     <<- commits(repo)
 git_head           <<- commits(repo)[[1]]
-dir_scenario       <<- file.path('~/github', dir_archive, default_scenario) # file.path(dir_archive, default_branch, default_scenario)
-# branches_scenarios <<- dirname(list.files(dir_archive, 'scores\\.csv$', recursive=T))
+dir_scenario       <<- file.path('~/github', dir_archive, default_scenario)
 repo_head          <<- branch_commits[[1]]
 
 # check for files/directories
@@ -147,13 +64,6 @@ if (file.exists(sprintf('%s/scores.csv', dir_scenario))){
 }
 dir_spatial  <<- sprintf('%s/spatial'  , dir_scenario)
 dir_scenario <<- dir_scenario
-
-#dir_app = system.file('shiny_app', package='ohicore')
-
-# update path for devtools load_all() mode
-#if (!file.exists(dir_app))  dir_app =  system.file('inst/shiny_app', package='ohicore')
-
-# finished standalone ----
 
 if (debug) {
   #print(sprintf('dir_app: %s', dir_app))
@@ -179,23 +89,27 @@ for (i in 1:length(layers$targets)){ # i=1
       target = targets,
       layer = rep(layer, length(targets))))
 }
-layer_targets = merge(
+layer_targets = left_join(
   layer_targets,
   rbind(
-    rename(
-      conf$goals[,c('goal','name','order_hierarchy','parent')],
-      c('goal'='target','name'='target_name','order_hierarchy'='target_order','parent'='target_parent')),
-    data.frame(
+    conf$goals %>%
+      select(target = goal,
+             target_name = name,
+             target_order = order_hierarchy,
+             target_parent = parent),
+      data.frame(
       target        = c('pressures','resilience','spatial'),
       target_name   = c('Pressures','Resilience','Spatial'),
       target_order  = c(       100 ,        101 ,     102),
       target_parent = c(        NA ,         NA ,      NA), stringsAsFactors=F)),
-  all.x=T)
+  by = 'target')
+
 layer_targets = arrange(merge(layer_targets, layers$meta, by='layer', all.x=T), target_order, name)
 layer_targets = within(layer_targets, {
   target_label = sprintf('%s %s', target_order, target_name)
   layer_label  = sprintf('%s (%s)', name, layer)
-}) # [,c('label','value')]
+})
+
 
 # get unique layer targets
 sel_layer_target_choices = with(unique(layer_targets[,c('target','target_label')]), setNames(target, target_label))
@@ -219,16 +133,6 @@ if (is.na(lyr_fld_year)){
 # Layers: get_var() ----
 # reactiveValues ----
 dir_scenarios = dirname(dir_scenario)
-
-# index or goal
-# conf$goals = within(arrange(
-#   conf$goals, order_hierarchy), {
-#     indented_label = ifelse(!is.na(parent),
-#                             sprintf('. %s', name),
-#                             name)})
-# varGoals      = c('0. Index'='Index', setNames(conf$goals$goal, conf$goals$indented_label)); # print(names(varGoals))
-
-#
 
 # add dir for regions
 addResourcePath('spatial', path.expand(dir_spatial))
