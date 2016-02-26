@@ -39,7 +39,7 @@ if (file.exists('shiny/app.yml')){
   tabs_hide <<- tolower(tabs_hide)
 
   dir_wd <<- getwd()
-
+}
 # } else {
 #   # assuming launching from draft branch having .travis.yml with env$global$default_branch_scenario & env$global$study_area
 #
@@ -125,7 +125,7 @@ branch_commits = list()
 
 branch_commits     <<- commits(repo)
 git_head           <<- commits(repo)[[1]]
-dir_scenario       <<- file.path(dir_archive, default_scenario) # file.path(dir_archive, default_branch, default_scenario)
+dir_scenario       <<- file.path('~/github', dir_archive, default_scenario) # file.path(dir_archive, default_branch, default_scenario)
 # branches_scenarios <<- dirname(list.files(dir_archive, 'scores\\.csv$', recursive=T))
 repo_head          <<- branch_commits[[1]]
 
@@ -416,5 +416,5 @@ PlotMap = function(v, width='100%', height='600px', lon=0, lat=0, zoom=2){  # Ba
               colors   =  names(d$legend),
               labels   =  as.vector(d$legend))
   return(lmap)
-  }
+}
 

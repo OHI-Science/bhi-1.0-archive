@@ -5,4 +5,4 @@
 
 library(shiny)
 setwd('~/github/bhi/baltic2015')
-runApp('~/github/bhi/baltic2015')
+runApp('~/github/bhi/baltic2015/shiny')
