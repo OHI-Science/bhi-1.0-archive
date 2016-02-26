@@ -274,7 +274,7 @@ shinyServer(function(input, output, session) {
     branch_scenario = input$sel_branch_scenario
 
     # update data based on branch and scenario selected
-    dir_scenario <<- file.path(dir_archive, branch_scenario)
+    dir_scenario <<- file.path(dir_repo, default_scenario)
     layers       <<- Layers(file.path(dir_scenario, 'layers.csv'), file.path(dir_scenario, 'layers'))
     conf         <<- Conf(file.path(dir_scenario, 'conf'))
     scores       <<- read.csv(file.path(dir_scenario, "scores.csv"), na.strings="")
@@ -699,7 +699,7 @@ shinyServer(function(input, output, session) {
       #g_csv = isolate(sprintf('%s/%s/conf/goals.csv', dir_archive, input$a_branch_scenario))
 
       # get necessary goals and regions from most recent A branch
-      a_dir_archive_scenario <- file.path(dir_archive, input$a_branch_scenario)
+      a_dir_archive_scenario <- file.path(dir_repo, input$a_branch_scenario)
       csv_goals <- file.path(a_dir_archive_scenario, 'conf/goals.csv')
       conf      <- Conf(file.path(a_dir_archive_scenario, 'conf'))
       csv_rgns  <- sprintf('%s/layers/%s.csv', a_dir_archive_scenario, conf$config$layer_region_labels)

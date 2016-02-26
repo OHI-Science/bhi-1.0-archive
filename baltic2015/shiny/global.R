@@ -1,7 +1,6 @@
 # setwd('/Volumes/data_edit/git-annex/clip-n-ship/Ecuador/shinyapps.io')
 # see launch_app(), makes global variables: conf, layers, scores, dir_spatial, dir_scenario
 suppressPackageStartupMessages({
-  require(plyr)
   require(dplyr)
   require(shiny)
   require(RJSONIO)
@@ -11,7 +10,6 @@ suppressPackageStartupMessages({
   require(yaml)
   require(ohicore)
   require(ggvis)
-  rename = plyr::rename
   require(stringr)
   require(git2r)
   tag   = shiny::tag
@@ -28,22 +26,23 @@ ohi_dimensions <<- c('score','status','trend','pressures','resilience','future')
 ohi_goals      <<- c('Index','FIS','FP','MAR','AO','NP','CS','CP','TR','LIV','LE','ECO','ICO','SP','LSP','CW','HAB','BD','SPP')
 
 ## load configuration
-  y = yaml.load_file('shiny/app.yml')
-  for (o in ls(y)){
-    assign(o, y[[o]], globalenv())
-  }
-  tabs_hide <<- tolower(tabs_hide)
-  dir_wd <<- getwd()
+y = yaml.load_file('app.yml')
+for (o in ls(y)){
+  assign(o, y[[o]], globalenv())
+}
+tabs_hide <<- tolower(tabs_hide)
 
+## directories
+dir_wd <<- getwd()
 setwd(dir_wd)
+dir_repo  <<- '~/github/bhi'
 
 # identify github repository, access commits
-dir_repo  <<- 'github'
-repo = repository('~/github/bhi')
+repo = repository(dir_repo)
 repo <<- repo
 branch_commits     <<- commits(repo)
 git_head           <<- commits(repo)[[1]]
-dir_scenario       <<- file.path('~/github', dir_archive, default_scenario)
+dir_scenario       <<- file.path(dir_repo, default_scenario)
 repo_head          <<- branch_commits[[1]]
 
 # check for files/directories
@@ -103,7 +102,6 @@ layer_targets = left_join(
       target_order  = c(       100 ,        101 ,     102),
       target_parent = c(        NA ,         NA ,      NA), stringsAsFactors=F)),
   by = 'target')
-
 layer_targets = arrange(merge(layer_targets, layers$meta, by='layer', all.x=T), target_order, name)
 layer_targets = within(layer_targets, {
   target_label = sprintf('%s %s', target_order, target_name)
@@ -141,8 +139,12 @@ addResourcePath('spatial', path.expand(dir_spatial))
 smax = 1 # max for goals slider inputs
 
 
-rgn_names = rbind(rename(SelectLayersData(layers, layers=conf$config$layer_region_labels, narrow=T), c('id_num'='rgn_id', 'val_chr'='rgn_name'))[,c('rgn_id','rgn_name')],
-                  data.frame(rgn_id=0, rgn_name='GLOBAL'))
+rgn_names =
+  rbind(
+    data.frame(rgn_id=0, rgn_name='BALTIC'),
+    SelectLayersData(layers, layers=conf$config$layer_region_labels, narrow=T) %>%
+      select(rgn_id = id_num,
+             rgn_name = val_chr))
 
 # get goals for aster, all and specific to weights
 goals.all = arrange(conf$goals, order_color)[['goal']]
