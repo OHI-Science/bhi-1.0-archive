@@ -307,7 +307,7 @@ shinyServer(function(input, output, session) {
       d = ohicore::SelectLayersData(layers, layers=lyr, narrow=T)
       fld_id_num = subset(layers$meta, layer==lyr, fld_id_num, drop=T)
       if (!is.na(fld_id_num) && fld_id_num=='rgn_id'){
-        d = rename(d, c('id_num'='rgn_id'))
+        d = plyr::rename(d, c('id_num'='rgn_id'))
         v$fld_id = 'rgn_id'
       } else {
         v$fld_id = ifelse(!is.na(fld_id_num), fld_id_num, subset(layers$meta, layer==lyr, fld_id_chr, drop=T))

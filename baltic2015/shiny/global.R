@@ -1,5 +1,8 @@
-# setwd('/Volumes/data_edit/git-annex/clip-n-ship/Ecuador/shinyapps.io')
-# see launch_app(), makes global variables: conf, layers, scores, dir_spatial, dir_scenario
+## global.r
+
+## setwd('~/github/bhi/baltic2015/shiny') # for debugging
+
+## load packages
 suppressPackageStartupMessages({
   require(dplyr)
   require(shiny)
@@ -143,7 +146,7 @@ rgn_names =
   rbind(
     data.frame(rgn_id=0, rgn_name='BALTIC'),
     SelectLayersData(layers, layers=conf$config$layer_region_labels, narrow=T) %>%
-      select(rgn_id = id_num,
+      select(rgn_id   = id_num,
              rgn_name = val_chr))
 
 # get goals for aster, all and specific to weights
