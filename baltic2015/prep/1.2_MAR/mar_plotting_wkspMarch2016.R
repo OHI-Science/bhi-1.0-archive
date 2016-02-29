@@ -25,10 +25,19 @@ fileexten="C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r
 #plot data
 ggplot(harvest_tonnes)+geom_point(aes(factor(year),tonnes),size=2) +
   facet_wrap(~rgn_id, scale="free_y")+
+  xlab("Year")+
+  ggtitle("Rainbow Trout Production (tons) by BHI Region")+
   scale_x_discrete(breaks=seq(2005,2014,5)) +  #reduce number of years labels shown
 ggsave(file=paste(fileexten,"mar_data_timeseries.pdf",sep=""),
        width = 210, height = 297, units = "mm")
 
+ggplot(harvest_tonnes)+geom_point(aes(factor(year),tonnes),size=2) +
+  facet_wrap(~rgn_id, scale="free_y")+
+  xlab("Year")+
+  ggtitle("Rainbow Trout Production (tons) by BHI Region")+
+  scale_x_discrete(breaks=seq(2005,2014,5)) +  #reduce number of years labels shown
+  ggsave(file=paste(fileexten,"mar_data_timeseries.wmf",sep=""),
+         width = 210, height = 297, units = "mm")
 
 #for Map get shape files
 #get shape files of bhi regions
@@ -85,6 +94,11 @@ legend("bottomleft", legend=c("Data","No Data"), fill=c("blue","gray"), bty='n')
 mtext("MAR data availability - Rainbow Trout Production")
 dev.off()
 
+win.metafile(paste(fileexten,"mar_data_map.wmf",sep=""))
+plot(shpData2, col=shpData2@data$cols)
+legend("bottomleft", legend=c("Data","No Data"), fill=c("blue","gray"), bty='n')
+mtext("MAR data availability - Rainbow Trout Production")
+dev.off()
 
 
 ############################
