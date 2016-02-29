@@ -3,7 +3,9 @@
 ##Goal of data prep file
 #have data on Total nights in accommodations by NUTS2 regions
 #have percent coastal stays by NUTS1 regions
-#get this percentage (averaged from 2012-2014) and apply to the NUTS2 data #have not done
+#get this percentage (averaged from 2012-2014)
+#apply coastal percentage to the NUTS2 data #have not done
+#For 3 danish regions (DK03,04,05) and one swedish region (SE22)- multiply the Total_nights_coastal*0.5 because have 2 coasts (baltic, non-baltic)
 # Divide this by the coastal area of the NUTS2 region (km2 with 5km buffer inland ?), call this NAC  #have not done
 #create Accom value (BHI_ID_value) for each region (r). contributions from NUTS2_ID (n)
 ##BHI_ID_value_r   =sum [ NAC_n * CoastalArea_n / CoastalPopDen_n] #have not done
@@ -11,9 +13,10 @@
 library(package = dplyr)
 library(package = tidyr)
 library(package = ggplot2)
+theme_set(theme_bw())
 library(colorRamps)
 
-#get GDP data from database
+#get accom data from database
 library(RMySQL)
 
 
@@ -32,6 +35,17 @@ accom.coast.data<-fetch(t,n=-1) # loads selection and assigns it to variable 'da
 head(accom.coast.data) #NUTS2 accommodation stays
 dbClearResult(t) # clears selection (IMPORTANT!)
 
+#fetch BHI-NUTS attributes
+t<-dbSendQuery(con, paste("select * from AT_COAST_NUTS2_BHI_inland_25km_AT ;",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
+nuts2_bhi_area<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+head(nuts2_bhi_area) #
+dbClearResult(t) # clears selection (IMPORTANT!)
+
+t<-dbSendQuery(con, paste("select * from AT_Pop_Density_BHI_inland_25km ;",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
+popdensity2005_inland<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+head(popdensity2005_inland) #popdensity data
+dbClearResult(t) # clears selection (IMPORTANT!)
+
 dbDisconnect(con) # closes connection (IMPORTANT!)
 
 
@@ -40,6 +54,10 @@ dbDisconnect(con) # closes connection (IMPORTANT!)
 glimpse(accom.data)
 
 glimpse(accom.coast.data)
+
+glimpse(nuts2_bhi_area)
+
+glimpse(popdensity2005_inland)
 
 #data type
 unique(accom.data$INDIC_TO_LABEL)#"Nights spent, total"
@@ -79,9 +97,43 @@ glimpse(bhi.factor)
 
 colnames(bhi.factor)[1]="NUTS2_ID"
 
-#join accom.data.bhi, bhi.factor to calculate GDP value per BHI_ID
-bhi.accom.join = full_join(accom.data.bhi, bhi.factor, by="NUTS2_ID")
+#not sure this is needed
+
+
+##########
+#clean up nuts2_bhi_area
+#NUTS_Area [km2] = total NUTS area
+#`25km buffer of NUTS_Area [km2]` =  size of the part of the NUTS area inside the respective 25km inland buffer of BHI region
+#Buffer fraction of NUTS area: 25km NUTS area divided by total NUTS area
+
+#to get the total area for each NUTS in the buffer (across all BHI_ID), need to sum `25km buffer of NUTS_Area [km2]
+
+
+#keep NUTS_AREA & Buffer fraction so can get area of NUTS inside the buffer
+nuts2_bhi_area2 = nuts2_bhi_area%>% select(NUTS_ID,`NUTS_Area [km2]`,`Buffer fraction of NUTS area`, `25km buffer of NUTS_Area [km2]`,BHI_ID)%>%
+  rename(NUTS2_ID = NUTS_ID, NUTS_Area_km2 = `NUTS_Area [km2]`,
+        NUTS_BHI_Area_km2 = `25km buffer of NUTS_Area [km2]`,
+        NUTS_area_buffer_percent =`Buffer fraction of NUTS area`)%>%
+      mutate(NUTS_Area_km2= as.numeric(NUTS_Area_km2), NUTS_BHI_Area_km2=as.numeric(NUTS_BHI_Area_km2),
+             NUTS_area_buffer_percent=as.numeric(NUTS_area_buffer_percent) ) %>% #make numeric not character
+            group_by(NUTS2_ID) %>%
+          mutate(NUTS2_Area_25km2_buffer= sum(NUTS_BHI_Area_km2)) %>% #sum area for each NUTS_ID in each BHI buffer to get the total buffer area
+            ungroup()
+
+glimpse(nuts2_bhi_area2)
+
+#check sum of area
+nuts2_bhi_area2[nuts2_bhi_area2$NUTS2_ID=="SE22",]
+
+
+#join accom.data.bhi with nuts2_bhi_area
+#now NUTS2 accommodation data are associated with a BHI region and the area of the NUTS2 region associated with the BHI region
+bhi.accom.join= left_join(accom.data.bhi,nuts2_bhi_area2, by="NUTS2_ID") #only keep BHI_IDs with regions that have data
 glimpse(bhi.accom.join)
+
+#join accom.data.bhi, bhi.factor to calculate GDP value per BHI_ID
+#bhi.accom.join = full_join(accom.data.bhi, bhi.factor, by="NUTS2_ID")
+#glimpse(bhi.accom.join)
 
 
 
@@ -99,9 +151,13 @@ ggplot(accom.data.bhi)+geom_point(aes(YEAR,TotalNights)) +
 
 #plot each BHI region with applicable accomm stays
 windows(50,30)
-ggplot(bhi.accom.join )+geom_point(aes(YEAR,TotalNights, color=NUTS2_ID)) +
-  facet_wrap(~BHI_ID,scales = "free")
+ggplot(bhi.accom.join )+geom_point(aes(YEAR,TotalNights, color=factor(NUTS2_ID))) +
+  facet_wrap(~BHI_ID)
 
+#plot by BHI region but divide by area associated with BHI region
+windows(50,30)
+ggplot(bhi.accom.join )+geom_point(aes(YEAR,(TotalNights/NUTS_BHI_Area_km2), color=factor(NUTS2_ID))) +
+  facet_wrap(~BHI_ID, scales="free_y")
 
 ##########
 ###Clean accom.coast.data###
@@ -162,12 +218,10 @@ accom.coast.bhi  #this can be used to convert NUTS2 data into the fraction that 
 
 
 #################################
-####Apply the average percent coastal to all the NUTS2_ID data
-
 glimpse(bhi.accom.join)
 accom.coast.bhi
 
-
+####Apply the average percent coastal to all the NUTS2_ID data
 total.night.coast =left_join(bhi.accom.join, accom.coast.bhi, by="NUTS2_ID" )%>% #join the bhi.accom.join to accom.coast.bhi
   mutate(TotalNightsCoast = TotalNights*PERCENT_CST_MEAN) #Calculate the coastal percentage of total Nights
 
@@ -176,21 +230,45 @@ ggplot(total.night.coast)+geom_point(aes(YEAR,TotalNightsCoast,color=NUTS2_ID)) 
   facet_wrap(~BHI_ID, scales="free")
 
 
+#cut coastal stays by 50% for DK & SE regions with nonBaltic coasts included
+#calculate the per km2 stays by NUTS region
+#calculte the allocation to each BHI region
+#the BHI regions have a few NUTS regions incorrectly assigned (need to correct but better to do by fixing map & NUTS allocation)
 
-#####For DK and SE (southwest) -- Need to reduce the # of stays because covering non-Baltic & Baltic Coasts?  Take 50%?
+bhi.accom.join_adj = total.night.coast%>%
+  mutate(TotalNightsCoastAdj =ifelse(grepl("DK03|DK04|DK05|SE23",NUTS2_ID), TotalNightsCoast*0.5,TotalNightsCoast))%>%
 
+  #####For DK and SE (southwest) -- Need to reduce the # of stays because covering non-Baltic & Baltic Coasts?  Take 50%?
+  ##DK03, DK04, and DK05 have both baltic and non-Baltic coast ##SE23 has Baltic and non-Baltic coast
+  ##did this above
 
-#####Divide by NUTS2_ID coastal area (calculating NAC from equation at top of script)
+  mutate(TotNiCoaAdj_km2 = TotalNightsCoastAdj/(NUTS2_Area_25km2_buffer))%>%  #gives stays /km2 in the NUTS2 buffer region  #this is Nac at top of script
 
+  mutate(BHI_stays =TotNiCoaAdj_km2*NUTS_BHI_Area_km2  ) #this is stays per Nuts km2 in the BHI_region
 
-####Calculate BHI region value
+glimpse(bhi.accom.join_adj)
 
+bhi_coast_accom_total=  bhi.accom.join_adj%>%
+  select(BHI_ID, YEAR, BHI_stays)%>% #select only the relevant final columns
+  group_by(BHI_ID,YEAR)%>% #group by year and BHI_ID
+  summarise(BHI_stays_total = sum(BHI_stays)) #sum all stays with in BHI_ID region by year (across all NUTS2_ID)
+
+glimpse(bhi_coast_accom_total)
+tail(bhi_coast_accom_total)
+
+windows(50,30)
+ggplot(bhi_coast_accom_total)+geom_point(aes(YEAR,BHI_stays_total)) +
+  facet_wrap(~BHI_ID, scales="free")
+
+###THESE DATA ARE NOT ADJUSTED BY POP DENSITY - NEED TO DO THIS?
 
 
 #column labels need to be:  rgn_id, year, value
+tr_accom = bhi_coast_accom_total
+colnames(tr_accom)=c("rgn_id","year","value")
 
 #save as CSV
-#tr_accom.csv
+#
 
 
 
