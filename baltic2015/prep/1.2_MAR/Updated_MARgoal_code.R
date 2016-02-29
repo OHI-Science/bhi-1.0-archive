@@ -44,6 +44,14 @@ MAR = function(layers){
     select(rgn_id = id_num,
            popsum = val_num)
 
+  #read the data if working in the prep folder
+  harvest_tonnes =read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/prep/1.2_MAR/mar_harvest_tonnes_bhi2015.csv", header=TRUE)  #mariculture production data by species code
+  harvest_species =read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/prep/1.2_MAR/mar_harvest_species_bhi2015.csv", header=TRUE) #species code and species name
+  sustainability_score = read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/prep/1.2_MAR/mar_sustainability_score_bhi2015.csv",header=TRUE) #sustainability score by species code
+  popn_inland25km =read.csv("C:/Users/jgrif/Documents/github/bhi/baltic2015/prep/1.2_MAR/mar_coastalpopn2005_inland25km_bhi2015.csv",
+                            header=TRUE)#2005 population for BHI inland regions. Apply to all years
+
+
   # SETTING CONSTANTS
   rm_year = 4              #number of years to use when calculating the running mean smoother
   regr_length =5          # number of years to use for regression for trend.  Use this to replace reading in the csv file "mar_trend_years_gl2014"
