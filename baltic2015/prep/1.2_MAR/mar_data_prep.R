@@ -42,7 +42,7 @@ ggplot(mar_dat)+geom_point(aes(Year,Production, colour=factor(SpeciesCode_Countr
 
 #sum all production with each BHI region by year
 mar_tot = mar_dat%>% group_by(BHI_ID,Year, ISSCAAP_FAO, Unit,Sust_coeff_SE)%>%
-  summarise(TotProduction = sum(Production))%>%
+  summarise(TotProduction = sum(Production,na.rm=TRUE))%>%
   arrange(BHI_ID,Year)%>%
   print(n=50)
 
