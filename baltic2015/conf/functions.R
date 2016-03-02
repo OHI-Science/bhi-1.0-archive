@@ -300,7 +300,7 @@ MAR = function(layers){
 
   #####----------------------######
   ###Baltic Wide Spatial Ref Pt
-  # get reference quantile, searches for ref pt across all basins & all years defined in status_years
+  # get reference quantile, searches for ref pt across all basins & all years less than or equal to status_years
   ref_95pct = temp2%>% ungroup()%>%
     select(rgn_id,year,mar_pop)%>%
     filter(year<=max(status_years))%>%
@@ -317,7 +317,7 @@ MAR = function(layers){
 
 
   #####----------------------######
-  # Calculate the status for each year (year_value / ref_value) #only for status years specified
+  # Calculate the status for each year (year_value / ref_value) #all years less than or equal to status_years
   mar_status_score = temp2%>%
     filter(year<=max(status_years))%>%
     mutate(.,status =  pmin(1, mar_pop/ref_95pct)) %>%
@@ -330,7 +330,7 @@ MAR = function(layers){
     full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%
     arrange(rgn_id,year)
 
-  # select last year of data in timeseries for status #last year based on status years specified
+  # select last year of data in timeseries for status #last year based on max of status years specified
   mar_status = mar_status_score %>%
     group_by(rgn_id) %>%
     summarise_each(funs(last), rgn_id, status) %>%
