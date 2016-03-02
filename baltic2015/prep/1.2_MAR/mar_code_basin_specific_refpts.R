@@ -27,6 +27,14 @@ mar_status_score = temp3%>%ungroup()%>%
   mutate(.,status =  pmin(1, mar_pop/ref_95pct)) %>%
   select(rgn_id, year, status)
 
+#give mar_status_score all BHI regions, regions with no data receive NA for last year
+bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(mar_status_score$year)))
+
+mar_status_score = mar_status_score%>%ungroup()%>%
+  full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%
+  arrange(rgn_id,year)
+
+
 # select last year of data in timeseries for status
 mar_status = mar_status_score %>%
   group_by(rgn_id) %>%
