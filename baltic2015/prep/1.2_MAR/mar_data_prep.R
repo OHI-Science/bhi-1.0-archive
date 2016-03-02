@@ -22,7 +22,7 @@ library(RMySQL)
 ####---------------------------------######
 ##Production Data
 #read in data
-mar_dat = read.csv("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/DataDownloads/Mariculture/RainbowTroutProductionSE_FI_DK.csv",
+mar_dat = read.csv("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/DataDownloads/Mariculture/mar_rainbow_production_data.csv",
                    header=TRUE, sep=";")
 mar_dat
 
