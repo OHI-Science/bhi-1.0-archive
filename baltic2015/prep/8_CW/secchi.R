@@ -41,6 +41,9 @@ smhi <- data2 %>%
 allData = bind_rows(ices, smhi) %>%
   rename(rgn_id = BHI_ID)
 
+map_data = filter(allData, Year > 2000) %>%
+  distinct(Latitude, Longitude)
+
 #### preparing data for functions.R ####
 values <- allData %>%
   # rename(rgn_id = BHI_ID) %>%
@@ -110,6 +113,23 @@ summer_secchi_opensea <-
 #### plot to check data ####
 cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
+
+# plot data in map
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
+
+windows()
+ggmap(map) +
+  # ggplot() +  # also produces map, but unprojected points and no background.
+  geom_point(data = filter(map_data, Month %in% c(6:9)), aes(x = Longitude, y = Latitude, color = supplier)) +
+  geom_point(data = filter(map_data, Month %in% c(1:5,7:9)), aes(x = Longitude, y = Latitude, color = supplier, shape = 'winter'), shape = 1) +
+  # scale_color_manual('Source/Season', values = c(supplier, 'winter')) +
+  ggtitle('Secchi depth data, June-September, from 2000- \n open circles show winter data') +
+  theme(title = element_text(size = 14),
+        plot.title = element_text(size = 14, face = "bold")) +
+  ggsave(file="C:/Users/lvikt/Dropbox/Baltic Health Index/Presentations, ppts/figures/figuresMarch2016_WS/CW_NUT_map_secchi.pdf",
+         width = 210, height = 297, units = "mm")
+
 # plots all summer mean data
 windows()
 ggplot() +
@@ -121,8 +141,13 @@ ggplot() +
   scale_color_manual('Area',values = c('open sea' = cbPalette[1], 'coastal'=  cbPalette[2], 'all' =  cbPalette[3], 'ref' = cbPalette[4])) +
   xlim(2000, 2015) +
   # ylim(2,12) +
-  ggtitle("Mean secchi June-Sept") +
-  facet_wrap(~rgn_id, ncol = 5, drop = F)
+  ggtitle("Mean secchi June-Sept \n by BHI region ID") +
+  facet_wrap(~rgn_id, ncol = 5, drop = F) +
+  theme(title = element_text(size = 14),
+        plot.title = element_text(size = 14, face = "bold")) +
+  ggsave(file="C:/Users/lvikt/Dropbox/Baltic Health Index/Presentations, ppts/figures/figuresMarch2016_WS/CW_NUT_summer_mean_all_coast_opens_by_rgn.pdf",
+         width = 210, height = 297, units = "mm")
+
 
 # plots status time-series from functions.R
 windows()
@@ -138,14 +163,17 @@ ylims = data.frame(region_id = 1:42, dimension = 'status', score = 0) %>%
   bind_rows(., data.frame(region_id = 1:42, dimension = 'trend', score = 1)) %>%
   arrange(region_id)
 
-windows(pointsize = 14)
+windows()
 ggplot() +
   geom_point(data = ylims, aes(x = region_id, y = score), color = 'white', size = 0) +      # to get the correct scales for trend and status
   geom_point(data = filter(scores, goal == 'CW', dimension %in% c('status', 'trend')),
              aes(x = region_id, y = score, color = as.factor(region_id)), size = 2) +
-  ggtitle("Status and trend scores from functions.R") +
   facet_wrap(~dimension, ncol = 2, drop = F, scales = 'free_y') +
-  ggsave(file="CW_status_trend.pdf", width = 210, height = 297, units = "mm")
+  ggtitle('Status and trend scores') +
+  theme(title = element_text(size = 14),
+        plot.title = element_text(size = 14, face = "bold")) +
+  ggsave(file="C:/Users/lvikt/Dropbox/Baltic Health Index/Presentations, ppts/figures/figuresMarch2016_WS/CW_NUT_status_trend.pdf",
+         width = 210, height = 297, units = "mm")
 
 # plot allData by country / region
 windows()
@@ -167,9 +195,13 @@ ggplot() +
   geom_point(data = filter(allData, supplier == 'ices'), aes(x = Year, y = secchi, color = supplier)) +
   geom_point(data = summer_mean, aes(x = year, y = summer_secchi, color = 'mean')) +
   scale_color_manual(values = c('smhi' = cbPalette[3], 'ices'= cbPalette[2], 'mean' = 'black')) +
-  xlim(1995, 2015) +
-  ggtitle('summer data') +
-  facet_wrap(~id_label, drop = F)
+  xlim(2000, 2015) +
+  facet_wrap(~rgn_id, drop = F) +
+  ggtitle('Secchi summer data') +
+  theme(title = element_text(size = 14),
+        plot.title = element_text(size = 14, face = "bold")) +
+  ggsave(file="C:/Users/lvikt/Dropbox/Baltic Health Index/Presentations, ppts/figures/figuresMarch2016_WS/CW_NUT_summer_allData_by_rgn.pdf",
+         width = 210, height = 297, units = "mm")
 
 # plots Swedish summer data, showing, smhi, ices and summer mean for them
 windows()
