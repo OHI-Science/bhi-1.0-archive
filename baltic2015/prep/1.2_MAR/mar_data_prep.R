@@ -71,7 +71,8 @@ write.csv(mar_harvest_species_bhi2015, "C:/Users/jgrif/Documents/github/bhi/balt
 #create the sustainability csv
 #"rgn_id","species","sust_coeff"
 mar_sustainability_score_bhi2015= mar_dat%>%select(BHI_ID,CommonName,Sust_coeff_SE)%>%
-    distinct(BHI_ID,CommonName,Sust_coeff_SE)
+    distinct(BHI_ID,CommonName,Sust_coeff_SE)%>%
+    arrange(BHI_ID)
 colnames(mar_sustainability_score_bhi2015)=c("rgn_id","species","sust_coeff")
 write.csv(mar_sustainability_score_bhi2015, "C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv",row.names=FALSE)
 
