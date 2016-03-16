@@ -18,7 +18,9 @@ regions <- read.csv("raw/ICES_fish_ID_assigned.csv") %>%
 write.csv(regions, "intermediate/ICES_2_BHI.csv", row.names=FALSE)
 
 ### Formatting score data  (FFmsy and BBmsy)
-score <- read.csv("../intermediate/fis_status.csv") 
+### This file generated from the raw/present_status_AND_trend.xlsx data
+
+score <- read.csv("../intermediate/fis_status.csv")
 table(score$stock)
 
 score <- score %>%
@@ -26,11 +28,12 @@ score <- score %>%
   left_join(regions, by=c("Fish", "ICES_subdiv")) %>%
   mutate(stock = paste(Fish, ICES_subdiv, sep="_")) %>%
   select(region_id=BHI_ID, stock, year, metric, score)
-  
+
 write.csv(score, "data/FIS_scores.csv", row.names=FALSE)
 
 
 ### Formatting catch data
+### Provided by Stefan: 3/16/2016
 catch <- read.csv("BalticLandings.csv") %>%
   gather("stock", "landings", -1) %>%
   mutate(stock = as.character(stock)) %>%
