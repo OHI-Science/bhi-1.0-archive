@@ -8,6 +8,7 @@
 * [Trend scores](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/1.1_FIS/data/FIS_trend.csv)
 * [R script](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/1.1_FIS/FIS.R) converts the B/Bmsy_F/Fmsy + Landings to Status/Trend data.  Ultimately the content of this script will need to be migrated to function.R (FIS function).
 * original data files are in the "raw" folder (also includes a script I used to prepare some of the data)
+* I'm not sure what the files in the "archive" folder are.  They were there when I started and I moved them in there in case they are important.  Otherwise they should be deleted.
 
 #### B/Bmsy and F/msy to score
 B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this [general relationship](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/1.1_FIS/ffms%3By_bbmsy_2_score.png).
