@@ -25,7 +25,7 @@ library(readxl) # install.packages('readxl')
 library(ggplot2)
 
 dir_prep   = '~/github/bhi/baltic2015/prep'
-dir_raw    = file.path(dir_prep, 'CW/raw/trash')
+dir_raw    = file.path(dir_prep, 'CW/trash/raw')
 trash_file = '1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
 
 ## lookup table
