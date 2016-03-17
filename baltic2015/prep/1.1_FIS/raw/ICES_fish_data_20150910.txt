@@ -1,0 +1,9 @@
+Meta file for ICES fish data
+
+Source: From the ICES database
+ICES_subdiv: these are ICES subdivisions: 22-24, 25-32 for cod, 25-29 and 32 for herring, 28_1 (Gulf of Riga) for herring, 30 for herring, (31 for herring where excluded due to unreliable data !), 22-32 as sprat is managed as one stock
+Fish: the name of the three commercial important fish species: cod, her=herring, spr=sprat 
+SSB: spawning stock biomass in tonnes
+F: fishing mortality
+
+

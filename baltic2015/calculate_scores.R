@@ -12,12 +12,19 @@
 
 source('~/github/bhi/baltic2015/pre_scores.R')
 
-# calculate scenario scores
+## calculate scenario scores
 scores = CalculateAll(conf, layers, debug=T)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
-# merge to published branch (to display on app)
 
+
+## Display app locally.
+## Note 1: to stop the app, type Ctrl+C or Esc, or closing the window.
+## Note 2: if it does not load properly the first time, stop and run again.
+source('launch_app_code.r')
+
+
+## Display app on ohi-science.org/bhi (merge to published branch)
 merge_branches = F
 
 if (merge_branches) {

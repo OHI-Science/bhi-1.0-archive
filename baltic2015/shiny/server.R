@@ -307,7 +307,8 @@ shinyServer(function(input, output, session) {
       d = ohicore::SelectLayersData(layers, layers=lyr, narrow=T)
       fld_id_num = subset(layers$meta, layer==lyr, fld_id_num, drop=T)
       if (!is.na(fld_id_num) && fld_id_num=='rgn_id'){
-        d = plyr::rename(d, c('id_num'='rgn_id'))
+        d = d %>%
+          dplyr::rename(rgn_id = id_num)
         v$fld_id = 'rgn_id'
       } else {
         v$fld_id = ifelse(!is.na(fld_id_num), fld_id_num, subset(layers$meta, layer==lyr, fld_id_chr, drop=T))
@@ -354,7 +355,10 @@ shinyServer(function(input, output, session) {
       v$name = sprintf('%s : %s', g, m)
       attr(v$name, 'target') = g
       attr(v$name, 'dimension') = m
-      v$data = plyr::rename(subset(scores, goal==g & dimension==m, c(region_id, score)), c('region_id'='rgn_id', 'score'='val_num'))
+      v$data = scores %>%
+        filter(goal==g & dimension==m) %>%
+        dplyr::select(rgn_id  = region_id,
+                      val_num = score)
       v$description = paste0('<b>', names(sel_score_target_choices[sel_score_target_choices==g]),'</b>: <em>',
                              ifelse(g=='Index',
                                     conf$config$index_description,
@@ -402,7 +406,8 @@ shinyServer(function(input, output, session) {
 
   # Layers: table ----
   output$table <- renderDataTable({
-    d = rename(GetVar()$data, c('val_num'='value'))
+    d = GetVar()$data %>%
+      dplyr::rename(value = val_num)
 
     # HACK: assuming has rgn_id in layer
     d = merge(d, rgn_names, all.x=T)
