@@ -4,6 +4,8 @@
 Jambeck et al 2015: Plastic waste inputs from land into the ocean
 http://science.sciencemag.org/content/347/6223/768.full.pdf+html
 
+[rendered html methods](https://cdn.rawgit.com/OHI-Science/bhi/draft/baltic2015/prep/CW/trash/trash_prep.html)
+
 raw data stored:
 '~/github/bhi/baltic2015/prep/CW/raw/trash/1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
 
