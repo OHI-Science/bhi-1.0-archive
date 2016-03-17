@@ -1,0 +1,70 @@
+---
+title: "Trash Exploration (Jambeck et al 2015)"
+output: html_document
+---
+
+Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html)
+
+*"the framework includes: 
+    - (i) the mass of waste generated per capita annually; 
+    - (ii) the percentage of waste that is plastic; and 
+    - (iii) the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic."*
+
+## Potential path forward:
+
+**Status**: 2010 modeled values / ref point  
+**Ref pt**: need to explore literature/mgt: some % decrease from 2010...  
+**Trend**: use projected 2025 data to get 5-year trend
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+
+## packages, directories
+library(dplyr)
+library(readr)  # install.packages('readr')
+library(readxl) # install.packages('readxl')
+library(ggplot2)
+
+dir_prep   = '~/github/bhi/baltic2015/prep'
+dir_raw    = file.path(dir_prep, 'CW/raw/trash')
+trash_file = '1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
+
+## lookup table
+baltic_lookup = read_csv(file.path(dir_prep, 'country_id.csv'))
+
+```
+
+## Modeled Mismanaged plastic waste 2010 
+Note: these data are for all of these countries, so do fraction of coastline or something to downweight
+```{r data explore, echo = FALSE, message = FALSE, warning = FALSE}
+## read in data
+d_raw = read_excel(file.path(dir_raw, trash_file));  #head(d_raw); summary(d_raw)
+
+## filter and rename
+d = d_raw %>%
+  dplyr::rename(
+    country              = Country,
+    econ_status          = `Economic status1`,
+    coastal_pop          = `Coastal population2`,
+    modeled_waste_percap = `Mismanaged plastic waste [kg/person/day]7`,
+    modeled_waste_2010   = `Mismanaged plastic waste in 2010\r\n [tonnes]7`,
+    modeled_waste_2025   = `Mismanaged plastic waste in 2025\r\n [tonnes]7`) %>%
+  filter(country %in% baltic_lookup$country_name)
+
+## plot 2010
+ggplot(d, aes(country, modeled_waste_2010)) +
+  geom_bar(stat='identity')
+
+```
+
+
+## Modeled Mismanaged plastic waste 2025
+Note: these data are for all of these countries, so do fraction of coastline or something to downweight
+
+```{r data explore 2025, echo = FALSE, message = FALSE, warning = FALSE}
+
+## plot 2025
+ggplot(d, aes(country, modeled_waste_2025)) +
+  geom_bar(stat='identity')
+
+```
+
