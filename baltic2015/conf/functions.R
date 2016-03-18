@@ -392,6 +392,12 @@ AO = function(layers,
               year_min=max(min(layers_data$year, na.rm=T), year_max - 10),
               Sustainability=1.0){
 
+  ## based off of the HELCOM coastal fish indicator
+  ## ohi-Fiji used this approach, although they calculated the fish indicator within functions.r. (but conceptually is the same)
+  ## http://www.sciencedirect.com/science/article/pii/S2212041614001363
+  ## github.com/OHI-Science/ohi-fiji/blob/master/fiji2013/conf/functions.R
+
+
   # cast data
   layers_data = SelectLayersData(layers, targets='AO')
 
@@ -1465,6 +1471,10 @@ CW = function(layers){
   # make new ref point csv file with correct header.
   # add contaminants, trash and secchi depth as subgoals and then calculate CW scores as arithmetric mean of those scores.
   ##
+
+  ## Trash ideas
+  ## Use Jambeck et al 2015: http://science.sciencemag.org/content/347/6223/768.full
+  ## baltic2015/prep/CW/trash_prep.r
 
   min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
   regr_length = 10       # number of years to use for regression
