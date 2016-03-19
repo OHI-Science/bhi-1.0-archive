@@ -1,6 +1,7 @@
-#######################################
-## Extracting the species data for BHI
-#######################################
+#############################################
+## Linking the HELCOM data to baltic regions
+## MRF Mar 18 2016
+#############################################
 
 library(sp)
 library(rgdal)
