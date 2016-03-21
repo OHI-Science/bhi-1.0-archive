@@ -1,5 +1,6 @@
 # Prep GDP data for ECO goal
 
+## Data
 Prepping Eurostat regional (NUTS3) GDP data for Eco sub-goal
 current data (02/19/2016) are nominal GDP data. Currently does not include full German time series. 
 
@@ -9,3 +10,13 @@ Eurostat Database names
 
 
 `GDP_prep.R` prepares data; requires access to BHI database. 
+
+## Goal Model
+
+'Xeco = (GDP_NUTS3_c/GDP_NUTS3_r)/(GDP_Country_c/GDP_Country_r)  
+'c = current year, r=reference year  '
+'reference point is a moving window (single year value)
+'data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out)  
+'each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region
+
+## Considerations

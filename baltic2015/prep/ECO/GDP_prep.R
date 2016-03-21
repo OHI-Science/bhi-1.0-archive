@@ -1,9 +1,11 @@
 ##Prepping Eurostat regional (NUTS3) GDP data for Eco sub-goal
-##current data (02/19/2016) are nominal GDP data - are not appropriate for status calc until corrected
+##current data (02/19/2016) are nominal GDP data
 
-library(package = dplyr)
-library(package = tidyr)
-library(package = ggplot2)
+#libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr) # install.packages("stringr")
 
 
 #get GDP data from database
@@ -48,12 +50,6 @@ data.nuts3 =data %>%select(-starts_with("BHI"))%>%
 
 data.nuts3 =data.nuts3%>%mutate(YEAR=as.numeric(YEAR), GDP=as.numeric(GDP))
 glimpse(data.nuts3)
-
-#Load GDP deflator (price index) and calculate real GDP
-# Ref year is:
-#Equation:  Real_GDP = Nominal_GDP / (Price_Index * 100)  ##need to check
-
-#CALCULATE REAL GDP
 
 
 
@@ -167,6 +163,7 @@ bhi.gdp[is.na(bhi.gdp$YEAR),"YEAR"] =2012
 #bhi.gdp correct column headers
 colnames(bhi.gdp)=c("rgn_id","year","gdp_mio_euro")
 print(bhi.gdp,n=1000)
+
 
 #write to temp cvs to check calculations here in the prep folder
 bhi.gdp.temp=bhi.gdp
