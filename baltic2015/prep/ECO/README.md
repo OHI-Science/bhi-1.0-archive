@@ -3,6 +3,9 @@
 ## Data
 
 ### Regional Data
+
+`GDP_prep.R` prepares data; requires access to BHI database. 
+
 Prepping Eurostat regional (NUTS3) GDP data for Eco sub-goal
 current data (02/19/2016) are nominal GDP data. Currently does not include full German time series. 
 
@@ -10,8 +13,6 @@ Eurostat Database names
  
 - [nama_10r_3gdp](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp)
 
-
-`GDP_prep.R` prepares data; requires access to BHI database. 
 
 ### Country Level data
 Prepping Eurostat Country GDP data for Eco sub-goal
@@ -33,4 +34,4 @@ Eurostat Database names
 
 ## Considerations
 
-'Data from each NUTS3 region assigned to BHI region by equally splitting NUTS3 value by number of associated BHI_IDs. This needs to be updated to allocate by the fraction of the population density in the NUTS3 area associated with the BHI_ID (within the 25km inland buffer)
+Data from each NUTS3 region assigned to BHI region by equally splitting NUTS3 value by number of associated BHI_IDs. This needs to be updated to allocate by the fraction of the population density in the NUTS3 area associated with the BHI_ID (within the 25km inland buffer)
