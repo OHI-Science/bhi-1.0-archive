@@ -41,6 +41,7 @@ glimpse(data)
 colnames(data)[1]="EUROSTAT_unit"  #replace geo\\time with NUTS3_ID
 colnames(data)[2]="NUTS3_ID"  #replace geo\\time with NUTS3_ID
 
+
 #select only GDP data, long data format, select only unit "MIO_EUR"
 data.nuts3 =data %>%select(-starts_with("BHI"))%>%
   gather(YEAR,GDP, -EUROSTAT_unit, -NUTS3_ID)%>%
@@ -144,6 +145,7 @@ bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_8")%>%
 #this should be fixed when new map created, will need to rerun
 #BHI_ID_23- Has both LV and LT assigned, LT is missing data, LV should not be assigned, problem from map join,
 #will hopefully be fixed with new map
+#factors simply 1/num. of BHI_ID associated with a single NUTS3.  Should be updated to reflect population density
 
 bhi.gdp= bhi.nuts3.join %>% filter(YEAR<2013)%>%
   group_by(BHI_ID,YEAR) %>%
@@ -163,6 +165,10 @@ bhi.gdp[is.na(bhi.gdp$YEAR),"YEAR"] =2012
 #bhi.gdp correct column headers
 colnames(bhi.gdp)=c("rgn_id","year","gdp_mio_euro")
 print(bhi.gdp,n=1000)
+
+#rename rgn_ids from string to numeric(eg BHI_ID_19 to 19)
+bhi.gdp =bhi.gdp %>%
+  mutate(rgn_id = str_replace_all(rgn_id,"BHI_ID_",""))
 
 
 #write to temp cvs to check calculations here in the prep folder
