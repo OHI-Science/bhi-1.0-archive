@@ -1322,6 +1322,82 @@ LIV_ECO = function(layers, subgoal){
 
 }
 
+ECO = function(scores, layers){
+
+  ## temp readin TODO: SelectLayers()
+  library(dplyr)
+  le_gdp = read.csv('~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv'); head(le_gdp)
+
+
+  # ECO status
+  eco_region = le_gdp %>%
+    dplyr::rename(gdp = gdp_mio_euro) %>%
+    filter(!is.na(gdp)) %>%
+    group_by(rgn_id)%>%
+    mutate(year_ref = lag(year, 5, order_by=year),
+           ref_val = lag(gdp, 5, order_by=year))%>% #create ref year and value which is value 5 years preceeding within a BHI region
+    arrange(year)%>%
+    filter(year>= max(year)- 5) %>% #filter most recent 5 year for each region for status calc
+
+    # reference for revenue [e]: value in the current year (or most recent year) [c], relative to the value in a recent moving reference period [r] defined as 5 years prior to [c]
+    arrange(rgn_id, year) %>%
+    group_by(rgn_id) %>%
+    mutate(
+      rev_sum_first  = first(rev_sum)) %>%
+    # calculate final scores
+    ungroup() %>%
+    mutate(
+      score  = pmin(rev_sum / rev_sum_first, 1) * 100) %>%
+    # get most recent year
+    filter(year == max(year, na.rm=T)) %>%
+    # format
+    mutate(
+      goal      = 'ECO',
+      dimension = 'status') %>%
+    select(
+      goal, dimension,
+      region_id = rgn_id,
+      score)
+  eco_status
+
+  print(eco_status, n=100)
+
+  # ECO trend
+  eco_trend = eco %>%
+    filter(!is.na(rev_adj)) %>%
+    filter(year >= max(year, na.rm=T) - 4 ) %>% # 5 year trend
+    # get sector weight as total revenue across years for given region
+    arrange(rgn_id, year, sector) %>%
+    group_by(rgn_id, sector) %>%
+    mutate(
+      weight = sum(rev_adj, na.rm=T)) %>%
+    # get linear model coefficient per region-sector
+    group_by(rgn_id, sector, weight) %>%
+    do(mdl = lm(rev_adj ~ year, data=.)) %>%
+    summarize(
+      weight = weight,
+      rgn_id = rgn_id,
+      sector = sector,
+      # TODO: consider how the units affect trend; should these be normalized? cap per sector or later?
+      sector_trend = pmax(-1, pmin(1, coef(mdl)[['year']] * 5))) %>%
+    # get weighted mean across sectors per region
+    group_by(rgn_id) %>%
+    summarize(
+      score = weighted.mean(sector_trend, weight, na.rm=T)) %>%
+    # format
+    mutate(
+      goal      = 'ECO',
+      dimension = 'trend') %>%
+    select(
+      goal, dimension,
+      region_id = rgn_id,
+      score)
+
+  eco_trend
+  print(eco_trend,n=100)
+
+}
+
 
 LE = function(scores, layers){
 
