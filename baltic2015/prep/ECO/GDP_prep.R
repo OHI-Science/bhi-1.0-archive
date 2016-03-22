@@ -1,9 +1,11 @@
 ##Prepping Eurostat regional (NUTS3) GDP data for Eco sub-goal
-##current data (02/19/2016) are nominal GDP data - are not appropriate for status calc until corrected
+##current data (02/19/2016) are nominal GDP data
 
-library(package = dplyr)
-library(package = tidyr)
-library(package = ggplot2)
+#libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr) # install.packages("stringr")
 
 
 #get GDP data from database
@@ -39,6 +41,7 @@ glimpse(data)
 colnames(data)[1]="EUROSTAT_unit"  #replace geo\\time with NUTS3_ID
 colnames(data)[2]="NUTS3_ID"  #replace geo\\time with NUTS3_ID
 
+
 #select only GDP data, long data format, select only unit "MIO_EUR"
 data.nuts3 =data %>%select(-starts_with("BHI"))%>%
   gather(YEAR,GDP, -EUROSTAT_unit, -NUTS3_ID)%>%
@@ -48,12 +51,6 @@ data.nuts3 =data %>%select(-starts_with("BHI"))%>%
 
 data.nuts3 =data.nuts3%>%mutate(YEAR=as.numeric(YEAR), GDP=as.numeric(GDP))
 glimpse(data.nuts3)
-
-#Load GDP deflator (price index) and calculate real GDP
-# Ref year is:
-#Equation:  Real_GDP = Nominal_GDP / (Price_Index * 100)  ##need to check
-
-#CALCULATE REAL GDP
 
 
 
@@ -148,11 +145,13 @@ bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_8")%>%
 #this should be fixed when new map created, will need to rerun
 #BHI_ID_23- Has both LV and LT assigned, LT is missing data, LV should not be assigned, problem from map join,
 #will hopefully be fixed with new map
+#factors simply 1/num. of BHI_ID associated with a single NUTS3.  Should be updated to reflect population density
 
 bhi.gdp= bhi.nuts3.join %>% filter(YEAR<2013)%>%
   group_by(BHI_ID,YEAR) %>%
   summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=FALSE)) %>%
-  arrange(BHI_ID)
+  arrange(BHI_ID)%>%
+  ungroup()
 
 print(bhi.gdp, n=1000)
 
@@ -168,26 +167,13 @@ bhi.gdp[is.na(bhi.gdp$YEAR),"YEAR"] =2012
 colnames(bhi.gdp)=c("rgn_id","year","gdp_mio_euro")
 print(bhi.gdp,n=1000)
 
-#write to temp cvs to check calculations here in the prep folder
-bhi.gdp.temp=bhi.gdp
-write.csv(bhi.gdp.temp, "~/github/bhi/baltic2015/prep/6.2_ECO/le_gdp_tempbhi2015.csv", row.names = F)
-
-#####calculate BHI_ID GDP, only 2010-2012 because no missing NUTS3 data#####
-
-# bhi.gdp= bhi.nuts3.join %>% filter(YEAR%in%c(2010,2011,2012))%>%
-#   group_by(BHI_ID,YEAR) %>%
-#   summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=TRUE)) %>%
-#   arrange(BHI_ID)
-#
-# bhi.gdp
+#rename rgn_ids from string to numeric(eg BHI_ID_19 to 19)
+bhi.gdp =bhi.gdp %>%
+  mutate(rgn_id = str_replace_all(rgn_id,"BHI_ID_",""))
 
 
-
-#write csv to layers
-##Commented out so don't export every time
-#write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv", row.names = F)
-
-
+##write to csv in layers
+write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv", row.names = FALSE)
 
 ##################################################################
 ###TESTS / EXPLORARTORY ###
