@@ -150,7 +150,8 @@ bhi.nuts3.join%>%filter(BHI_ID=="BHI_ID_8")%>%
 bhi.gdp= bhi.nuts3.join %>% filter(YEAR<2013)%>%
   group_by(BHI_ID,YEAR) %>%
   summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=FALSE)) %>%
-  arrange(BHI_ID)
+  arrange(BHI_ID)%>%
+  ungroup()
 
 print(bhi.gdp, n=1000)
 
@@ -171,26 +172,8 @@ bhi.gdp =bhi.gdp %>%
   mutate(rgn_id = str_replace_all(rgn_id,"BHI_ID_",""))
 
 
-#write to temp cvs to check calculations here in the prep folder
-bhi.gdp.temp=bhi.gdp
-write.csv(bhi.gdp.temp, "~/github/bhi/baltic2015/prep/6.2_ECO/le_gdp_tempbhi2015.csv", row.names = F)
-
-#####calculate BHI_ID GDP, only 2010-2012 because no missing NUTS3 data#####
-
-# bhi.gdp= bhi.nuts3.join %>% filter(YEAR%in%c(2010,2011,2012))%>%
-#   group_by(BHI_ID,YEAR) %>%
-#   summarise(BHI_ID_GDP = sum(FACTOR_NUTS3*GDP, na.rm=TRUE)) %>%
-#   arrange(BHI_ID)
-#
-# bhi.gdp
-
-
-
-#write csv to layers
-##Commented out so don't export every time
-#write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv", row.names = F)
-
-
+##write to csv in layers
+write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv", row.names = FALSE)
 
 ##################################################################
 ###TESTS / EXPLORARTORY ###
