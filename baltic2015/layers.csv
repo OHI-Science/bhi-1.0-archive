@@ -61,12 +61,12 @@ Data sources:
 
 - [International Union for Conservation of Nature (IUCN)](http://www.iucnredlist.org/technical-documents/classification-schemes/threats-classification-scheme)
 ","popn_trend","trend score","ico_spp_popn_trend_gl2014.csv","equal","global trends were applied equally to all regions.","ico_spp_popn_trend","~/github/ohi-global/eez2014/layers/ico_spp_popn_trend.csv","global","rgn_id",,"sciname",,,"popn_trend",TRUE,,,,,FALSE,,,,42,
-"LE","le_gdp","GDP","Gross Domestic Product (GDP) data (nominal values) from Eurostat.
+"LE","le_gdp_region","GDP per BHI region","Gross Domestic Product (GDP) data (nominal values) from Eurostat.
 
 Data sources:
 
 - [Eurostat](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp)
-","gdp_mio_euro","EURO","le_gdp_bhi2015.csv","population_inland25km","global GDP data were applied to each region after weighting by each region's coastal population.","le_gdp","~/github/ohi-global/eez2014/layers/le_gdp.csv","global","rgn_id",,,"year","gdp_mio_euro",,TRUE,2000,2012,113.8,91799.25,FALSE,,,,42,FALSE
+","gdp_mio_euro","EURO","le_gdp_region_bhi2015.csv","population_inland25km","global GDP data were applied to each region after weighting by each region's coastal population.","le_gdp","~/github/ohi-global/eez2014/layers/le_gdp.csv","global","rgn_id",,,"year","gdp_mio_euro",,TRUE,2000,2012,113.8,91799.25,FALSE,,,,42,FALSE
 "LE","le_jobs_sector_year","Jobs","gapfilled","value","jobs","le_jobs_sector_year_gl2014.csv","equal","global trends were applied equally to each region. ","le_jobs_sector_year","~/github/ohi-global/eez2014/layers/le_jobs_sector_year.csv","global","rgn_id",,"sector","year","value",,TRUE,1998,2010,0,410244,FALSE,,,,42,FALSE
 "LE","le_unemployment","Unemployment","gapfilled","percent","percent unemployed","le_unemployment_gl2014.csv","equal","global unemployment percentages were applied equally to each region. ","le_unemployment","~/github/ohi-global/eez2014/layers/le_unemployment.csv","global","rgn_id",,,"year","percent",,TRUE,1998,2010,3.32031,19.6448,FALSE,,,,42,FALSE
 "LE","le_wage_sector_year","Wages","gapfilled","value","2010 USD","le_wage_sector_year_gl2014.csv","equal","global wages were applied equally to each region. ","le_wage_sector_year","~/github/ohi-global/eez2014/layers/le_wage_sector_year.csv","global","rgn_id",,"sector","year","value",,TRUE,1993,2008,307.699,238506,FALSE,,,,42,FALSE

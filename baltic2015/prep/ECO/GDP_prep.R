@@ -168,12 +168,12 @@ colnames(bhi.gdp)=c("rgn_id","year","gdp_mio_euro")
 print(bhi.gdp,n=1000)
 
 #rename rgn_ids from string to numeric(eg BHI_ID_19 to 19)
-bhi.gdp =bhi.gdp %>%
+bhi.gdp = bhi.gdp %>%
   mutate(rgn_id = str_replace_all(rgn_id,"BHI_ID_",""))
 
 
 ##write to csv in layers
-write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv", row.names = FALSE)
+write.csv(bhi.gdp, "~/github/bhi/baltic2015/layers/le_gdp_region_bhi2015.csv", row.names = FALSE)
 
 ##################################################################
 ###TESTS / EXPLORARTORY ###
@@ -227,13 +227,17 @@ eco = le_gdp %>%
 eco
 
 # ECO status
-eco_status = eco %>%
-  filter(!is.na(rev_adj)) %>%
-  filter(year >= max(year, na.rm=T) - 4) %>% # reference point is 5 years ago, #selects data for up to past 5 years
-  # across sectors, revenue is summed
-  group_by(rgn_id, year) %>%
-  summarize(
-    rev_sum  = sum(rev_adj, na.rm=T)) %>%
+library(dplyr)
+le_gdp = read.csv('/Users/julialowndes/github/bhi/baltic2015/layers/le_gdp_bhi2015.csv')
+
+eco_status = le_gdp %>%
+  dplyr::rename(gdp = gdp_mio_euro) %>%
+  filter(!is.na(gdp)) %>%
+  group_by(rgn_id) %>%
+  mutate(year_ref = as.integer(year-5)) %>%
+  mutate(gdp_ref = lag(gdp, 5, order_by = year)); head(eco_status, 20)
+
+
   # reference for revenue [e]: value in the current year (or most recent year) [c], relative to the value in a recent moving reference period [r] defined as 5 years prior to [c]
   arrange(rgn_id, year) %>%
   group_by(rgn_id) %>%
