@@ -41,6 +41,10 @@ smhi <- data2 %>%
 allData = bind_rows(ices, smhi) %>%
   rename(rgn_id = BHI_ID)
 
+#write all data to csv so can be discussed
+#write.csv(allData, "prep/CW/secchi_all_data.csv", row.names=FALSE )
+#allData = read.csv("prep/CW/secchi_all_data.csv",header=TRUE)
+
 map_data = filter(allData, Year > 2000) %>%
   distinct(Latitude, Longitude)
 
