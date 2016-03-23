@@ -6,6 +6,7 @@ output: html_document
 Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html)
 
 *"the framework includes: 
+
     - (i) the mass of waste generated per capita annually; 
     - (ii) the percentage of waste that is plastic; and 
     - (iii) the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic."*
@@ -42,13 +43,26 @@ d_raw = read_excel(file.path(dir_raw, trash_file));  #head(d_raw); summary(d_raw
 ## filter and rename
 d = d_raw %>%
   dplyr::rename(
-    country              = Country,
-    econ_status          = `Economic status1`,
-    coastal_pop          = `Coastal population2`,
-    modeled_waste_percap = `Mismanaged plastic waste [kg/person/day]7`,
-    modeled_waste_2010   = `Mismanaged plastic waste in 2010\r\n [tonnes]7`,
-    modeled_waste_2025   = `Mismanaged plastic waste in 2025\r\n [tonnes]7`) %>%
+    country                      = Country,
+    econ_status                  = `Economic status1`,
+    coastal_pop                  = `Coastal population2`,
+    waste_gen_rate_kg_person_day = `Waste generation rate [kg/person/day]3`,
+    perc_plastic_waste_stream    = `% Plastic in waste stream4`,
+    perc_inadq_managed_waste     = `% Inadequately managed waste5`,
+    perc_littered_waste          = `% Littered waste6`,
+    waste_gen_kg_day             = `Waste generation [kg/day]7`,
+    plastic_waste_gen_kg_day     = `Plastic waste generation [kg/day]7`,
+    inadq_managed_plastic_kg_day = `Inadequately managed plastic waste [kg/day]7`,
+    plastic_waste_littered       = `Plastic waste littered\r\n [kg/day]7`,
+    modeled_waste_percap         = `Mismanaged plastic waste [kg/person/day]7`,
+    modeled_waste_2010           = `Mismanaged plastic waste in 2010\r\n [tonnes]7`,
+    modeled_waste_2025           = `Mismanaged plastic waste in 2025\r\n [tonnes]7`) %>%
   filter(country %in% baltic_lookup$country_name)
+
+
+## save data (columnnames cleaned and data filtered for BHI)
+
+write.csv(d, '~/github/bhi/baltic2015/prep/CW/trash/trash_jambeck_baltic.csv')
 
 ## plot 2010
 ggplot(d, aes(country, modeled_waste_2010)) +
