@@ -62,7 +62,7 @@ d = d_raw %>%
 
 ## save data (columnnames cleaned and data filtered for BHI)
 
-write.csv(d, '~/github/bhi/baltic2015/prep/CW/trash/trash_jambeck_baltic.csv')
+write.csv(d, '~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
 
 ## plot 2010
 ggplot(d, aes(country, modeled_waste_2010)) +
@@ -79,6 +79,42 @@ Note: these data are for all of these countries, so do fraction of coastline or 
 ## plot 2025
 ggplot(d, aes(country, modeled_waste_2025)) +
   geom_bar(stat='identity')
+
+```
+
+
+## Prepare data layer for Toolbox 
+
+**Plan:** 
+
+Modeled Mismanaged plastic waste data (tonnes) are reported for each country. We will create scores for each country related to the reference point, and then apply to all of that country's BHI regions under the assumption that the management for the country is probably equal.  Note: for BHI 2.0, would be better to recalcuate their model using coastal population for each BHI region. 
+
+**Reference points**
+
+Need a min and a max reference point (they will ultimately be inverted for CW but not as a pressure)
+
+- **Minimum modeled trash entering the ocean = 0** (we want no trash entering the ocean)
+- **Maximum modeled trash entering the ocean = highest Eurpean country in 2025** (we have 2025 modeled data. Is this reasonable, ie do we think that the maximum trash we see in Europe, or is that too high because it's based on a larger population that we don't have now? Another option would be to make a linear model between 2010 and 2025 and choose a year more like 2015?)
+
+
+```{r data layer, echo = FALSE, message = FALSE, warning = FALSE}
+
+# d = read.csv('~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
+
+## rescale to reference point -- whole European area? or just Baltic?
+summary(d)  
+
+trash = d %>%
+  select(country, coastal_pop, modeled_waste_2010, modeled_waste_2025)
+
+## 
+
+  
+
+## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?
+
+## assign to BHI regions
+  
 
 ```
 
