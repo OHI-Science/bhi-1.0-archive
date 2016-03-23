@@ -1,6 +1,15 @@
 ## Trash data from Jambeck et al. 2015
 
 
+### Data
+
+Raw data are stored in `prep/CW/trash/raw`. 
+
+`trash_prep.rmd` renames headers and filters for Baltic countries; saves as `prep/CW/trash/intermediate/trash_jambeck_baltic.csv`
+
+
+### Info 
+
 Jambeck et al 2015: Plastic waste inputs from land into the ocean
 http://science.sciencemag.org/content/347/6223/768.full.pdf+html
 
