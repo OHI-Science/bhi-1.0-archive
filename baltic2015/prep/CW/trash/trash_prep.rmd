@@ -208,6 +208,12 @@ baltic_layer = eur_rus %>%
       (modeled_waste_2025 - ref_point_min) /
       (ref_point_max_2025 - ref_point_min))); baltic_layer; summary(baltic_layer)
 
+#compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
+ggplot(baltic_layer)+
+  geom_point(aes(country,trash_score_2010, colour="red"))+
+  geom_point(aes(country,trash_score_2025))+
+  ggtitle('Country Trash Score')
+
 
 
 
