@@ -180,26 +180,36 @@ eur_rus = rbind(
 # 28       Slovenia      336594           556.0515            984.811
 
 
-## set min and max reference points
-ref_point_max_2010 = eur_rus %>%
-  filter(modeled_waste_2010 == max(modeled_waste_2010)); print(ref_point_max_2010)
-
-ref_point_max_2025 = eur_rus %>%
-  filter(modeled_waste_2025 == max(modeled_waste_2025)); print(ref_point_max_2025)
+## set min and max reference points ----
+## rescale to reference point -- whole European
+## to normalize data: normalized = (x-min(x))/(max(x)-min(x))
 
 ref_point_min = 0
 
+##2010
+ref_point_max_2010 = eur_rus %>%
+  filter(modeled_waste_2010 == max(modeled_waste_2010)); print(ref_point_max_2010)
+ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
 
-## rescale to reference point -- whole European area? or just Baltic?
-## to normalize data: normalized = (x-min(x))/(max(x)-min(x))
+## 2025
+ref_point_max_2025 = eur_rus %>%
+  filter(modeled_waste_2025 == max(modeled_waste_2025)); print(ref_point_max_2025)
+ref_point_max_2025 = ref_point_max_2025$modeled_waste_2025
 
+
+## calculate ref point
 baltic_layer = eur_rus %>%
   filter(country %in% baltic$country) %>%
   mutate(ref_point_min = as.numeric(ref_point_min),
          ref_point_max = as.numeric(ref_point_max$modeled_waste_2010),
-         trash_score   = (
+         trash_score_2010   = (
            (modeled_waste_2010 - ref_point_min) /
-           (ref_point_max - ref_point_min))); baltic_layer; summary(baltic_layer)
+           (ref_point_max_2010 - ref_point_min)),
+          trash_score_2025   = (
+           (modeled_waste_2025 - ref_point_min) /
+           (ref_point_max_2025 - ref_point_min))); baltic_layer; summary(baltic_layer)
+
+
 
 
 
