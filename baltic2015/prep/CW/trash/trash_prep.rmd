@@ -128,11 +128,10 @@ europe = lookup %>%
 
 ## downweight russia **very hacky for now**
 #  4597600 # St Petersbergy: from Wikipedia https://en.wikipedia.org/wiki/Demographics_of_Saint_Petersburg
-#  431902 # Kaliningrad https://en.wikipedia.org/wiki/Kaliningrad
+#  431902  # Kaliningrad https://en.wikipedia.org/wiki/Kaliningrad
 rus_trash_pop = data_clean_select %>%
   filter(country == 'Russia') %>%
   select(coastal_pop)
-
 
 rus_coastal_pop_proportion = as.numeric((4597600+431902) / rus_trash_pop); rus_coastal_pop_proportion
 
@@ -144,7 +143,7 @@ rus = data_clean_select %>%
 ## consider also downweighting Germany, Denmark, Sweden?
 
 
-## create dataframe of europe + russia  TODO: is this fair? Russia includes WAY more than the Baltic.
+## create dataframe of europe + russia
 eur_rus = rbind(
   europe,
   rus) %>%
@@ -181,21 +180,28 @@ eur_rus = rbind(
 # 28       Slovenia      336594           556.0515            984.811
 
 
-## get 2025 reference point
-max_ref_point = eur_rus %>%
-  filter(modeled_waste_2025 == max(modeled_waste_2025))
+## set min and max reference points
+ref_point_max_2010 = eur_rus %>%
+  filter(modeled_waste_2010 == max(modeled_waste_2010)); print(ref_point_max_2010)
 
-print(max_ref_point)
+ref_point_max_2025 = eur_rus %>%
+  filter(modeled_waste_2025 == max(modeled_waste_2025)); print(ref_point_max_2025)
+
+ref_point_min = 0
 
 
 ## rescale to reference point -- whole European area? or just Baltic?
+## to normalize data: normalized = (x-min(x))/(max(x)-min(x))
+
+baltic_layer = eur_rus %>%
+  filter(country %in% baltic$country) %>%
+  mutate(ref_point_min = as.numeric(ref_point_min),
+         ref_point_max = as.numeric(ref_point_max$modeled_waste_2010),
+         trash_score   = (
+           (modeled_waste_2010 - ref_point_min) /
+           (ref_point_max - ref_point_min))); baltic_layer; summary(baltic_layer)
 
 
-# baltic_layer = baltic %>%
-#   mutate(ref_min = 0,
-#          ref_max = xx)
-
-## 
 
   
 
