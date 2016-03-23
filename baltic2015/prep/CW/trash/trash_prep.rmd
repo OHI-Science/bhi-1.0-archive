@@ -14,8 +14,8 @@ Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from la
 ## Potential path forward:
 
 **Status**: 2010 modeled values / ref point  
-**Ref pt**: need to explore literature/mgt: some % decrease from 2010...  
-**Trend**: use projected 2025 data to get 5-year trend
+**Ref pt**: maximum for Europe in 2010 or 2025 (explored below)
+**Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal.
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -187,18 +187,24 @@ ref_point_min = 0
 
 ##2010
 ref_point_max_2010 = eur_rus %>%
-  filter(modeled_waste_2010 == max(modeled_waste_2010)); print(ref_point_max_2010)
+  filter(modeled_waste_2010 == max(modeled_waste_2010))
+sprintf('max trash for 2010 is %s (%s)', 
+        round(ref_point_max_2010$modeled_waste_2010),
+        ref_point_max_2010$country)
 ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
 
 ## 2025
 ref_point_max_2025 = eur_rus %>%
-  filter(modeled_waste_2025 == max(modeled_waste_2025)); print(ref_point_max_2025)
+  filter(modeled_waste_2025 == max(modeled_waste_2025))
+sprintf('max trash for 2025 is %s (%s)', 
+        round(ref_point_max_2025$modeled_waste_2025),
+        ref_point_max_2025$country)
 ref_point_max_2025 = ref_point_max_2025$modeled_waste_2025
 
 
 ## calculate ref point
 ## to normalize data: normalized = (x-min(x))/(max(x)-min(x))
-baltic_layer = eur_rus %>%
+baltic_explore = eur_rus %>%
   filter(country %in% baltic$country) %>%
   mutate(
     trash_score_2010   = (
@@ -206,24 +212,33 @@ baltic_layer = eur_rus %>%
       (ref_point_max_2010 - ref_point_min)),
     trash_score_2025   = (
       (modeled_waste_2025 - ref_point_min) /
-      (ref_point_max_2025 - ref_point_min))); baltic_layer; summary(baltic_layer)
+      (ref_point_max_2025 - ref_point_min))); baltic_explore; summary(baltic_explore)
 
 #compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
-ggplot(baltic_layer)+
+ggplot(baltic_explore)+
   geom_point(aes(country,trash_score_2010, colour="red"))+
   geom_point(aes(country,trash_score_2025))+
   ggtitle('Country Trash Score')
 
 
+## assign to BHI regions ----
+lookup_bhi = read.csv('~/github/bhi/baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
+  select(rgn_id,
+         country = cntry_name) %>%
+  mutate(country = as.character(country))
 
-
+## join baltic_explore (baltic countries) to bhi regions, repeating the trash score for each baltic region.
+baltic_layer = lookup_bhi %>%
+  left_join(baltic_explore, 
+            by = 'country') %>%
+  select(rgn_id, 
+         score = trash_score_2010); baltic_layer
+  
+## save layer to layers folder, and register layer in layers.csv by hand
+write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
 
   
-
 ## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?
-
-## assign to BHI regions
-  
 
 
 ```

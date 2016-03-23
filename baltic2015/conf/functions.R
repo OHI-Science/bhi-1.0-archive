@@ -1366,9 +1366,6 @@ CW = function(layers){
   # add contaminants, trash and secchi depth as subgoals and then calculate CW scores as arithmetric mean of those scores.
   ##
 
-  ## Trash ideas
-  ## Use Jambeck et al 2015: http://science.sciencemag.org/content/347/6223/768.full
-  ## baltic2015/prep/CW/trash_prep.r
 
   min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
   regr_length = 10       # number of years to use for regression
@@ -1406,6 +1403,14 @@ trend =
 # join status and trend to one dataframe
 r = full_join(status, trend, by = 'rgn_id') %>%
   dplyr::rename(region_id = rgn_id)
+
+
+## trash
+## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
+
+#... 1- po_trash layer
+# trend: could trend for entire CW goal be based on one of these contributors (no trend for trash, but could back-calculate next year)
+
 
   # return scores
   scores = rbind(
