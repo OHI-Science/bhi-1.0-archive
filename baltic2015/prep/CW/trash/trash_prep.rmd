@@ -14,10 +14,10 @@ Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from la
 ## Potential path forward:
 
 **Status**: 2010 modeled values / ref point  
-**Ref pt**: maximum for Europe in 2010 or 2025 (explored below)
+**Ref pt**: maximum for Europe in 2010 or 2025 (explored below)  
 **Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal.
 
-```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+```{r setup and load data, echo = FALSE, message = FALSE, warning = FALSE}
 
 ## packages, directories
 library(dplyr)
@@ -33,11 +33,6 @@ trash_file = '1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
 ## lookup table
 baltic_lookup = read_csv(file.path(dir_prep, 'country_id.csv'))
 
-```
-
-## Modeled Mismanaged plastic waste 2010 
-Note: these data are for all of these countries, so do fraction of coastline or something to downweight
-```{r data explore, echo = FALSE, message = FALSE, warning = FALSE}
 ## read in data
 data_raw = read_excel(file.path(dir_raw, trash_file));  #head(data_raw); summary(data_raw)
 
@@ -58,16 +53,23 @@ data_clean = data_raw %>%
     modeled_waste_percap         = `Mismanaged plastic waste [kg/person/day]7`,
     modeled_waste_2010           = `Mismanaged plastic waste in 2010\r\n [tonnes]7`,
     modeled_waste_2025           = `Mismanaged plastic waste in 2025\r\n [tonnes]7`) %>%
-  mutate(country = str_replace_all(country, '8', ''))
+  mutate(country = str_replace_all(country, '8', '')) # remove footnotes from country names
 
+```
+
+## Filter Baltic data 
+Note: these data are for all of these countries, so do fraction of coastline or something to downweight
+```{r filter baltic data, echo = TRUE, message = FALSE, warning = FALSE}
+
+## filter Baltic data, save intermediate
 baltic = data_clean %>%
   filter(country %in% baltic_lookup$country_name)
+#write.csv(baltic, '~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
+```
 
+## Modeled Mismanaged plastic waste 2010 
 
-## save data (columnnames cleaned and data filtered for BHI)
-
-write.csv(baltic, '~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
-
+```{r baltic data explore, echo = FALSE, message = FALSE, warning = FALSE}
 ## plot 2010
 ggplot(baltic, aes(country, modeled_waste_2010)) +
   geom_bar(stat='identity')
@@ -76,7 +78,6 @@ ggplot(baltic, aes(country, modeled_waste_2010)) +
 
 
 ## Modeled Mismanaged plastic waste 2025
-Note: these data are for all of these countries, so do fraction of coastline or something to downweight
 
 ```{r data explore 2025, echo = FALSE, message = FALSE, warning = FALSE}
 
