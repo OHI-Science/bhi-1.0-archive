@@ -34,7 +34,8 @@ bhi_country = bhi_country %>% select(rgn_id,cntry_name)%>%
 data2 = data %>% select(TIME, GEO, GEO_LABEL, UNIT,Value, Flag.and.Footnotes)%>%
   dplyr::rename(year = TIME, country_abb = GEO, country=GEO_LABEL, unit = UNIT, gdp= Value) %>%
   filter(unit=="Current prices, million euro") %>% #filter only current prices
-  filter(year >= 2000)%>% #work with only data from 2000 to present
+  filter(year >= 2000)%>% #work with only data from 2000
+  filter(year < 2013) %>% #work with data only before 2013 to be consistent with region data
   select(-unit)%>% #do not need this column
   mutate(country_abb= as.character(country_abb))%>% #change from factor to character
   group_by(country_abb)%>%

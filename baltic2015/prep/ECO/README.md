@@ -26,9 +26,10 @@ Eurostat Database names
 
 ## Goal Model
 
-'Xeco = (GDP_NUTS3_c/GDP_NUTS3_r)/(GDP_Country_c/GDP_Country_r)  
+'Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r)  
 'c = current year, r=reference year  '
 'reference point is a moving window (single year value)
+'Region is the BHI region which is comprised of GDP data from the associated NUTS3 regions
 'data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out)  
 'each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region
 
