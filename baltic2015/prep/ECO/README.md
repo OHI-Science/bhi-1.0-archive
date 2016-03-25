@@ -23,6 +23,10 @@ Eurostat Database names
  
 `GDP_prep_countrydata.R` prepares data
 
+### Considerations
+
+Data from each NUTS3 region assigned to BHI region by equally splitting NUTS3 value by number of associated BHI_IDs. This needs to be updated to allocate by the fraction of the population density in the NUTS3 area associated with the BHI_ID (within the 25km inland buffer)
+
 
 ## Goal Model
 
@@ -33,6 +37,10 @@ Eurostat Database names
 'data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out)  
 'each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region
 
-## Considerations
+## Interpreting NA and zero
+### Status Score of Zero
+'Status scores of zero were assigned when the region had no data or insufficient data but the indicator is applicable
 
-Data from each NUTS3 region assigned to BHI region by equally splitting NUTS3 value by number of associated BHI_IDs. This needs to be updated to allocate by the fraction of the population density in the NUTS3 area associated with the BHI_ID (within the 25km inland buffer)
+### Trend value of NA
+'Trend values of NA are assigned if there are not 5 years of data available to calculate a trend
+
