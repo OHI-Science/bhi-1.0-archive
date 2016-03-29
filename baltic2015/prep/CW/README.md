@@ -31,14 +31,10 @@ HELCOM for **eutrophication indicators** to be used for status and **pollution l
 ###### Pressure
 * Total nutrient load (N and P)
 
-### Litter
+### Trash
+See `trash/README.rmd` `trash_prep.rmd` for more details
 
-##### _Data prep_
 
-
-##### _Data source_
-
-Beach cleanings data from Keep Sweden Clean (HSR) and Fishing for litter from KIMO.
 
 ### Pathogens
 
