@@ -240,6 +240,7 @@ MAR = function(layers){
   #updated by Jennifer Griffiths 25Feb2016
   #updated by Julie 26Feb2016
   #updated by Jennifer Griffiths 29Feb2016 - make sure mar_status_score limited to status_years, change layer names
+  #updated by Jennifer Griffiths 29March2016 - added code for temporal reference point but this is commented out until final decision made
 
   #layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score, mar_coastalpopn2005_inland25km
 
@@ -264,13 +265,22 @@ MAR = function(layers){
     select(rgn_id = id_num,
            popsum = val_num)
 
+  ## TEMP read in
+  #  library(dplyr)
+  #  library (tidyr)
+  # harvest_tonnes = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv'); head(harvest_tonnes)
+  # harvest_species = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv'); head(harvest_species)
+  # sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
+  # popn_inland25km = read.csv('~/github/bhi/baltic2015/layers/mar_coastalpopn2005_inland25km_bhi2015.csv'); head(popn_inland25km)
+
+
   # SETTING CONSTANTS
   rm_year = 4              #number of years to use when calculating the running mean smoother
   regr_length =5          # number of years to use for regression for trend.  Use this to replace reading in the csv file "mar_trend_years_gl2014"
   future_year = 5          # the year at which we want the likely future status
   min_regr_length = 4      # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!  4 is the value in the old code
-  status_years = 2005:2014 #this was originally set in goals.csv  #global set to 2007:2012 originally
-
+  status_years = 2010:2014 #this was originally set in goals.csv  #global set to 2007:2012 originally
+  lag_win = 5             # if use a 5 year moving window reference point (instead of spatial, use this lag)
 
   #####----------------------######
   #harvest_tonnes has years without data but those years not present with NAs
@@ -323,12 +333,14 @@ MAR = function(layers){
     mutate(.,status =  pmin(1, mar_pop/ref_95pct)) %>%
     select(rgn_id, year, status)
 
-  #give mar_status_score all BHI regions, regions with no data receive NA for last year
+  #give mar_status_score all BHI regions, regions with no data receive zero for last year
+  ## Get a zero value because there is no production but the indicator is applicable
   bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(mar_status_score$year)))
 
   mar_status_score = mar_status_score%>%ungroup()%>%
     full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%
-    arrange(rgn_id,year)
+    arrange(rgn_id,year)%>%
+    mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
 
   # select last year of data in timeseries for status #last year based on max of status years specified
   mar_status = mar_status_score %>%
@@ -337,6 +349,42 @@ MAR = function(layers){
     mutate(status = round(status*100,2))  #took away pmin piece that Lena has used in this code in CW func
 
 
+  ###----------------------------###
+  ##This is commented out until a decision is made about the reference point
+      ##If the temporal reference point is used, need remove/update the code above and then make sure
+      ## the trend calculation and the scores function are pulling from the correct objects
+
+
+  ## Alternative reference point and status calculation using a 5 year moving window (temporal ref by region)
+  ## Xmar = Mar_current / Mar_ref
+  ## if use this, need to decide if the production should be scaled per capita
+
+
+
+  #for complete region ID list
+  # bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(mar_status_score$year)))
+  #
+  #
+  # temp_status = temp2 %>% group_by(rgn_id)%>%
+  #               mutate(year_ref= lag(year, lag_win, order_by=year),
+  #                      ref_val = lag(mar_pop, lag_win, order_by=year))%>% #create ref year and value which is value 5 years preceeding within a BHI region
+  #               arrange(year)%>%
+  #               ungroup()%>%
+  #               filter(year %in% status_years) %>% #select status years
+  #               mutate(score = pmin(1,mar_pop/ref_val))%>% #calculate score per year
+  #               select(rgn_id, year, score)%>%
+  #               full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
+  #               arrange(rgn_id,year)%>%
+  #               mutate(score, score = replace(score, is.na(score), 0))  #give NA value a 0
+  #
+  # temp_score = temp_status%>%
+  #   group_by(rgn_id) %>%
+  #   summarise_each(funs(last), rgn_id,score) %>% #select last year for the score
+  #   mutate(status = round(score*100,2))%>% #status is between 0-100
+  #   ungroup()%>%
+  #   select(rgn_id,status)
+
+  ###----------------------------###
   #calulate trend - update MAR code based on Lena template code
   #original code has option to exclude last year status year from the trend calculation
   #if exclude last year, trend calc was for 5 status years, but if did not was for 6
@@ -350,6 +398,7 @@ MAR = function(layers){
       else data.frame(trend_score = NA)}) %>%
     ungroup()%>%
     mutate(trend_score=round(trend_score,3))  #change round to 3 decimal places because trend values are very small
+
 
   #####----------------------######
   # return MAR scores
