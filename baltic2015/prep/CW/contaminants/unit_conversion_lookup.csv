@@ -1,0 +1,4 @@
+OriginalUnit;ConvertFactor_mg_kg;ConvertFactor_ug_kg;ConvertFactor_ng_g
+ug/kg;0.001;1;1
+mg/kg;1;1000;1000
+ng/g;0.001;1;1
