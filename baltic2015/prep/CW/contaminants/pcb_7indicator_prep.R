@@ -51,9 +51,6 @@ dim(data)
     ## given in LMQNT. if QFLAG == 'D' then the value is equal to what is entered for DETLI.
     ## This might not be true for earlier years (either detection limit not given, or value not replaced)
 
-## Stopped exploration below when realized that IVL data sources have lat-lon switched and no BHI-ID assigned
-    ## but ICES data have BHI ID assigned for same station
-
 
 #################################
 ##------------------------#
@@ -76,11 +73,17 @@ unique(data2$variable) #"CB101" "CB118" "CB138" "CB153" "CB180" "CB28"  "CB52"  
 
 data2 = data2 %>% filter(variable != "CB105") ;dim(data2) #6818   19
 
+##remove location :Vaederoearna 58.51560 10.90010 -- this is on the west coast
+
+data2 = data2 %>% filter(station!= "Vaederoearna")
+dim(data2) #6400   19
+
+
 ##------------------------#
 ##unique identifiers
 ##number of unique bio_id
-data2%>% select(bio_id)%>%distinct(bio_id)%>% nrow(.) #1206
-length(unique(data2$bio_id)) #1206
+data2%>% select(bio_id)%>%distinct(bio_id)%>% nrow(.) #1142
+length(unique(data2$bio_id)) #1142
 
 ##number unique samp_id
 data2%>% select(samp_id)%>%distinct(samp_id)%>% nrow(.) #220
@@ -92,44 +95,74 @@ data2%>% select(sub_id)%>%distinct(sub_id)%>% nrow(.) #517
 ##------------------------#
 ## Lookup tables
 ##location lookup
-loc_lookup = data2 %>% select(source,country,bhi_id,station,lat,lon)%>%
+loc_lookup = data2 %>% select(country,bhi_id,station,lat,lon)%>%
   distinct(.)
 loc_lookup
-#Which Swedish sites are missing BHI regions - can some be assigned?
-loc_lookup %>% filter(country=="Sweden") %>% arrange(source,station)
-
-###lat-lon for IVL data are switched.  Probably explains why no BHI location for all IVL data
-    ## except  Seskaroefjaerden entered correctly?!
-
-
+## Two swedish sites without BHI-ID
+    ## Vaederoearna 58.51560 10.90010 -- this is on the west coast, this has now been removed above
+    ## Storfjaerden       NA       NA  -- quick IVL search indicates is near Piteå -- Have email the IVL database manager for lat-lon
+        ##is sampled on 2 dates (between 2009-2013)
 
 ##country/bhi_id/bio_id/lat/long/station
-id_lookup = data2 %>% select(country,bhi_id, bio_id,station,lat,lon)%>%
+id_lookup = data2 %>% select(country,bhi_id,station,bio_id)%>%
             distinct(.)%>%
-            arrange(bio_id)
+            arrange(bio_id) %>%
+            mutate(new_id = seq(1,length(bio_id))) #create new ID value that is numeric is paired with ICES/IVL ID
 head(id_lookup)
-
-#which data are not assigned to a BHI ID
-id_lookup %>% filter(is.na(bhi_id))
-
 
 
 ##------------------------#
 ## spread data - so congeners across columns
-data3 = data2 %>% select(bio_id,date,variable,value)%>%
+
+data3 = data2 %>% right_join(.,id_lookup, by="bio_id")%>% #join with bio_id
+  select(new_id,date,variable,value)%>%
         spread(.,variable, value )%>%
-        arrange(bio_id)
+        arrange(new_id)
 head(data3)  #not all congeners measured for each bio_id
 
-nrow(data3) #1206
+nrow(data3) #1142
 
 ##gather data again to long format for plotting
 data3=data3 %>% gather(key= variable, value = value ,CB101,CB118,CB138,CB153,CB180,CB28,CB52, na.rm=FALSE )%>%
-      arrange(bio_id,variable)
+      arrange(new_id,variable)
 
 ## plot by bio_id
 windows()
-ggplot(data3) + geom_point(aes(factor(bio_id), value,colour=variable))
+ggplot(data3) + geom_point(aes(new_id, value,colour=variable))
+
+##join data3 with country data and explore conger measurements by country
+data4 = data3 %>% full_join(.,id_lookup, by="new_id")
+
+windows()
+ggplot(data4) + geom_point(aes(new_id, value, colour=variable))+
+  facet_wrap(~country)
+
+windows()
+ggplot(data4) + geom_point(aes(new_id, value))+
+  facet_wrap(~variable+country)
+
+    ## German values very high for a few congeners (CB138, CB153)
+    ## need to check closer to see if multiple measurement for the same sample ID
+
+windows()
+ggplot(filter(data4, country=="Germany" & new_id < 200)) + geom_point(aes(new_id, value))+
+  facet_wrap(~variable)
+data4 %>% filter(country=="Germany" & new_id < 200)%>%
+    spread(variable, value)
+    ## data are multiple new_id/bio_id but many samples per station & data - as would expect
+    ##  different combos of congeners measured for different bio_ids at the same station and date
+
+
+## how many individuals sampled in different samples
+data5 = data4 %>% left_join(.,select(data2,bio_id,num_indiv_subsamp), by="bio_id")
+head(data5)
+
+windows()
+ggplot(distinct(data5,new_id)) + geom_point(aes(new_id, num_indiv_subsamp))+
+  facet_wrap(~country)
+    ##need to investigate Swedish data - some id's with many individuals pooled
+
+  data5 %>% filter(country=="Sweden" & num_indiv_subsamp > 1)
 
 
 
