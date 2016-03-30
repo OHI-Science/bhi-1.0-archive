@@ -37,8 +37,8 @@ For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ fo
 
 ## Data prep
 Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the BHI database.  
-**PCBs**
-(1) Swedish data were given in lipid weight and were converted to wet weight.  Not all samples had a Extrlip (fat) percentage and therefore could not be converted.  These samples were not included in the database
+**PCBs**  
+(1) Swedish data were given in lipid weight and were converted to wet weight.  Not all samples had a Extrlip (fat) percentage and therefore could not be converted.  These samples were not included in the database  
 (2) Data were in different units and were standardized to mg/kg (however the values listed for the detection limit and the quantification limit were not updated to reflect the value unit change)
 
 
