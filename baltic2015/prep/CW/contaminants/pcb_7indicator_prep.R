@@ -133,21 +133,27 @@ data3=data3 %>% gather(key= variable, value = value ,CB101,CB118,CB138,CB153,CB1
       arrange(new_id,variable)
 
 ## summerise congeners per new_ID
-
 congener_count = data3 %>% group_by (new_id) %>%
                 summarise(congener_count = sum(!is.na(value)))%>%
                 ungroup()
+##PLOT
 ggplot(congener_count)+geom_point(aes(new_id,congener_count))+
   xlab("Unique Sample ID")+
   ylab("Number Congeners Measured")+
   ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count.png")
-
-congener_count %>% left_join(.,id_lookup)
+##
 ggplot(congener_count%>% left_join(.,id_lookup), by="new_id")+geom_point(aes(new_id,congener_count))+
   facet_wrap(~country)+
   xlab("Unique Sample ID")+
   ylab("Number Congeners Measured")+
   ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country.png")
+
+ggplot(congener_count%>%left_join(.,id_lookup, by="new_id")%>%left_join(.,select(data3,new_id,date),by="new_id"))+geom_point(aes(date,congener_count))+
+  facet_wrap(~country)+
+  xlab("Unique Sample ID")+
+  ylab("Number Congeners Measured")+
+  ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country_bydate.png")
+
 
 ##------------------------#
 ## EXPLORATION PLOTS
