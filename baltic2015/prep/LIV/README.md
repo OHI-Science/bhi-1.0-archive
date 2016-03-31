@@ -37,7 +37,9 @@ i 	see metadata (phased out)
 n 	not significant  
 p 	provisional  
 r 	revised  
-
+s 	Eurostat estimate (phased out)  
+u 	low reliability  
+z 	not applicable 
 
 ## Goal model
 Xliv = (Employment_Region_c/Employment_Region_r)/(Employment_Country_c/Employment_Country_r)  
