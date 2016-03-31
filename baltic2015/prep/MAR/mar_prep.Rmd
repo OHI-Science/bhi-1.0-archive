@@ -1,6 +1,8 @@
 ---
 title: "MAR data layer prep"
 output: html_document
+params: 
+    datasource: csv
 ---
 
 ## Data
@@ -35,22 +37,24 @@ This replaces earlier prep code because it starts with the raw data, rather than
 
 ```{r setup and load data, echo =TRUE, message = FALSE, warning = FALSE}
 
-#Libraries
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## set additional directories
+dir_mar    = file.path(dir_prep, 'MAR')
 
 ##-------------------------##
 ## Read in data
 
-lookup = read.csv("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/DataDownloads/Mariculture/mar_data_database/mar_data_lookuptable.csv",
-                  header=TRUE,sep=";")
-head(lookup)
+## TODO @jennifergriffiths: save these documents in bhi repo so can call like this 
 
-production = read.csv("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/DataDownloads/Mariculture/mar_data_database/mar_data_production.csv",
-                    header=TRUE,sep=";")
-head(production)
+# lookup = read.csv("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/DataDownloads/Mariculture/mar_data_database/mar_data_lookuptable.csv",
+#                   header=TRUE,sep=";")
+# head(lookup)
+# 
+# production = read.csv("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/DataDownloads/Mariculture/mar_data_database/mar_data_production.csv",
+#                     header=TRUE,sep=";")
+# head(production)
 
 
 ```
@@ -59,8 +63,8 @@ head(production)
 This is the scale of data reported
 
 ```{r plot raw data, echo=TRUE}
-ggplot(production)+geom_point(aes(year, production)) +
-  facet_wrap(~mar_region, scales="free_y")
+# ggplot(production)+geom_point(aes(year, production)) +
+#   facet_wrap(~mar_region, scales="free_y")
 
 ```
 
@@ -71,30 +75,30 @@ Do not have any additional information that would allow us to make this allocati
 
 ```{r allocated data by bhi region, echo=TRUE}
 
-## create a conversion factor for each mar_region
-lookup = lookup%>%
-         group_by(mar_region)%>%
-         mutate(rgn_factor = round((1/n_distinct(BHI)),2))%>%
-         ungroup()
-
-
-## join lookup to production
-
-prod_allot = full_join(lookup, production, by=c("country","mar_region"))%>%
-            select(mar_region,BHI, year, production, rgn_factor,common_name,ISSCAAP_FAO,Sust_coeff)%>%
-            mutate(prod_allot = production*rgn_factor)%>%  #get production fraction for each BHI region
-            select(-mar_region)%>%
-            group_by(BHI,year,common_name,ISSCAAP_FAO, Sust_coeff)%>%
-            summarise(prod_tot = sum(prod_allot,na.rm=TRUE))%>%  #get production per BHI region - more than one 
-            ungroup()
+# ## create a conversion factor for each mar_region
+# lookup = lookup%>%
+#          group_by(mar_region)%>%
+#          mutate(rgn_factor = round((1/n_distinct(BHI)),2))%>%
+#          ungroup()
+# 
+# 
+# ## join lookup to production
+# 
+# prod_allot = full_join(lookup, production, by=c("country","mar_region"))%>%
+#             select(mar_region,BHI, year, production, rgn_factor,common_name,ISSCAAP_FAO,Sust_coeff)%>%
+#             mutate(prod_allot = production*rgn_factor)%>%  #get production fraction for each BHI region
+#             select(-mar_region)%>%
+#             group_by(BHI,year,common_name,ISSCAAP_FAO, Sust_coeff)%>%
+#             summarise(prod_tot = sum(prod_allot,na.rm=TRUE))%>%  #get production per BHI region - more than one 
+#             ungroup()
 
 ```
 
 ### Plot production per BHI region
 
 ```{r plot production by bhi region, echo=TRUE}
-ggplot(prod_allot)+geom_point(aes(year, prod_tot)) +
-  facet_wrap(~BHI, scales="free_y")
+# ggplot(prod_allot)+geom_point(aes(year, prod_tot)) +
+#   facet_wrap(~BHI, scales="free_y")
 
 ```
 
@@ -106,29 +110,29 @@ Regions with no data - BHI regions not associated with Sweden, Finland, and Denm
 
 ```{r output files for layers, echo=TRUE}
 ## mar_harvest_tonnes
-mar_harvest_tonnes= prod_allot %>% select(BHI,ISSCAAP_FAO,year,prod_tot)%>%
-                    dplyr::rename(rgn_id=BHI,species_code=ISSCAAP_FAO, year=year,tonnes=prod_tot)
-head(mar_harvest_tonnes)
-is.na(mar_harvest_tonnes$tonnes)
-
-write.csv(mar_harvest_tonnes, "C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv",row.names=FALSE)
-
-## mar_harvest_species
-mar_harvest_species= prod_allot %>%select(ISSCAAP_FAO,common_name)%>%
-                    distinct(ISSCAAP_FAO,common_name)%>%
-                    mutate(common_name=as.character(common_name))%>%
-                    dplyr::rename(species_code=ISSCAAP_FAO, species=common_name)
-
-write.csv(mar_harvest_species, "C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv",row.names=FALSE)
-
-
-## mar_sustainability_score
-mar_sustainability_score = prod_allot %>% select(BHI,common_name,Sust_coeff)%>%
-                          mutate(common_name=as.character(common_name))%>%
-                          distinct(.)%>%
-                          dplyr::rename(rgn_id=BHI,species=common_name, sust_coeff=Sust_coeff)
-  
-write.csv(mar_sustainability_score, "C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv",row.names=FALSE)
+# mar_harvest_tonnes= prod_allot %>% select(BHI,ISSCAAP_FAO,year,prod_tot)%>%
+#                     dplyr::rename(rgn_id=BHI,species_code=ISSCAAP_FAO, year=year,tonnes=prod_tot)
+# head(mar_harvest_tonnes)
+# is.na(mar_harvest_tonnes$tonnes)
+# 
+# write.csv(mar_harvest_tonnes, "C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv",row.names=FALSE)
+# 
+# ## mar_harvest_species
+# mar_harvest_species= prod_allot %>%select(ISSCAAP_FAO,common_name)%>%
+#                     distinct(ISSCAAP_FAO,common_name)%>%
+#                     mutate(common_name=as.character(common_name))%>%
+#                     dplyr::rename(species_code=ISSCAAP_FAO, species=common_name)
+# 
+# write.csv(mar_harvest_species, "C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv",row.names=FALSE)
+# 
+# 
+# ## mar_sustainability_score
+# mar_sustainability_score = prod_allot %>% select(BHI,common_name,Sust_coeff)%>%
+#                           mutate(common_name=as.character(common_name))%>%
+#                           distinct(.)%>%
+#                           dplyr::rename(rgn_id=BHI,species=common_name, sust_coeff=Sust_coeff)
+#   
+# write.csv(mar_sustainability_score, "C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv",row.names=FALSE)
 
 ```
 
@@ -138,27 +142,44 @@ MAR code from OHI uses production/per capita
 This code creates a csv of the population density data (2005) from 25km inland buffer.  
 Code in functions.r is where the decision is made whether or not to use it.
 ```{r population density, echo=TRUE}
-##Code is commented out because connecting to the database prevents knitr from executing
 
-#connect to the BHI database
-#run your personal mysql config script to read in passcode
+if (params$datasource != 'csv') {
 
-# con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
-# dbListTables(con) # shows all tables in the DB
-# 
-# #fetch GPD data from database, use BHI_relevant = 'NUTS3' should draw only NUTS3 data with is associated with a BHI region (database also contains some NUTS2)
-# t<-dbSendQuery(con, paste("select * from AT_Pop_Density_BHI_inland_25km ;",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
-# data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
-# head(data) #GPD data
-# dbClearResult(t) # clears selection (IMPORTANT!)
-# dbDisconnect(con) # closes connection (IMPORTANT!)
-# 
-# bhi_pop = data%>%select(BHI_ID, `Total Population in 25km Buffer`)%>%
-#     rename(., rgn_id=BHI_ID, popsum=`Total Population in 25km Buffer`)
-# bhi_pop
+## connect to the BHI database 
+## run your personal mysql config script to read in passcode
+## NOTE: this cannot be knit in the .Rmd. Run this manually when you need to access the database. It will: 
+## 1. access the database with MySQL()
+## 2. save an intermediate .csv file that will be used to knit your .Rmd so that you can use the .Rmd workflow. 
+  
+con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
+dbListTables(con) # shows all tables in the DB
 
-#write to layers folder to use in the function
-#write.csv (bhi_pop,"C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/mar_coastalpopn2005_inland25km_bh#i2015.csv",row.names=FALSE)
+#fetch GPD data from database, use BHI_relevant = 'NUTS3' should draw only NUTS3 data with is associated with a BHI region (database also contains some NUTS2)
+t<-dbSendQuery(con, paste("select * from AT_Pop_Density_BHI_inland_25km ;",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
+data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+head(data) #GPD data
+dbClearResult(t) # clears selection (IMPORTANT!)
+dbDisconnect(con) # closes connection (IMPORTANT!)
 
+# save intermediate file
+write.csv(data, file.path(dir_mar, 'intermediate/data_sql.csv'))
+
+} else if (params$datasource == 'csv') {
+
+   ## load in csv file that was saved after accessing the database. 
+  data = readr::read_csv(file.path(dir_mar, 'intermediate/data_sql.csv'))
+
+}
+
+  
+## clean up and save layer
+bhi_pop = data %>%
+  dplyr::select(rgn_id = BHI_ID, 
+                popsum = `Total Population in 25km Buffer`)
+bhi_pop
+
+## write to layers folder to use in the function
+readr::write_csv(bhi_pop, 
+                 file.path(dir_layers, "mar_coastalpopn2005_inland25km_bhi2015.csv"))
 
 ```
