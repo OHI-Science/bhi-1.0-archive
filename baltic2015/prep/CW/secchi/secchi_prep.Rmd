@@ -10,6 +10,9 @@ params:
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_cw    = file.path(dir_prep, 'CW')
 dir_secchi    = file.path(dir_prep, 'CW/secchi')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_secchi, 'secchi_prep.rmd')
 ```
 
 ## Background on using Secchi
