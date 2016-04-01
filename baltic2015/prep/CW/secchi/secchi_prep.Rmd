@@ -1,0 +1,237 @@
+---
+title: "secchi_prep"
+output: html_document
+
+params: 
+    datasource: csv
+---
+```{r setup}
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_cw    = file.path(dir_prep, 'CW')
+dir_secchi    = file.path(dir_prep, 'CW/secchi')
+```
+
+## Background on using Secchi
+
+[HELCOM Water Clarity Core Indicator](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity)  Mean Summer Secchi (June-September)
+
+## Secchi Data
+
+### Data sources
+ICES
+SMHI
+
+**Duplicates in the Data**  
+ICES data contains profile data (eg temperature,but secchi is only measured once). Need only unique secchi records.  It appears the SMHI also contains profiles. Also check to see if any SMHI data already in the ICES records.
+
+
+```{r data load}
+## read in secchi data
+data1 = readr::read_csv(file.path(dir_secchi, 'secchi_data_database/ices_secchi.csv'))
+data2 = readr::read_csv(file.path(dir_secchi, 'secchi_data_database/smhi_secchi.csv'))
+
+## Data overview
+dim(data1)
+colnames(data1)
+str(data1)
+
+dim(data2)
+colnames(data2)
+str(data2)
+
+## Initial filtering
+ices <- data1 %>% data.frame()%>% filter(!is.na(BHI_ID)) %>%
+  select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
+         lat= Latitude, lon = Longitude, 
+         cruise= Cruise, station = Station, date= Date) %>%
+  mutate(date = as.Date(date, format= "%Y-%m-%d"))%>%
+  mutate(supplier = 'ices')
+head(ices)
+
+
+smhi <- data2 %>% data.frame()%>%
+  filter(!is.na(BHI_ID)) %>%
+  rename(secchi = value) %>%
+  select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
+        lat= Latitude, lon= Longitude, 
+         cruise = Provtagningstillfaelle.id, 
+         station = Stationsnamn, date= Date) %>%
+  mutate(supplier = 'smhi', cruise = as.character(cruise))
+head(smhi)
+
+## Look for duplicate data
+
+## is any data duplicated in ices itself
+ices.duplicated = duplicated(ices)
+sum(ices.duplicated==TRUE) #180841  ## MANY duplicates 
+
+ices.duplicated = duplicated(select(ices,-station))
+sum(ices.duplicated==TRUE) #180963  ## more duplicated when remove station columns
+    ## it is not because of multiple cruises on same day and location
+    ## tried by removing lat and lon and keeping station, fewer duplicates detected
+
+## duplicates because ICES table includes deptp
+new_ices = unique(select(ices,-station)); nrow(new_ices)  #take only unique records # 32896
+
+
+## is any data duplicated in smhi itself
+smhi.duplicated = duplicated(select(smhi, -station))
+sum(smhi.duplicated==TRUE) #56938 ## MANY duplicates  ## removing station does not affect it
+new_smhi = unique(select(smhi, -station)); nrow(new_smhi) #take only unique records # 10818
+
+## use setdiff() to indentify data smhi not in ices
+new_smhi = setdiff(select(new_smhi,-supplier,-cruise),select(new_ices,-supplier,-cruise)) %>%
+            mutate(supplier = "smhi")
+nrow(new_smhi) # 10357
+## it appears 461 records are duplicates (if remove cruise and station)
+## if date, lat, lon, secchi all match, I think they are duplicates
+
+## Now create a new allData, bind only the new_smhi object to ices
+allData = bind_rows(new_ices,new_smhi)
+nrow(allData) # 43253
+allData %>% select(year, month, date, cruise, lat, lon,secchi) %>% distinct() %>%nrow(.)  #43253
+
+## what if remove cruise
+allData %>% select(year, month, date, lat, lon,secchi) %>% distinct() %>%nrow(.)
+# 43253 
+
+```
+
+## Target values
+These are the values that will be used as a reference point.
+```{r helcom target secchi}
+target <- readr::read_csv(file.path(dir_cw, "eutro_targets_HELCOM.csv"))
+head(target)
+
+#select just summer_seccchi target
+target = target %>% select(basin, summer_secchi)%>%
+        mutate(basin = str_replace_all(basin,"_"," "))
+
+```
+
+## HELCOM HOLAS Basin
+These basins are the relevant physical units.  
+Secchi data will be first assessed at this level and then assigned to BHI region. EEZ divisions may result in some BHI regions that have no data but they are physically the same basin as a BHI region with data.
+
+```{r basin lookup}
+basin_lookup = readr::read_csv(file.path(
+  dir_prep,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
+basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
+  mutate(basin_name = str_replace_all(basin_name,"_"," "))
+
+```
+
+
+## Select summer data and plot
+Months 6-9 (June, July, August, September)
+Years >= 2000
+Data is sparse for BHI regions 4,22,25
+```{r select summer data}
+summer = allData %>% filter(month %in%c(6:9)) %>%
+        filter(year >=2000)
+head(summer)
+
+#Plot
+ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
+  facet_wrap(~bhi_id, scales ="free_y")
+
+ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
+  facet_wrap(~bhi_id)
+
+
+```
+
+## Assign secchi data to a HOLAS basin
+Data coverage appears substantially better at the basin scale.
+Some basins have missing data or limited data for the most recent years: Great Belt, Gulf of Riga, Kiel Bay
+```{r assign summer data to a HOLAS basin}
+
+summer = summer %>% full_join(., basin_lookup, by="bhi_id")
+
+#Plot
+ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
+  facet_wrap(~basin_name, scales ="free_y")
+
+ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
+  facet_wrap(~basin_name, scales ="free_y")
+
+
+```
+
+
+## Restrict data to before 2014
+There are still basins with limited or not data from 2010 onwards but this at least removes the potential for not having data reported in the past 2 years
+```{r restrict data before 2014}
+summer = summer %>% filter(year < 2014)
+
+#Plot
+ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
+  facet_wrap(~basin_name, scales ="free_y")
+
+
+```
+
+## Evaluate number of stations sampled in each basin
+Very different number of unique lat-lon locations by month and basin.  
+Sometimes lat-lon is not good to use because recording specific ship location which might be vary even though ship is at the same station. More duplicates were detected in the data however when station was not included, than when lat and lon were not included as the location identifier.  
+
+
+```{r samples and stations by basin}
+
+basin_summary = summer %>% group_by(basin_name,year,month)%>%
+                select(year, month,lat,lon,basin_name)%>%
+                summarise(loc_count = n_distinct(lat,lon))
+basin_summary
+
+#plot sampling overview
+ggplot(basin_summary) + geom_point(aes(year,loc_count, colour=factor(month)))+
+  facet_wrap(~basin_name, scales ="free_y")+
+  ylab("Number Sampling Locations")
+
+
+
+```
+
+
+## How to model the data?
+Not all months are sampled in all years (see above plot). **Question is how to model:**    
+1. Take mean summer secchi, ignore that different months sampled in different years, just average the months that are sampled in any given year.  Model by basin and year.  
+2. Take mean monthly value by year, model by basin + year + month. Average the modelled monthly value to get a summer mean.  
+3. Do the above but just model all the data points, don't take the mean value and instead use a random effect to account for location?  
+**Perhaps need to look at document describing HELCOM targets**, how do they calcalate the summer mean? Our calculations should be consistent with how target determined
+
+## Calculate mean monthly value for each summer month & overall mean
+
+```{r calculate summer secchi}
+
+mean_months = summer %>% select(year, month,basin_name,secchi)%>%
+              group_by(year,month,basin_name)%>%
+              summarise(mean_secchi = round(mean(secchi,na.rm=TRUE),1))%>%
+              ungroup()
+head(mean_months)
+
+#Plot
+ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
+  geom_line(aes(year,mean_secchi, colour=factor(month)))+
+  facet_wrap(~basin_name)+
+  scale_y_continuous(limits = c(0,10))
+
+mean_months_summer = mean_months %>% select(year, basin_name,mean_secchi) %>%
+                      group_by(year,basin_name)%>%
+                      summarise(mean_secchi = round(mean(mean_secchi,na.rm=TRUE),1)) %>%
+                      ungroup()  #in mean calculation all some months to have NA, ignore for that years calculation
+
+ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
+  geom_line(aes(year,mean_secchi))+
+  facet_wrap(~basin_name)+
+  scale_y_continuous(limits = c(0,10))
+
+```
+
+
+## Next steps
+1. Find out how mean secchi value determined for HELCOM core indicator
+2. Decide how to model data (see above) - will do a linear model (not a threshold approach with a logistic model)
+
+

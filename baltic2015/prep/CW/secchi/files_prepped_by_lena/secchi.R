@@ -65,7 +65,7 @@ values <- allData %>%
 rgn_id <- read.table(file = "~/github/bhi/baltic2015/layers/rgn_global_gl2014.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 rgn_id <- rgn_id %>% mutate(basin = gsub(" ", "_", substring(label,7)), country = paste(substring(label, 1, 3)))
 
-target <- read.table(file = "~/github/bhi/baltic2015/prep/8_CW/eutro_targets_HELCOM.csv", header = TRUE, sep = ",", stringsAsFactors = F)
+target <- read.table(file = "~/github/bhi/baltic2015/prep/CW/eutro_targets_HELCOM.csv", header = TRUE, sep = ",", stringsAsFactors = F)
 target <- full_join(target, rgn_id, by = 'basin') %>%
   rename(ref_point = summer_secchi) %>%
   select(rgn_id, ref_point) %>%
