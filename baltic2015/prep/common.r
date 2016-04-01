@@ -10,6 +10,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(RMySQL)
+library(stringr)
 
 ## Directories
 dir_baltic = '~/github/bhi/baltic2015'
