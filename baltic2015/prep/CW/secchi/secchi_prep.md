@@ -321,14 +321,14 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
   facet_wrap(~bhi_id, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~bhi_id)
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)
 
 Assign secchi data to a HOLAS basin
 -----------------------------------
@@ -345,7 +345,7 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
@@ -354,7 +354,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)
 
 Restrict data to before 2014
 ----------------------------
@@ -369,7 +369,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~basin_name, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)
 
 Evaluate number of stations sampled in each basin
 -------------------------------------------------
@@ -408,7 +408,7 @@ ggplot(basin_summary) + geom_point(aes(year,loc_count, colour=factor(month)))+
   ylab("Number Sampling Locations")
 ```
 
-![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)
 
 How to model the data?
 ----------------------
@@ -451,7 +451,7 @@ ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-1.png)
 
 ``` r
 mean_months_summer = mean_months %>% select(year, basin_name,mean_secchi) %>%
@@ -465,7 +465,7 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
   scale_y_continuous(limits = c(0,10))
 ```
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-2.png)
 
 Next steps
 ----------
