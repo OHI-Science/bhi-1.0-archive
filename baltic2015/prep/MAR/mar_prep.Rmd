@@ -45,6 +45,9 @@ source('~/github/bhi/baltic2015/prep/common.r')
 ## set additional directories
 dir_mar    = file.path(dir_prep, 'MAR')
 
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_mar, 'mar_prep.rmd')
+
 ##-------------------------##
 ## Read in data
 
@@ -163,3 +166,4 @@ readr::write_csv(bhi_pop,
                  file.path(dir_layers, "mar_coastalpopn2005_inland25km_bhi2015.csv"))
 
 ```
+
