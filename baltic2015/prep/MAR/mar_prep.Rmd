@@ -167,3 +167,13 @@ readr::write_csv(bhi_pop,
 
 ```
 
+
+
+## Goal Model
+
+Xmar =  Current_value /ref_point
+
+- Data are allocated to BHI region by taking the production from a country production region and dividing it equally among associated BHI regions.  
+- In goal calculation, data are taken as 4 year running mean
+- Data unit is tons of production
+- Reference point is temporal, 5 year moving window
