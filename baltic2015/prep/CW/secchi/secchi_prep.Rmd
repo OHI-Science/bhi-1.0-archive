@@ -19,15 +19,34 @@ create_readme(dir_secchi, 'secchi_prep.rmd')
 
 [HELCOM Water Clarity Core Indicator](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity)  Mean Summer Secchi (June-September)
 
+[Approaches and methods for eutrophication target setting in the Baltic Sea region](http://www.helcom.fi/Documents/Ministerial2013/Associated%20documents/Background/Eutorophication%20targets_BSEP133.pdf)
+
+[Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10](http://www.sciencedirect.com/science/article/pii/S0272771412000418)
+
 ## Secchi Data
 
 ### Data sources
-ICES
-SMHI
+**ICES**  
+Data extracted from database and sent by Hjalte Parner.  
+* "extraction from our database classified into HELCOM Assessment Units – HELCOM sub basins with coastal WFD water bodies or water types"
 
+**SMHI**  
+Downloaded from [SMHI Shark database](http://www.smhi.se/klimatdata/oceanografi/havsmiljodata/marina-miljoovervakningsdata) on 23 February 2016 by Lena Viktorsson. 
+* Download notes: datatyp: Physical and Chemical; Parameter: secchi depth  
+Lena  did not exclude any data when she downloaded it.
+
+## Data Cleaning and decision-making
 **Duplicates in the Data**  
 ICES data contains profile data (eg temperature,but secchi is only measured once). Need only unique secchi records.  It appears the SMHI also contains profiles. Also check to see if any SMHI data already in the ICES records.
 
+**Coastal data**  
+See decisions (map) Fleming-Lehtinen and Laamanen 2012. Need to decide if need to filter out the coastal sampling data.
+
+**Sampling frequency**
+__Can these data decisions be implemented?__
+Fleming-Lehtinen and Laamanen 2012 do the following:  
+1. If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.  
+2. If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias
 
 ```{r data load}
 ## read in secchi data
@@ -205,6 +224,8 @@ Not all months are sampled in all years (see above plot). **Question is how to m
 **Perhaps need to look at document describing HELCOM targets**, how do they calcalate the summer mean? Our calculations should be consistent with how target determined
 
 ## Calculate mean monthly value for each summer month & overall mean
+basin monthly mean = mean of all samples within month and basin
+basin summer mean = mean of basin monthly mean values
 
 ```{r calculate summer secchi}
 
@@ -233,8 +254,78 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
 ```
 
 
+## Plot summer secchi with target values indicated
+```{r summer secchi with target }
+
+secchi_target = full_join(mean_months_summer,target, by=c("basin_name" = "basin"))%>%
+                dplyr::rename(target_secchi = summer_secchi)
+head(secchi_target)
+
+ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
+  geom_line(aes(year,target_secchi))+
+  facet_wrap(~basin_name)+
+  scale_y_continuous(limits = c(0,10))
+
+```
+
+
+## What year will the status be calculated for for each basin?
+This is if there is no temporal gapfilling.  
+Most basins can have the status calculated for 2013 with the exception of the Great Belt and Gulf of Riga.  
+One option is no gap filling and calculating the status for differenet final years and over a different 5 year period
+```{r what is the last year}
+## get the last year of non-NA data
+last_year = secchi_target%>%
+            filter(!is.na(mean_secchi))%>%
+            group_by(basin_name)%>%
+            summarise(last_year = last(year))
+
+##which are not in 2013
+last_year %>% filter(last_year < 2013)
+
+ 
+```
+
+## Status calculation non-modeled data
+Status must be calculated in data prep because calculation for a basin and then applying to all regions.  
+*Status code based on code Lena Viktorsson developed for functions.r
+
+```{r Status calculation}
+
+## Define constants for status calculation
+
+  min_year = 2000        # earliest year to use as a start for regr_length timeseries
+                          ##data already filtered for 
+  regr_length = 10       # number of years to use for regression
+  future_year = 5        # the year at which we want the likely future status
+  min_regr_length = 5    # min actual number of years with data to use for regression.
+
+  
+## Basin data with target
+  secchi_target
+  
+  
+## Calculate status
+  ## Xnut = basin_mean/basin_target
+  
+  basin_status = secchi_target %>%
+                 mutate(., status =  pmin(1, values/ref_point)) %>%
+      select(rgn_id, year, status)
+
+    ### IN PROGRESS......
+
+
+```
+
+
+
+## Save csv files
+These csv files will be used as a first cut for the secchi status and trend.
+**Files to save**  
+1. Status by BHI region based on basin level calculations
+
+
 ## Next steps
 1. Find out how mean secchi value determined for HELCOM core indicator
 2. Decide how to model data (see above) - will do a linear model (not a threshold approach with a logistic model)
-
 

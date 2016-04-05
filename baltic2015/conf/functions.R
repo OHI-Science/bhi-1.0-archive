@@ -1392,65 +1392,93 @@ CW = function(layers){
   ## TODO ##
   # make new ref point csv file with correct header.
   # add contaminants, trash and secchi depth as subgoals and then calculate CW scores as arithmetric mean of those scores.
-  ##
+
+  ##UPDATE 5April2016 - IN PROGRESS - calculating status in prep file for NUT
 
 
-  min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
-  regr_length = 10       # number of years to use for regression
-  future_year = 5        # the year at which we want the likely future status
-  min_regr_length = 5    # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!
-  n_rgns = 42            # Number of regions used
+  #################################
+  #####----------------------######
+  ## NUT Status - Secchi data
+  #####----------------------######
 
- s = layers$data[['cw_nu_values']]
- r = layers$data[['cw_nu_secchi_targets']]
+  ## NUT status and trend will need to be calculated in prep file because being done for the basin
 
-# normalize data #
-status_score =
-  full_join(s, r, by = 'rgn_id') %>%
-  mutate(., status =  pmin(1, values/ref_point)) %>%
-  select(rgn_id, year, status)
+  ## status and trend will be assigned from basin to BHI regions and saved to csv for layers
 
-# select last year of data in timeseries for status
-status = status_score %>%
-  group_by(rgn_id) %>%
-  summarise_each(funs(last), rgn_id, status) %>%  #UPDATE set summarise to give status for a set year instead of last in timeseries
-  mutate(status = pmin(100, status*100))
+  # min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
+  # regr_length = 10       # number of years to use for regression
+  # future_year = 5        # the year at which we want the likely future status
+  # min_regr_length = 5    # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!
+  # n_rgns = 42            # Number of regions used
+  #
+  #   s = layers$data[['cw_nu_values']]
+  #   r = layers$data[['cw_nu_secchi_targets']]
+  #
+  #   # normalize data #
+  #   status_score =
+  #     full_join(s, r, by = 'rgn_id') %>%
+  #     mutate(., status =  pmin(1, values/ref_point)) %>%
+  #     select(rgn_id, year, status)
+  #
+  #   # select last year of data in timeseries for status
+  #   status = status_score %>%
+  #     group_by(rgn_id) %>%
+  #     summarise_each(funs(last), rgn_id, status) %>%  #UPDATE set summarise to give status for a set year instead of last in timeseries
+  #     mutate(status = pmin(100, status*100))
 
-# calculate trend based on status timeseries
-trend =
-  status_score %>%
-  group_by(rgn_id) %>%
-  do(tail(. , n = regr_length)) %>%
-  # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
-  do({if(sum(!is.na(.$status)) >= min_regr_length)
-    data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
-    # data.frame(slope = coef(lm(status ~ year, .))['year'])
-    else data.frame(trend_score = NA)}) #%>%
-  # mutate(trend_score = pmin(100, trend_score*100))
+    # # calculate trend based on status timeseries
+    # trend =
+    #   status_score %>%
+    #   group_by(rgn_id) %>%
+    #   do(tail(. , n = regr_length)) %>%
+    #   # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+    #   do({if(sum(!is.na(.$status)) >= min_regr_length)
+    #     data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
+    #     # data.frame(slope = coef(lm(status ~ year, .))['year'])
+    #     else data.frame(trend_score = NA)}) #%>%
+    #   # mutate(trend_score = pmin(100, trend_score*100))
 
-# join status and trend to one dataframe
-r = full_join(status, trend, by = 'rgn_id') %>%
-  dplyr::rename(region_id = rgn_id)
+    # join status and trend to one dataframe
+    r = full_join(status, trend, by = 'rgn_id') %>%
+      dplyr::rename(region_id = rgn_id)
+
+    #####----------------------######
+
+  #################################
+  #####----------------------######
+  ## Trash
+  #####----------------------######
+  ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
+
+      #... 1- po_trash layer
+      # trend: could trend for entire CW goal be based on one of these contributors (no trend for trash, but could back-calculate next year)
+
+  #################################
+  #####----------------------######
+  ## Contaminents
+  #####----------------------######
 
 
-## trash
-## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
+  #####----------------------######
+  ## CW status
+      ##TODO when have all components
+      ##combine status and/or trend from all components
 
-#... 1- po_trash layer
-# trend: could trend for entire CW goal be based on one of these contributors (no trend for trash, but could back-calculate next year)
 
 
-  # return scores
-  scores = rbind(
-    within(r, {
-      goal      = 'CW'
-      dimension = 'status'
-      score     = status}),
-    within(r, {
-      goal      = 'CW'
-      dimension = 'trend'
-      score     = trend_score}))[,c('region_id','goal','dimension','score')]
-  return(scores)
+
+      ##here scores based just upon secchi data
+      # return scores
+      scores = rbind(
+        within(r, {
+          goal      = 'CW'
+          dimension = 'status'
+          score     = status}),
+        within(r, {
+          goal      = 'CW'
+          dimension = 'trend'
+          score     = trend_score}))[,c('region_id','goal','dimension','score')]
+      return(scores)
 }
 
 
