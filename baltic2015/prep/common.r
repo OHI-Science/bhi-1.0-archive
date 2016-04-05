@@ -20,7 +20,9 @@ dir_prep   = file.path(dir_baltic, 'prep')
 
 
 ## create_readme function will create a rawgit.com url
-create_readme = function(dir = dir_secchi, file = 'secchi_prep.rmd') {
+
+
+create_readme = function(dir, file) {
 
   # if statement so don't overwrite existing README.md
   if (!file.exists(file.path(dir, 'README.md'))) {
@@ -40,4 +42,6 @@ create_readme = function(dir = dir_secchi, file = 'secchi_prep.rmd') {
   }
 }
 
+## example of how to fill in the function
+## dir = dir_secchi, file = 'secchi_prep.rmd'
 
