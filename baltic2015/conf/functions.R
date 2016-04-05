@@ -241,8 +241,9 @@ MAR = function(layers){
   #updated by Julie 26Feb2016
   #updated by Jennifer Griffiths 29Feb2016 - make sure mar_status_score limited to status_years, change layer names
   #updated by Jennifer Griffiths 29March2016 - added code for temporal reference point but this is commented out until final decision made
+  #updated by Jennifer Griffiths 05April2016 - made reference point temporal (removed spatial), made data unit tons of production, not per capita
 
-  #layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score, mar_coastalpopn2005_inland25km
+  #layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score
 
 
   # select layers for MAR
@@ -261,17 +262,13 @@ MAR = function(layers){
            species = category,
            sust_coeff = val_num)
 
-  popn_inland25km =SelectLayersData(layers, layers='mar_coastalpopn2005_inland25km', narrow=T) %>% #this is data only from 2005 for Baltic Region, Lena/Erik say ok to use one year data for all
-    select(rgn_id = id_num,
-           popsum = val_num)
 
   ## TEMP read in
-  #  library(dplyr)
-  #  library (tidyr)
-  # harvest_tonnes = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv'); head(harvest_tonnes)
-  # harvest_species = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv'); head(harvest_species)
-  # sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
-  # popn_inland25km = read.csv('~/github/bhi/baltic2015/layers/mar_coastalpopn2005_inland25km_bhi2015.csv'); head(popn_inland25km)
+   library(dplyr)
+   library (tidyr)
+  harvest_tonnes = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv'); head(harvest_tonnes)
+  harvest_species = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv'); head(harvest_species)
+  sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
 
 
   # SETTING CONSTANTS
@@ -279,7 +276,7 @@ MAR = function(layers){
   regr_length =5          # number of years to use for regression for trend.  Use this to replace reading in the csv file "mar_trend_years_gl2014"
   future_year = 5          # the year at which we want the likely future status
   min_regr_length = 4      # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!  4 is the value in the old code
-  status_years = 2010:2014 #this was originally set in goals.csv  #global set to 2007:2012 originally
+  status_years = 2010:2014 #this was originally set in goals.csv
   lag_win = 5             # if use a 5 year moving window reference point (instead of spatial, use this lag)
 
   #####----------------------######
@@ -301,95 +298,48 @@ MAR = function(layers){
            sust_tonnes = rm * sust_coeff)
 
   # now calculate total sust_tonnes per year  #only matters if multiple species
-  #relate to pop density
+  ## remove code that made the data unit per capita
+
   temp2 = temp %>%    # temp2 is ry in the original version
     group_by(rgn_id, year) %>%
-    summarise(sust_tonnes_sum = sum(sust_tonnes)) %>% #this sums the harvest(production) across all species in a given region if multiple spp are present
-    left_join(., popn_inland25km, by=c('rgn_id')) %>%  #apply 2005 pop data to all years
-    mutate(mar_pop = sust_tonnes_sum/popsum) #tonnes per capita
-
-  #####----------------------######
-  ###Baltic Wide Spatial Ref Pt
-  # get reference quantile, searches for ref pt across all basins & all years less than or equal to status_years
-  ref_95pct = temp2%>% ungroup()%>%
-    select(rgn_id,year,mar_pop)%>%
-    filter(year<=max(status_years))%>%
-    summarise(ref_95pct=quantile(mar_pop,probs=0.95, na.rm=TRUE))%>%
-    as.numeric(.)
-  #ref_95pct
-
-  #find ID associated with the ref_95pct
-  ref_id = temp2%>%ungroup()%>%
-    filter(year<=max(status_years))%>%
-    arrange(mar_pop) %>%
-    filter(mar_pop >= ref_95pct)
-  cat(sprintf('95th percentile rgn_id for MAR ref pt is: %s\n', ref_id$rgn_id[1]))
-
-
-  #####----------------------######
-  # Calculate the status for each year (year_value / ref_value) #all years less than or equal to status_years
-  mar_status_score = temp2%>%
-    filter(year<=max(status_years))%>%
-    mutate(.,status =  pmin(1, mar_pop/ref_95pct)) %>%
-    select(rgn_id, year, status)
-
-  #give mar_status_score all BHI regions, regions with no data receive zero for last year
-  ## Get a zero value because there is no production but the indicator is applicable
-  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(mar_status_score$year)))
-
-  mar_status_score = mar_status_score%>%ungroup()%>%
-    full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%
-    arrange(rgn_id,year)%>%
-    mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
-
-  # select last year of data in timeseries for status #last year based on max of status years specified
-  mar_status = mar_status_score %>%
-    group_by(rgn_id) %>%
-    summarise_each(funs(last), rgn_id, status) %>%
-    mutate(status = round(status*100,2))  #took away pmin piece that Lena has used in this code in CW func
+    summarise(sust_tonnes_sum = sum(sust_tonnes)) #this sums the harvest(production) across all species in a given region if multiple spp are present
+    ## left_join(., popn_inland25km, by=c('rgn_id')) %>%  #apply 2005 pop data to all years
+    ##mutate(mar_prod = sust_tonnes_sum) #tonnes per capita
 
 
   ###----------------------------###
-  ##This is commented out until a decision is made about the reference point
-      ##If the temporal reference point is used, need remove/update the code above and then make sure
-      ## the trend calculation and the scores function are pulling from the correct objects
-
-
-  ## Alternative reference point and status calculation using a 5 year moving window (temporal ref by region)
+  ##Calculate status using temporal reference point
+  ## 5 year moving window (temporal ref by region)
   ## Xmar = Mar_current / Mar_ref
   ## if use this, need to decide if the production should be scaled per capita
 
+  ##for complete region ID list
+  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(temp2$year)))
 
+  ## Calculate status
+  mar_status_score = temp2 %>% group_by(rgn_id)%>%
+                mutate(year_ref= lag(year, lag_win, order_by=year),
+                       ref_val = lag(sust_tonnes_sum, lag_win, order_by=year))%>% #create ref year and value which is value 5 years preceeding within a BHI region
+                arrange(year)%>%
+                ungroup()%>%
+                filter(year %in% status_years) %>% #select status years
+                mutate(status = pmin(1,sust_tonnes_sum/ref_val))%>% #calculate status per year
+                select(rgn_id, year, status)%>%
+                full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
+                arrange(rgn_id,year)%>%
+                mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
 
-  #for complete region ID list
-  # bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(mar_status_score$year)))
-  #
-  #
-  # temp_status = temp2 %>% group_by(rgn_id)%>%
-  #               mutate(year_ref= lag(year, lag_win, order_by=year),
-  #                      ref_val = lag(mar_pop, lag_win, order_by=year))%>% #create ref year and value which is value 5 years preceeding within a BHI region
-  #               arrange(year)%>%
-  #               ungroup()%>%
-  #               filter(year %in% status_years) %>% #select status years
-  #               mutate(score = pmin(1,mar_pop/ref_val))%>% #calculate score per year
-  #               select(rgn_id, year, score)%>%
-  #               full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
-  #               arrange(rgn_id,year)%>%
-  #               mutate(score, score = replace(score, is.na(score), 0))  #give NA value a 0
-  #
-  # temp_score = temp_status%>%
-  #   group_by(rgn_id) %>%
-  #   summarise_each(funs(last), rgn_id,score) %>% #select last year for the score
-  #   mutate(status = round(score*100,2))%>% #status is between 0-100
-  #   ungroup()%>%
-  #   select(rgn_id,status)
+  #Calculate score
+  mar_status = mar_status_score%>%
+    group_by(rgn_id) %>%
+    summarise_each(funs(last), rgn_id,status) %>% #select last year of status for the score
+    mutate(score = round(status*100,2))%>% #status is between 0-100
+    ungroup()%>%
+    select(rgn_id,score)
 
   ###----------------------------###
-  #calulate trend - update MAR code based on Lena template code
-  #original code has option to exclude last year status year from the trend calculation
-  #if exclude last year, trend calc was for 5 status years, but if did not was for 6
-  # if I sent regr_length = 6, then I can reproduce the old code results for trend_years = '5_yrs
-  #but to me this is very inconsistent with the other approach, so will set regr_length = 5
+  ## Calulate trend
+      ##regr_length = 5; there are 5 data points used to calculate the trend
   mar_trend= mar_status_score%>%group_by(rgn_id)%>%
     do(tail(. , n = regr_length)) %>% #select the years for trend calculate (regr_length # years from the end of the time series)
     #regr_length replaces the need to read in the trend_yrs from the csv file
@@ -397,14 +347,13 @@ MAR = function(layers){
       data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year))) #future_year set in contants, this is the value 5 in the old code
       else data.frame(trend_score = NA)}) %>%
     ungroup()%>%
-    mutate(trend_score=round(trend_score,3))  #change round to 3 decimal places because trend values are very small
-
+    mutate(trend_score=round(trend_score,2))
 
   #####----------------------######
   # return MAR scores
   scores = mar_status %>%
     select(region_id = rgn_id,
-           score     = status) %>%
+           score     = score) %>%
     mutate(dimension='status') %>%
     rbind(
       mar_trend %>%
