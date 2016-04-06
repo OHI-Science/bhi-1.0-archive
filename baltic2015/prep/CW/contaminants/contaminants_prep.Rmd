@@ -1,0 +1,373 @@
+---
+title: "contaminants_prep"
+output: html_document
+---
+
+```{r setup}
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_cw    = file.path(dir_prep, 'CW')
+dir_con    = file.path(dir_prep, 'CW/contaminants')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_con, 'contaminants_prep.rmd')
+
+
+```
+# Contaminant Data Prep
+
+## Indicators
+3 indicators are proposed which would then be combined to give an overall comtanimant sub-component status.  
+
+## (1) 6 PCB concentration indicator
+**ICES-6**
+Sum  of  PCB28, PCB52,  PCB101, PCB138,  PCB153 and  PCB180.  
+
+This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).  
+
+[EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
+
+**Additional information from HELCOM on the Core Indicators**  
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)
+
+*Relevant text from the HELCOM core indicator report*  
+"The PCBs included in this core indicator report are the 7 PCB congeners that have been monitored since the beginning of the HELCOM and OSPARCOM monitoring programmes, carefully selected mainly by ICES working groups due to their relatively uncomplicated identification and quantification in gas chromatograms and as they usually contribute a very high proportion of the total PCB content in environmental samples. These are the ‘ICES 7’: CB-28, CB-52, CB-101, CB-118, CB-138, CB-153 and CB-180."  
+
+*Determination of GES boundary*
+The CORESET expert group decided that, due to uncertainties in the target setting on the OSPAR and EU working groups, the seven PCBs should be monitored and concentrations analysed but the core indicator assesses primarily two congeners only: CB-118 (dioxin like) and 153 (non-dioxin like). Tentatively the OSPAR EACs for these two congeners are suggested to be used.
+
+
+## (2) TEQ value for PCBs and Dioxins
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)
+
+Dioxins are included in several international agreements, of which the Stockholm Convention and the Convention on Long Range Transboundary Air are among the most important for the control and reduction of sources to the environment. WHO and FAO have jointly established a maximum tolerable human intake level of dioxins via food, and within the EU there are limit values for dioxins in food and feed stuff (EC 2006). Several other EU legislations regulate dioxins, e.g. the plan for integrated pollution prevention and control (IPPC) and directives on waste incineration (EC, 2000, 2008). The EU has also adopted a Community Strategy for dioxins, furans and PCBs (EC 2001).
+
+**Determination of GES boundary**
+For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ for dioxins and 8.0 ng kg-1 ww WHO-TEQ for dioxins and dl-PCBs.
+
+## (3) PFOS indicator
+
+[HElCOM PFOS core indicator document](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
+
+
+# Data
+
+## Data sources
+ICES  
+
+IVL
+
+## Data prep prior to database
+Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the BHI database.  
+**PCBs**  
+(1) Swedish data were given in lipid weight and were converted to wet weight.  Not all samples had a Extrlip (fat) percentage and therefore could not be converted.  These samples were not included in the database  
+(2) Data were in different units and were standardized to mg/kg (however the values listed for the detection limit and the quantification limit were not updated to reflect the value unit change)
+
+
+# Other Info 
+........
+
+
+
+# Data Prep 6-PCB indicator
+
+## Initial prep and notes
+```{r 6-pcb notes and initial prep}
+
+## Values for the detection limit (DETLI) and quantification limit (LMQNT) are in the original units provided by each country.
+## Measured values however, have been standardized to mg/kg.  This will make it challenging to check whether
+## values provided are given as simply the detection limit or the quantification limit
+
+## Manually reviewing original data for units and detection limit levels by country
+## looking in file "ICES sill original data 2015112.csc"
+## LMQNT is rarely reported
+## DETLI is more often reported but not always reported
+## summary csv in contaminants prep folder "pcb_country_units_detli.csv"
+    ## Some countries use multiple reporting units: Some countries have multiple detection limits reported for a single congener (must vary by machine by year)
+    ## this csv has all congeners, units, and detli/lmqnt unique by monitoring year
+## "unit_conversion_lookup.csv" created to help with different unit conversions
+
+## Checked years 2009-2013 in original data (use this file "raw_dat_quant_detect_check.csv")
+    ## Did check in excel
+    ## Filtered by 2009 -2013
+    ## Looked for values with QFLAG entry
+    ## Looked to see if the value matched the DETLI or LMQNT value
+    ## For these years, if QFLAG == '<'or 'Q' then what is entered in the value column is equal to the value
+    ## given in LMQNT. if QFLAG == 'D' then the value is equal to what is entered for DETLI.
+    ## This might not be true for earlier years (either detection limit not given, or value not replaced)
+
+
+##------------------------#
+## INITIAL DATA SELECTION
+##------------------------#
+
+## Read in data from csv
+pcb_data = readr::read_csv(file.path(dir_con, 'contaminants_data_database/pcb_data.csv'),
+                           col_types = cols(sub_id= "c",
+                                            bio_id= "c") )#make sure these columns are read in as character
+   
+
+##filter for years 2009-2013
+data2 = pcb_data %>%filter(year %in% c(2009:2013))
+
+head(data2)
+dim(data2) #[1] 6873   19
+##------------------------#
+## Station names
+    ##Finnish data in ICES does not have a station name. Create a station name with Lat-Lon if Station is NA
+
+data2 = data2 %>% mutate(station2= paste("lat",round(lat,2),"lon",round(lon,2),sep="")) %>% #create new station column
+        mutate(station = ifelse(is.na(station), station2, station))%>% #replace station if NA with station2
+        select(-station2) #remove station2 column
+
+head(data2)
+
+##------------------------#
+##unique variables
+unique(data2$variable) #"CB101" "CB118" "CB138" "CB153" "CB180" "CB28"  "CB52"  "CB105"
+##CB105 is not one of the ICES 7 variables, remove
+##CB118 is not in the ICES 6, remove
+
+data3 = data2 %>% filter(variable != "CB105") %>%
+                  filter(variable != "CB118") ;dim(data3) #5816   19
+
+##remove location :Vaederoearna 58.51560 10.90010 -- this is on the west coast
+
+data3 = data3 %>% filter(station!= "Vaederoearna")
+dim(data3) #5462   19
+
+##------------------------#
+##unique identifiers
+##number of unique bio_id
+data3%>% select(bio_id)%>%distinct(bio_id)%>% nrow(.) #1100
+length(unique(data3$bio_id)) #1100
+    ##any NA bio_id?
+    data3 %>% filter(is.na(bio_id)) %>% nrow(.)  #0 rows with NA in bio_id
+    
+##number unique samp_id
+data3%>% select(samp_id)%>%distinct(samp_id)%>% nrow(.) #219
+
+##number unique sub_id
+data3%>% select(sub_id)%>%distinct(sub_id)%>% nrow(.) #495
+
+
+```
+
+## Location & ID Lookup tables
+```{r lookup tables}
+##------------------------#
+## LOOKUP TABLES - LOCATION & ID
+##------------------------#
+##location lookup
+loc_lookup = data3 %>% select(country,bhi_id,station,lat,lon)%>%
+  distinct(.)
+print(loc_lookup,n=nrow(loc_lookup))
+
+## Swedish sites without a BHI ID
+  loc_lookup%>%filter(is.na(bhi_id))
+    ## Vaederoearna 58.51560 10.90010 -- this is on the west coast, this has now been removed above, so does not appear in the list
+    ## Storfjaerden       NA       NA  -- quick IVL search indicates is near Piteå -- Have email the IVL database manager for lat-lon
+        ##is sampled on 2 dates (between 2009-2013)
+  
+  ##the other stations have lat-lon , all are Bothian Sea / Bothnian Bay, not sure why these were not assigned to a BHI ID 
+  station_missing = loc_lookup%>%filter(is.na(bhi_id))%>% filter(!is.na(lat))%>%select(station)%>%
+                    as.matrix(.,1, nrow(station_missing ))
+  station_missing
+  
+  data3 %>% filter(station %in% station_missing) %>% select(bio_id)%>%distinct()%>%nrow() #47 unique samples from these stations not assigned to a BHI_ID
+  
+
+##country/bhi_id/bio_id/lat/long/station
+id_lookup = data3 %>% select(country,bhi_id,station,bio_id)%>%
+            distinct(.)%>%
+            arrange(bio_id) %>%
+            mutate(new_id = seq(1,length(bio_id))) #create new ID value that is numeric is paired with ICES/IVL bio_id. This should make is easier to work id columns
+head(id_lookup)
+
+
+```
+
+
+## Data exploration
+```{r data exploration}
+## spread data - so congeners across columns
+data4 = data3 %>% right_join(.,id_lookup, by="bio_id")%>% #join with bio_id
+  select(new_id,date,variable,value)%>%
+        spread(.,variable, value )%>%
+        arrange(new_id)
+head(data4)  #not all congeners measured for each bio_id
+
+nrow(data4) #1100
+
+##gather data again to long format for plotting, now have NA where congeners not measured
+data4=data4 %>% gather(key= variable, value = value ,CB101,CB138,CB153,CB180,CB28,CB52, na.rm=FALSE )%>%
+      arrange(new_id,variable)
+head(data4)
+
+## summerise congeners per new_ID
+congener_count = data4 %>% group_by (new_id) %>%
+                summarise(congener_count = sum(!is.na(value)))%>%
+                ungroup()
+congener_count
+
+
+#how many time is each congener measured
+congener_freq = data4%>%group_by(variable)%>%
+                summarise(congener_freq = sum(!is.na(value)))%>%
+                ungroup()
+congener_freq
+
+#how many times was each congener counted by date
+congener_freq_date = data4%>%group_by(variable,date)%>%
+                summarise(congener_freq = sum(!is.na(value)))%>%
+                ungroup()
+congener_freq_date
+
+##PLOT
+ggplot(congener_count)+geom_point(aes(new_id,congener_count))+
+  xlab("Unique Sample ID")+
+  ylab("Number Congeners Measured")
+  #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count.png")
+##
+ggplot(congener_count%>% left_join(.,id_lookup), by="new_id")+geom_point(aes(new_id,congener_count))+
+  facet_wrap(~country)+
+  xlab("Unique Sample ID")+
+  ylab("Number Congeners Measured")
+  #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country.png")
+
+ggplot(congener_count%>%left_join(.,id_lookup, by="new_id")%>%left_join(.,select(data4,new_id,date),by="new_id"))+geom_point(aes(date,congener_count))+
+  facet_wrap(~country)+
+  xlab("Unique Sample ID")+
+  ylab("Number Congeners Measured")
+  #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country_bydate.png")
+
+
+```
+
+## Overview plots
+
+```{r overview plots}
+##------------------------#
+## EXPLORATION PLOTS
+##------------------------#
+## Overview plots of data distribution by country conducting the sampling.,
+##    samples by date by BHI-ID
+
+## plot by bio_id
+
+ggplot(data4) + geom_point(aes(new_id, value,colour=variable))
+
+##join data4 with country data and explore conger measurements by country
+data5 = data4 %>% full_join(.,id_lookup, by="new_id")
+
+## at ID, By Country
+ggplot(data5) + geom_point(aes(new_id, value, colour=variable))+
+  facet_wrap(~country)
+
+## At Date, By Country
+ggplot(data5) + geom_point(aes(date, value, colour=variable))+
+  facet_wrap(~country)+
+  scale_x_date(name= "Month-Year",date_breaks="1 year", date_labels = "%m-%y")
+
+#ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_date_country.png")
+
+## At Date, By BHI ID
+ggplot(data5) + geom_point(aes(date, value, colour = country))+
+  facet_wrap(~bhi_id)+
+  scale_x_date(date_breaks="1 year", date_labels = "%m-%y")
+    ## German data assigned to 17 (Poland BHI region)
+    data5 %>% filter(bhi_id==17 & country == "Germany") %>%
+      select(station)%>%
+      distinct(.)  #FOE-B11
+      loc_lookup %>% filter(station =="FOE-B11")
+      ## is a station off poland
+
+## At Date, By BHI ID
+ggplot(data5) + geom_point(aes(date, value, color=station))+
+  facet_wrap(~bhi_id)+
+  scale_x_date(name= "Month-Year",date_breaks="1 year", date_labels = "%m-%y")+
+  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"))
+ # ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_date_bhi-id.png")
+
+
+## at ID, By variable & country
+ggplot(data5) + geom_point(aes(new_id, value))+
+  facet_wrap(~variable+country)
+
+    ## German values very high for a few congeners (CB138, CB153)
+    ## need to check closer to see if multiple measurement for the same sample ID
+
+
+ggplot(filter(data5, country=="Germany" & new_id < 200)) + geom_point(aes(new_id, value))+
+  facet_wrap(~variable)
+data5 %>% filter(country=="Germany" & new_id < 200)%>%
+    spread(variable, value)
+    ## data are multiple new_id/bio_id but many samples per station & data - as would expect
+    ##  different combos of congeners measured for different bio_ids at the same station and date
+
+
+```
+
+## Assess sample composition
+
+```{r sample comp}
+
+##------------------------#
+## ASSESS SAMPLE COMPOSITION - NUM INDIV FISH INCLUDED
+##------------------------#
+## how many individuals sampled in different samples
+data6 = data5 %>% left_join(.,select(data3,bio_id,source, num_indiv_subsamp), by="bio_id")
+head(data6)
+
+
+ggplot(distinct(data6,new_id)) + geom_point(aes(new_id, num_indiv_subsamp))+
+  facet_wrap(~country)
+    ##need to investigate Swedish data - some id's with many individuals pooled
+
+  data6 %>% filter(country=="Sweden" & num_indiv_subsamp > 1)
+
+  #count samples with >1 indiv in sample
+  data6 %>% select(country, num_indiv_subsamp)%>%
+    group_by(country,num_indiv_subsamp) %>% summarise(count = n())
+
+  ##This has a large number of samples because each congener a separate "sample" here
+
+  # country num_indiv_subsamp count
+  # (chr)             (dbl) (int)
+  # 1 Finland                 1  5600
+  # 2 Germany                 1  2674
+  # 3  Poland                 1  7252
+  # 4  Sweden                 1  6818
+  # 5  Sweden                10     7
+  # 6  Sweden                11    49
+  # 7  Sweden                12  2891
+  # 8  Sweden                13    70
+  # 9  Sweden                NA 19439
+
+  ## Which data sources are NA?
+  data6 %>% select(country, num_indiv_subsamp, source,station)%>%
+    filter(is.na(num_indiv_subsamp))%>%
+    distinct(.)
+    ## IVL data (at least some) do not have number of individuals in subsample entered
+
+```
+
+
+## Next steps
+### Data steps
+**Make sure check with Marc on IVL stations with no BHI ID**  
+1. How many samples have all 6 congeners measured? Sufficient for status?  
+
+1. Need a final concentration value for each congener.  
+
+    * if congener was at the detection or quantification limit, need to adjust value  
+    * if value given is detli, recommendation is adj_value = detect lim value / 2
+    * if value given is lmqnt,recommendation is adj_value = quant lim value / sqrt(2)  
+
+2. Need to sum 7 PCB congeners within in a fish  
+
+3. inspect data variation within a BHI region and data coverage. need to work at basin scale instead?  
+
+4. average/median value of samples taken within a BHI region.  
+
+5.  gap-filling or data smoothing decisions  

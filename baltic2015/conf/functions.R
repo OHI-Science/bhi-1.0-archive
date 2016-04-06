@@ -1388,12 +1388,11 @@ SP = function(scores){
 
 
 CW = function(layers){
-  ## UPDATED 2016-02-15, Lena
-  ## TODO ##
-  # make new ref point csv file with correct header.
-  # add contaminants, trash and secchi depth as subgoals and then calculate CW scores as arithmetric mean of those scores.
+  ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
 
-  ##UPDATE 5April2016 - IN PROGRESS - calculating status in prep file for NUT
+  ##TODO
+      ## add contaminents and trash
+      ## Combine status & trend for all components
 
 
   #################################
@@ -1401,45 +1400,22 @@ CW = function(layers){
   ## NUT Status - Secchi data
   #####----------------------######
 
-  ## NUT status and trend will need to be calculated in prep file because being done for the basin
+  ## NUT status and trend calculated in prep file because calculated for HOLAS basins
+  ## Basin status and trend are then assigned to BHI regions
+  ## Status is calculated for more recent year (prior to 2014). This is 2013 for most regions
+    ## but not for all (some 2012,2011)
+  ## Trend is calculated over a 10 year period with a minimum of 5 years of data
+      ## expect slow response time in secchi observation so use longer time window for trend
 
-  ## status and trend will be assigned from basin to BHI regions and saved to csv for layers
+  cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-  # min_year = 2000        # earliest year to use as a start for regr_length timeseries, !!!THIS NEED TO BE filtered out BEFORE FILLING MISSING RGN WITH NA!!!
-  # regr_length = 10       # number of years to use for regression
-  # future_year = 5        # the year at which we want the likely future status
-  # min_regr_length = 5    # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!
-  # n_rgns = 42            # Number of regions used
-  #
-  #   s = layers$data[['cw_nu_values']]
-  #   r = layers$data[['cw_nu_secchi_targets']]
-  #
-  #   # normalize data #
-  #   status_score =
-  #     full_join(s, r, by = 'rgn_id') %>%
-  #     mutate(., status =  pmin(1, values/ref_point)) %>%
-  #     select(rgn_id, year, status)
-  #
-  #   # select last year of data in timeseries for status
-  #   status = status_score %>%
-  #     group_by(rgn_id) %>%
-  #     summarise_each(funs(last), rgn_id, status) %>%  #UPDATE set summarise to give status for a set year instead of last in timeseries
-  #     mutate(status = pmin(100, status*100))
+  cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-    # # calculate trend based on status timeseries
-    # trend =
-    #   status_score %>%
-    #   group_by(rgn_id) %>%
-    #   do(tail(. , n = regr_length)) %>%
-    #   # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
-    #   do({if(sum(!is.na(.$status)) >= min_regr_length)
-    #     data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
-    #     # data.frame(slope = coef(lm(status ~ year, .))['year'])
-    #     else data.frame(trend_score = NA)}) #%>%
-    #   # mutate(trend_score = pmin(100, trend_score*100))
 
-    # join status and trend to one dataframe
-    r = full_join(status, trend, by = 'rgn_id') %>%
+    # join NUT status and trend to one dataframe
+    cw_nu = full_join(cw_nu_status, cw_nu_trend, by = c('rgn_id','dimension','score')) %>%
       dplyr::rename(region_id = rgn_id)
 
     #####----------------------######
@@ -1469,15 +1445,9 @@ CW = function(layers){
 
       ##here scores based just upon secchi data
       # return scores
-      scores = rbind(
-        within(r, {
-          goal      = 'CW'
-          dimension = 'status'
-          score     = status}),
-        within(r, {
-          goal      = 'CW'
-          dimension = 'trend'
-          score     = trend_score}))[,c('region_id','goal','dimension','score')]
+        scores = cw_nu %>%
+                  mutate(goal   = 'CW')
+
       return(scores)
 }
 
