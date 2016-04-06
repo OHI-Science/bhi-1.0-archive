@@ -6,6 +6,8 @@ secchi\_prep
 source('~/github/bhi/baltic2015/prep/common.r')
 ```
 
+    ## Warning: package 'readr' was built under R version 3.2.4
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -33,16 +35,41 @@ Background on using Secchi
 --------------------------
 
 [HELCOM Water Clarity Core Indicator](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity) Mean Summer Secchi (June-September)
+**HELCOM Good Environmental Status** "Good environmental status is measured in relation to scientifically based and commonly agreed sub-basin-wise target levels.
+
+These GES boundaries were based on the results obtained in the TARGREV project (HELCOM 2013a), taking also advantage of the work carried out during the EUTRO PRO project (HELCOM 2009) and national work for WFD. The final targets were set through an expert evaluation process done by the intersessional activity on development of core eutrophication indicators (HELCOM CORE EUTRO) and the targets were adopted by the HELCOM Heads of Delegations 39/2012."
+
+[Approaches and methods for eutrophication target setting in the Baltic Sea region](http://www.helcom.fi/Documents/Ministerial2013/Associated%20documents/Background/Eutorophication%20targets_BSEP133.pdf)
+
+[Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10](http://www.sciencedirect.com/science/article/pii/S0272771412000418)
 
 Secchi Data
 -----------
 
 ### Data sources
 
-ICES SMHI
+**ICES**
+Data extracted from database and sent by Hjalte Parner.
+\* "extraction from our database classified into HELCOM Assessment Units – HELCOM sub basins with coastal WFD water bodies or water types"
+
+**SMHI**
+Downloaded from [SMHI Shark database](http://www.smhi.se/klimatdata/oceanografi/havsmiljodata/marina-miljoovervakningsdata) on 23 February 2016 by Lena Viktorsson.
+\* Download notes: datatyp: Physical and Chemical; Parameter: secchi depth
+Lena did not exclude any data when she downloaded it.
+
+Data Cleaning and decision-making
+---------------------------------
 
 **Duplicates in the Data**
 ICES data contains profile data (eg temperature,but secchi is only measured once). Need only unique secchi records. It appears the SMHI also contains profiles. Also check to see if any SMHI data already in the ICES records.
+
+**Coastal data**
+See decisions (map) Fleming-Lehtinen and Laamanen 2012. Need to decide if need to filter out the coastal sampling data.
+
+**Sampling frequency** *Can these data decisions be implemented?* Fleming-Lehtinen and Laamanen (2012) do the following:
+1. If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.
+2. If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias.
+*We have not implemented this so far*
 
 ``` r
 ## read in secchi data
@@ -321,14 +348,14 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
   facet_wrap(~bhi_id, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)<!-- -->
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~bhi_id)
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)<!-- -->
 
 Assign secchi data to a HOLAS basin
 -----------------------------------
@@ -345,7 +372,7 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)<!-- -->
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
@@ -354,7 +381,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)<!-- -->
 
 Restrict data to before 2014
 ----------------------------
@@ -369,7 +396,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~basin_name, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)
+![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)<!-- -->
 
 Evaluate number of stations sampled in each basin
 -------------------------------------------------
@@ -408,19 +435,12 @@ ggplot(basin_summary) + geom_point(aes(year,loc_count, colour=factor(month)))+
   ylab("Number Sampling Locations")
 ```
 
-![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)
-
-How to model the data?
-----------------------
-
-Not all months are sampled in all years (see above plot). **Question is how to model:**
-1. Take mean summer secchi, ignore that different months sampled in different years, just average the months that are sampled in any given year. Model by basin and year.
-2. Take mean monthly value by year, model by basin + year + month. Average the modelled monthly value to get a summer mean.
-3. Do the above but just model all the data points, don't take the mean value and instead use a random effect to account for location?
-**Perhaps need to look at document describing HELCOM targets**, how do they calcalate the summer mean? Our calculations should be consistent with how target determined
+![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)<!-- -->
 
 Calculate mean monthly value for each summer month & overall mean
 -----------------------------------------------------------------
+
+basin monthly mean = mean of all samples within month and basin basin summer mean = mean of basin monthly mean values
 
 ``` r
 mean_months = summer %>% select(year, month,basin_name,secchi)%>%
@@ -451,7 +471,7 @@ ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-1.png)
+![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-1.png)<!-- -->
 
 ``` r
 mean_months_summer = mean_months %>% select(year, basin_name,mean_secchi) %>%
@@ -465,10 +485,187 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
   scale_y_continuous(limits = c(0,10))
 ```
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-2.png)
+![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-2.png)<!-- -->
+
+Plot summer secchi with target values indicated
+-----------------------------------------------
+
+``` r
+secchi_target = left_join(mean_months_summer,target, by=c("basin_name" = "basin"))%>%
+                dplyr::rename(target_secchi = summer_secchi)
+head(secchi_target)
+```
+
+    ## Source: local data frame [6 x 4]
+    ## 
+    ##    year         basin_name mean_secchi target_secchi
+    ##   (int)              (chr)       (dbl)         (dbl)
+    ## 1  2000          Aland Sea         3.5           6.9
+    ## 2  2000       Arkona Basin         8.1           7.2
+    ## 3  2000 Bay of Mecklenburg         6.7           7.1
+    ## 4  2000     Bornholm Basin         6.5           7.1
+    ## 5  2000       Bothnian Bay         3.0           5.8
+    ## 6  2000       Bothnian Sea         3.8           6.8
+
+``` r
+ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
+  geom_line(aes(year,target_secchi))+
+  facet_wrap(~basin_name)+
+  scale_y_continuous(limits = c(0,10))
+```
+
+![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)<!-- -->
+
+What year will the status be calculated for for each basin?
+-----------------------------------------------------------
+
+This is if there is no temporal gapfilling.
+Most basins can have the status calculated for 2013 with the exception of the Great Belt and Gulf of Riga.
+One option is no gap filling and calculating the status for differenet final years and over a different 5 year period
+
+``` r
+## get the last year of non-NA data
+last_year = secchi_target%>%
+            filter(!is.na(mean_secchi))%>%
+            group_by(basin_name)%>%
+            summarise(last_year = last(year))
+
+##which are not in 2013
+last_year %>% filter(last_year < 2013)
+```
+
+    ## Source: local data frame [2 x 2]
+    ## 
+    ##     basin_name last_year
+    ##          (chr)     (int)
+    ## 1   Great Belt      2011
+    ## 2 Gulf of Riga      2012
+
+Status calculation non-modeled data
+-----------------------------------
+
+Status must be calculated in data prep because calculation for a basin and then applying to all regions.
+\*Status code based on code Lena Viktorsson developed for functions.r
+
+``` r
+## Define constants for status calculation
+
+  min_year = 2000        # earliest year to use as a start for regr_length timeseries
+                          ##data already filtered for 
+  regr_length = 10       # number of years to use for regression
+  future_year = 5        # the year at which we want the likely future status
+  min_regr_length = 5    # min actual number of years with data to use for regression.
+
+  
+## Basin data with target
+  secchi_target
+```
+
+    ## Source: local data frame [234 x 4]
+    ## 
+    ##     year            basin_name mean_secchi target_secchi
+    ##    (int)                 (chr)       (dbl)         (dbl)
+    ## 1   2000             Aland Sea         3.5           6.9
+    ## 2   2000          Arkona Basin         8.1           7.2
+    ## 3   2000    Bay of Mecklenburg         6.7           7.1
+    ## 4   2000        Bornholm Basin         6.5           7.1
+    ## 5   2000          Bothnian Bay         3.0           5.8
+    ## 6   2000          Bothnian Sea         3.8           6.8
+    ## 7   2000 Eastern Gotland Basin         6.6           7.6
+    ## 8   2000          Gdansk Basin         4.7           6.5
+    ## 9   2000            Great Belt         5.9           8.5
+    ## 10  2000       Gulf of Finland         3.5           5.5
+    ## ..   ...                   ...         ...           ...
+
+``` r
+## Calculate basin status
+  ## Xnut = basin_mean/basin_target
+  
+  basin_status = secchi_target %>%
+                 mutate(., status =  pmin(1, mean_secchi/target_secchi)) %>%
+      select(basin_name, year, status)
+  
+## Calculate basin trend
+  
+  basin_trend =
+    basin_status %>%
+    group_by(basin_name) %>%
+    do(tail(. , n = regr_length)) %>%  # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+    do({if(sum(!is.na(.$status)) >= min_regr_length)
+    data.frame(trend_score = 
+                 max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
+         else data.frame(trend_score = NA)}) %>%
+    ungroup() 
+
+  
+  ## Assign basin status and trend to BHI regions
+    bhi_status = basin_status %>%
+                group_by(basin_name)%>%
+                summarise_each(funs(last), basin_name, status)%>% #select last year of data for status in each basin (this means status year differs by basin)
+                mutate(status = round(status*100))%>% #status is whole number 0-100
+                ungroup()%>%
+                left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
+                mutate(dimension = 'status') %>%
+                select (rgn_id = bhi_id, dimension, score=status)
+                
+  
+    bhi_trend = left_join(basin_lookup,basin_trend, by="basin_name") %>%
+                 mutate(score = round(trend_score,2),
+                        dimension = "trend")%>%
+                select(rgn_id = bhi_id, dimension, score )
+```
+
+Plot Basin status over time
+---------------------------
+
+``` r
+ggplot(basin_status) + geom_point((aes(year,status)))+
+  facet_wrap(~basin_name)
+```
+
+![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)<!-- -->
+
+Plot BHI region status and trend values
+---------------------------------------
+
+Status values can range from 0-100
+Trend values can be between -1 to 1
+
+``` r
+ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + geom_point(aes(rgn_id,score),size=2)+
+  facet_wrap(~dimension, scales="free_y")+
+  xlab("BHI region")
+```
+
+![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)<!-- -->
+
+Save csv files
+--------------
+
+These csv files will be used as a first cut for the secchi status and trend. **Files to save**
+1. Status and trend for each BHI region based on the basin level calculations
+
+``` r
+## Write csv files to layers
+    readr::write_csv(bhi_status, 
+                 file.path(dir_layers, "cw_nu_status_bhi2015.csv"))
+    
+    readr::write_csv(bhi_trend, 
+                 file.path(dir_layers, "cw_nu_trend_bhi2015.csv"))
+```
 
 Next steps
 ----------
 
-1.  Find out how mean secchi value determined for HELCOM core indicator
-2.  Decide how to model data (see above) - will do a linear model (not a threshold approach with a logistic model)
+**Mean secchi calculation**
+1. Find out how mean secchi value determined for HELCOM core indicator - is our calculation of the mean ok? *Thorsten contacting Vivi Fleming-Lehtinen*
+
+**Trend calculation**
+1. Have calculated the trend using data spanning 10 years (minimum of 5 data points). Is it agreed that we should use the longer time window for the trend?
+
+**Should/How to model the data?**
+Not all months are sampled in all years (see above plot).
+If model, do a linear model.
+*Linear model options* 1. Take mean summer secchi, ignore that different months sampled in different years, just average the months that are sampled in any given year. Model by basin and year.
+2. Take mean monthly value by year, model by basin + year + month. Average the modelled monthly value to get a summer mean.
+3. Do the above but just model all the data points, don't take the mean value and instead use a random effect to account for location?
