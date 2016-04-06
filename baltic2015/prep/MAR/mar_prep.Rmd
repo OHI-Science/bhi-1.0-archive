@@ -1,6 +1,6 @@
 ---
 title: "MAR data layer prep"
-output: html_document
+output: github_document
 params: 
     datasource: csv
 ---
