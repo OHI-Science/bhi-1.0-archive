@@ -25,7 +25,7 @@ Sum  of  PCB28, PCB52,  PCB101, PCB138,  PCB153 and  PCB180.
 
 This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).  
 
-[EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
+75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
 
 **Additional information from HELCOM on the Core Indicators**  
 [HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)
@@ -49,13 +49,21 @@ For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ fo
 
 [HElCOM PFOS core indicator document](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
 
+## Additional references
+[Faxneld et al. 2014](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators  
+
 
 # Data
 
 ## Data sources
 ICES  
+[ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
+Downloaded 20 October 2015 by Cornelia Ludwig
 
-IVL
+IVL (Svenska Miljönstitutet / Swedish Environmental Research Institute)  
+[IVL database](http://dvsb.ivl.se/)  
+Downloaded 2 December 2015 by Cornelia Ludwig  
+[IVL detection limit information](http://www.ivl.se/sidor/lab--analys/miljo/biota.html)  
 
 ## Data prep prior to database
 Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the BHI database.  
@@ -71,7 +79,7 @@ Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the 
 
 # Data Prep 6-PCB indicator
 
-## Initial prep and notes
+### Initial prep and notes
 ```{r 6-pcb notes and initial prep}
 
 ## Values for the detection limit (DETLI) and quantification limit (LMQNT) are in the original units provided by each country.
@@ -79,6 +87,7 @@ Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the 
 ## values provided are given as simply the detection limit or the quantification limit
 
 ## Manually reviewing original data for units and detection limit levels by country
+
 ## looking in file "ICES sill original data 2015112.csc"
 ## LMQNT is rarely reported
 ## DETLI is more often reported but not always reported
@@ -87,7 +96,7 @@ Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the 
     ## this csv has all congeners, units, and detli/lmqnt unique by monitoring year
 ## "unit_conversion_lookup.csv" created to help with different unit conversions
 
-## Checked years 2009-2013 in original data (use this file "raw_dat_quant_detect_check.csv")
+## Checked years 2009-2013 in original data (use this file "raw_ICESdat_quant_detect_check.csv")
     ## Did check in excel
     ## Filtered by 2009 -2013
     ## Looked for values with QFLAG entry
@@ -95,6 +104,17 @@ Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the 
     ## For these years, if QFLAG == '<'or 'Q' then what is entered in the value column is equal to the value
     ## given in LMQNT. if QFLAG == 'D' then the value is equal to what is entered for DETLI.
     ## This might not be true for earlier years (either detection limit not given, or value not replaced)
+
+
+## Check years 2009-2013 for IVL data flags
+    ## Used file "raw_IVLdat_quant_detect_check.csv"
+    ## 3 congeners receive data flags ("b") for detection limit (CB28,CB52,CB180)
+    ## these data are  mg/kg lipid weight
+    ## Values are given as a less than symbol and number (eg. <0.004)
+    ## These values vary for the same congener in samples taken on the same day. These values are 
+        ## are likely not then the detection limit value entered but rather the raw machine values
+        ## How to deal with this?  Divide these values (eg value/2 like LOD/2) or need to replace
+          ## machine value with the LOD value then calculate LOD/2
 
 
 ##------------------------#
@@ -153,7 +173,7 @@ data3%>% select(sub_id)%>%distinct(sub_id)%>% nrow(.) #495
 
 ```
 
-## Location & ID Lookup tables
+### Location & ID Lookup tables
 ```{r lookup tables}
 ##------------------------#
 ## LOOKUP TABLES - LOCATION & ID
@@ -188,7 +208,8 @@ head(id_lookup)
 ```
 
 
-## Data exploration
+### Data exploration
+Want to make sure have an entry for all congeners for all unique samples.  Need to assess for each unique sample, which congeners are not measured.
 ```{r data exploration}
 ## spread data - so congeners across columns
 data4 = data3 %>% right_join(.,id_lookup, by="bio_id")%>% #join with bio_id
@@ -204,6 +225,10 @@ data4=data4 %>% gather(key= variable, value = value ,CB101,CB138,CB153,CB180,CB2
       arrange(new_id,variable)
 head(data4)
 
+```
+
+### Explore how often different congeners are measured
+```{r congener count}
 ## summerise congeners per new_ID
 congener_count = data4 %>% group_by (new_id) %>%
                 summarise(congener_count = sum(!is.na(value)))%>%
@@ -242,20 +267,25 @@ ggplot(congener_count%>%left_join(.,id_lookup, by="new_id")%>%left_join(.,select
   #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country_bydate.png")
 
 
+ggplot(congener_freq_date)+geom_point(aes(date,congener_freq))+
+  facet_wrap(~variable)+
+  xlab("Date")+
+  ylab("Numer Samples with Congener measured")
+
+
 ```
 
-## Overview plots
 
+### Overview plots
+Overview plots of data distribution by country conducting the sampling, samples by date by BHI-ID
 ```{r overview plots}
 ##------------------------#
 ## EXPLORATION PLOTS
 ##------------------------#
-## Overview plots of data distribution by country conducting the sampling.,
-##    samples by date by BHI-ID
 
 ## plot by bio_id
-
 ggplot(data4) + geom_point(aes(new_id, value,colour=variable))
+
 
 ##join data4 with country data and explore conger measurements by country
 data5 = data4 %>% full_join(.,id_lookup, by="new_id")
@@ -268,8 +298,6 @@ ggplot(data5) + geom_point(aes(new_id, value, colour=variable))+
 ggplot(data5) + geom_point(aes(date, value, colour=variable))+
   facet_wrap(~country)+
   scale_x_date(name= "Month-Year",date_breaks="1 year", date_labels = "%m-%y")
-
-#ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_date_country.png")
 
 ## At Date, By BHI ID
 ggplot(data5) + geom_point(aes(date, value, colour = country))+
@@ -287,13 +315,10 @@ ggplot(data5) + geom_point(aes(date, value, color=station))+
   facet_wrap(~bhi_id)+
   scale_x_date(name= "Month-Year",date_breaks="1 year", date_labels = "%m-%y")+
   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"))
- # ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_date_bhi-id.png")
-
 
 ## at ID, By variable & country
 ggplot(data5) + geom_point(aes(new_id, value))+
   facet_wrap(~variable+country)
-
     ## German values very high for a few congeners (CB138, CB153)
     ## need to check closer to see if multiple measurement for the same sample ID
 
@@ -308,17 +333,24 @@ data5 %>% filter(country=="Germany" & new_id < 200)%>%
 
 ```
 
-## Assess sample composition
+### Country and Congener measured
+```{r country and congener}
+data5 %>% select(variable,country) %>% distinct(.)%>% print (n=25)
 
+
+```
+
+
+### Assess sample composition
+How many individuals sampled in different samples?
 ```{r sample comp}
 
 ##------------------------#
 ## ASSESS SAMPLE COMPOSITION - NUM INDIV FISH INCLUDED
 ##------------------------#
-## how many individuals sampled in different samples
+## join data to get source # num_indiv_subsamp
 data6 = data5 %>% left_join(.,select(data3,bio_id,source, num_indiv_subsamp), by="bio_id")
-head(data6)
-
+head(data6) 
 
 ggplot(distinct(data6,new_id)) + geom_point(aes(new_id, num_indiv_subsamp))+
   facet_wrap(~country)
@@ -353,21 +385,236 @@ ggplot(distinct(data6,new_id)) + geom_point(aes(new_id, num_indiv_subsamp))+
 ```
 
 
+### Assess data flagged
+What data are qflagged (detection or quantifcation limit)?
+```{r flagged data}
+
+data7 = data5 %>% left_join(.,select(data3,source,bio_id,variable,date,value, source,qflag,detli,lmqnt), by=c("bio_id","variable","date","value"))
+head(data7)
+dim(data7); dim(data5) #should have same number of rows
+
+```
+
+### Number of samples with all 6 congeners
+534 samples 2009-2013 with all 6 congeners measured (this is not unique dates)
+```{r samples all congeners}
+congener_count # number of congeners per new_id
+congener_count6 = congener_count %>% filter(congener_count == 6) #new_id with all six congeners
+congener_count6 %>% summarise(count=n()) #534 samples
+
+#select data for only samples with all 6 congeners
+data8 = data7 %>% right_join(congener_count6, by="new_id") %>% arrange(new_id)
+dim(data8)
+
+```
+
+### Plots of data with all 6 congeners measured
+Second two plots show qflags
+```{r plot 6 congener data coverage}
+ggplot(data8) + geom_point(aes(date,value, colour=variable))+
+facet_wrap(~station)
+
+ggplot(data8) + geom_point(aes(date,value, colour=variable))+
+facet_wrap(~bhi_id, scales="free_y")
+
+ggplot(data8) + geom_point(aes(date,value, colour=variable,shape=factor(qflag)))+
+facet_wrap(~bhi_id, scales="free_y")
+
+```
+
+
+### Plot data filtering for no qflags and all congeners measured
+Plot of just one congener to show sampling coverage  
+*limited data coverage over time and BHI region*
+```{r no qflag and all congener plot}
+## how many of the samples with all 6 congeners do not have any qflag?
+data8_no_q_id= data8 %>% group_by(new_id) %>% 
+          summarise(congener_no_q = sum(is.na(qflag)) )%>%
+          ungroup()%>%
+          filter(congener_no_q==6)
+
+          nrow(data8_no_q_id)  #214 samples with all 6 congeners and no qflags
+
+data8_no_q =data8 %>% right_join(data8_no_q_id, by=c("new_id"))
+
+##These are the samples over time avaiable with no qflags and all congeners measured
+ggplot(filter(data8_no_q, variable=="CB28")) + geom_point(aes(date,value))+
+  facet_wrap(~bhi_id)
+
+```
+
+### Take 6 PCB total concentration for samples with no qflag
+```{r total conc., no qflag}
+data8_no_q
+
+data8_no_q_total = data8_no_q %>% select(new_id, date, variable,value,country, station, bhi_id) %>%
+                  group_by(new_id,date,country,station,bhi_id)%>%
+                  summarise( pcb6_conc = sum(value))%>%
+                  ungroup()
+
+data8_no_q_total
+```
+
+### Convert units to ng/g to match EU threshold value units
+
+```{r convert units}
+## Read in unit conversion table
+unit_lookup= readr::read_csv2(file.path(dir_con, 'unit_conversion_lookup.csv'))
+unit_lookup
+convert_ng_g = unit_lookup %>% filter(OriginalUnit == "mg/kg") %>% select(ConvertFactor_ng_g)%>% as.numeric()
+
+data8_no_q_total = data8_no_q_total %>%
+                    mutate(pcb6_conc_ng_g = pcb6_conc * convert_ng_g,
+                           pcb6_threshold = 75)
+
+#how many greater than the threshold?
+data8_no_q_total %>% filter(pcb6_conc_ng_g > pcb6_threshold) #one sample
+
+```
+
+### Plot samples relative to threshold
+1 sample exceeds the threshold (when restricted to samples with no qflags)
+```{r plot samples and threshold}
+ggplot(data8_no_q_total) + geom_point(aes(date,pcb6_conc_ng_g))+
+  geom_line(aes(date,pcb6_threshold)) +
+  facet_wrap(~bhi_id, scales="free_y")+
+  ylab("6 PCB total concentration ng/g")
+
+```
+### Mean total concentration value by station and date
+```{r mean value loc and date}
+
+data8_no_q_total_sample_mean = data8_no_q_total %>% 
+                              group_by(date,country,station,bhi_id, pcb6_threshold)%>%
+                              summarise(pcb6_mean_sample_ng_g = mean(pcb6_conc_ng_g),
+                                        pcb6_sd_sample_ng_g= sd(pcb6_conc_ng_g))%>%
+                              ungroup()
+data8_no_q_total_sample_mean
+dim(data8_no_q_total_sample_mean) #50 unique dates x station
+
+
+ggplot(data8_no_q_total_sample_mean) + geom_point(aes(date,pcb6_mean_sample_ng_g))+
+  geom_line(aes(date,pcb6_threshold)) +
+  facet_wrap(~bhi_id, scales="free_y")+
+  ylab("Date Sample Mean 6 PCB total concentration ng/g")
+
+```
+
+### Incorporate data qflagged 2009-2013
+Convert flagged congener values to LOD/2 or LOQ/sqrt(2)  
+Then sum to get a total sample concentration
+```{r qflag data incorporation}
+## Adjust value of those data with qflag
+data8_q_adj = data8 %>%
+              mutate(value_adj = ifelse(!is.na(qflag) & !is.na(detli) & source=="ICES",value/2,  
+                                 ifelse(!is.na(qflag) & !is.na(lmqnt) & source =="ICES", value/sqrt(2),
+                                 ifelse(!is.na(qflag)& source=="IVL",value / 2, value))))  #if ICES data, know that value is either detli or lmqnt if flagged, if is IVL data, do not have detli value if flagged, instead is raw data, but convert this to anyways to value /2 for now. May need to go back at replace with detect limit value but is not clear how to get the correct detection limit values from IVL website
+
+head(data8_q_adj)
+data8_q_adj %>% arrange(qflag) %>% print(n=100)
+
+
+
+## Get total concentration per sample
+data8_q_adj_total = data8_q_adj %>% select(new_id, date, variable,value_adj,country, station, bhi_id) %>%
+                  group_by(new_id,date,country,station,bhi_id)%>%
+                  summarise(pcb6_conc = sum(value_adj))%>%
+                  ungroup()
+data8_q_adj_total
+
+## convert data to ng/g using convert_ng_g
+data8_q_adj_total = data8_q_adj_total %>%
+                    mutate(pcb6_conc_ng_g = pcb6_conc * convert_ng_g,
+                           pcb6_threshold = 75)
+
+data8_q_adj_total
+dim(data8_q_adj_total)
+
+```
+
+### Plot 6-PCB total conc included samples with qflagged data relative to threshold
+```{r plot total conc including qflagged samples}
+
+ggplot(data8_q_adj_total) + geom_point(aes(date,pcb6_conc_ng_g))+
+  geom_line(aes(date,pcb6_threshold)) +
+  facet_wrap(~bhi_id, scales="free_y")+
+  ylab("6 PCB total concentration ng/g")
+
+```
+
+### Mean total concentration value by station and date w/qflagged data
+```{r average station date with qflagged data}
+
+data8_q_adj_sample_mean = data8_q_adj_total %>% 
+                              group_by(date,country,station,bhi_id, pcb6_threshold)%>%
+                              summarise(pcb6_mean_sample_ng_g = mean(pcb6_conc_ng_g),
+                                        pcb6_sd_sample_ng_g= sd(pcb6_conc_ng_g))%>%
+                              ungroup()
+data8_q_adj_sample_mean
+
+ggplot(data8_q_adj_sample_mean) + geom_point(aes(date,pcb6_mean_sample_ng_g))+
+  geom_line(aes(date,pcb6_threshold)) +
+  facet_wrap(~bhi_id, scales="free_y")+
+  ylab("Date Sample Mean 6 PCB total concentration ng/g")
+
+
+```
+
+
+## Visualize mean sample points on a BHI region map
+```{r samples on map}
+# plot data in map
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
+
+
+map_data = data8_q_adj_sample_mean %>% left_join(.,loc_lookup, by=c("station","bhi_id","country"))
+str(map_data)
+
+#add year to map data
+map_data = map_data %>% mutate(year =as.numeric(format(date,"%Y")))
+
+
+#set up the plot
+plot_map = ggmap(map) +
+  geom_point(aes(x=lon, y=lat,colour=pcb6_mean_sample_ng_g, shape=factor(year)), data=map_data,size = 2) 
+
+#plot the map
+plot_map + scale_color_gradientn(colours=rainbow(5))+
+  ggtitle('6 PCB Mean Total Concentration, Dates 2009-2013') +
+  theme(title = element_text(size = 12)) 
+
+
+```
+
+
+
 ## Next steps
 ### Data steps
 **Make sure check with Marc on IVL stations with no BHI ID**  
 1. How many samples have all 6 congeners measured? Sufficient for status?  
+    -  534 samples 2009-2013 with all 6 congeners measured (this is not unique dates)  
+    -  Only 214 samples when exclude a sample that has any qflags associated with.  
 
-1. Need a final concentration value for each congener.  
+2. Need a final concentration value for each congener.  
+    -  How to calculate final concentration  
+        * if congener was at the detection or quantification limit, need to adjust value  
+        * if value given is detli, recommendation is adj_value = detect lim value / 2
+        * if value given is lmqnt,recommendation is adj_value = quant lim value / sqrt(2)
+    - Have done this adjustment (object: data8_q_adj)  
+        * If data source is IVL, value is not the detection limit itself but appears to be the raw machine value.  I have preliminarily divided this value by 2 as well.  
 
-    * if congener was at the detection or quantification limit, need to adjust value  
-    * if value given is detli, recommendation is adj_value = detect lim value / 2
-    * if value given is lmqnt,recommendation is adj_value = quant lim value / sqrt(2)  
+3. Need to sum 6 PCB congeners within in a fish  
+    -   Have summed 6 PCB concentrations within a unique sample (sometimes represents 1 fish, other many fish (some Swedish data))  
+    -  Two datasets (if include qflagged samples or not)  
 
-2. Need to sum 7 PCB congeners within in a fish  
+4. Mean total concentration by station and sample date  
+    -   Average the samples taken on the same date and station (w/ and w/o qflagged samples)
 
-3. inspect data variation within a BHI region and data coverage. need to work at basin scale instead?  
+5. Inspect data variation within a BHI region and data coverage for the mean total concentration by date and station. Need to work at basin scale instead?  
+    -   Data coverage poor in time and also in space without qflagged samples included.  
+    -  109 unique date x station (2009-2013) if include the qflagged samples
 
-4. average/median value of samples taken within a BHI region.  
+6. average/median value of samples taken within a BHI region.  
 
-5.  gap-filling or data smoothing decisions  
+7. gap-filling or data smoothing decisions  
