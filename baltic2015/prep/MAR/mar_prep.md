@@ -76,7 +76,7 @@ facet_wrap(~mar_region, scales="free_y")
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](mar_prep_files/figure-markdown_github/plot%20raw%20data-1.png) <!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20raw%20data-1.png) 
 
 ### Use mar\_lookup to allocate production among BHI regions
 
@@ -109,7 +109,7 @@ ggplot(prod_allot)+geom_point(aes(year, prod_tot)) +
   facet_wrap(~BHI, scales="free_y")
 ```
 
-![](mar_prep_files/figure-markdown_github/plot%20production%20by%20bhi%20region-1.png) <!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20production%20by%20bhi%20region-1.png) 
 
 ### Create objects to save to put in layers, save a csv
 
