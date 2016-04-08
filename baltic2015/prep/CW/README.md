@@ -1,41 +1,36 @@
 # Clean waters data preparation
 
-For the global index scaling if status to reference points and scaling of trends to values -1,1 was done in the data preparation. Pressures and resiliences then works on all parts of the clean waters goal together.
+There are three sub-components for Clean Water in BHI: *Contaminants, Nutrients,and Trash*. We are using sub-components so that all are weighted equally (and have the same weights across regions) in their contribution to the goal score. Each sub-component, however, will have a unique set of pressures and resilience.  
+
+**Status and Trend**  
+Each of the 3 sub-components will have a status calculation that is averaged for an overall goal status. It may not be possible to calculate a trend for each sub-component. In this case, the trend from a single sub-component will be used for the overall status trend.  
+
+## Sub-component prep  
+For this goal, sub-components will be prepped from the raw data to status and trend calculations in the prep folders. This is because functions.r requires having values for all regions when data are selected from layers.  Our status calculations are not all done on the region level (some are done by basin, e.g. nutrients (secchi)) and therefore it will not make sense to do the status and trends calculations in functions.r
 
 ### Contaminants
+See `contaminants_prep.rmd` for information on indicators, data, and data prep.  
 
-##### _Data prep_
+Our intention is to use three equally weighted indicators to capture different dimensions of toxicity: total 6-PCB concentration, dioxin and dioxin-like toxicity equivalent, PFOS.  
 
-For the Baltic we will use multiple contaminants (not only pesticide use as in global), so we must decide how to weigh these together.
-
-##### _Data sources_
-
-HELCOM primarily, also for reference points.
 
 ### Nutrients
+See `secchi_prep.rmd` for information on indicators, data, and data prep.  
 
-##### _Data prep_
-
-As for contaminants we need to weigh multiple status indicators together.
-Initially we will use status data and trends from the latest eutrophication assessment.
-
-##### _Data source_
-
-HELCOM for **eutrophication indicators** to be used for status and **pollution load compilation** to be used as a pressure on CW and other relevant goals.
-###### Status, trends and reference points
-* Winter nutrient concentrations (DIN and DIP)
-* Chl-a concentration
-* Secchi depth
-* Oxygen debt
-
-###### Pressure
-* Total nutrient load (N and P)
+For this goal we will use mean summer secchi relative to the HELCOM target to measure the nutrient sub-component status and trend.  
 
 ### Trash
-See `trash/README.rmd` `trash_prep.rmd` for more details
+See `trash/README.rmd` `trash_prep.rmd` for more details.  
+
+For this goal we use modelled estimates of mismanaged trash entering the ocean to assess the trash sub-component.  
+
+
+### Sub-components not included
+**Pathogens**
+Not identified as a wide-spread problem in the Baltic and not included.  
 
 
 
-### Pathogens
+# Pressure layers currently prepped in CW folder
+* Total nutrient load (N and P)
 
-Not identified as a wide problem in the Baltic. If we find good data for this, maybe put a lesser weight on this than the other parts of this goal.
