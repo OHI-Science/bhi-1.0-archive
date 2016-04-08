@@ -6,8 +6,6 @@ secchi\_prep
 source('~/github/bhi/baltic2015/prep/common.r')
 ```
 
-    ## Warning: package 'readr' was built under R version 3.2.4
-
     ## 
     ## Attaching package: 'dplyr'
 
@@ -348,14 +346,14 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
   facet_wrap(~bhi_id, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~bhi_id)
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)
 
 Assign secchi data to a HOLAS basin
 -----------------------------------
@@ -372,7 +370,7 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
@@ -381,7 +379,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)
 
 Restrict data to before 2014
 ----------------------------
@@ -396,7 +394,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~basin_name, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)
 
 Evaluate number of stations sampled in each basin
 -------------------------------------------------
@@ -435,7 +433,7 @@ ggplot(basin_summary) + geom_point(aes(year,loc_count, colour=factor(month)))+
   ylab("Number Sampling Locations")
 ```
 
-![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)
 
 Calculate mean monthly value for each summer month & overall mean
 -----------------------------------------------------------------
@@ -471,7 +469,7 @@ ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-1.png)
 
 ``` r
 mean_months_summer = mean_months %>% select(year, basin_name,mean_secchi) %>%
@@ -485,7 +483,7 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
   scale_y_continuous(limits = c(0,10))
 ```
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-2.png)
 
 Plot summer secchi with target values indicated
 -----------------------------------------------
@@ -514,7 +512,7 @@ ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
   scale_y_continuous(limits = c(0,10))
 ```
 
-![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)
 
 What year will the status be calculated for for each basin?
 -----------------------------------------------------------
@@ -623,7 +621,7 @@ ggplot(basin_status) + geom_point((aes(year,status)))+
   facet_wrap(~basin_name)
 ```
 
-![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)
 
 Plot BHI region status and trend values
 ---------------------------------------
@@ -637,7 +635,7 @@ ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + ge
   xlab("BHI region")
 ```
 
-![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)
 
 Save csv files
 --------------

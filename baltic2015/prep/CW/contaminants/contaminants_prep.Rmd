@@ -1,6 +1,8 @@
 ---
 title: "contaminants_prep"
-output: html_document
+output: github_document
+params: 
+    datasource: csv
 ---
 
 ```{r setup}
