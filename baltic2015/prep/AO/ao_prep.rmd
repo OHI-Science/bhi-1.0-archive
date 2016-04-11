@@ -149,6 +149,12 @@ basin_lookup
 
 
 ## Assign scores to GES status
+Explore the consequences of different scoring schemes.  
+In all cases, a score of 1 achieving highest status.  
+### Alternative scoring methods
+**"score1"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"*
+**"score2"**: GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*  
+**"score3"**: GES =1, subGES (low) = 0.2, subGES(high) = 0.5, subGES (no comment) = 0.2. *Distinguish between subGES levels that have been ranked low or high. Has only been done for cyprinids functional group.*  
 
 ```{r assign scores}
 ## is status ever NA?
@@ -295,7 +301,7 @@ basin_indicator_mean
 
 #HOLAS basin score (mean across the two indicators)
 basin_mean_score = basin_indicator_mean %>%
-                    group_by(Basin_HOLAS)%>%
+                    group_by(Basin_HOLAS,score_type)%>%
                     summarise(mean_basin_score = round(mean(mean_core_basin_score,na.rm=TRUE),1))%>%
                     ungroup()
   
@@ -312,9 +318,15 @@ basin_mean_score
   
 ```
 
-## Plot scores at each level of aggregations
+## Plot scores at each level
+*e.g. plot the monitoring stations, basins, BHI regions*  
 
 ### Plot monitoring area indicator mean scores
+Scoring alternatives do not seem to lead to strong differences.  Clearly changing the subGES from 0 to 0.5 shifts the range of scores.  
+
+**Note that points are "jittered" in the second plot to make visible**  
+**Colors in the second plot are different monitoring locations**
+
 ```{r plot scores levels of aggregation}
 
 ##plot monitoring area indicator mean scores
@@ -325,7 +337,22 @@ ggplot(monitoring_indicator_mean) +
                                     hjust=.5, vjust=.5, face = "plain"),
          plot.margin = unit(c(1,1,1,1), "cm")) 
 
+##plot monitoring area indicator mean scores by HOLAS basin
+ggplot(monitoring_indicator_mean) + 
+  geom_jitter(aes(Basin_HOLAS, mean_core_monitoring_score, color=monitoring_area, shape=factor(core_indicator)))+
+  facet_wrap(~score_type)+
+  guides(colour=FALSE)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
 
+
+```
+
+## Plot the monitoring area mean scores on a map
+Each of the alternative scorings plotted on a separate map
+
+```{r monitoring mean score map}
 ##plot on map
 
 ## Join monitoring_indicator_mean to lat-lon
@@ -337,63 +364,109 @@ library('ggmap')
 map = get_map(location = c(8.5, 53, 32, 67.5))
 
 
-#Plot Scoring Alternative 1
-map_data1 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
-  filter(score_type == "score1")
-
-#set up the plot
-plot_map = ggmap(map) +
-  geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score), data=map_data1,size = 2)
-
-#plot the map
-plot_map + scale_color_gradientn(colours=rainbow(2)) +
-  ggtitle('Coastal Fish Stock Status, Score Type 1') +
-  theme(title = element_text(size = 12))
-
-
-#Plot Scoring Alternative 2
-map_data2 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
-  filter(score_type == "score2")
-
-#set up the plot
-plot_map = ggmap(map) +
-  geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score), data=map_data2,size = 2)
-
-#plot the map
-plot_map + scale_color_gradientn(colours=rainbow(2)) +
-  ggtitle('Coastal Fish Stock Status, Score Type 2') +
-  theme(title = element_text(size = 12))
+##Plot Scoring Alternative 1
+    map_data1 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score1")
+    
+    ##set up the plot
+    plot_map1 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score, shape=factor(core_indicator)), data=map_data1,size = 2.5)
+    
+    ##plot the map
+    plot_map1 + scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 1') +
+      theme(title = element_text(size = 12))
 
 
+##Plot Scoring Alternative 2
+    map_data2 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score2")
+    
+    ##set up the plot
+    plot_map2 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score,shape=factor(core_indicator)), data=map_data2,size = 2.5)
+    
+    ##plot the map
+    plot_map2 + scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 2') +
+      theme(title = element_text(size = 12))
 
-#Plot Scoring Alternative 3
-map_data3 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
-  filter(score_type == "score3")
 
-#set up the plot
-plot_map = ggmap(map) +
-  geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score), data=map_data3,size = 2)
 
-#plot the map
-plot_map + scale_color_gradientn(colours=rainbow(2)) +
-  ggtitle('Coastal Fish Stock Status, Score Type 3') +
-  theme(title = element_text(size = 12))
+##Plot Scoring Alternative 3
+    map_data3 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score3")
+    
+    ##set up the plot
+    plot_map3 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score,shape=factor(core_indicator)), data=map_data3,size = 2.5)
+    
+    ##plot the map
+    plot_map3+ scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 3') +
+      theme(title = element_text(size = 12))
+
+```
+
+
+
+## Plot Basin Indicator scores
+```{r plot basin indicator scores}
+
+##basin_indicator_mean
+
+##plot monitoring area indicator mean scores
+ggplot(basin_indicator_mean) + 
+  geom_point(aes(Basin_HOLAS, mean_core_basin_score, color=core_indicator))+
+  facet_wrap(~score_type)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
+
 
 
 ```
 
-## Plot Basin scores
+## Plot Basin mean score across indicators
+```{r plot basin mean across indicators}
+
+##basin_mean_score
+
+##plot monitoring area indicator mean scores
+ggplot(basin_mean_score) + 
+  geom_point(aes(Basin_HOLAS, mean_basin_score))+
+  facet_wrap(~score_type)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
+
+
+```
+
 
 
 ## Plot BHI Scores
 ```{r plot BHI scores}
-#BHI Data
+## BHI Data
 library(rgdal)
 BHIshp = readOGR("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/March2016WkshpPlots/shapefiles", "BHI_regions_plus_buffer_25km")
 BHIshp2 = spTransform(BHIshp, CRS("+proj=longlat +init=epsg:4326"))
 print(proj4string(BHIshp2))
 
+
+## Assign score values to BHI regions
+
+## Plot BHI regions colored by score value
+  ## plot each score type separately
+
+
+
+
+
 plot(BHIshp2)
+
+
+
 ```
 
 

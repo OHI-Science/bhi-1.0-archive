@@ -239,6 +239,11 @@ basin_lookup
 Assign scores to GES status
 ---------------------------
 
+Explore the consequences of different scoring schemes.
+In all cases, a score of 1 achieving highest status.
+\#\#\# Alternative scoring methods **"score1"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"* **"score2"**: GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*
+**"score3"**: GES =1, subGES (low) = 0.2, subGES(high) = 0.5, subGES (no comment) = 0.2. *Distinguish between subGES levels that have been ranked low or high. Has only been done for cyprinids functional group.*
+
 ``` r
 ## is status ever NA?
 coastal_fish %>% filter(is.na(status)) #No
@@ -608,32 +613,28 @@ basin_indicator_mean
 ``` r
 #HOLAS basin score (mean across the two indicators)
 basin_mean_score = basin_indicator_mean %>%
-                    group_by(Basin_HOLAS)%>%
+                    group_by(Basin_HOLAS,score_type)%>%
                     summarise(mean_basin_score = round(mean(mean_core_basin_score,na.rm=TRUE),1))%>%
                     ungroup()
   
 basin_mean_score
 ```
 
-    ## Source: local data frame [15 x 2]
+    ## Source: local data frame [45 x 3]
     ## 
-    ##               Basin_HOLAS mean_basin_score
-    ##                     (chr)            (dbl)
-    ## 1               Aland Sea              1.0
-    ## 2            Arkona Basin              0.7
-    ## 3      Bay of Mecklenburg              0.7
-    ## 4          Bornholm Basin              0.8
-    ## 5            Bothnian Bay              0.8
-    ## 6            Bothnian Sea              0.8
-    ## 7   Eastern Gotland Basin              1.0
-    ## 8              Great Belt              0.2
-    ## 9         Gulf of Finland              0.6
-    ## 10           Gulf of Riga              0.5
-    ## 11               Kattegat              0.1
-    ## 12 Northern Baltic Proper              1.0
-    ## 13              The Quark              0.7
-    ## 14              The Sound              0.1
-    ## 15  Western Gotland Basin              0.1
+    ##           Basin_HOLAS score_type mean_basin_score
+    ##                 (chr)      (chr)            (dbl)
+    ## 1           Aland Sea     score1              0.9
+    ## 2           Aland Sea     score2              1.0
+    ## 3           Aland Sea     score3              1.0
+    ## 4        Arkona Basin     score1              0.7
+    ## 5        Arkona Basin     score2              0.8
+    ## 6        Arkona Basin     score3              0.8
+    ## 7  Bay of Mecklenburg     score1              0.6
+    ## 8  Bay of Mecklenburg     score2              0.7
+    ## 9  Bay of Mecklenburg     score3              0.7
+    ## 10     Bornholm Basin     score1              0.8
+    ## ..                ...        ...              ...
 
 ``` r
 ## BHI score
@@ -643,57 +644,68 @@ basin_mean_score
   bhi_mean_score %>% print(n=45)
 ```
 
-    ## Source: local data frame [42 x 3]
+    ## Source: local data frame [118 x 4]
     ## 
-    ##               Basin_HOLAS mean_basin_score bhi_id
-    ##                     (chr)            (dbl)  (int)
-    ## 1               Aland Sea              1.0     35
-    ## 2               Aland Sea              1.0     36
-    ## 3            Arkona Basin              0.7     11
-    ## 4            Arkona Basin              0.7     12
-    ## 5            Arkona Basin              0.7     13
-    ## 6      Bay of Mecklenburg              0.7      9
-    ## 7      Bay of Mecklenburg              0.7     10
-    ## 8          Bornholm Basin              0.8     14
-    ## 9          Bornholm Basin              0.8     15
-    ## 10         Bornholm Basin              0.8     16
-    ## 11         Bornholm Basin              0.8     17
-    ## 12           Bothnian Bay              0.8     41
-    ## 13           Bothnian Bay              0.8     42
-    ## 14           Bothnian Sea              0.8     37
-    ## 15           Bothnian Sea              0.8     38
-    ## 16  Eastern Gotland Basin              1.0     20
-    ## 17  Eastern Gotland Basin              1.0     21
-    ## 18  Eastern Gotland Basin              1.0     22
-    ## 19  Eastern Gotland Basin              1.0     23
-    ## 20  Eastern Gotland Basin              1.0     24
-    ## 21  Eastern Gotland Basin              1.0     25
-    ## 22             Great Belt              0.2      3
-    ## 23             Great Belt              0.2      4
-    ## 24        Gulf of Finland              0.6     32
-    ## 25        Gulf of Finland              0.6     33
-    ## 26        Gulf of Finland              0.6     34
-    ## 27           Gulf of Riga              0.5     27
-    ## 28           Gulf of Riga              0.5     28
-    ## 29               Kattegat              0.1      1
-    ## 30               Kattegat              0.1      2
-    ## 31 Northern Baltic Proper              1.0     29
-    ## 32 Northern Baltic Proper              1.0     30
-    ## 33 Northern Baltic Proper              1.0     31
-    ## 34              The Quark              0.7     39
-    ## 35              The Quark              0.7     40
-    ## 36              The Sound              0.1      5
-    ## 37              The Sound              0.1      6
-    ## 38  Western Gotland Basin              0.1     26
-    ## 39               Kiel Bay               NA      7
-    ## 40               Kiel Bay               NA      8
-    ## 41           Gdansk Basin               NA     18
-    ## 42           Gdansk Basin               NA     19
+    ##           Basin_HOLAS score_type mean_basin_score bhi_id
+    ##                 (chr)      (chr)            (dbl)  (int)
+    ## 1           Aland Sea     score1              0.9     35
+    ## 2           Aland Sea     score1              0.9     36
+    ## 3           Aland Sea     score2              1.0     35
+    ## 4           Aland Sea     score2              1.0     36
+    ## 5           Aland Sea     score3              1.0     35
+    ## 6           Aland Sea     score3              1.0     36
+    ## 7        Arkona Basin     score1              0.7     11
+    ## 8        Arkona Basin     score1              0.7     12
+    ## 9        Arkona Basin     score1              0.7     13
+    ## 10       Arkona Basin     score2              0.8     11
+    ## 11       Arkona Basin     score2              0.8     12
+    ## 12       Arkona Basin     score2              0.8     13
+    ## 13       Arkona Basin     score3              0.8     11
+    ## 14       Arkona Basin     score3              0.8     12
+    ## 15       Arkona Basin     score3              0.8     13
+    ## 16 Bay of Mecklenburg     score1              0.6      9
+    ## 17 Bay of Mecklenburg     score1              0.6     10
+    ## 18 Bay of Mecklenburg     score2              0.7      9
+    ## 19 Bay of Mecklenburg     score2              0.7     10
+    ## 20 Bay of Mecklenburg     score3              0.7      9
+    ## 21 Bay of Mecklenburg     score3              0.7     10
+    ## 22     Bornholm Basin     score1              0.8     14
+    ## 23     Bornholm Basin     score1              0.8     15
+    ## 24     Bornholm Basin     score1              0.8     16
+    ## 25     Bornholm Basin     score1              0.8     17
+    ## 26     Bornholm Basin     score2              0.8     14
+    ## 27     Bornholm Basin     score2              0.8     15
+    ## 28     Bornholm Basin     score2              0.8     16
+    ## 29     Bornholm Basin     score2              0.8     17
+    ## 30     Bornholm Basin     score3              0.8     14
+    ## 31     Bornholm Basin     score3              0.8     15
+    ## 32     Bornholm Basin     score3              0.8     16
+    ## 33     Bornholm Basin     score3              0.8     17
+    ## 34       Bothnian Bay     score1              0.8     41
+    ## 35       Bothnian Bay     score1              0.8     42
+    ## 36       Bothnian Bay     score2              0.8     41
+    ## 37       Bothnian Bay     score2              0.8     42
+    ## 38       Bothnian Bay     score3              0.8     41
+    ## 39       Bothnian Bay     score3              0.8     42
+    ## 40       Bothnian Sea     score1              0.8     37
+    ## 41       Bothnian Sea     score1              0.8     38
+    ## 42       Bothnian Sea     score2              0.8     37
+    ## 43       Bothnian Sea     score2              0.8     38
+    ## 44       Bothnian Sea     score3              0.8     37
+    ## 45       Bothnian Sea     score3              0.8     38
+    ## ..                ...        ...              ...    ...
 
-Plot scores at each level of aggregations
------------------------------------------
+Plot scores at each level
+-------------------------
+
+*e.g. plot the monitoring stations, basins, BHI regions*
 
 ### Plot monitoring area indicator mean scores
+
+Scoring alternatives do not seem to lead to strong differences. Clearly changing the subGES from 0 to 0.5 shifts the range of scores.
+
+**Note that points are "jittered" in the second plot to make visible**
+**Colors in the second plot are different monitoring locations**
 
 ``` r
 ##plot monitoring area indicator mean scores
@@ -706,6 +718,24 @@ ggplot(monitoring_indicator_mean) +
 ```
 
 ![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-1.png)<!-- -->
+
+``` r
+##plot monitoring area indicator mean scores by HOLAS basin
+ggplot(monitoring_indicator_mean) + 
+  geom_jitter(aes(Basin_HOLAS, mean_core_monitoring_score, color=monitoring_area, shape=factor(core_indicator)))+
+  facet_wrap(~score_type)+
+  guides(colour=FALSE)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
+```
+
+![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-2.png)<!-- -->
+
+Plot the monitoring area mean scores on a map
+---------------------------------------------
+
+Each of the alternative scorings plotted on a separate map
 
 ``` r
 ##plot on map
@@ -737,70 +767,101 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
     ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=60.25,20.25&zoom=5&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
 
 ``` r
-#Plot Scoring Alternative 1
-map_data1 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
-  filter(score_type == "score1")
-
-#set up the plot
-plot_map = ggmap(map) +
-  geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score), data=map_data1,size = 2)
-
-#plot the map
-plot_map + scale_color_gradientn(colours=rainbow(2)) +
-  ggtitle('Coastal Fish Stock Status, Score Type 1') +
-  theme(title = element_text(size = 12))
+##Plot Scoring Alternative 1
+    map_data1 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score1")
+    
+    ##set up the plot
+    plot_map1 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score, shape=factor(core_indicator)), data=map_data1,size = 2.5)
+    
+    ##plot the map
+    plot_map1 + scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 1') +
+      theme(title = element_text(size = 12))
 ```
 
     ## Warning: Removed 2 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-2.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-1.png)<!-- -->
 
 ``` r
-#Plot Scoring Alternative 2
-map_data2 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
-  filter(score_type == "score2")
-
-#set up the plot
-plot_map = ggmap(map) +
-  geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score), data=map_data2,size = 2)
-
-#plot the map
-plot_map + scale_color_gradientn(colours=rainbow(2)) +
-  ggtitle('Coastal Fish Stock Status, Score Type 2') +
-  theme(title = element_text(size = 12))
+##Plot Scoring Alternative 2
+    map_data2 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score2")
+    
+    ##set up the plot
+    plot_map2 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score,shape=factor(core_indicator)), data=map_data2,size = 2.5)
+    
+    ##plot the map
+    plot_map2 + scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 2') +
+      theme(title = element_text(size = 12))
 ```
 
     ## Warning: Removed 2 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-3.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-2.png)<!-- -->
 
 ``` r
-#Plot Scoring Alternative 3
-map_data3 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
-  filter(score_type == "score3")
-
-#set up the plot
-plot_map = ggmap(map) +
-  geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score), data=map_data3,size = 2)
-
-#plot the map
-plot_map + scale_color_gradientn(colours=rainbow(2)) +
-  ggtitle('Coastal Fish Stock Status, Score Type 3') +
-  theme(title = element_text(size = 12))
+##Plot Scoring Alternative 3
+    map_data3 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score3")
+    
+    ##set up the plot
+    plot_map3 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score,shape=factor(core_indicator)), data=map_data3,size = 2.5)
+    
+    ##plot the map
+    plot_map3+ scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 3') +
+      theme(title = element_text(size = 12))
 ```
 
     ## Warning: Removed 2 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-4.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-3.png)<!-- -->
 
-Plot Basin scores
------------------
+Plot Basin Indicator scores
+---------------------------
+
+``` r
+##basin_indicator_mean
+
+##plot monitoring area indicator mean scores
+ggplot(basin_indicator_mean) + 
+  geom_point(aes(Basin_HOLAS, mean_core_basin_score, color=core_indicator))+
+  facet_wrap(~score_type)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
+```
+
+![](ao_prep_files/figure-markdown_github/plot%20basin%20indicator%20scores-1.png)<!-- -->
+
+Plot Basin mean score across indicators
+---------------------------------------
+
+``` r
+##basin_mean_score
+
+##plot monitoring area indicator mean scores
+ggplot(basin_mean_score) + 
+  geom_point(aes(Basin_HOLAS, mean_basin_score))+
+  facet_wrap(~score_type)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
+```
+
+![](ao_prep_files/figure-markdown_github/plot%20basin%20mean%20across%20indicators-1.png)<!-- -->
 
 Plot BHI Scores
 ---------------
 
 ``` r
-#BHI Data
+## BHI Data
 library(rgdal)
 ```
 
@@ -836,6 +897,15 @@ print(proj4string(BHIshp2))
     ## [1] "+proj=longlat +init=epsg:4326 +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
 ``` r
+## Assign score values to BHI regions
+
+## Plot BHI regions colored by score value
+  ## plot each score type separately
+
+
+
+
+
 plot(BHIshp2)
 ```
 
