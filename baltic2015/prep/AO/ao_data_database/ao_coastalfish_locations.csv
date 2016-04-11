@@ -1,50 +1,50 @@
-station;LAT__DEC_D;LON__DEC_D;DECWGSN;DECWGSE;Shape_STAr;Shape_STLe
-Hiiumaa;58.5000;23.0000;58.5000;23.0000;;
-Finbo;60.2870;19.6710;60.2870;19.6710;;
-Kumlinge;60.2250;20.8190;60.2250;20.8190;;
-Ranea;65.8330;22.4260;65.8330;22.4260;;
-Holmoen;63.6820;20.8750;63.6820;20.8750;;
-Forsmark;60.4340;18.1620;60.4340;18.1620;;
-Kvaedoefjaerden;58.0170;16.7750;58.0170;16.7750;;
-Vinoe;57.5000;16.7000;57.5000;16.7000;;
-Finnish ICES SD 31;;;;;5551202869.2900;3325063.4643
-Kinnbaecksfjaerden;65.0470;21.5180;65.0470;21.5180;;
-Finnish Rectangle 23 & 28;;;;;3482155967.2900;3923349.5620
-Norrbyn;63.5340;19.8340;63.5340;19.8340;;
-Finnish ICES SD 30;;;;;4269244034.7100;4330593.7569
-Gaviksfjaerden;62.8630;18.2760;62.8630;18.2760;;
-Langvindsfjaerden;61.4560;17.1660;61.4560;17.1660;;
-Lagnoe;59.5660;18.8400;59.5660;18.8400;;
-Finnish ICES SD 29;;;;;10686042807.7000;18211293.9827
-Askoe;58.8120;17.7180;58.8120;17.7180;;
-Finnish ICES SD 32;;;;;5766937616.9600;6743706.2158
-Daugagriva;57.0400;24.0300;57.0400;24.0300;;
-Jurkalne;56.5900;21.2000;56.5900;21.2000;;
-Monciskes/Butinge;56.0055;21.0678;56.0055;21.0678;;
-Curonian Lagoon;55.5169;21.2181;55.5169;21.2181;;
-Torhamn;56.0500;15.7920;56.0500;15.7920;;
-Pomeranian Bay, Outer;;;54.1006;15.0800;;
-Stettin Lagoon (German part);;;53.7686;14.2098;;
-Peene river / Achterwasser;;;53.9968;13.9111;;
-East of Usedom Peninsula;;;54.0275;14.0982;;
-Greifswalder Bodden;;;54.2593;13.4482;;
-Strelasund;;;54.2859;13.1205;;
-Darss-Zingst Bodden chain;;;54.3501;12.4408;;
-Northeast of Ruegen Island;;;54.6784;13.4539;;
-Praestoe Fiord;;;55.1740;12.0893;;
-North of Kuhlungsborn city;;;54.1565;11.8380;;
-Wismar Bight and Salzhaff;;;53.9283;11.4366;;
-Boergerende;;;54.1700;11.9100;;
-Area south of Zealand (Smalandsfarvandet);;;54.6457;11.7323;;
-Sejeroe Bay;;;55.8577;11.2032;;
-The Great Belt;;;55.1669;10.8042;;
-Southern Little Belt and the archipelago;;;55.3003;9.6786;;
-Odense Fiord;;;55.4661;10.4758;;
-Arhus Bay;;;56.2244;10.4284;;
-Fiords of Eastern Jutland;;;55.7018;9.6096;;
-The Sound;;;56.0016;12.5855;;
-Isefjord and Roskilde Fjord;;;55.7074;11.9745;;
-Northern Kattegat;;;57.3098;10.5358;;
-Northern Limfjord;;;56.8575;9.0280;;
-Skive Fiord og Lovns Broad;;;56.6861;9.2484;;
-Venoe Bay and Nissum Broad;;;56.5182;8.6285;;
+station_cleaned;station;LAT__DEC_D;LON__DEC_D;DECWGSN;DECWGSE;Shape_STAr;Shape_STLe
+Area south of Zealand (Smalandsfarvandet);Area south of Zealand (Smalandsfarvandet);;;54.6457;11.7323;;
+Arhus Bay;Arhus Bay;;;56.2244;10.4284;;
+Askoe;Askoe;58.812;17.718;58.812;17.718;;
+Boergerende;Boergerende;;;54.17;11.91;;
+Curonian Lagoon;Curonian Lagoon;55.5169;21.2181;55.5169;21.2181;;
+Darss-Zingst Bodden chain;Darss-Zingst Bodden chain;;;54.3501;12.4408;;
+Daugagriva;Daugagriva;57.04;24.03;57.04;24.03;;
+East of Usedom Peninsula;East of Usedom Peninsula;;;54.0275;14.0982;;
+Finbo;Finbo;60.287;19.671;60.287;19.671;;
+ICES SD 29;Finnish ICES SD 29;;;;;10686042808;18211293.98
+ICES SD 30;Finnish ICES SD 30;;;;;4269244035;4330593.757
+ICES SD 31;Finnish ICES SD 31;;;;;5551202869;3325063.464
+ICES SD 32;Finnish ICES SD 32;;;;;5766937617;6743706.216
+Rectangle 23 & 28;Finnish Rectangle 23 & 28;;;;;3482155967;3923349.562
+Fiords of Eastern Jutland;Fiords of Eastern Jutland;;;55.7018;9.6096;;
+Forsmark;Forsmark;60.434;18.162;60.434;18.162;;
+Gaviksfjaerden;Gaviksfjaerden;62.863;18.276;62.863;18.276;;
+Greifswalder Bodden;Greifswalder Bodden;;;54.2593;13.4482;;
+Hiiumaa;Hiiumaa;58.5;23;58.5;23;;
+Holmoen;Holmoen;63.682;20.875;63.682;20.875;;
+Isefjord and Roskilde Fjord;Isefjord and Roskilde Fjord;;;55.7074;11.9745;;
+Jurkalne;Jurkalne;56.59;21.2;56.59;21.2;;
+Kinnbaecksfjaerden;Kinnbaecksfjaerden;65.047;21.518;65.047;21.518;;
+Kumlinge;Kumlinge;60.225;20.819;60.225;20.819;;
+Kvaedoefjaerden;Kvaedoefjaerden;58.017;16.775;58.017;16.775;;
+Lagnoe;Lagnoe;59.566;18.84;59.566;18.84;;
+Langvindsfjaerden;Langvindsfjaerden;61.456;17.166;61.456;17.166;;
+Monciskes/Butinge;Monciskes/Butinge;56.0055;21.0678;56.0055;21.0678;;
+Norrbyn;Norrbyn;63.534;19.834;63.534;19.834;;
+North of Kuhlungsborn city;North of Kuhlungsborn city;;;54.1565;11.838;;
+Northeast of Ruegen Island;Northeast of Ruegen Island;;;54.6784;13.4539;;
+Northern Kattegat;Northern Kattegat;;;57.3098;10.5358;;
+Northern Limfjord;Northern Limfjord;;;56.8575;9.028;;
+Odense Fiord;Odense Fiord;;;55.4661;10.4758;;
+Peene river / Achterwasser;Peene river / Achterwasser;;;53.9968;13.9111;;
+Pomeranian Bay, Outer;Pomeranian Bay, Outer;;;54.1006;15.08;;
+Praestoe Fiord;Praestoe Fiord;;;55.174;12.0893;;
+Ranea;Ranea;65.833;22.426;65.833;22.426;;
+Sejeroe Bay;Sejeroe Bay;;;55.8577;11.2032;;
+Skive Fiord og Lovns Broad;Skive Fiord og Lovns Broad;;;56.6861;9.2484;;
+Southern Little Belt and the archipelago;Southern Little Belt and the archipelago;;;55.3003;9.6786;;
+Stettin Lagoon (German part);Stettin Lagoon (German part);;;53.7686;14.2098;;
+Strelasund;Strelasund;;;54.2859;13.1205;;
+The Great Belt;The Great Belt;;;55.1669;10.8042;;
+The Sound;The Sound;;;56.0016;12.5855;;
+Torhamn;Torhamn;56.05;15.792;56.05;15.792;;
+Venoe Bay and Nissum Broad;Venoe Bay and Nissum Broad;;;56.5182;8.6285;;
+Vinoe;Vinoe;57.5;16.7;57.5;16.7;;
+Wismar Bight and Salzhaff;Wismar Bight and Salzhaff;;;53.9283;11.4366;;
