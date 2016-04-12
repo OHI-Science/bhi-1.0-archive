@@ -945,13 +945,10 @@ print(proj4string(BHIshp2))
 bhi_mean_score_colors = bhi_mean_score %>% 
                         mutate(cols = ifelse(is.na(mean_basin_score) == TRUE, "grey",
                                       ifelse(mean_basin_score >= 0 & mean_basin_score < 0.2, "orange1",
-<<<<<<< HEAD
                                       ifelse(mean_basin_score >= 0.2 & mean_basin_score < 0.5, "yellow2",
-=======
-                                      ifelse(mean_basin_score >= 0.2 & mean_basin_score < 0.5, "yellow3",
->>>>>>> 0db259d1e8c0cdc079fdd5cbd74326932b9d37bd
                                       ifelse(mean_basin_score >= 0.5 & mean_basin_score < 0.75, "light blue",
                                       ifelse(mean_basin_score >= .75 & mean_basin_score <=1.0, "blue", "grey"))))))
+
 
 ## Need separate shapefile for each score
 
@@ -979,21 +976,12 @@ head(shp_score2@data)
 ```
 
     ##   BHI_ID Basin_HOLAS score_type mean_basin_score    cols
-<<<<<<< HEAD
     ## 1      1    Kattegat     score2             0.20 yellow2
     ## 2      2    Kattegat     score2             0.20 yellow2
     ## 3      3  Great Belt     score2             0.27 yellow2
     ## 4      4  Great Belt     score2             0.27 yellow2
     ## 5      5   The Sound     score2             0.20 yellow2
     ## 6      6   The Sound     score2             0.20 yellow2
-=======
-    ## 1      1    Kattegat     score2             0.20 yellow3
-    ## 2      2    Kattegat     score2             0.20 yellow3
-    ## 3      3  Great Belt     score2             0.27 yellow3
-    ## 4      4  Great Belt     score2             0.27 yellow3
-    ## 5      5   The Sound     score2             0.20 yellow3
-    ## 6      6   The Sound     score2             0.20 yellow3
->>>>>>> 0db259d1e8c0cdc079fdd5cbd74326932b9d37bd
 
 ``` r
 shp_score3@data = shp_score3@data %>% full_join(., filter(bhi_mean_score_colors,score_type=="score3"), by=c("BHI_ID"= "bhi_id"))
@@ -1001,21 +989,12 @@ head(shp_score3@data)
 ```
 
     ##   BHI_ID Basin_HOLAS score_type mean_basin_score    cols
-<<<<<<< HEAD
     ## 1      1    Kattegat     score3             0.20 yellow2
     ## 2      2    Kattegat     score3             0.20 yellow2
     ## 3      3  Great Belt     score3             0.27 yellow2
     ## 4      4  Great Belt     score3             0.27 yellow2
     ## 5      5   The Sound     score3             0.20 yellow2
     ## 6      6   The Sound     score3             0.20 yellow2
-=======
-    ## 1      1    Kattegat     score3             0.20 yellow3
-    ## 2      2    Kattegat     score3             0.20 yellow3
-    ## 3      3  Great Belt     score3             0.27 yellow3
-    ## 4      4  Great Belt     score3             0.27 yellow3
-    ## 5      5   The Sound     score3             0.20 yellow3
-    ## 6      6   The Sound     score3             0.20 yellow3
->>>>>>> 0db259d1e8c0cdc079fdd5cbd74326932b9d37bd
 
 ``` r
 ## Plot BHI regions colored by score value

@@ -505,6 +505,7 @@ bhi_mean_score_colors = bhi_mean_score %>%
                                       ifelse(mean_basin_score >= 0.5 & mean_basin_score < 0.75, "light blue",
                                       ifelse(mean_basin_score >= .75 & mean_basin_score <=1.0, "blue", "grey"))))))
 
+
 ## Need separate shapefile for each score
 
 shp_score1 = BHIshp2
