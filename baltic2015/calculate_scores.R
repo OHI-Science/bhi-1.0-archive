@@ -16,6 +16,8 @@ source('~/github/bhi/baltic2015/pre_scores.R')
 scores = CalculateAll(conf, layers, debug=T)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
+## plot maps of scores
+source('~/github/bhi/baltic2015/PlotMapCall.r')
 
 
 ## Display app locally.
