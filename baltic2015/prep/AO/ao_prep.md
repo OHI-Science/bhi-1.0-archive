@@ -1,8 +1,8 @@
 ao\_prep.rmd
 ================
 
-AO Goal Data Prep
-=================
+Artisanal Opportunity (AO) Goal Data Prep
+=========================================
 
 Goal Overview
 -------------
@@ -14,9 +14,8 @@ This goal has three sub-components: *stock, access, and need*. For BHI we focus 
 ### Goal model
 
 Xao = Mean Stock Indicator Value / Reference pt
-Stock indicators = three HELCOM core indicators assessed for good environemental status (each scored between 0 and 1 by BHI)
+Stock indicators = two HELCOM core indicators assessed for good environemental status (each scored between 0 and 1 by BHI)
 Reference pt = maximum possible good environmental status (value=1)
-*Should it be the mean of the 3 indicators or the sum of the three?*
 
 Data
 ----
@@ -38,9 +37,13 @@ Data are from monitoring locations (described in the HELCOM core indicators). Fi
 Data Prep
 ---------
 
+Data prep below.
+
 ### Data scoring
 
-We will have to determine appropriate 0-1 scale for *GES* and *sub-GES*
+We will have to determine appropriate 0-1 scale for *GES* and *sub-GES*.
+
+*Note that in the OHI framework 'NA' means that an indicator is not applicable, not that there is no data. If there is no data, should either gap-fill or assign a score of 0 to highlight missing information*
 
     ## Warning: package 'readr' was built under R version 3.2.4
 
@@ -63,6 +66,13 @@ We will have to determine appropriate 0-1 scale for *GES* and *sub-GES*
 
 Layer prep
 ----------
+
+1. Read in data
+---------------
+
+Read in status assessment, monitoring area locations, lookup table for BHI regions to HOLAS basins.
+
+Locations for the Finnish monitoring areas are not given by specific lat-lon because are assessment areas. I have assigned a single lat-lon for each Finnish monitoring area for plotting purposes.
 
 ``` r
 ## read in data...
@@ -236,13 +246,19 @@ basin_lookup
     ## 10     10 Bay of Mecklenburg
     ## ..    ...                ...
 
-Assign scores to GES status
----------------------------
+2. Assign scores to GES status
+------------------------------
 
 Explore the consequences of different scoring schemes.
 In all cases, a score of 1 achieving highest status.
-\#\#\# Alternative scoring methods **"score1"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"* **"score2"**: GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*
-**"score3"**: GES =1, subGES (low) = 0.2, subGES(high) = 0.5, subGES (no comment) = 0.2. *Distinguish between subGES levels that have been ranked low or high. Has only been done for cyprinids functional group.*
+
+### 2.1 Alternative scoring methods
+
+**score"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"*
+
+**score2**: GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*
+
+**score3**: GES =1, subGES (low) = 0.2, subGES(high) = 0.5, subGES (no comment) = 0.2. *Distinguish between subGES levels that have been ranked low or high. Has only been done for cyprinids functional group.*
 
 ``` r
 ## is status ever NA?
@@ -294,10 +310,11 @@ coastal_fish_scores
     ##   (chr), assessment_method (chr), status (chr), status_comment (chr),
     ##   score1 (dbl), score2 (dbl), score3 (dbl)
 
-Plot alternative scores by location
------------------------------------
+### 2.2 Plot alternative scores by location
 
-Three separate plots for alternative scoring methods
+Three separate plots for alternative scoring methods.
+
+The difference between **score1** and **score2** / **score3** is that **score1** is binary between 0 and 1, while **score2** is binary between 0.2 and 1. **Score3** is only slightly different from **score 2** where for the functional groups (cyprinids) some receive a slightly higher score as "high" subGES stats.
 
 ``` r
 # make coastal_fish_scores in long format then plot
@@ -342,14 +359,14 @@ ggplot(filter(temp_long, score_type=="score3")) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-3.png)<!-- -->
 
-Unique indicators per monitoring location
------------------------------------------
+3. Unique indicators per monitoring location
+--------------------------------------------
 
-1.  Is more than one key species monitored at a given locations?
-    **NO**
-2.  Is more than one function group monitored?
-    **Depends on location, 1 or 2 groups monitored**
-3.  Are both key species and functional groups monitored at all locations? **No** 4 monitoring areas without Functional status, 2 without Key\_spp status
+*Summary information from code below.*
+1. Is more than one key species monitored at a given locations?
+**NO** 2. Is more than one function group monitored?
+**Depends on location, 1 or 2 groups monitored**
+3. Are both key species and functional groups monitored at all locations? **No**, 4 monitoring areas without Functional status, 2 without Key\_spp status
 
 ``` r
 coastal_fish_scores_long = coastal_fish_scores %>% 
@@ -550,10 +567,10 @@ indicator_taxa_count %>%  spread(core_indicator,unique_taxa_func)%>%
     ##     (int)     (int)
     ## 1       4         2
 
-BHI score
----------
+4. BHI score
+------------
 
-1.  Get mean score for each indicator type in each monitoring region.
+1.  Take mean score for each indicator type in each monitoring region.
 2.  Take mean score for each indicator at the HOLAS basin scale.
 3.  Take mean of the two indicators for each basin.
 4.  Apply basin score to each BHI region
@@ -614,7 +631,7 @@ basin_indicator_mean
 #HOLAS basin score (mean across the two indicators)
 basin_mean_score = basin_indicator_mean %>%
                     group_by(Basin_HOLAS,score_type)%>%
-                    summarise(mean_basin_score = round(mean(mean_core_basin_score,na.rm=TRUE),1))%>%
+                    summarise(mean_basin_score = round(mean(mean_core_basin_score,na.rm=TRUE),2))%>%
                     ungroup()
   
 basin_mean_score
@@ -624,22 +641,21 @@ basin_mean_score
     ## 
     ##           Basin_HOLAS score_type mean_basin_score
     ##                 (chr)      (chr)            (dbl)
-    ## 1           Aland Sea     score1              0.9
-    ## 2           Aland Sea     score2              1.0
-    ## 3           Aland Sea     score3              1.0
-    ## 4        Arkona Basin     score1              0.7
-    ## 5        Arkona Basin     score2              0.8
-    ## 6        Arkona Basin     score3              0.8
-    ## 7  Bay of Mecklenburg     score1              0.6
-    ## 8  Bay of Mecklenburg     score2              0.7
-    ## 9  Bay of Mecklenburg     score3              0.7
-    ## 10     Bornholm Basin     score1              0.8
+    ## 1           Aland Sea     score1             0.94
+    ## 2           Aland Sea     score2             0.95
+    ## 3           Aland Sea     score3             0.97
+    ## 4        Arkona Basin     score1             0.70
+    ## 5        Arkona Basin     score2             0.76
+    ## 6        Arkona Basin     score3             0.76
+    ## 7  Bay of Mecklenburg     score1             0.62
+    ## 8  Bay of Mecklenburg     score2             0.70
+    ## 9  Bay of Mecklenburg     score3             0.70
+    ## 10     Bornholm Basin     score1             0.80
     ## ..                ...        ...              ...
 
 ``` r
 ## BHI score
     ## join basin lookup
-
   bhi_mean_score = basin_mean_score %>% full_join(.,basin_lookup, by=c("Basin_HOLAS" = "basin_name"))
   bhi_mean_score %>% print(n=45)
 ```
@@ -648,63 +664,80 @@ basin_mean_score
     ## 
     ##           Basin_HOLAS score_type mean_basin_score bhi_id
     ##                 (chr)      (chr)            (dbl)  (int)
-    ## 1           Aland Sea     score1              0.9     35
-    ## 2           Aland Sea     score1              0.9     36
-    ## 3           Aland Sea     score2              1.0     35
-    ## 4           Aland Sea     score2              1.0     36
-    ## 5           Aland Sea     score3              1.0     35
-    ## 6           Aland Sea     score3              1.0     36
-    ## 7        Arkona Basin     score1              0.7     11
-    ## 8        Arkona Basin     score1              0.7     12
-    ## 9        Arkona Basin     score1              0.7     13
-    ## 10       Arkona Basin     score2              0.8     11
-    ## 11       Arkona Basin     score2              0.8     12
-    ## 12       Arkona Basin     score2              0.8     13
-    ## 13       Arkona Basin     score3              0.8     11
-    ## 14       Arkona Basin     score3              0.8     12
-    ## 15       Arkona Basin     score3              0.8     13
-    ## 16 Bay of Mecklenburg     score1              0.6      9
-    ## 17 Bay of Mecklenburg     score1              0.6     10
-    ## 18 Bay of Mecklenburg     score2              0.7      9
-    ## 19 Bay of Mecklenburg     score2              0.7     10
-    ## 20 Bay of Mecklenburg     score3              0.7      9
-    ## 21 Bay of Mecklenburg     score3              0.7     10
-    ## 22     Bornholm Basin     score1              0.8     14
-    ## 23     Bornholm Basin     score1              0.8     15
-    ## 24     Bornholm Basin     score1              0.8     16
-    ## 25     Bornholm Basin     score1              0.8     17
-    ## 26     Bornholm Basin     score2              0.8     14
-    ## 27     Bornholm Basin     score2              0.8     15
-    ## 28     Bornholm Basin     score2              0.8     16
-    ## 29     Bornholm Basin     score2              0.8     17
-    ## 30     Bornholm Basin     score3              0.8     14
-    ## 31     Bornholm Basin     score3              0.8     15
-    ## 32     Bornholm Basin     score3              0.8     16
-    ## 33     Bornholm Basin     score3              0.8     17
-    ## 34       Bothnian Bay     score1              0.8     41
-    ## 35       Bothnian Bay     score1              0.8     42
-    ## 36       Bothnian Bay     score2              0.8     41
-    ## 37       Bothnian Bay     score2              0.8     42
-    ## 38       Bothnian Bay     score3              0.8     41
-    ## 39       Bothnian Bay     score3              0.8     42
-    ## 40       Bothnian Sea     score1              0.8     37
-    ## 41       Bothnian Sea     score1              0.8     38
-    ## 42       Bothnian Sea     score2              0.8     37
-    ## 43       Bothnian Sea     score2              0.8     38
-    ## 44       Bothnian Sea     score3              0.8     37
-    ## 45       Bothnian Sea     score3              0.8     38
+    ## 1           Aland Sea     score1             0.94     35
+    ## 2           Aland Sea     score1             0.94     36
+    ## 3           Aland Sea     score2             0.95     35
+    ## 4           Aland Sea     score2             0.95     36
+    ## 5           Aland Sea     score3             0.97     35
+    ## 6           Aland Sea     score3             0.97     36
+    ## 7        Arkona Basin     score1             0.70     11
+    ## 8        Arkona Basin     score1             0.70     12
+    ## 9        Arkona Basin     score1             0.70     13
+    ## 10       Arkona Basin     score2             0.76     11
+    ## 11       Arkona Basin     score2             0.76     12
+    ## 12       Arkona Basin     score2             0.76     13
+    ## 13       Arkona Basin     score3             0.76     11
+    ## 14       Arkona Basin     score3             0.76     12
+    ## 15       Arkona Basin     score3             0.76     13
+    ## 16 Bay of Mecklenburg     score1             0.62      9
+    ## 17 Bay of Mecklenburg     score1             0.62     10
+    ## 18 Bay of Mecklenburg     score2             0.70      9
+    ## 19 Bay of Mecklenburg     score2             0.70     10
+    ## 20 Bay of Mecklenburg     score3             0.70      9
+    ## 21 Bay of Mecklenburg     score3             0.70     10
+    ## 22     Bornholm Basin     score1             0.80     14
+    ## 23     Bornholm Basin     score1             0.80     15
+    ## 24     Bornholm Basin     score1             0.80     16
+    ## 25     Bornholm Basin     score1             0.80     17
+    ## 26     Bornholm Basin     score2             0.84     14
+    ## 27     Bornholm Basin     score2             0.84     15
+    ## 28     Bornholm Basin     score2             0.84     16
+    ## 29     Bornholm Basin     score2             0.84     17
+    ## 30     Bornholm Basin     score3             0.84     14
+    ## 31     Bornholm Basin     score3             0.84     15
+    ## 32     Bornholm Basin     score3             0.84     16
+    ## 33     Bornholm Basin     score3             0.84     17
+    ## 34       Bothnian Bay     score1             0.75     41
+    ## 35       Bothnian Bay     score1             0.75     42
+    ## 36       Bothnian Bay     score2             0.80     41
+    ## 37       Bothnian Bay     score2             0.80     42
+    ## 38       Bothnian Bay     score3             0.82     41
+    ## 39       Bothnian Bay     score3             0.82     42
+    ## 40       Bothnian Sea     score1             0.75     37
+    ## 41       Bothnian Sea     score1             0.75     38
+    ## 42       Bothnian Sea     score2             0.80     37
+    ## 43       Bothnian Sea     score2             0.80     38
+    ## 44       Bothnian Sea     score3             0.82     37
+    ## 45       Bothnian Sea     score3             0.82     38
     ## ..                ...        ...              ...    ...
 
-Plot scores at each level
--------------------------
+``` r
+  ## Want to make sure that there are entries for each score type and basin (if not scored because no data, then only get a single NA)
+      ## make a "master" list of scores and bhi_id
+      score_list = basin_lookup %>% select(basin_name, bhi_id)%>% 
+                                    mutate(score1 = "score1",
+                                           score2 = "score2",
+                                           score3 = "score3") %>%
+                                    dplyr::rename(Basin_HOLAS = basin_name) %>%
+                                    group_by(Basin_HOLAS,bhi_id) %>%
+                                    gather(score_type,score,score1,score2,score3)%>%
+                                    ungroup() %>%
+                                    select(Basin_HOLAS,bhi_id,score_type)
+      
+      ## Join bhi_mean_score and score_list
+          bhi_mean_score = bhi_mean_score %>% right_join(., score_list, by=c("Basin_HOLAS","bhi_id","score_type"))
+```
+
+### 4.1 Plot scores at each level
 
 *e.g. plot the monitoring stations, basins, BHI regions*
 
-### Plot monitoring area indicator mean scores
+### 4.1a Plot monitoring area indicator mean scores
 
-Scoring alternatives do not seem to lead to strong differences. Clearly changing the subGES from 0 to 0.5 shifts the range of scores.
+Scoring alternatives do not seem to lead to strong differences. Clearly changing the subGES from 0 to 0.2 shifts the range of scores.
 
 **Note that points are "jittered" in the second plot to make visible**
+
 **Colors in the second plot are different monitoring locations**
 
 ``` r
@@ -732,10 +765,9 @@ ggplot(monitoring_indicator_mean) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-2.png)<!-- -->
 
-Plot the monitoring area mean scores on a map
----------------------------------------------
+### 4.1b Plot the monitoring area mean scores on a map
 
-Each of the alternative scorings plotted on a separate map
+Each of the alternative score methods plotted on a separate map.
 
 ``` r
 ##plot on map
@@ -823,16 +855,20 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
 
 ![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-3.png)<!-- -->
 
-Plot Basin Indicator scores
----------------------------
+### 4.1c Plot Basin Indicator scores
+
+Plot the mean basin score for each indicator *(e.g. on functional score per basin and one key species score per basin).*
+*Basins are currently alphabetically ordered on x-axis, not ordered geographically.*
 
 ``` r
 ##basin_indicator_mean
 
 ##plot monitoring area indicator mean scores
 ggplot(basin_indicator_mean) + 
-  geom_point(aes(Basin_HOLAS, mean_core_basin_score, color=core_indicator))+
+  geom_point(aes(Basin_HOLAS, mean_core_basin_score, color=core_indicator,shape=core_indicator), size=1.5)+
   facet_wrap(~score_type)+
+  scale_shape_manual(values=c(6,19))+
+  scale_colour_manual(values = c("black","turquoise"))+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"),
          plot.margin = unit(c(1,1,1,1), "cm")) 
@@ -840,15 +876,16 @@ ggplot(basin_indicator_mean) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20basin%20indicator%20scores-1.png)<!-- -->
 
-Plot Basin mean score across indicators
----------------------------------------
+### 4.1d Plot Basin mean score across indicators
+
+The mean of the two indicator scores was taken for each basin.
 
 ``` r
 ##basin_mean_score
 
 ##plot monitoring area indicator mean scores
 ggplot(basin_mean_score) + 
-  geom_point(aes(Basin_HOLAS, mean_basin_score))+
+  geom_point(aes(Basin_HOLAS, mean_basin_score), size=2)+
   facet_wrap(~score_type)+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"),
@@ -857,8 +894,10 @@ ggplot(basin_mean_score) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20basin%20mean%20across%20indicators-1.png)<!-- -->
 
-Plot BHI Scores
----------------
+### 4.1e Plot BHI Scores
+
+There are no scores for Kiel Bay and Gdansk Basin, there for no scores for BHI regions 7,8,18,19. For Kiel Bay, this could be because some monitoring locations should be assigned to Kiel Bay but are not. There is no Polish data which is why there is no scoring for Gdansk Basin.
+**Outcome among score type** does not seem to change at the basin or BHI scale. Should other score methods be considered?
 
 ``` r
 ## BHI Data
@@ -897,26 +936,95 @@ print(proj4string(BHIshp2))
     ## [1] "+proj=longlat +init=epsg:4326 +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
 ``` r
-## Assign score values to BHI regions
+## Assign colors to BHI ID based on score - these bins are not even, not sure how to do a gradient
+## 0 - 0.19
+## 0.2 - 0.49
+## 0.5 - 0.74
+## 0.75 - 1.0
 
+bhi_mean_score_colors = bhi_mean_score %>% 
+                        mutate(cols = ifelse(is.na(mean_basin_score) == TRUE, "grey",
+                                      ifelse(mean_basin_score >= 0 & mean_basin_score < 0.2, "orange1",
+                                      ifelse(mean_basin_score >= 0.2 & mean_basin_score < 0.5, "yellow2",
+                                      ifelse(mean_basin_score >= 0.5 & mean_basin_score < 0.75, "light blue",
+                                      ifelse(mean_basin_score >= .75 & mean_basin_score <=1.0, "blue", "grey"))))))
+
+## Need separate shapefile for each score
+
+shp_score1 = BHIshp2
+shp_score2 = BHIshp2
+shp_score3 = BHIshp2
+
+#assign colors to shapefile data
+
+shp_score1@data = shp_score1@data %>% full_join(., filter(bhi_mean_score_colors,score_type=="score1"), by=c("BHI_ID"= "bhi_id"))
+head(shp_score1@data)
+```
+
+    ##   BHI_ID Basin_HOLAS score_type mean_basin_score    cols
+    ## 1      1    Kattegat     score1             0.00 orange1
+    ## 2      2    Kattegat     score1             0.00 orange1
+    ## 3      3  Great Belt     score1             0.08 orange1
+    ## 4      4  Great Belt     score1             0.08 orange1
+    ## 5      5   The Sound     score1             0.00 orange1
+    ## 6      6   The Sound     score1             0.00 orange1
+
+``` r
+shp_score2@data = shp_score2@data %>% full_join(., filter(bhi_mean_score_colors,score_type=="score2"), by=c("BHI_ID"= "bhi_id"))
+head(shp_score2@data)
+```
+
+    ##   BHI_ID Basin_HOLAS score_type mean_basin_score    cols
+    ## 1      1    Kattegat     score2             0.20 yellow2
+    ## 2      2    Kattegat     score2             0.20 yellow2
+    ## 3      3  Great Belt     score2             0.27 yellow2
+    ## 4      4  Great Belt     score2             0.27 yellow2
+    ## 5      5   The Sound     score2             0.20 yellow2
+    ## 6      6   The Sound     score2             0.20 yellow2
+
+``` r
+shp_score3@data = shp_score3@data %>% full_join(., filter(bhi_mean_score_colors,score_type=="score3"), by=c("BHI_ID"= "bhi_id"))
+head(shp_score3@data)
+```
+
+    ##   BHI_ID Basin_HOLAS score_type mean_basin_score    cols
+    ## 1      1    Kattegat     score3             0.20 yellow2
+    ## 2      2    Kattegat     score3             0.20 yellow2
+    ## 3      3  Great Belt     score3             0.27 yellow2
+    ## 4      4  Great Belt     score3             0.27 yellow2
+    ## 5      5   The Sound     score3             0.20 yellow2
+    ## 6      6   The Sound     score3             0.20 yellow2
+
+``` r
 ## Plot BHI regions colored by score value
+
   ## plot each score type separately
 
+  par(mfrow=c(2,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
+  
+ plot(shp_score1, col=shp_score1@data$cols, main = "score 1")
+ plot(shp_score1, col=shp_score1@data$cols, main = "score 2")
+ plot(shp_score1, col=shp_score1@data$cols, main = "score 3")
 
+  plot(c(1,2,3),c(1,2,3), type='n', fg="white",bg="white", xaxt='n',yaxt='n')
+  legend("center", 
+         legend=c("No Score","0 - 0.19", "0.2 - 0.49", "0.5 - 0.74", "0.75 -1.0"), 
+         fill=c("grey","orange1","yellow2","light blue", "blue"), bty='n', cex=1.5)
 
-
-
-plot(BHIshp2)
+    mtext("AO Score", side = 3, outer=TRUE, line=1.5)
 ```
 
 ![](ao_prep_files/figure-markdown_github/plot%20BHI%20scores-1.png)<!-- -->
 
-Next steps
-----------
+5. Next steps
+-------------
 
 1.  Have Jens assess scoring options for GES status assessment.
+    -   Should other scoring options be considered. Current methods don't differ when scaled up to basin or region.
 
 2.  Have Jens assess method for scale up from monitoring location specific indicator status assessments to BHI region score.
+    -   Is it reasonable to
 
-3.  Check assignment of monitoring regions / assessment basins to HOLAS basins
-    **Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data). *Should we gap-fill with adjacent areas?*
+3.  Check assignment of monitoring regions / assessment basins to HOLAS basins.
+
+**Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data). *Should we gap-fill with adjacent areas?*
