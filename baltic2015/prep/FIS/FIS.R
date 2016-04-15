@@ -5,7 +5,14 @@
 library(dplyr)
 library(tidyr)
 
-scores <- read.csv('data/FIS_scores.csv') %>%
+## Directories
+dir_baltic = '~/github/bhi/baltic2015'
+dir_layers = file.path(dir_baltic, 'layers')
+dir_prep   = file.path(dir_baltic, 'prep')
+dir_fis = file.path(dir_prep, 'FIS')
+
+scores <- read.csv(file.path(dir_fis,
+'data/FIS_scores.csv')) %>%
   spread(metric, score)
 
 ###########################################################################
@@ -30,14 +37,14 @@ scores <- scores %>%
 ## STEP 2: cacluting the weights.
 #############################################
 
-landings <- read.csv('data/FIS_landings.csv')
+landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
 
 ##### Subset the data to include only the most recent 10 years
 landings <- landings %>%
   filter(year %in% (max(landings$year)-9):max(landings$year))
 
 
-## we use the average catch for each stock/region across all years 
+## we use the average catch for each stock/region across all years
 ## to obtain weights
 weights <- landings %>%
   group_by(region_id, stock) %>%
@@ -66,7 +73,7 @@ status <- weights %>%
   left_join(scores, by=c('region_id', 'year', 'stock')) %>%
   filter(!is.na(score)) %>%                    # remove missing data
   select(region_id, year, stock, propCatch, score)        # cleaning data
-  
+
 
 ### Geometric mean weighted by proportion of catch in each region
 status <- status %>%
@@ -78,6 +85,7 @@ status <- status %>%
 ### To get trend, get slope of regression model based on most recent 5 years
 ### of data
 
+##TODO where is the object status_trend_data????
 trend_years <- (max(status_trend_data$year)-4):max(status_trend_data$year)
 
 trend <- status %>%
@@ -88,12 +96,12 @@ trend <- status %>%
             trend = coef(mdl)['year'] * 5) %>%  ## trend multiplied by 5 to get prediction 5 years out
   ungroup() %>%
   mutate(trend = round(trend, 2))
-  
+
 # can do a check to make sure it looks right:
 data.frame(filter(status, region_id==3))
- 
-lm(c(0.8811878, 0.9390962, 0.9390962, 0.7916069, 0.7145114) ~ trend_years)  
--0.04808 * 5 
+
+lm(c(0.8811878, 0.9390962, 0.9390962, 0.7916069, 0.7145114) ~ trend_years)
+-0.04808 * 5
 ## results match....looks like everything went well!
 
 ### final formatting of status data:
@@ -106,3 +114,21 @@ status <- status %>%
 ##### save the data (eventually these steps will be incorporated into the OHI toolbox)
 write.csv(status, "data/FIS_status.csv", row.names=FALSE)
 write.csv(trend, "data/FIS_trend.csv", row.names = FALSE)
+
+
+
+##############################################
+## Read in the status and trend csv for plotting
+status = read.csv(file.path(dir_fis,
+                   'data/FIS_status.csv'))
+trend = read.csv(file.path(dir_fis,
+                            'data/FIS_trend.csv'))
+
+library(ggplot2)
+
+windows()
+par(mfrow=c(1,2), mar=c(1,1,1,1), oma=c(2,2,2,2))
+plot(status~region_id, data=status)
+
+par(new=FALSE)
+plot(trend~region_id, data=trend)
