@@ -499,7 +499,7 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
 
 ![](secchi_prep_files/figure-markdown_github/plot%20mean%20summer%20secchi-1.png)<!-- -->
 
-### 8.3 Plot summer secchi with target values indicated
+### 3.8.5 Plot summer secchi with target values indicated
 
 Horizontal lines are HELCOM target values.
 
