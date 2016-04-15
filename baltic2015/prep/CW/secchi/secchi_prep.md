@@ -6,6 +6,8 @@ secchi\_prep
 source('~/github/bhi/baltic2015/prep/common.r')
 ```
 
+    ## Warning: package 'readr' was built under R version 3.2.4
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -29,8 +31,8 @@ dir_secchi    = file.path(dir_prep, 'CW/secchi')
 create_readme(dir_secchi, 'secchi_prep.rmd')
 ```
 
-Background on using Secchi
---------------------------
+1. Background on using Secchi
+-----------------------------
 
 [HELCOM Water Clarity Core Indicator](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity) Mean Summer Secchi (June-September)
 **HELCOM Good Environmental Status** "Good environmental status is measured in relation to scientifically based and commonly agreed sub-basin-wise target levels.
@@ -41,10 +43,10 @@ These GES boundaries were based on the results obtained in the TARGREV project (
 
 [Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10](http://www.sciencedirect.com/science/article/pii/S0272771412000418)
 
-Secchi Data
------------
+2. Secchi Data
+--------------
 
-### Data sources
+### 2.1 Data sources
 
 **ICES**
 Data extracted from database and sent by Hjalte Parner.
@@ -55,19 +57,26 @@ Downloaded from [SMHI Shark database](http://www.smhi.se/klimatdata/oceanografi/
 \* Download notes: datatyp: Physical and Chemical; Parameter: secchi depth
 Lena did not exclude any data when she downloaded it.
 
-Data Cleaning and decision-making
----------------------------------
+### 2.2 Data Cleaning and decision-making
 
 **Duplicates in the Data**
 ICES data contains profile data (eg temperature,but secchi is only measured once). Need only unique secchi records. It appears the SMHI also contains profiles. Also check to see if any SMHI data already in the ICES records.
 
 **Coastal data**
-See decisions (map) Fleming-Lehtinen and Laamanen 2012. Need to decide if need to filter out the coastal sampling data.
+ - All stations are currently included in our analysis.
+ - See decisions (map) Fleming-Lehtinen and Laamanen 2012. Need to decide if need to filter out the coastal sampling data.
 
-**Sampling frequency** *Can these data decisions be implemented?* Fleming-Lehtinen and Laamanen (2012) do the following:
-1. If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.
-2. If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias.
-*We have not implemented this so far*
+**Sampling frequency** *Can / should these data decisions be implemented? We have not implemented this so far*
+Fleming-Lehtinen and Laamanen (2012) do the following:
+ - If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.
+ - If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias.
+
+3. Data Prep
+------------
+
+### 3.1 Read in data
+
+Prelimary filtering to remove duplicate values within datasets (eg profiles) and between datasets.
 
 ``` r
 ## read in secchi data
@@ -277,8 +286,7 @@ allData %>% select(year, month, date, lat, lon,secchi) %>% distinct() %>%nrow(.)
 # 43253 
 ```
 
-Target values
--------------
+### 3.2 Target values
 
 These are the values that will be used as a reference point.
 
@@ -305,8 +313,7 @@ target = target %>% select(basin, summer_secchi)%>%
         mutate(basin = str_replace_all(basin,"_"," "))
 ```
 
-HELCOM HOLAS Basin
-------------------
+### 3.3 HELCOM HOLAS Basin
 
 These basins are the relevant physical units.
 Secchi data will be first assessed at this level and then assigned to BHI region. EEZ divisions may result in some BHI regions that have no data but they are physically the same basin as a BHI region with data.
@@ -318,8 +325,7 @@ basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
   mutate(basin_name = str_replace_all(basin_name,"_"," "))
 ```
 
-Select summer data and plot
----------------------------
+### 3.4 Select summer data and plot
 
 Months 6-9 (June, July, August, September) Years &gt;= 2000 Data is sparse for BHI regions 4,22,25
 
@@ -346,17 +352,16 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
   facet_wrap(~bhi_id, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)<!-- -->
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~bhi_id)
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)<!-- -->
 
-Assign secchi data to a HOLAS basin
------------------------------------
+### 3.5 Assign secchi data to a HOLAS basin
 
 Data coverage appears substantially better at the basin scale. Some basins have missing data or limited data for the most recent years: Great Belt, Gulf of Riga, Kiel Bay
 
@@ -370,7 +375,7 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)<!-- -->
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
@@ -379,10 +384,9 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)<!-- -->
 
-Restrict data to before 2014
-----------------------------
+### 3.6 Restrict data to before 2014
 
 There are still basins with limited or not data from 2010 onwards but this at least removes the potential for not having data reported in the past 2 years
 
@@ -394,10 +398,9 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~basin_name, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)
+![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)<!-- -->
 
-Evaluate number of stations sampled in each basin
--------------------------------------------------
+### 3.7 Evaluate number of stations sampled in each basin
 
 Very different number of unique lat-lon locations by month and basin.
 Sometimes lat-lon is not good to use because recording specific ship location which might be vary even though ship is at the same station. More duplicates were detected in the data however when station was not included, than when lat and lon were not included as the location identifier.
@@ -433,12 +436,13 @@ ggplot(basin_summary) + geom_point(aes(year,loc_count, colour=factor(month)))+
   ylab("Number Sampling Locations")
 ```
 
-![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)
+![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)<!-- -->
 
-Calculate mean monthly value for each summer month & overall mean
------------------------------------------------------------------
+### 3.8 Mean secchi Calculation
 
-basin monthly mean = mean of all samples within month and basin basin summer mean = mean of basin monthly mean values
+### 3.8.1 Calculate mean monthly value for each summer month
+
+basin monthly mean = mean of all samples within month and basin
 
 ``` r
 mean_months = summer %>% select(year, month,basin_name,secchi)%>%
@@ -459,6 +463,8 @@ head(mean_months)
     ## 5  2000     6          Bothnian Sea         4.5
     ## 6  2000     6 Eastern Gotland Basin         7.9
 
+### 3.8.2 Plot mean monthly value by basin
+
 ``` r
 #Plot
 ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
@@ -469,24 +475,33 @@ ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-1.png)
+![](secchi_prep_files/figure-markdown_github/plot%20mean%20monthly-1.png)<!-- -->
+
+### 3.8.3 Calculate summer mean secchi (basin)
+
+basin summer mean = mean of basin monthly mean values
 
 ``` r
 mean_months_summer = mean_months %>% select(year, basin_name,mean_secchi) %>%
                       group_by(year,basin_name)%>%
                       summarise(mean_secchi = round(mean(mean_secchi,na.rm=TRUE),1)) %>%
                       ungroup()  #in mean calculation all some months to have NA, ignore for that years calculation
+```
 
+### 3.8.4 Plot summer mean secchi
+
+``` r
 ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
   geom_line(aes(year,mean_secchi))+
   facet_wrap(~basin_name)+
   scale_y_continuous(limits = c(0,10))
 ```
 
-![](secchi_prep_files/figure-markdown_github/calculate%20summer%20secchi-2.png)
+![](secchi_prep_files/figure-markdown_github/plot%20mean%20summer%20secchi-1.png)<!-- -->
 
-Plot summer secchi with target values indicated
------------------------------------------------
+### 8.3 Plot summer secchi with target values indicated
+
+Horizontal lines are HELCOM target values.
 
 ``` r
 secchi_target = left_join(mean_months_summer,target, by=c("basin_name" = "basin"))%>%
@@ -512,13 +527,30 @@ ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
   scale_y_continuous(limits = c(0,10))
 ```
 
-![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)
+![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)<!-- -->
 
-What year will the status be calculated for for each basin?
------------------------------------------------------------
+4. Status and Trend exploration
+-------------------------------
+
+### 4.1 Goal Model & Trend
+
+**The Goal Model is how the status is calculated**
+Xnut\_b = mean\_summer\_secchi\_y\_b / Reference point\_r
+
+mean\_summer\_secchi\_y = mean summer secchi in year (y) in a basin (b) Reference point = HELCOM target for that basin
+
+Xnut\_bhi\_region = Xnut\_b
+*Each BHI region will receive the status value of the HOLAS basin it belongs to*
+
+**Trend** The trend is calculated based on a linear regression.
+Status\_b ~ m\*Year + intercept
+In our approach here, we use a 10 year period to calculate the trend with a minimum of 5 data points. In most cases, the BHI framework uses a 5 year period for the trend, but as secchi is a slow response variable, we use a longer time period.
+The trend value is the slope (m) of the linear regression multiplied by the year of future interest (5 years from status year) and this value is constrained to between -1 and 1.
+
+### 4.2 What year will the status be calculated for for each basin?
 
 This is if there is no temporal gapfilling.
-Most basins can have the status calculated for 2013 with the exception of the Great Belt and Gulf of Riga.
+Most basins can have the status calculated for **2013** with the **exception** of the *Great Belt (2011)* and *Gulf of Riga (2012)*.
 One option is no gap filling and calculating the status for differenet final years and over a different 5 year period
 
 ``` r
@@ -539,11 +571,11 @@ last_year %>% filter(last_year < 2013)
     ## 1   Great Belt      2011
     ## 2 Gulf of Riga      2012
 
-Status calculation non-modeled data
------------------------------------
+### 4.3 Calculate status
 
-Status must be calculated in data prep because calculation for a basin and then applying to all regions.
-\*Status code based on code Lena Viktorsson developed for functions.r
+**Status calculation with raw (non-modeled) mean summer secchi by basin**
+Status must be calculated in data prep because calculation for a basin and then applied to all regions.
+*Status code based on code Lena Viktorsson developed for functions.r*
 
 ``` r
 ## Define constants for status calculation
@@ -613,20 +645,22 @@ Status must be calculated in data prep because calculation for a basin and then 
                 select(rgn_id = bhi_id, dimension, score )
 ```
 
-Plot Basin status over time
----------------------------
+### 4.4 Plot Basin status over time
+
+Basin status is initially a value between 0 - 1. Calculated for each year between 2000 and 2013.
 
 ``` r
 ggplot(basin_status) + geom_point((aes(year,status)))+
-  facet_wrap(~basin_name)
+  facet_wrap(~basin_name) +
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))
 ```
 
-![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)
+![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)<!-- -->
 
-Plot BHI region status and trend values
----------------------------------------
+### 4.5 Plot BHI region status and trend values
 
-Status values can range from 0-100
+Status values can range from 0-100 -- this is the status for the *most recent* year. In most cases this is 2013.
 Trend values can be between -1 to 1
 
 ``` r
@@ -635,10 +669,9 @@ ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + ge
   xlab("BHI region")
 ```
 
-![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)
+![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)<!-- -->
 
-Save csv files
---------------
+### 4.6 Save csv files
 
 These csv files will be used as a first cut for the secchi status and trend. **Files to save**
 1. Status and trend for each BHI region based on the basin level calculations
@@ -652,8 +685,8 @@ These csv files will be used as a first cut for the secchi status and trend. **F
                  file.path(dir_layers, "cw_nu_trend_bhi2015.csv"))
 ```
 
-Next steps
-----------
+5. Next steps
+-------------
 
 **Mean secchi calculation**
 1. Find out how mean secchi value determined for HELCOM core indicator - is our calculation of the mean ok? *Thorsten contacting Vivi Fleming-Lehtinen*
