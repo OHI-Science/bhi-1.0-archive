@@ -6,7 +6,8 @@
 #NOTE: one bird species fell out of the bhi polygon areas and was excluded
 # I would probably ignore....but it might be worth figuring out.
 
-## These data are very annoying
+## These data are very annoying, the data consist of the "raster-style" polygons and other
+## polygons.  Given this, I just reextracted the data.
 
 library(sp)
 library(rgdal)
@@ -32,14 +33,15 @@ bird <- readOGR(dsn = "/var/data/ohi/git-annex/Baltic/spp/Birds/Vanellus vanellu
                 layer = "vanellusvanellus_pro")
 
 #### transform the sp_map data to have the same
-#### coordinate reference system as the region boundaries
+#### coordinate reference system as the Helcom data
 bhi <- spTransform(bhi, CRS(proj4string(bird)))
 
 ### Extracting bird data
 all_birds <- list.files('/var/data/ohi/git-annex/Baltic/spp/Birds')
-all_birds <- all_birds[-(which(all_birds %in% c("Actitis hypoleucos (NT)"))) ]
+all_birds <- all_birds[-(which(all_birds %in% c("Actitis hypoleucos (NT)"))) ] # this bird falls outside the polygons (appears to be only one cell)
 
 bird_data <- data.frame()
+
 
 for(birdy in all_birds){  #birdy <- "Actitis hypoleucos (NT)"
   print(birdy)
@@ -63,5 +65,14 @@ for(birdy in all_birds){  #birdy <- "Actitis hypoleucos (NT)"
 bird_data <- rbind(bird_data, data)
 }
 
-write.csv(bird_data, "baltic2015/prep/SPP/intermediate/bird_extract.csv", row.names=FALSE)
 
+bird_data_tmp <- bird_data %>%
+  separate(species, c("species_name", "IUCN"), -5) %>%
+  mutate(IUCN = gsub('[()]', '', IUCN))
+
+write.csv(bird_data_tmp, "baltic2015/prep/SPP/intermediate/birds.csv", row.names=FALSE)
+
+
+
+
+all_birds

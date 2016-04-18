@@ -11,8 +11,23 @@ library(maptools)
 library(dplyr)
 library(tidyr)
 
+## some species have multiple IUCN categories (probably due to subspecies)
+## It would be ideal if we know which categories correspond to which regions,
+## but these data are not available.
+## two possible options are:
+  ## 1. average them
+  ## 2. use the most conservative option
 
-mammal <- readOGR(dsn = "C:/Users/Melanie/Desktop/bhi_data/spp_ico/All_Mammals",
+## I am going with #2 for now, but this would be easy to change.
+
+
+species <- read.csv('baltic2015/prep/SPP/raw/mammal_species.csv') %>%
+  filter(!(species_name == "Phoca vitulina vitulina" & IUCN == "LC")) %>%
+  filter(!(species_name == "Phocoena phocoena" & IUCN == "VU"))
+
+
+
+mammal <- readOGR(dsn = "/var/data/ohi/git-annex/Baltic/spp/All_Mammals",
                 layer = "Join_Mammals")
 mammal <- mammal@data
 mammal <- mammal %>%
@@ -20,7 +35,7 @@ mammal <- mammal %>%
   mutate(Subbasin = ifelse(mammal$Subbasin %in% grep("land Sea", mammal$Subbasin, value=TRUE), "Aland Sea", Subbasin),
          Subbasin = ifelse(Subbasin %in% "Gulf of Gdansk", "Gdansk Basin", Subbasin))
 
-regions <- read.csv('bhi/baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
+regions <- read.csv('baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
   select(rgn_id, Subbasin = basin_name)
 setdiff(regions$Subbasin, mammal$Subbasin)
 setdiff(mammal$Subbasin, regions$Subbasin)
@@ -30,12 +45,10 @@ mammal <- mammal %>%
   select(-OBJECTID, -Basin_name, -Subbasin) %>%
   gather("gis_name", "presence", -rgn_id) %>%
   filter(presence==1) %>%
-  select(-presence)
-  
+  select(-presence) %>%
+  left_join(species, by="gis_name") %>%
+  select(rgn_id, species_name, IUCN)
 
-### NOTE: Need to associate these regions with bhi regions:
-## "Vistula lagoon"  "Curonia lagoon"  "Little Belt"     "Archipelago Sea"
-## NOTE: Also need to associate mammal codes with names and vulnerability
-  
-write.csv(mammal, "bhi/baltic2015/prep/SPP/intermediate/mammal_extract.csv", row.names=FALSE)
+
+write.csv(mammal, "baltic2015/prep/SPP/intermediate/mammals.csv", row.names=FALSE)
 

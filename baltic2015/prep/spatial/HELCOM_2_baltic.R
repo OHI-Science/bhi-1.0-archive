@@ -64,7 +64,14 @@ write.csv(data, "baltic2015/prep/spatial/helcom_to_rgn_bhi_sea.csv", row.names=F
 
 
 
+############################################
 ###### 50 km inland ######################
+
+## NOTE: My idea was to get the 50 km inland data and merge it with the sea data to ensure that
+## species landing slightly on land would be included.
+## However, I let this run for over 24 hours and had no success.  I think there is something strange about the
+## spatial file that is preventing this from working.
+
 #### BHI map
 bhi_inland <- readOGR(dsn = "/var/data/ohi/git-annex/Baltic/regions/BHI_regions_inland_buffer/BHI_inland_50km",
                layer = "BHI_inland_50km")

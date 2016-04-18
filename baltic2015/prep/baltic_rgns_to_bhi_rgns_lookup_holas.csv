@@ -3,8 +3,10 @@ rgn_id,area_km2,cntry_name,basin_name,rgn_name,sc_key,baltic_rgn_key,sc_id
 23,6083.73,Lithuania,Southern Baltic Proper,Lit - Eastern Gotland Basin,,,
 36,,Finland,Archipelago Sea,,,,
 3,,Denmark,Little Belt,,,,
-22,,Russia,Curonia lagoon,,,,
-23,,Lithuania,Curonia lagoon,,,,
+22,,Russia,Curonia lagoon,,,,
+23,,Lithuania,Curonia lagoon,,,,
+22,,Russia,Curonian lagoon,,,,
+23,,Lithuania,Curonian lagoon,,,,
 18,,Poland,Vistula lagoon,,,,
 19,,Russia,Vistula lagoon,,,,
 1,6565.59,Sweden,Kattegat,Swe - Kattegat,bhi-swe,swe,1

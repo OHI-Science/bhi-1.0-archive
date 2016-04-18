@@ -13,7 +13,7 @@ library(tidyr)
 species <- read.csv("baltic2015/prep/SPP/raw/benthic_species.csv")
 
 ### Regions
-regions <- read.csv("baltic2015/prep/spatial/helcom_to_rgn.csv")
+regions <- read.csv("baltic2015/prep/spatial/helcom_to_rgn_bhi_sea.csv")
 
 
 #### Benthos Helcom data:

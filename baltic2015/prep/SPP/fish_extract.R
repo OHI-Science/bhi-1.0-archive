@@ -2,13 +2,31 @@
 ## Extracting the fish data
 ## MRF Mar 18 2016
 #######################################
+library(sp)
+library(rgdal)
+library(raster)
+library(rgeos)
+library(maptools)
+library(dplyr)
+library(tidyr)
 
-regions <- read.csv('bhi/baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
+regions <- read.csv('baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
   select(rgn_id, Subbasin = basin_name)
 
-names <- read.csv('bhi/baltic2015/prep/spp/raw/fish_species.csv')
+names <- read.csv('baltic2015/prep/SPP/raw/fish_species.csv')
 
-fish <- readOGR(dsn = "C:/Users/Melanie/Desktop/bhi_data/spp_ico/All_Fish",
+### some additional stuff to identify some missing subbasins in the "baltic_rgns_to_bhi_rgns_lookup_holas.csv"
+# tmp <-  readOGR(dsn = "/var/data/ohi/git-annex/Baltic/spp/Fishes/Pelecus cultratus (LC)",
+#                layer = "Pelecus_cultratus_combo")
+# tmp <- tmp[tmp$Subbasin == "Southern Baltic Proper", ]
+# bhi <- readOGR(dsn = "/var/data/ohi/git-annex/clip-n-ship/bhi/spatial", layer = "rgn_offshore_gcs")
+# bhi <- spTransform(bhi, CRS(proj4string(tmp)))
+# plot(bhi)
+# plot(tmp, add=TRUE, col="red")
+#
+# plot(tmp, add=TRUE, col="red")
+
+fish <- readOGR(dsn = "/var/data/ohi/git-annex/Baltic/spp/All_Fish",
                 layer = "all_fish")
 fish <- fish@data
 fish <- fish %>%
@@ -16,13 +34,8 @@ fish <- fish %>%
   mutate(Subbasin = ifelse(fish$Subbasin %in% grep("land Sea", fish$Subbasin, value=TRUE), "Aland Sea", Subbasin),
          Subbasin = ifelse(Subbasin %in% "Gulf of Gdansk", "Gdansk Basin", Subbasin))
 
-setdiff(regions$Subbasin, fish$Subbasin)
 setdiff(fish$Subbasin, regions$Subbasin)
 
-### Need these subregions:
-## [1] "Archipelago Sea"        "Vistula lagoon"        
-## [3] "Curonian lagoon"        "Little Belt"           
-## [5] "Southern Baltic Proper"
 
 fish <- fish %>%
   left_join(regions, by="Subbasin") %>%
@@ -30,7 +43,8 @@ fish <- fish %>%
   gather("gis_name", "presence", -rgn_id) %>%
   filter(presence==1) %>%
   select(-presence) %>%
-  left_join(names, by="gis_name")
+  left_join(names, by="gis_name") %>%
+  select(rgn_id, species_name, IUCN=iucn)
 
-write.csv(fish, "bhi/baltic2015/prep/SPP/intermediate/fish_extract.csv", row.names=FALSE)
+write.csv(fish, "baltic2015/prep/SPP/intermediate/fish.csv", row.names=FALSE)
 
