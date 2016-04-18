@@ -1,6 +1,6 @@
 ########################################################################
 ##
-##  Organizes data and converts HELCOM regions to Baltic regions
+##  Organizes benthic data
 ##
 ##  MRF March 17 2016
 ##
