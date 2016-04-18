@@ -161,12 +161,22 @@ ggplot(scores) + geom_point(aes(year,bbmsy), color="black") +
 ##FFMSY
 ggplot(scores) + geom_point(aes(year,ffmsy), color="black") +
   facet_wrap(~stock)
-
+##-----------------------------------------------##
 ##-----------------------------------------------##
 ## SCORES based on BBMSY and FFMSY OVER TIME
 ## Run code up to lines 23-31 and plot rescaled scores
 ggplot(scores)+ geom_point(aes(year,score), color="black") +
   facet_wrap(~stock)
 
+##-----------------------------------------------##
+##-----------------------------------------------##
+## STATUS weighted by propCatch Over time
+## Run up to line 83 in the code
+
+ggplot(status)+ geom_point(aes(year,status)) +
+  facet_wrap(~region_id)+
+  xlim(c(2005,2015)) +
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5))
 
 
