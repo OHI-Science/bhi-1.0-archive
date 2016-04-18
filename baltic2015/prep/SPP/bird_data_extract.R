@@ -3,6 +3,9 @@
 ## MRF Mar 18 2016
 #######################################
 
+#NOTE: one bird species fell out of the bhi polygon areas and was excluded
+# I would probably ignore....but it might be worth figuring out.
+
 ## These data are very annoying
 
 library(sp)
