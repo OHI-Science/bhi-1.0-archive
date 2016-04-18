@@ -118,17 +118,55 @@ write.csv(trend, "data/FIS_trend.csv", row.names = FALSE)
 
 
 ##############################################
+## PLOT RESULTS
+library(ggplot2)
+
+##-----------------------------------------------##
+## FINAL STATUS AND TREND
 ## Read in the status and trend csv for plotting
 status = read.csv(file.path(dir_fis,
                    'data/FIS_status.csv'))
 trend = read.csv(file.path(dir_fis,
                             'data/FIS_trend.csv'))
 
-library(ggplot2)
 
+## Plot FIS status and trend by BHI region
 windows()
 par(mfrow=c(1,2), mar=c(1,1,1,1), oma=c(2,2,2,2))
-plot(status~region_id, data=status)
+plot(status~region_id, data=status, pch=19, cex=1,
+     xlim=c(0,43), ylim=c(0,100),
+     ylab="Status", xlab="")
 
 par(new=FALSE)
-plot(trend~region_id, data=trend)
+plot(trend~region_id, data=trend, pch=19, cex=1,
+     xlim=c(0,43), ylim=c(-1,1),
+     ylab="Trend", xlab="")
+abline(h=0)
+
+mtext("BHI region", side=1, line=1, outer=TRUE)
+mtext("FIS Status and Trend - All Stocks", side=3, line=.5, outer=TRUE, cex=1.5)
+##-----------------------------------------------##
+##-----------------------------------------------##
+## INITIAL SCORES
+## Read in initial scores (code line 14-16) and plot
+
+scores <- read.csv(file.path(dir_fis,
+                             'data/FIS_scores.csv')) %>%
+  spread(metric, score)
+
+## BBMSY
+ggplot(scores) + geom_point(aes(year,bbmsy), color="black") +
+  facet_wrap(~stock)
+
+##FFMSY
+ggplot(scores) + geom_point(aes(year,ffmsy), color="black") +
+  facet_wrap(~stock)
+
+##-----------------------------------------------##
+## SCORES based on BBMSY and FFMSY OVER TIME
+## Run code up to lines 23-31 and plot rescaled scores
+ggplot(scores)+ geom_point(aes(year,score), color="black") +
+  facet_wrap(~stock)
+
+
+
