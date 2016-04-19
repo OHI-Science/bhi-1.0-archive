@@ -146,7 +146,7 @@ str(coastal_fish_loc)
 
 #bhi region and HOLAS basin look up
  basin_lookup = readr::read_csv(file.path(
-  dir_prep,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
+  dir_ao,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
 basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
   mutate(basin_name = str_replace_all(basin_name,"_"," ")) 
 basin_lookup
