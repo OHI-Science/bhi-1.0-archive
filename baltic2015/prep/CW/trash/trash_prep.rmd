@@ -208,7 +208,7 @@ ggplot(baltic_explore)+
 
 
 ## assign to BHI regions ----
-lookup_bhi = read.csv('~/github/bhi/baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
+lookup_bhi = read.csv('~/github/bhi/baltic2015/prep/CW/trash/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
   select(rgn_id,
          country = cntry_name) %>%
   mutate(country = as.character(country))
