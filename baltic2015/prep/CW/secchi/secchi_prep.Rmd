@@ -134,7 +134,7 @@ allData %>% select(year, month, date, lat, lon,secchi) %>% distinct() %>%nrow(.)
 ### 3.2 Target values
 These are the values that will be used as a reference point.
 ```{r helcom target secchi}
-target <- readr::read_csv(file.path(dir_cw, "eutro_targets_HELCOM.csv"))
+target <- readr::read_csv(file.path(dir_secchi, "eutro_targets_HELCOM.csv"))
 head(target)
 
 #select just summer_seccchi target
@@ -149,7 +149,7 @@ Secchi data will be first assessed at this level and then assigned to BHI region
 
 ```{r basin lookup}
 basin_lookup = readr::read_csv(file.path(
-  dir_prep,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
+  dir_secchi,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
 basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
   mutate(basin_name = str_replace_all(basin_name,"_"," "))
 
