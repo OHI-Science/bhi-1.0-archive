@@ -35,7 +35,7 @@ mammal <- mammal %>%
   mutate(Subbasin = ifelse(mammal$Subbasin %in% grep("land Sea", mammal$Subbasin, value=TRUE), "Aland Sea", Subbasin),
          Subbasin = ifelse(Subbasin %in% "Gulf of Gdansk", "Gdansk Basin", Subbasin))
 
-regions <- read.csv('baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
+regions <- read.csv('baltic2015/prep/SPP/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
   select(rgn_id, Subbasin = basin_name)
 setdiff(regions$Subbasin, mammal$Subbasin)
 setdiff(mammal$Subbasin, regions$Subbasin)

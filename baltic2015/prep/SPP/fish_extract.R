@@ -10,7 +10,7 @@ library(maptools)
 library(dplyr)
 library(tidyr)
 
-regions <- read.csv('baltic2015/prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
+regions <- read.csv('baltic2015/prep/SPP/baltic_rgns_to_bhi_rgns_lookup_holas.csv', stringsAsFactors = FALSE) %>%
   select(rgn_id, Subbasin = basin_name)
 
 names <- read.csv('baltic2015/prep/SPP/raw/fish_species.csv')
