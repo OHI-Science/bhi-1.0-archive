@@ -1,0 +1,100 @@
+---
+title: "nutrient_load_prep"
+output: github_document
+params: 
+    datasource: csv
+---
+
+## Prep Nutrient Load Pressure Layers
+
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+
+dir_nutprep = make_path('baltic2015/prep/pressures/nutrient_load')
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_nutprep, 'nutrient_load_prep.rmd') 
+
+```
+
+## Background on Nutrient Load Pressures
+External loads of nitrogen and phosphorus into the Baltic Sea. Loads include land-based and atmospheric sources and are normalized for river flow.  
+
+[HELCOM Core Indicator- Inputs of Nitrogen and Phosphorus into the Baltic Sea](http://www.helcom.fi/baltic-sea-trends/indicators/inputs-of-nitrogen-and-phosphorus-to-the-basins)
+
+## Data Sources
+Data provided by Bo Gustafsson.  
+Data are official HELCOM reported data. 
+
+### N & P Loads
+
+### Maximum Allowable Inputs (MAI)
+MAI values for each basin are found in [Summary report on the development of revised Maximum Allowable Inputs (MAI) and updated Country Allocated Reduction Targets (CART) of the Baltic Sea Action Plan](http://www.helcom.fi/Documents/Ministerial2013/Associated%20documents/Supporting/Summary%20report%20on%20MAI-CART.pdf) in Table 3, p. 8
+
+
+## Read in all data
+```{r read in data echo=FALSE, message=FALSE }
+## read in N load
+n_load = read.csv(file.path(dir_nutprep, 'nutrient_data_database/N_basin_load.csv'), sep=";")
+head(n_load)
+str(n_load)
+
+## read in P load
+p_load = read.csv(file.path(dir_nutprep, 'nutrient_data_database/P_basin_load.csv'), sep=";")
+head(p_load)
+str(p_load)
+
+## read in Maximum allowable inputs (MAI)
+mai = read.csv(file.path(dir_nutprep, 'nutrient_data_database/N_P_load_targets.csv'), sep=";")
+head(mai)
+str(mai)
+
+```
+
+
+
+## Nitrogen Layer Prep
+
+```{r TODO, echo=FALSE, message=FALSE}
+
+
+## plot data...
+
+```
+
+
+## Phosphorus Layer Prep
