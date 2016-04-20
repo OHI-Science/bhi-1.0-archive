@@ -1,0 +1,43 @@
+rgn_id,area_km2,cntry_name,basin_name_holas,rgn_name,basin_name_loads
+1,"6565,59",Sweden,Kattegat,Swe - Kattegat,Kattegat
+2,"16315,5",Denmark,Kattegat,Den - Kattegat,Kattegat
+3,"9987,81",Denmark,Great Belt,Den - Great Belt,Danish Straits
+4,"98,6209",Germany,Great Belt,Ger - Great Belt,Danish Straits
+5,594723,Sweden,The Sound,Swe - The Sound,Kattegat
+6,577869,Denmark,The Sound,Den - The Sound,Kattegat
+7,"1211,21",Denmark,Kiel Bay,Den - Kiel Bay,Danish Straits
+8,"1996,89",Germany,Kiel Bay,Ger - Kiel Bay,Danish Straits
+9,"1141,11",Denmark,Bay of Mecklenburg,Den - Bay of Mecklenburg,Danish Straits
+10,"3380,62",Germany,Bay of Mecklenburg,Ger - Bay of Mecklenburg,Danish Straits
+11,"4229,1",Sweden,Arkona Basin,Swe - Arkona Basin,Baltic Proper
+12,"6178,48",Denmark,Arkona Basin,Den - Arkona Basin,Baltic Proper
+13,"6943,74",Germany,Arkona Basin,Ger - Arkona Basin,Baltic Proper
+14,"15059,2",Sweden,Bornholm Basin,Swe - Bornholm Basin,Baltic Proper
+15,"7132,67",Denmark,Bornholm Basin,Den - Bornholm Basin,Baltic Proper
+16,"2532,23",Germany,Bornholm Basin,Ger - Bornholm Basin,Baltic Proper
+17,"17231,1",Poland,Bornholm Basin,Pol - Bornholm Basin,Baltic Proper
+18,"3598,08",Poland,Gdansk Basin,Pol - Gdansk Basin,Baltic Proper
+19,"2093,52",Russia,Gdansk Basin,Rus - Gdansk Basin,Baltic Proper
+20,"21904,3",Sweden,Eastern Gotland Basin,Swe - Eastern Gotland Basin,Baltic Proper
+21,"11013,7",Poland,Eastern Gotland Basin,Pol - Eastern Gotland Basin,Baltic Proper
+22,"9402,47",Russia,Eastern Gotland Basin,Rus - Eastern Gotland Basin,Baltic Proper
+23,"6083,73",Lithuania,Eastern Gotland Basin,Lit - Eastern Gotland Basin,Baltic Proper
+24,"20992,3",Latvia,Eastern Gotland Basin,Lat - Eastern Gotland Basin,Baltic Proper
+25,"5364,64",Estonia,Eastern Gotland Basin,Est - Eastern Gotland Basin,Baltic Proper
+26,"27312,9",Sweden,Western Gotland Basin,Swe - Western Gotland Basin,Baltic Proper
+27,"7846,04",Latvia,Gulf of Riga,Lat - Gulf of Riga,Gulf of Riga
+28,"10356,9",Estonia,Gulf of Riga,Est - Gulf of Riga,Gulf of Riga
+29,"17846,8",Sweden,Northern Baltic Proper,Swe - Northern Baltic Proper,Baltic Proper
+30,"9809,85",Finland,Northern Baltic Proper,Fin - Northern Baltic Proper,Baltic Proper
+31,"11685,8",Estonia,Northern Baltic Proper,Est - Northern Baltic Proper,Baltic Proper
+32,"9376,48",Finland,Gulf of Finland,Fin - Gulf of Finland,Gulf of Finland
+33,"11279,1",Russia,Gulf of Finland,Rus - Gulf of Finland,Gulf of Finland
+34,"8121,92",Estonia,Gulf of Finland,Est - Gulf of Finland,Gulf of Finland
+35,"2732,12",Sweden,Aland Sea,Swe - Aland Sea,Bothnian Sea
+36,12812,Finland,Aland Sea,Fin - Aland Sea,Bothnian Sea
+37,"31239,7",Sweden,Bothnian Sea,Swe - Bothnian Sea,Bothnian Sea
+38,"27952,4",Finland,Bothnian Sea,Fin - Bothnian Sea,Bothnian Sea
+39,"3164,65",Sweden,The Quark,Swe - The Quark,Bothnian Bay
+40,"4862,28",Finland,The Quark,Fin - The Quark,Bothnian Bay
+41,"16947,7",Sweden,Bothnian Bay,Swe - Bothnian Bay,Bothnian Bay
+42,"14709,9",Finland,Bothnian Bay,Fin - Bothnian Bay,Bothnian Bay

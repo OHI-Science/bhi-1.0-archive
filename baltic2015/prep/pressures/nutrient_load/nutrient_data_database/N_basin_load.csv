@@ -1,127 +1,127 @@
-year;basin;variable;tonnes
-1995;Bothnian Bay;total normalized nitrogen input;55478
-1996;Bothnian Bay;total normalized nitrogen input;57469
-1997;Bothnian Bay;total normalized nitrogen input;57834
-1998;Bothnian Bay;total normalized nitrogen input;59849
-1999;Bothnian Bay;total normalized nitrogen input;57353
-2000;Bothnian Bay;total normalized nitrogen input;59996
-2001;Bothnian Bay;total normalized nitrogen input;60046
-2002;Bothnian Bay;total normalized nitrogen input;56625
-2003;Bothnian Bay;total normalized nitrogen input;63118
-2004;Bothnian Bay;total normalized nitrogen input;60619
-2005;Bothnian Bay;total normalized nitrogen input;60429
-2006;Bothnian Bay;total normalized nitrogen input;70241
-2007;Bothnian Bay;total normalized nitrogen input;60949
-2008;Bothnian Bay;total normalized nitrogen input;56682
-2009;Bothnian Bay;total normalized nitrogen input;55008
-2010;Bothnian Bay;total normalized nitrogen input;53131
-2011;Bothnian Bay;total normalized nitrogen input;60180
-2012;Bothnian Bay;total normalized nitrogen input;57576
-1995;Bothnian Sea;total normalized nitrogen input;79388
-1996;Bothnian Sea;total normalized nitrogen input;91088
-1997;Bothnian Sea;total normalized nitrogen input;80578
-1998;Bothnian Sea;total normalized nitrogen input;81165
-1999;Bothnian Sea;total normalized nitrogen input;81225
-2000;Bothnian Sea;total normalized nitrogen input;87794
-2001;Bothnian Sea;total normalized nitrogen input;78314
-2002;Bothnian Sea;total normalized nitrogen input;74826
-2003;Bothnian Sea;total normalized nitrogen input;84715
-2004;Bothnian Sea;total normalized nitrogen input;80726
-2005;Bothnian Sea;total normalized nitrogen input;76610
-2006;Bothnian Sea;total normalized nitrogen input;85010
-2007;Bothnian Sea;total normalized nitrogen input;76612
-2008;Bothnian Sea;total normalized nitrogen input;76411
-2009;Bothnian Sea;total normalized nitrogen input;69403
-2010;Bothnian Sea;total normalized nitrogen input;71582
-2011;Bothnian Sea;total normalized nitrogen input;76062
-2012;Bothnian Sea;total normalized nitrogen input;70895
-1995;Gulf of Finland;total normalized nitrogen input;118833
-1996;Gulf of Finland;total normalized nitrogen input;123564
-1997;Gulf of Finland;total normalized nitrogen input;115820
-1998;Gulf of Finland;total normalized nitrogen input;122240
-1999;Gulf of Finland;total normalized nitrogen input;118834
-2000;Gulf of Finland;total normalized nitrogen input;125234
-2001;Gulf of Finland;total normalized nitrogen input;116978
-2002;Gulf of Finland;total normalized nitrogen input;111275
-2003;Gulf of Finland;total normalized nitrogen input;117338
-2004;Gulf of Finland;total normalized nitrogen input;118552
-2005;Gulf of Finland;total normalized nitrogen input;113217
-2006;Gulf of Finland;total normalized nitrogen input;116382
-2007;Gulf of Finland;total normalized nitrogen input;122096
-2008;Gulf of Finland;total normalized nitrogen input;114485
-2009;Gulf of Finland;total normalized nitrogen input;113678
-2010;Gulf of Finland;total normalized nitrogen input;109208
-2011;Gulf of Finland;total normalized nitrogen input;128683
-2012;Gulf of Finland;total normalized nitrogen input;111814
-1995;Gulf of Riga;total normalized nitrogen input;98148
-1996;Gulf of Riga;total normalized nitrogen input;81955
-1997;Gulf of Riga;total normalized nitrogen input;103127
-1998;Gulf of Riga;total normalized nitrogen input;90565
-1999;Gulf of Riga;total normalized nitrogen input;90920
-2000;Gulf of Riga;total normalized nitrogen input;83412
-2001;Gulf of Riga;total normalized nitrogen input;105489
-2002;Gulf of Riga;total normalized nitrogen input;86441
-2003;Gulf of Riga;total normalized nitrogen input;67716
-2004;Gulf of Riga;total normalized nitrogen input;88707
-2005;Gulf of Riga;total normalized nitrogen input;79766
-2006;Gulf of Riga;total normalized nitrogen input;79319
-2007;Gulf of Riga;total normalized nitrogen input;127872
-2008;Gulf of Riga;total normalized nitrogen input;112785
-2009;Gulf of Riga;total normalized nitrogen input;72012
-2010;Gulf of Riga;total normalized nitrogen input;80946
-2011;Gulf of Riga;total normalized nitrogen input;105959
-2012;Gulf of Riga;total normalized nitrogen input;86865
-1995;Baltic Proper;total normalized nitrogen input;494479
-1996;Baltic Proper;total normalized nitrogen input;540614
-1997;Baltic Proper;total normalized nitrogen input;457860
-1998;Baltic Proper;total normalized nitrogen input;460108
-1999;Baltic Proper;total normalized nitrogen input;431285
-2000;Baltic Proper;total normalized nitrogen input;400382
-2001;Baltic Proper;total normalized nitrogen input;397156
-2002;Baltic Proper;total normalized nitrogen input;425384
-2003;Baltic Proper;total normalized nitrogen input;416320
-2004;Baltic Proper;total normalized nitrogen input;431436
-2005;Baltic Proper;total normalized nitrogen input;407222
-2006;Baltic Proper;total normalized nitrogen input;417892
-2007;Baltic Proper;total normalized nitrogen input;422072
-2008;Baltic Proper;total normalized nitrogen input;407390
-2009;Baltic Proper;total normalized nitrogen input;387999
-2010;Baltic Proper;total normalized nitrogen input;375132
-2011;Baltic Proper;total normalized nitrogen input;389427
-2012;Baltic Proper;total normalized nitrogen input;345477
-1995;Danish Straits;total normalized nitrogen input;79788
-1996;Danish Straits;total normalized nitrogen input;75577
-1997;Danish Straits;total normalized nitrogen input;73905
-1998;Danish Straits;total normalized nitrogen input;76195
-1999;Danish Straits;total normalized nitrogen input;71071
-2000;Danish Straits;total normalized nitrogen input;67356
-2001;Danish Straits;total normalized nitrogen input;63166
-2002;Danish Straits;total normalized nitrogen input;61391
-2003;Danish Straits;total normalized nitrogen input;56834
-2004;Danish Straits;total normalized nitrogen input;62612
-2005;Danish Straits;total normalized nitrogen input;59776
-2006;Danish Straits;total normalized nitrogen input;60221
-2007;Danish Straits;total normalized nitrogen input;58828
-2008;Danish Straits;total normalized nitrogen input;56358
-2009;Danish Straits;total normalized nitrogen input;55040
-2010;Danish Straits;total normalized nitrogen input;58152
-2011;Danish Straits;total normalized nitrogen input;51466
-2012;Danish Straits;total normalized nitrogen input;51015
-1995;Kattegat;total normalized nitrogen input;86432
-1996;Kattegat;total normalized nitrogen input;85303
-1997;Kattegat;total normalized nitrogen input;81751
-1998;Kattegat;total normalized nitrogen input;89747
-1999;Kattegat;total normalized nitrogen input;83448
-2000;Kattegat;total normalized nitrogen input;78902
-2001;Kattegat;total normalized nitrogen input;75308
-2002;Kattegat;total normalized nitrogen input;78155
-2003;Kattegat;total normalized nitrogen input;73257
-2004;Kattegat;total normalized nitrogen input;78919
-2005;Kattegat;total normalized nitrogen input;72063
-2006;Kattegat;total normalized nitrogen input;78679
-2007;Kattegat;total normalized nitrogen input;75881
-2008;Kattegat;total normalized nitrogen input;72402
-2009;Kattegat;total normalized nitrogen input;65718
-2010;Kattegat;total normalized nitrogen input;63908
-2011;Kattegat;total normalized nitrogen input;64491
-2012;Kattegat;total normalized nitrogen input;62655
+"year","basin","variable","tonnes"
+1995,"Bothnian Bay","total normalized nitrogen input",55478
+1996,"Bothnian Bay","total normalized nitrogen input",57469
+1997,"Bothnian Bay","total normalized nitrogen input",57834
+1998,"Bothnian Bay","total normalized nitrogen input",59849
+1999,"Bothnian Bay","total normalized nitrogen input",57353
+2000,"Bothnian Bay","total normalized nitrogen input",59996
+2001,"Bothnian Bay","total normalized nitrogen input",60046
+2002,"Bothnian Bay","total normalized nitrogen input",56625
+2003,"Bothnian Bay","total normalized nitrogen input",63118
+2004,"Bothnian Bay","total normalized nitrogen input",60619
+2005,"Bothnian Bay","total normalized nitrogen input",60429
+2006,"Bothnian Bay","total normalized nitrogen input",70241
+2007,"Bothnian Bay","total normalized nitrogen input",60949
+2008,"Bothnian Bay","total normalized nitrogen input",56682
+2009,"Bothnian Bay","total normalized nitrogen input",55008
+2010,"Bothnian Bay","total normalized nitrogen input",53131
+2011,"Bothnian Bay","total normalized nitrogen input",60180
+2012,"Bothnian Bay","total normalized nitrogen input",57576
+1995,"Bothnian Sea","total normalized nitrogen input",79388
+1996,"Bothnian Sea","total normalized nitrogen input",91088
+1997,"Bothnian Sea","total normalized nitrogen input",80578
+1998,"Bothnian Sea","total normalized nitrogen input",81165
+1999,"Bothnian Sea","total normalized nitrogen input",81225
+2000,"Bothnian Sea","total normalized nitrogen input",87794
+2001,"Bothnian Sea","total normalized nitrogen input",78314
+2002,"Bothnian Sea","total normalized nitrogen input",74826
+2003,"Bothnian Sea","total normalized nitrogen input",84715
+2004,"Bothnian Sea","total normalized nitrogen input",80726
+2005,"Bothnian Sea","total normalized nitrogen input",76610
+2006,"Bothnian Sea","total normalized nitrogen input",85010
+2007,"Bothnian Sea","total normalized nitrogen input",76612
+2008,"Bothnian Sea","total normalized nitrogen input",76411
+2009,"Bothnian Sea","total normalized nitrogen input",69403
+2010,"Bothnian Sea","total normalized nitrogen input",71582
+2011,"Bothnian Sea","total normalized nitrogen input",76062
+2012,"Bothnian Sea","total normalized nitrogen input",70895
+1995,"Gulf of Finland","total normalized nitrogen input",118833
+1996,"Gulf of Finland","total normalized nitrogen input",123564
+1997,"Gulf of Finland","total normalized nitrogen input",115820
+1998,"Gulf of Finland","total normalized nitrogen input",122240
+1999,"Gulf of Finland","total normalized nitrogen input",118834
+2000,"Gulf of Finland","total normalized nitrogen input",125234
+2001,"Gulf of Finland","total normalized nitrogen input",116978
+2002,"Gulf of Finland","total normalized nitrogen input",111275
+2003,"Gulf of Finland","total normalized nitrogen input",117338
+2004,"Gulf of Finland","total normalized nitrogen input",118552
+2005,"Gulf of Finland","total normalized nitrogen input",113217
+2006,"Gulf of Finland","total normalized nitrogen input",116382
+2007,"Gulf of Finland","total normalized nitrogen input",122096
+2008,"Gulf of Finland","total normalized nitrogen input",114485
+2009,"Gulf of Finland","total normalized nitrogen input",113678
+2010,"Gulf of Finland","total normalized nitrogen input",109208
+2011,"Gulf of Finland","total normalized nitrogen input",128683
+2012,"Gulf of Finland","total normalized nitrogen input",111814
+1995,"Gulf of Riga","total normalized nitrogen input",98148
+1996,"Gulf of Riga","total normalized nitrogen input",81955
+1997,"Gulf of Riga","total normalized nitrogen input",103127
+1998,"Gulf of Riga","total normalized nitrogen input",90565
+1999,"Gulf of Riga","total normalized nitrogen input",90920
+2000,"Gulf of Riga","total normalized nitrogen input",83412
+2001,"Gulf of Riga","total normalized nitrogen input",105489
+2002,"Gulf of Riga","total normalized nitrogen input",86441
+2003,"Gulf of Riga","total normalized nitrogen input",67716
+2004,"Gulf of Riga","total normalized nitrogen input",88707
+2005,"Gulf of Riga","total normalized nitrogen input",79766
+2006,"Gulf of Riga","total normalized nitrogen input",79319
+2007,"Gulf of Riga","total normalized nitrogen input",127872
+2008,"Gulf of Riga","total normalized nitrogen input",112785
+2009,"Gulf of Riga","total normalized nitrogen input",72012
+2010,"Gulf of Riga","total normalized nitrogen input",80946
+2011,"Gulf of Riga","total normalized nitrogen input",105959
+2012,"Gulf of Riga","total normalized nitrogen input",86865
+1995,"Baltic Proper","total normalized nitrogen input",494479
+1996,"Baltic Proper","total normalized nitrogen input",540614
+1997,"Baltic Proper","total normalized nitrogen input",457860
+1998,"Baltic Proper","total normalized nitrogen input",460108
+1999,"Baltic Proper","total normalized nitrogen input",431285
+2000,"Baltic Proper","total normalized nitrogen input",400382
+2001,"Baltic Proper","total normalized nitrogen input",397156
+2002,"Baltic Proper","total normalized nitrogen input",425384
+2003,"Baltic Proper","total normalized nitrogen input",416320
+2004,"Baltic Proper","total normalized nitrogen input",431436
+2005,"Baltic Proper","total normalized nitrogen input",407222
+2006,"Baltic Proper","total normalized nitrogen input",417892
+2007,"Baltic Proper","total normalized nitrogen input",422072
+2008,"Baltic Proper","total normalized nitrogen input",407390
+2009,"Baltic Proper","total normalized nitrogen input",387999
+2010,"Baltic Proper","total normalized nitrogen input",375132
+2011,"Baltic Proper","total normalized nitrogen input",389427
+2012,"Baltic Proper","total normalized nitrogen input",345477
+1995,"Danish Straits","total normalized nitrogen input",79788
+1996,"Danish Straits","total normalized nitrogen input",75577
+1997,"Danish Straits","total normalized nitrogen input",73905
+1998,"Danish Straits","total normalized nitrogen input",76195
+1999,"Danish Straits","total normalized nitrogen input",71071
+2000,"Danish Straits","total normalized nitrogen input",67356
+2001,"Danish Straits","total normalized nitrogen input",63166
+2002,"Danish Straits","total normalized nitrogen input",61391
+2003,"Danish Straits","total normalized nitrogen input",56834
+2004,"Danish Straits","total normalized nitrogen input",62612
+2005,"Danish Straits","total normalized nitrogen input",59776
+2006,"Danish Straits","total normalized nitrogen input",60221
+2007,"Danish Straits","total normalized nitrogen input",58828
+2008,"Danish Straits","total normalized nitrogen input",56358
+2009,"Danish Straits","total normalized nitrogen input",55040
+2010,"Danish Straits","total normalized nitrogen input",58152
+2011,"Danish Straits","total normalized nitrogen input",51466
+2012,"Danish Straits","total normalized nitrogen input",51015
+1995,"Kattegat","total normalized nitrogen input",86432
+1996,"Kattegat","total normalized nitrogen input",85303
+1997,"Kattegat","total normalized nitrogen input",81751
+1998,"Kattegat","total normalized nitrogen input",89747
+1999,"Kattegat","total normalized nitrogen input",83448
+2000,"Kattegat","total normalized nitrogen input",78902
+2001,"Kattegat","total normalized nitrogen input",75308
+2002,"Kattegat","total normalized nitrogen input",78155
+2003,"Kattegat","total normalized nitrogen input",73257
+2004,"Kattegat","total normalized nitrogen input",78919
+2005,"Kattegat","total normalized nitrogen input",72063
+2006,"Kattegat","total normalized nitrogen input",78679
+2007,"Kattegat","total normalized nitrogen input",75881
+2008,"Kattegat","total normalized nitrogen input",72402
+2009,"Kattegat","total normalized nitrogen input",65718
+2010,"Kattegat","total normalized nitrogen input",63908
+2011,"Kattegat","total normalized nitrogen input",64491
+2012,"Kattegat","total normalized nitrogen input",62655
