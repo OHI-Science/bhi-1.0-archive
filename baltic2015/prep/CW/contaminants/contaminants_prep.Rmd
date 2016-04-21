@@ -16,13 +16,22 @@ create_readme(dir_con, 'contaminants_prep.rmd')
 
 
 ```
-# Contaminant Data Prep
+# 1. Contaminant Data Prep
 
-## Indicators
+## 1.2 Indicators
 3 indicators are proposed which would then be combined to give an overall comtanimant sub-component status.  
 
-## (1) 6 PCB concentration indicator
-**ICES-6**
+### 1.2.1 (1) PCB concentration indicator
+**CB-153 concentration**
+    - Suggested by Anders Bignet and Elisabeth Nyberg.  
+
+This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.  
+
+Use the EU threshold for human health as the reference point.  
+
+
+
+#### 1.2.1a Original PCB indicator: ICES-6 PCB
 Sum  of  PCB28, PCB52,  PCB101, PCB138,  PCB153 and  PCB180.  
 
 This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).  
@@ -39,25 +48,25 @@ This is similar to the ICES-7 except that PCB 118 is excluded (since it is metab
 The CORESET expert group decided that, due to uncertainties in the target setting on the OSPAR and EU working groups, the seven PCBs should be monitored and concentrations analysed but the core indicator assesses primarily two congeners only: CB-118 (dioxin like) and 153 (non-dioxin like). Tentatively the OSPAR EACs for these two congeners are suggested to be used.
 
 
-## (2) TEQ value for PCBs and Dioxins
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)
+### 1.3 (2) TEQ value for PCBs and Dioxins
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)  *There should be a more recent document*  
 
 Dioxins are included in several international agreements, of which the Stockholm Convention and the Convention on Long Range Transboundary Air are among the most important for the control and reduction of sources to the environment. WHO and FAO have jointly established a maximum tolerable human intake level of dioxins via food, and within the EU there are limit values for dioxins in food and feed stuff (EC 2006). Several other EU legislations regulate dioxins, e.g. the plan for integrated pollution prevention and control (IPPC) and directives on waste incineration (EC, 2000, 2008). The EU has also adopted a Community Strategy for dioxins, furans and PCBs (EC 2001).
 
 **Determination of GES boundary**
 For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ for dioxins and 8.0 ng kg-1 ww WHO-TEQ for dioxins and dl-PCBs.
 
-## (3) PFOS indicator
+### 1.4 (3) PFOS indicator
 
 [HElCOM PFOS core indicator document](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
 
-## Additional references
+### 1.5 Additional references
 [Faxneld et al. 2014](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators  
 
 
-# Data
+# 2. Data
 
-## Data sources
+## 2.1 Data sources
 ICES  
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
 Downloaded 20 October 2015 by Cornelia Ludwig
@@ -67,17 +76,141 @@ IVL (Svenska Miljönstitutet / Swedish Environmental Research Institute)
 Downloaded 2 December 2015 by Cornelia Ludwig  
 [IVL detection limit information](http://www.ivl.se/sidor/lab--analys/miljo/biota.html)  
 
-## Data prep prior to database
+## 2.2 Data prep prior to database
 Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the BHI database.  
 **PCBs**  
 (1) Swedish data were given in lipid weight and were converted to wet weight.  Not all samples had a Extrlip (fat) percentage and therefore could not be converted.  These samples were not included in the database  
 (2) Data were in different units and were standardized to mg/kg (however the values listed for the detection limit and the quantification limit were not updated to reflect the value unit change)
 
 
-# Other Info 
+# 3. Other Info 
 ........
 
+# 4. Data Prep - PCB Indicator
 
+## 4.1 Initial data prep
+
+### 4.1.1 Read in unfiltered data
+    - Read in data exported from database.  
+    - Read in unfiltered ICES and IVL data sources *there are duplicates*
+```{r read in unfiltered data}
+## Unfiltered data
+ices_unfilter =read.csv(file.path(dir_con, 'contaminants_data_database/ices_unfilter.csv'), stringsAsFactors = FALSE)
+
+                           
+dim(ices_unfilter) #[1] 18312    18
+str(ices_unfilter)   ## date is as.character  
+head(ices_unfilter)
+min(ices_unfilter$year); max(ices_unfilter$year)
+
+
+
+ivl_unfilter = read.csv(file.path(dir_con, 'contaminants_data_database/ivl_unfilter.csv'),stringsAsFactors = FALSE)
+
+                         
+dim(ivl_unfilter)# 19716    18
+str(ivl_unfilter) ## date is as.character  ## mix of just year, just month & year, just full date  
+head(ivl_unfilter)
+min(ivl_unfilter$year); max(ivl_unfilter$year)
+
+## These data do not have BHI IDS affiliated with them
+```
+
+### 4.1.2 Filter data to years 2009-2013
+
+```{r filter to 2009-2013}
+
+ices_unfilter = ices_unfilter %>% filter(year %in% 2009:2013)
+dim(ices_unfilter) # 4691   18
+
+ivl_unfilter = ivl_unfilter %>% filter(year %in% 2009:2013)
+dim(ivl_unfilter) # 3556   18
+
+
+
+```
+
+### 4.1.3 Format columns
+1. date
+    - For these years, are full dates present (not just year or year and month)?
+2. Remove IVL columns
+    - Remove columns from IVL that were added to match ICES. These are all of type "logical" and will make joining dataframes difficult: *vflag,detli,lmqnt,sub_id,samp_id, num_indiv_subsamp*  
+3. ICES bio_id make character
+
+    
+```{r format columns}
+
+ices_unfilter %>% select(date)
+    ## date format is dd/mm/yy
+
+ices_unfilter = ices_unfilter  %>% 
+                mutate(date = as.Date(as.character(date), "%d/%m/%y"))
+                      
+
+head(ices_unfilter);tail(ices_unfilter)
+
+
+
+ivl_unfilter %>% select(date)
+    ## date format is yyyy-mm-dd
+
+ivl_unfilter = ivl_unfilter  %>% 
+                mutate(date = as.Date(date,format="%Y-%m-%d"))%>%
+                select(-vflag,-detli,-lmqnt,-sub_id,-samp_id, -num_indiv_subsamp)
+
+
+head(ivl_unfilter);tail(ivl_unfilter)
+
+
+```
+
+### 4.1.4 Select only the CB153 congener
+
+```{r select cb153}
+ices_unfilter = ices_unfilter %>% filter(variable == "CB153")
+dim(ices_unfilter) #658  18
+
+ivl_unfilter = ivl_unfilter %>% filter(variable == "CB153")
+dim(ivl_unfilter) #507  12
+
+
+```
+
+### 4.1.5 Combine ICES & IVL data, remove duplicates
+```{r combine ices and ivl}
+
+pcb_153 = full_join(ices_unfilter,select(ivl_unfilter,-bio_id), 
+                    by=c("source","country","station","lat","lon", "year","date","variable","value","qflag","unit"))  # remove bio_id from IVL joined data, but retain in ivl_unfilter
+
+dim(pcb_153) ##1165   19
+##appears no data is discarded
+pcb_153 %>% filter(station=="Aengskaersklubb") %>% arrange(date,value)
+#### THERE are CLEARLY DUPLICATES BUT THE VALUES ARE A LITTLE DIFFERENT -- NOT SURE HOW CONVERSIONS COULD BE OFF
+
+## ARE THERE ANY SAMPLE DATES & LOCATIONS ONLY IN IVL, NOT ICES???
+find_unique = full_join(select(ices_unfilter,source, country,station,date),select(ivl_unfilter,source, country,station,date))
+
+find_unique = find_unique %>% filter(country=="Sweden") %>% distinct(.)
+dim(find_unique)
+find_unique %>% arrange(station,date)
+
+
+## ICES data from Sweden stops atfter 2011.  IVL has unique dates after.
+## unique IVL stations Baltic Proper. Off shore,Bothnian Sea. Off shore, Lilla Vaertan (1yr),  Oernskoeldsviksfjaerden (1yr), Seskaroefjaerden,Skelleftebukten,Storfjaerden ,  Torsas,Yttre fjaerden, Vaederoearna (this is west coast will be excluded)
+##unique ICES station  E/W FLADEN  but probably matches IVL's Fladen
+
+## NEED to check IVL unique sites against sweden national monitoring program list to see if these are there??  
+    ### unique IVL sites not national monitoring:  Lilla Vaertan,Oernskoeldsviksfjaerden, Seskaroefjaerden,Skelleftebukten,Storfjaerden,Torsas,Yttre fjaerden
+  ## all except Baltic proper off shore, and bothnian sea offshore are not national monitoring sites
+
+
+```
+
+
+
+# OLD PREP FOR 6-PCB
+**PROBLEMS WITH DUPLICATES!!!**
+**NOT USING 6 PCB anymore**
 
 # Data Prep 6-PCB indicator
 
@@ -124,7 +257,7 @@ Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the 
 ##------------------------#
 
 ## Read in data from csv
-pcb_data = readr::read_csv(file.path(dir_con, 'contaminants_data_database/pcb_data.csv'),
+pcb_data = readr::read_csv(file.path(dir_con, 'contaminants_data_database/pcb_data_filter.csv'),
                            col_types = cols(sub_id= "c",
                                             bio_id= "c") )#make sure these columns are read in as character
    
