@@ -43,6 +43,8 @@ These GES boundaries were based on the results obtained in the TARGREV project (
 
 [Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10](http://www.sciencedirect.com/science/article/pii/S0272771412000418)
 
+[EUTRO-OPER](http://helcom.fi/helcom-at-work/projects/eutro-oper/) Making HELCOM Eutrophication Assessments operational. Check here for HELCOM status calculations and assessment. Included on this page is a link to the [Eutrophication Assessment Manual](http://helcom.fi/Documents/Eutrophication%20assessment%20manual.pdf)
+
 2. Secchi Data
 --------------
 
@@ -63,8 +65,10 @@ Lena did not exclude any data when she downloaded it.
 ICES data contains profile data (eg temperature,but secchi is only measured once). Need only unique secchi records. It appears the SMHI also contains profiles. Also check to see if any SMHI data already in the ICES records.
 
 **Coastal data**
- - All stations are currently included in our analysis.
- - See decisions (map) Fleming-Lehtinen and Laamanen 2012. Need to decide if need to filter out the coastal sampling data.
+ - non-coastal (offshore) data are flagged with the code "0" under the column *"HELCOM\_COASTAL\_CODE"*
+ - HOLAS basin shape files with coastal and non-coastal areas were overlayed with the secchi sampling locations, all locations were flagged with a code indicating coastal or offshore.
+ - Coastal data are removed from the analysis.
+ - This should result in a similar dataset used as Fleming-Lehtinen and Laamanen 2012 (see map).
 
 **Sampling frequency** *Can / should these data decisions be implemented? We have not implemented this so far*
 Fleming-Lehtinen and Laamanen (2012) do the following:
@@ -77,6 +81,7 @@ Fleming-Lehtinen and Laamanen (2012) do the following:
 ### 3.1 Read in data
 
 Prelimary filtering to remove duplicate values within datasets (eg profiles) and between datasets.
+ - Check of initial smhi and ices datasets for observations from BHI regions 5 & 6 (The Sound) - region 5 all have a coastal designation. ICES data for region 6 includes both coastal and offshore but only 3 data points offshore from 2000- present. SMHI data contains no observations from region 6.
 
 ``` r
 ## read in secchi data
@@ -160,7 +165,7 @@ str(data2)
 ices <- data1 %>% data.frame()%>% filter(!is.na(BHI_ID)) %>%
   select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
          lat= Latitude, lon = Longitude, 
-         cruise= Cruise, station = Station, date= Date) %>%
+         cruise= Cruise, station = Station, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
   mutate(date = as.Date(date, format= "%Y-%m-%d"))%>%
   mutate(supplier = 'ices')
 head(ices)
@@ -173,13 +178,13 @@ head(ices)
     ## 4      3    4.5 1972    12 55.8517 9.9083   26ve    0010 1972-12-04
     ## 5      3    4.5 1972    12 55.8517 9.9083   26ve    0010 1972-12-04
     ## 6      3    3.1 1973     4 55.8517 9.9083   26ve    0001 1973-04-12
-    ##   supplier
-    ## 1     ices
-    ## 2     ices
-    ## 3     ices
-    ## 4     ices
-    ## 5     ices
-    ## 6     ices
+    ##   coast_code supplier
+    ## 1         38     ices
+    ## 2         38     ices
+    ## 3         38     ices
+    ## 4         38     ices
+    ## 5         38     ices
+    ## 6         38     ices
 
 ``` r
 smhi <- data2 %>% data.frame()%>%
@@ -188,7 +193,7 @@ smhi <- data2 %>% data.frame()%>%
   select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
         lat= Latitude, lon= Longitude, 
          cruise = Provtagningstillfaelle.id, 
-         station = Stationsnamn, date= Date) %>%
+         station = Stationsnamn, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
   mutate(supplier = 'smhi', cruise = as.character(cruise))
 head(smhi)
 ```
@@ -200,13 +205,13 @@ head(smhi)
     ## 4      1      8 2015    11 56.5650 12.7200    311 Laholmsbukten (L9)
     ## 5      1      8 2015    11 56.5650 12.7200    311 Laholmsbukten (L9)
     ## 6      1      7 2015    11 57.6675 11.6867    105          DANAFJORD
-    ##         date supplier
-    ## 1 2015-11-26     smhi
-    ## 2 2015-11-26     smhi
-    ## 3 2015-11-26     smhi
-    ## 4 2015-11-26     smhi
-    ## 5 2015-11-26     smhi
-    ## 6 2015-11-03     smhi
+    ##         date coast_code supplier
+    ## 1 2015-11-26         41     smhi
+    ## 2 2015-11-26         41     smhi
+    ## 3 2015-11-26         41     smhi
+    ## 4 2015-11-26         41     smhi
+    ## 5 2015-11-26         41     smhi
+    ## 6 2015-11-03         41     smhi
 
 ``` r
 ## Look for duplicate data
@@ -286,12 +291,122 @@ allData %>% select(year, month, date, lat, lon,secchi) %>% distinct() %>%nrow(.)
 # 43253 
 ```
 
-### 3.2 Target values
+### 3.2 Remove coastal observations
+
+Select only data with coastal code "0"
+
+``` r
+dim(allData) #[1] 43253    10
+```
+
+    ## [1] 43253    10
+
+``` r
+## Do any observations have NA for coast_code
+allData %>% filter(is.na(coast_code))
+```
+
+    ## Source: local data frame [3 x 10]
+    ## 
+    ##   bhi_id secchi  year month     lat     lon cruise       date coast_code
+    ##    (int)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
+    ## 1     37    3.5  2011     8 63.2823 19.1348     NA 2011-08-01         NA
+    ## 2     41    1.4  2011     7 65.6695 22.3087     NA 2011-07-26         NA
+    ## 3     37    1.5  2001     9 62.1893 17.5318     NA 2001-09-04         NA
+    ## Variables not shown: supplier (chr)
+
+``` r
+  ## three observations with NA for the coast_code
+  ## manually checked with google earth, these are all clearly coastal stations. but would be better to fix this assignment in the database
+
+## What are coastal codes for The Sound (BHI regions 5,6)
+##Region 6
+allData %>% filter(bhi_id %in% 6) %>% select(bhi_id,year,date,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
+```
+
+    ## Source: local data frame [24 x 7]
+    ## 
+    ##    bhi_id  year       date     lat     lon coast_code supplier
+    ##     (int) (int)     (date)   (dbl)   (dbl)      (int)    (chr)
+    ## 1       6  2007 2007-04-23 55.8517 12.6683          0     ices
+    ## 2       6  2002 2002-02-14 55.8517 12.6683          0     ices
+    ## 3       6  2002 2002-05-21 55.8083 12.7152          0     ices
+    ## 4       6  1999 1999-01-19 56.1270 12.5170         39     ices
+    ## 5       6  1998 1998-03-16 55.7002 12.6860         40     ices
+    ## 6       6  1998 1998-03-30 55.7002 12.6860         40     ices
+    ## 7       6  1998 1998-04-27 55.7002 12.6860         40     ices
+    ## 8       6  1998 1998-05-18 55.8490 12.6795          0     ices
+    ## 9       6  1998 1998-12-08 55.7000 12.7500         40     ices
+    ## 10      6  1998 1998-03-19 55.6200 12.8700          0     ices
+    ## ..    ...   ...        ...     ...     ...        ...      ...
+
+``` r
+    ## three observations in BHI region 6 after 2000
+    ## Not summer observations
+allData %>% filter(bhi_id %in% 6) %>% select(coast_code, supplier)%>%distinct(.)
+```
+
+    ## Source: local data frame [3 x 2]
+    ## 
+    ##   coast_code supplier
+    ##        (int)    (chr)
+    ## 1         40     ices
+    ## 2          0     ices
+    ## 3         39     ices
+
+``` r
+#Region 5
+allData %>% filter(bhi_id %in% 5) %>% select(bhi_id,year,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
+```
+
+    ## Source: local data frame [430 x 6]
+    ## 
+    ##    bhi_id  year     lat     lon coast_code supplier
+    ##     (int) (int)   (dbl)   (dbl)      (int)    (chr)
+    ## 1       5  2015 55.8667 12.7500         39     smhi
+    ## 2       5  2014 55.8670 12.7500         39     ices
+    ## 3       5  2014 56.2167 12.5167         39     smhi
+    ## 4       5  2014 55.7850 12.9067         39     smhi
+    ## 5       5  2014 55.6508 13.0350         39     smhi
+    ## 6       5  2014 55.6867 13.0367         39     smhi
+    ## 7       5  2014 55.8667 12.7500         39     smhi
+    ## 8       5  2013 55.8670 12.7500         39     ices
+    ## 9       5  2013 55.8667 12.7500         39     smhi
+    ## 10      5  2012 55.8670 12.7500         39     ices
+    ## ..    ...   ...     ...     ...        ...      ...
+
+``` r
+allData %>% filter(bhi_id %in% 5) %>% select(coast_code, supplier)%>%distinct(.)
+```
+
+    ## Source: local data frame [2 x 2]
+    ## 
+    ##   coast_code supplier
+    ##        (int)    (chr)
+    ## 1         39     ices
+    ## 2         39     smhi
+
+``` r
+    ## All region 5 codes are coastal
+
+## Filter data that are only offshore, coast_code == 0
+allData = allData %>% filter(coast_code==0)
+
+dim(allData)#14018    10 
+```
+
+    ## [1] 14018    10
+
+``` r
+## This is a substantial reduction in the number of observations
+```
+
+### 3.3 Target values
 
 These are the values that will be used as a reference point.
 
 ``` r
-target <- readr::read_csv(file.path(dir_cw, "eutro_targets_HELCOM.csv"))
+target <- readr::read_csv(file.path(dir_secchi, "eutro_targets_HELCOM.csv"))
 head(target)
 ```
 
@@ -313,21 +428,24 @@ target = target %>% select(basin, summer_secchi)%>%
         mutate(basin = str_replace_all(basin,"_"," "))
 ```
 
-### 3.3 HELCOM HOLAS Basin
+### 3.4 HELCOM HOLAS Basin
 
 These basins are the relevant physical units.
 Secchi data will be first assessed at this level and then assigned to BHI region. EEZ divisions may result in some BHI regions that have no data but they are physically the same basin as a BHI region with data.
 
 ``` r
 basin_lookup = readr::read_csv(file.path(
-  dir_prep,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
+  dir_secchi,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
 basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
   mutate(basin_name = str_replace_all(basin_name,"_"," "))
 ```
 
-### 3.4 Select summer data and plot
+### 3.5 Select summer data and plot
 
-Months 6-9 (June, July, August, September) Years &gt;= 2000 Data is sparse for BHI regions 4,22,25
+    - Months 6-9 (June, July, August, September)  
+    - Years >= 2000  
+    - Data is sparse for BHI regions 4,22,25  
+    - No data BHI regions 5 (all coastal), 6 (offshore observations rare after from 2000 and not in summer).  
 
 ``` r
 summer = allData %>% filter(month %in%c(6:9)) %>%
@@ -335,16 +453,17 @@ summer = allData %>% filter(month %in%c(6:9)) %>%
 head(summer)
 ```
 
-    ## Source: local data frame [6 x 9]
+    ## Source: local data frame [6 x 10]
     ## 
-    ##   bhi_id secchi  year month     lat     lon cruise       date supplier
-    ##    (int)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)    (chr)
-    ## 1      5    7.0  2000     8 55.8700 12.7500   26GT 2000-08-07     ices
-    ## 2      1    8.0  2000     8 56.2300 12.3700   26GT 2000-08-07     ices
-    ## 3      2    7.0  2000     8 56.5583 11.0300   26GT 2000-08-08     ices
-    ## 4      2    6.3  2000     8 56.8567 10.7917   26GT 2000-08-08     ices
-    ## 5      2   10.2  2000     8 57.3000 10.7450   26GT 2000-08-08     ices
-    ## 6      2   13.2  2000     8 57.4300 10.7083   26GT 2000-08-08     ices
+    ##   bhi_id secchi  year month     lat     lon cruise       date coast_code
+    ##    (int)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
+    ## 1      1    8.0  2000     8 56.2300 12.3700   26GT 2000-08-07          0
+    ## 2      2    7.0  2000     8 56.5583 11.0300   26GT 2000-08-08          0
+    ## 3      2    6.3  2000     8 56.8567 10.7917   26GT 2000-08-08          0
+    ## 4      2   10.2  2000     8 57.3000 10.7450   26GT 2000-08-08          0
+    ## 5      2   13.2  2000     8 57.4300 10.7083   26GT 2000-08-08          0
+    ## 6      2   13.0  2000     8 57.4650 10.9000   26GT 2000-08-08          0
+    ## Variables not shown: supplier (chr)
 
 ``` r
 #Plot
@@ -361,34 +480,37 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
 ![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)<!-- -->
 
-### 3.5 Assign secchi data to a HOLAS basin
+### 3.6 Assign secchi data to a HOLAS basin
 
-Data coverage appears substantially better at the basin scale. Some basins have missing data or limited data for the most recent years: Great Belt, Gulf of Riga, Kiel Bay
+    - Data coverage appears better at the basin scale.  
+    - With coastal data excluded, there are **no data points observed in the The Sound**  
+    - Some basins have missing data or limited data for the most recent years: Aland Sea, Great Belt, Gulf of Riga, Kiel Bay, The Quark  
 
 ``` r
 summer = summer %>% full_join(., basin_lookup, by="bhi_id")
 
 #Plot
 ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
-  facet_wrap(~basin_name, scales ="free_y")
+  facet_wrap(~basin_name)
 ```
 
-    ## Warning: Removed 3 rows containing missing values (geom_point).
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)<!-- -->
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
-  facet_wrap(~basin_name, scales ="free_y")
+  facet_wrap(~basin_name)
 ```
 
-    ## Warning: Removed 3 rows containing missing values (geom_point).
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)<!-- -->
 
-### 3.6 Restrict data to before 2014
+### 3.7 Restrict data to before 2014
 
-There are still basins with limited or not data from 2010 onwards but this at least removes the potential for not having data reported in the past 2 years
+    - The Sound does not appear in the plot - No Data
+    - There are still basins with limited or not data from 2010 onwards (*Great Belt*) but this at least removes the potential for not having data reported in the past 2 years
 
 ``` r
 summer = summer %>% filter(year < 2014)
@@ -400,7 +522,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
 ![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)<!-- -->
 
-### 3.7 Evaluate number of stations sampled in each basin
+### 3.8 Evaluate number of stations sampled in each basin
 
 Very different number of unique lat-lon locations by month and basin.
 Sometimes lat-lon is not good to use because recording specific ship location which might be vary even though ship is at the same station. More duplicates were detected in the data however when station was not included, than when lat and lon were not included as the location identifier.
@@ -412,21 +534,21 @@ basin_summary = summer %>% group_by(basin_name,year,month)%>%
 basin_summary
 ```
 
-    ## Source: local data frame [871 x 4]
+    ## Source: local data frame [631 x 4]
     ## Groups: basin_name, year [?]
     ## 
     ##    basin_name  year month loc_count
     ##         (chr) (int) (int)     (int)
-    ## 1   Aland Sea  2000     6         5
-    ## 2   Aland Sea  2000     7         9
-    ## 3   Aland Sea  2000     8        13
-    ## 4   Aland Sea  2000     9        10
-    ## 5   Aland Sea  2001     6         4
-    ## 6   Aland Sea  2001     7         8
-    ## 7   Aland Sea  2001     8        12
-    ## 8   Aland Sea  2001     9         2
-    ## 9   Aland Sea  2002     6         8
-    ## 10  Aland Sea  2002     7        11
+    ## 1   Aland Sea  2000     6         1
+    ## 2   Aland Sea  2001     6         1
+    ## 3   Aland Sea  2002     6         1
+    ## 4   Aland Sea  2003     6         1
+    ## 5   Aland Sea  2003     8         1
+    ## 6   Aland Sea  2004     6         1
+    ## 7   Aland Sea  2004     8         1
+    ## 8   Aland Sea  2005     6         2
+    ## 9   Aland Sea  2005     8         1
+    ## 10  Aland Sea  2006     7         1
     ## ..        ...   ...   ...       ...
 
 ``` r
@@ -438,9 +560,9 @@ ggplot(basin_summary) + geom_point(aes(year,loc_count, colour=factor(month)))+
 
 ![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)<!-- -->
 
-### 3.8 Mean secchi Calculation
+### 3.9 Mean secchi Calculation
 
-### 3.8.1 Calculate mean monthly value for each summer month
+### 3.9.1 Calculate mean monthly value for each summer month
 
 basin monthly mean = mean of all samples within month and basin
 
@@ -456,14 +578,17 @@ head(mean_months)
     ## 
     ##    year month            basin_name mean_secchi
     ##   (int) (int)                 (chr)       (dbl)
-    ## 1  2000     6             Aland Sea         4.3
-    ## 2  2000     6          Arkona Basin         8.0
-    ## 3  2000     6        Bornholm Basin         6.5
-    ## 4  2000     6          Bothnian Bay         3.5
-    ## 5  2000     6          Bothnian Sea         4.5
+    ## 1  2000     6             Aland Sea         5.5
+    ## 2  2000     6          Arkona Basin         7.8
+    ## 3  2000     6        Bornholm Basin         6.8
+    ## 4  2000     6          Bothnian Bay         5.4
+    ## 5  2000     6          Bothnian Sea         5.3
     ## 6  2000     6 Eastern Gotland Basin         7.9
 
-### 3.8.2 Plot mean monthly value by basin
+### 3.9.2 Plot mean monthly value by basin
+
+    - Limited July sampling in a number of basins 
+    - The Quark only sampled in June in early part of time series, August later half of time series.  
 
 ``` r
 #Plot
@@ -473,11 +598,11 @@ ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
   scale_y_continuous(limits = c(0,10))
 ```
 
-    ## Warning: Removed 1 rows containing missing values (geom_point).
+    ## Warning: Removed 9 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/plot%20mean%20monthly-1.png)<!-- -->
 
-### 3.8.3 Calculate summer mean secchi (basin)
+### 3.9.3 Calculate summer mean secchi (basin)
 
 basin summer mean = mean of basin monthly mean values
 
@@ -488,7 +613,7 @@ mean_months_summer = mean_months %>% select(year, basin_name,mean_secchi) %>%
                       ungroup()  #in mean calculation all some months to have NA, ignore for that years calculation
 ```
 
-### 3.8.4 Plot summer mean secchi
+### 3.9.4 Plot summer mean secchi
 
 ``` r
 ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
@@ -497,9 +622,11 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
   scale_y_continuous(limits = c(0,10))
 ```
 
+    ## Warning: Removed 1 rows containing missing values (geom_point).
+
 ![](secchi_prep_files/figure-markdown_github/plot%20mean%20summer%20secchi-1.png)<!-- -->
 
-### 3.8.5 Plot summer secchi with target values indicated
+### 3.9.5 Plot summer secchi with target values indicated
 
 Horizontal lines are HELCOM target values.
 
@@ -513,12 +640,12 @@ head(secchi_target)
     ## 
     ##    year         basin_name mean_secchi target_secchi
     ##   (int)              (chr)       (dbl)         (dbl)
-    ## 1  2000          Aland Sea         3.5           6.9
-    ## 2  2000       Arkona Basin         8.1           7.2
+    ## 1  2000          Aland Sea         5.5           6.9
+    ## 2  2000       Arkona Basin         8.0           7.2
     ## 3  2000 Bay of Mecklenburg         6.7           7.1
-    ## 4  2000     Bornholm Basin         6.5           7.1
-    ## 5  2000       Bothnian Bay         3.0           5.8
-    ## 6  2000       Bothnian Sea         3.8           6.8
+    ## 4  2000     Bornholm Basin         7.0           7.1
+    ## 5  2000       Bothnian Bay         2.5           5.8
+    ## 6  2000       Bothnian Sea         2.8           6.8
 
 ``` r
 ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
@@ -526,6 +653,8 @@ ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
   facet_wrap(~basin_name)+
   scale_y_continuous(limits = c(0,10))
 ```
+
+    ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)<!-- -->
 
@@ -549,27 +678,55 @@ The trend value is the slope (m) of the linear regression multiplied by the year
 
 ### 4.2 What year will the status be calculated for for each basin?
 
-This is if there is no temporal gapfilling.
-Most basins can have the status calculated for **2013** with the **exception** of the *Great Belt (2011)* and *Gulf of Riga (2012)*.
-One option is no gap filling and calculating the status for differenet final years and over a different 5 year period
+    - This is if there is no temporal gapfilling.  
+    - Most basins can have the status calculated for **2013** with the **exception** of: *Aland Sea (2012)*, *Great Belt (2011)*, *Gulf of Finland (2012), *Gulf of Riga (2012)*, *The Quark (2012)*  
+    - No data for the Sound  
+    - One option is no gap filling and calculating the status for differenet final years and over a different 5 year period
 
 ``` r
 ## get the last year of non-NA data
 last_year = secchi_target%>%
             filter(!is.na(mean_secchi))%>%
             group_by(basin_name)%>%
-            summarise(last_year = last(year))
+            summarise(last_year = last(year)) %>%
+            print(n=15)
+```
 
+    ## Source: local data frame [16 x 2]
+    ## 
+    ##                basin_name last_year
+    ##                     (chr)     (int)
+    ## 1               Aland Sea      2012
+    ## 2            Arkona Basin      2013
+    ## 3      Bay of Mecklenburg      2013
+    ## 4          Bornholm Basin      2013
+    ## 5            Bothnian Bay      2013
+    ## 6            Bothnian Sea      2013
+    ## 7   Eastern Gotland Basin      2013
+    ## 8            Gdansk Basin      2013
+    ## 9              Great Belt      2009
+    ## 10        Gulf of Finland      2012
+    ## 11           Gulf of Riga      2012
+    ## 12               Kattegat      2013
+    ## 13               Kiel Bay      2013
+    ## 14 Northern Baltic Proper      2013
+    ## 15              The Quark      2012
+    ## ..                    ...       ...
+
+``` r
 ##which are not in 2013
 last_year %>% filter(last_year < 2013)
 ```
 
-    ## Source: local data frame [2 x 2]
+    ## Source: local data frame [5 x 2]
     ## 
-    ##     basin_name last_year
-    ##          (chr)     (int)
-    ## 1   Great Belt      2011
-    ## 2 Gulf of Riga      2012
+    ##        basin_name last_year
+    ##             (chr)     (int)
+    ## 1       Aland Sea      2012
+    ## 2      Great Belt      2009
+    ## 3 Gulf of Finland      2012
+    ## 4    Gulf of Riga      2012
+    ## 5       The Quark      2012
 
 ### 4.3 Calculate status
 
@@ -591,20 +748,20 @@ Status must be calculated in data prep because calculation for a basin and then 
   secchi_target
 ```
 
-    ## Source: local data frame [234 x 4]
+    ## Source: local data frame [214 x 4]
     ## 
     ##     year            basin_name mean_secchi target_secchi
     ##    (int)                 (chr)       (dbl)         (dbl)
-    ## 1   2000             Aland Sea         3.5           6.9
-    ## 2   2000          Arkona Basin         8.1           7.2
+    ## 1   2000             Aland Sea         5.5           6.9
+    ## 2   2000          Arkona Basin         8.0           7.2
     ## 3   2000    Bay of Mecklenburg         6.7           7.1
-    ## 4   2000        Bornholm Basin         6.5           7.1
-    ## 5   2000          Bothnian Bay         3.0           5.8
-    ## 6   2000          Bothnian Sea         3.8           6.8
+    ## 4   2000        Bornholm Basin         7.0           7.1
+    ## 5   2000          Bothnian Bay         2.5           5.8
+    ## 6   2000          Bothnian Sea         2.8           6.8
     ## 7   2000 Eastern Gotland Basin         6.6           7.6
-    ## 8   2000          Gdansk Basin         4.7           6.5
-    ## 9   2000            Great Belt         5.9           8.5
-    ## 10  2000       Gulf of Finland         3.5           5.5
+    ## 8   2000          Gdansk Basin         6.7           6.5
+    ## 9   2000            Great Belt         6.9           8.5
+    ## 10  2000       Gulf of Finland         4.8           5.5
     ## ..   ...                   ...         ...           ...
 
 ``` r
@@ -660,14 +817,17 @@ ggplot(basin_status) + geom_point((aes(year,status)))+
 
 ### 4.5 Plot BHI region status and trend values
 
-Status values can range from 0-100 -- this is the status for the *most recent* year. In most cases this is 2013.
-Trend values can be between -1 to 1
+    - Status values can range from 0-100 -- this is the status for the *most recent* year. In most cases this is 2013.  
+    - Trend values can be between -1 to 1
+    - No status or trend for 5 or 6 - these are The Sound
 
 ``` r
 ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + geom_point(aes(rgn_id,score),size=2)+
   facet_wrap(~dimension, scales="free_y")+
   xlab("BHI region")
 ```
+
+    ## Warning: Removed 4 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)<!-- -->
 
@@ -688,11 +848,13 @@ These csv files will be used as a first cut for the secchi status and trend. **F
 5. Next steps
 -------------
 
-**Mean secchi calculation**
-1. Find out how mean secchi value determined for HELCOM core indicator - is our calculation of the mean ok? *Thorsten contacting Vivi Fleming-Lehtinen*
-
 **Trend calculation**
 1. Have calculated the trend using data spanning 10 years (minimum of 5 data points). Is it agreed that we should use the longer time window for the trend?
+
+**No Observations for The Sound**
+1. The Sound has no summer offshore observations after 2000 in either ICES or SMHI data.
+ - How is it evaluated by HOLAS?
+ - BHI regions are 5 & 6. 5 is all coastal, 6 has both coastal and offshore observations before 2000 and from 2000 forward, 3 offshore observations in spring (not summer).
 
 **Should/How to model the data?**
 Not all months are sampled in all years (see above plot).
