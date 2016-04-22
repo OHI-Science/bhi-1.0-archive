@@ -3,7 +3,14 @@ contaminants\_prep
 
 ``` r
 ## source common libraries, directories, functions, etc
-source('~/github/bhi/baltic2015/prep/common.r')
+# Libraries
+library(readr)
+```
+
+    ## Warning: package 'readr' was built under R version 3.2.4
+
+``` r
+library(dplyr)
 ```
 
     ## 
@@ -17,11 +24,38 @@ source('~/github/bhi/baltic2015/prep/common.r')
     ## 
     ##     intersect, setdiff, setequal, union
 
+``` r
+library(tidyr)
+library(ggplot2)
+```
+
     ## Warning: package 'ggplot2' was built under R version 3.2.4
+
+``` r
+library(RMySQL)
+```
 
     ## Loading required package: DBI
 
 ``` r
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+```
+
+    ## Warning: package 'rprojroot' was built under R version 3.2.4
+
+``` r
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+source('~/github/bhi/baltic2015/prep/common.r')
 dir_cw    = file.path(dir_prep, 'CW')
 dir_con    = file.path(dir_prep, 'CW/contaminants')
 
@@ -29,18 +63,25 @@ dir_con    = file.path(dir_prep, 'CW/contaminants')
 create_readme(dir_con, 'contaminants_prep.rmd')
 ```
 
-Contaminant Data Prep
-=====================
+1. Contaminant Data Prep
+========================
 
-Indicators
-----------
+1.2 Indicators
+--------------
 
 3 indicators are proposed which would then be combined to give an overall comtanimant sub-component status.
 
-(1) 6 PCB concentration indicator
----------------------------------
+### 1.2.1 (1) PCB concentration indicator
 
-**ICES-6** Sum of PCB28, PCB52, PCB101, PCB138, PCB153 and PCB180.
+**CB-153 concentration** - Suggested by Anders Bignet and Elisabeth Nyberg.
+
+This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.
+
+Use the EU threshold for human health as the reference point.
+
+#### 1.2.1a Original PCB indicator: ICES-6 PCB
+
+Sum of PCB28, PCB52, PCB101, PCB138, PCB153 and PCB180.
 
 This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).
 
@@ -54,30 +95,27 @@ This is similar to the ICES-7 except that PCB 118 is excluded (since it is metab
 
 *Determination of GES boundary* The CORESET expert group decided that, due to uncertainties in the target setting on the OSPAR and EU working groups, the seven PCBs should be monitored and concentrations analysed but the core indicator assesses primarily two congeners only: CB-118 (dioxin like) and 153 (non-dioxin like). Tentatively the OSPAR EACs for these two congeners are suggested to be used.
 
-(2) TEQ value for PCBs and Dioxins
-----------------------------------
+### 1.3 (2) TEQ value for PCBs and Dioxins
 
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf) *There should be a more recent document*
 
 Dioxins are included in several international agreements, of which the Stockholm Convention and the Convention on Long Range Transboundary Air are among the most important for the control and reduction of sources to the environment. WHO and FAO have jointly established a maximum tolerable human intake level of dioxins via food, and within the EU there are limit values for dioxins in food and feed stuff (EC 2006). Several other EU legislations regulate dioxins, e.g. the plan for integrated pollution prevention and control (IPPC) and directives on waste incineration (EC, 2000, 2008). The EU has also adopted a Community Strategy for dioxins, furans and PCBs (EC 2001).
 
 **Determination of GES boundary** For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ for dioxins and 8.0 ng kg-1 ww WHO-TEQ for dioxins and dl-PCBs.
 
-(3) PFOS indicator
-------------------
+### 1.4 (3) PFOS indicator
 
 [HElCOM PFOS core indicator document](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
 
-Additional references
----------------------
+### 1.5 Additional references
 
 [Faxneld et al. 2014](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators
 
-Data
-====
+2. Data
+=======
 
-Data sources
-------------
+2.1 Data sources
+----------------
 
 ICES
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)
@@ -88,18 +126,859 @@ IVL (Svenska Miljönstitutet / Swedish Environmental Research Institute)
 Downloaded 2 December 2015 by Cornelia Ludwig
 [IVL detection limit information](http://www.ivl.se/sidor/lab--analys/miljo/biota.html)
 
-Data prep prior to database
----------------------------
+2.2 Data prep prior to database
+-------------------------------
 
 Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the BHI database.
 **PCBs**
 (1) Swedish data were given in lipid weight and were converted to wet weight. Not all samples had a Extrlip (fat) percentage and therefore could not be converted. These samples were not included in the database
 (2) Data were in different units and were standardized to mg/kg (however the values listed for the detection limit and the quantification limit were not updated to reflect the value unit change)
 
-Other Info
-==========
+3. Other Info
+=============
 
 ........
+
+4. Data Prep - PCB Indicator
+============================
+
+4.1 Initial data prep
+---------------------
+
+### 4.1.1 Read in unfiltered data
+
+    - Read in data exported from database.  
+    - Read in unfiltered ICES and IVL data sources *there are duplicates*
+
+``` r
+## Unfiltered data
+ices_unfilter =read.csv(file.path(dir_con, 'contaminants_data_database/ices_unfilter.csv'), stringsAsFactors = FALSE)
+
+                           
+dim(ices_unfilter) #[1] 18312    18
+```
+
+    ## [1] 18312    18
+
+``` r
+str(ices_unfilter)   ## date is as.character  
+```
+
+    ## 'data.frame':    18312 obs. of  18 variables:
+    ##  $ source           : chr  "ICES" "ICES" "ICES" "ICES" ...
+    ##  $ country          : chr  "Poland" "Poland" "Poland" "Poland" ...
+    ##  $ station          : chr  "LWLA" "LWLA" "LWLA" "LWLA" ...
+    ##  $ lat              : num  54.9 54.9 54.9 54.9 54.9 ...
+    ##  $ lon              : num  18.7 18.7 18.7 18.7 18.7 ...
+    ##  $ year             : int  2009 2009 2009 2009 2009 2009 2009 2009 2009 2009 ...
+    ##  $ date             : chr  "01/09/09" "01/09/09" "01/09/09" "01/09/09" ...
+    ##  $ variable         : chr  "CB101" "CB101" "CB101" "CB101" ...
+    ##  $ qflag            : chr  "" "" "" "" ...
+    ##  $ value            : num  0.00049 0.00048 0.00091 0.00078 0.00054 0.00046 0.0006 0.00067 0.00054 0.00043 ...
+    ##  $ unit             : chr  "mg/kg" "mg/kg" "mg/kg" "mg/kg" ...
+    ##  $ vflag            : chr  "A" "A" "A" "A" ...
+    ##  $ detli            : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ lmqnt            : num  0.14 0.14 0.14 0.14 0.14 0.14 0.14 0.14 0.14 0.14 ...
+    ##  $ sub_id           : chr  "19" "20" "13" "15" ...
+    ##  $ bio_id           : int  2971439 2971440 2971433 2971435 2971434 2971436 2971438 2971437 2971423 2971422 ...
+    ##  $ samp_id          : int  1109586 1109586 1109586 1109586 1109586 1109586 1109586 1109586 1109586 1109586 ...
+    ##  $ num_indiv_subsamp: int  1 1 1 1 1 1 1 1 1 1 ...
+
+``` r
+head(ices_unfilter)
+```
+
+    ##   source country station      lat      lon year     date variable qflag
+    ## 1   ICES  Poland    LWLA 54.91667 18.66667 2009 01/09/09    CB101      
+    ## 2   ICES  Poland    LWLA 54.91667 18.66667 2009 01/09/09    CB101      
+    ## 3   ICES  Poland    LWLA 54.91667 18.66667 2009 01/09/09    CB101      
+    ## 4   ICES  Poland    LWLA 54.91667 18.66667 2009 01/09/09    CB101      
+    ## 5   ICES  Poland    LWLA 54.91667 18.66667 2009 01/09/09    CB101      
+    ## 6   ICES  Poland    LWLA 54.91667 18.66667 2009 01/09/09    CB101      
+    ##     value  unit vflag detli lmqnt sub_id  bio_id samp_id num_indiv_subsamp
+    ## 1 0.00049 mg/kg     A    NA  0.14     19 2971439 1109586                 1
+    ## 2 0.00048 mg/kg     A    NA  0.14     20 2971440 1109586                 1
+    ## 3 0.00091 mg/kg     A    NA  0.14     13 2971433 1109586                 1
+    ## 4 0.00078 mg/kg     A    NA  0.14     15 2971435 1109586                 1
+    ## 5 0.00054 mg/kg     A    NA  0.14     14 2971434 1109586                 1
+    ## 6 0.00046 mg/kg     A    NA  0.14     16 2971436 1109586                 1
+
+``` r
+min(ices_unfilter$year); max(ices_unfilter$year)
+```
+
+    ## [1] 1978
+
+    ## [1] 2013
+
+``` r
+ivl_unfilter = read.csv(file.path(dir_con, 'contaminants_data_database/ivl_unfilter.csv'),stringsAsFactors = FALSE)
+
+                         
+dim(ivl_unfilter)# 19716    18
+```
+
+    ## [1] 19716    18
+
+``` r
+str(ivl_unfilter) ## date is as.character  ## mix of just year, just month & year, just full date  
+```
+
+    ## 'data.frame':    19716 obs. of  18 variables:
+    ##  $ source           : chr  "IVL" "IVL" "IVL" "IVL" ...
+    ##  $ country          : chr  "Sweden" "Sweden" "Sweden" "Sweden" ...
+    ##  $ station          : chr  "Utlaengan" "Utlaengan" "Utlaengan" "Utlaengan" ...
+    ##  $ lat              : num  55.9 55.9 55.9 55.9 55.9 ...
+    ##  $ lon              : num  15.8 15.8 15.8 15.8 15.8 ...
+    ##  $ year             : int  2006 2006 2006 2006 2006 2006 2006 2006 2006 2006 ...
+    ##  $ date             : chr  "2006" "2006" "2006" "2006" ...
+    ##  $ variable         : chr  "CB101" "CB101" "CB101" "CB101" ...
+    ##  $ qflag            : chr  "" "" "" "" ...
+    ##  $ value            : num  0.00012 0.000244 0.000296 0.00035 0.000596 ...
+    ##  $ unit             : chr  "mg/kg" "mg/kg" "mg/kg" "mg/kg" ...
+    ##  $ vflag            : logi  NA NA NA NA NA NA ...
+    ##  $ detli            : logi  NA NA NA NA NA NA ...
+    ##  $ lmqnt            : logi  NA NA NA NA NA NA ...
+    ##  $ sub_id           : logi  NA NA NA NA NA NA ...
+    ##  $ bio_id           : chr  "P2006/06500" "P2006/06503" "P2006/06494" "P2006/06497" ...
+    ##  $ samp_id          : logi  NA NA NA NA NA NA ...
+    ##  $ num_indiv_subsamp: logi  NA NA NA NA NA NA ...
+
+``` r
+head(ivl_unfilter)
+```
+
+    ##   source country   station     lat    lon year date variable qflag
+    ## 1    IVL  Sweden Utlaengan 55.9491 15.781 2006 2006    CB101      
+    ## 2    IVL  Sweden Utlaengan 55.9491 15.781 2006 2006    CB101      
+    ## 3    IVL  Sweden Utlaengan 55.9491 15.781 2006 2006    CB101      
+    ## 4    IVL  Sweden Utlaengan 55.9491 15.781 2006 2006    CB101      
+    ## 5    IVL  Sweden Utlaengan 55.9491 15.781 2006 2006    CB101      
+    ## 6    IVL  Sweden Utlaengan 55.9491 15.781 2006 2006    CB101      
+    ##       value  unit vflag detli lmqnt sub_id      bio_id samp_id
+    ## 1 0.0001196 mg/kg    NA    NA    NA     NA P2006/06500      NA
+    ## 2 0.0002444 mg/kg    NA    NA    NA     NA P2006/06503      NA
+    ## 3 0.0002964 mg/kg    NA    NA    NA     NA P2006/06494      NA
+    ## 4 0.0003502 mg/kg    NA    NA    NA     NA P2006/06497      NA
+    ## 5 0.0005957 mg/kg    NA    NA    NA     NA P2006/06495      NA
+    ## 6 0.0006020 mg/kg    NA    NA    NA     NA P2006/06493      NA
+    ##   num_indiv_subsamp
+    ## 1                NA
+    ## 2                NA
+    ## 3                NA
+    ## 4                NA
+    ## 5                NA
+    ## 6                NA
+
+``` r
+min(ivl_unfilter$year); max(ivl_unfilter$year)
+```
+
+    ## [1] 1990
+
+    ## [1] 2013
+
+``` r
+## These data do not have BHI IDS affiliated with them
+```
+
+### 4.1.2 Filter data to years 2009-2013
+
+``` r
+ices_unfilter = ices_unfilter %>% filter(year %in% 2009:2013)
+dim(ices_unfilter) # 4691   18
+```
+
+    ## [1] 4691   18
+
+``` r
+ivl_unfilter = ivl_unfilter %>% filter(year %in% 2009:2013)
+dim(ivl_unfilter) # 3556   18
+```
+
+    ## [1] 3556   18
+
+### 4.1.3 Format columns
+
+1.  date
+    -   For these years, are full dates present (not just year or year and month)?
+
+2.  Remove IVL columns
+    -   Remove columns from IVL that were added to match ICES. These are all of type "logical" and will make joining dataframes difficult: *vflag,detli,lmqnt,sub\_id,samp\_id, num\_indiv\_subsamp*
+
+3.  ICES bio\_id make character
+
+``` r
+ices_unfilter %>% select(date) %>% head(.)
+```
+
+    ##       date
+    ## 1 01/09/09
+    ## 2 01/09/09
+    ## 3 01/09/09
+    ## 4 01/09/09
+    ## 5 01/09/09
+    ## 6 01/09/09
+
+``` r
+    ## date format is dd/mm/yy
+
+ices_unfilter = ices_unfilter  %>% 
+                mutate(date = as.Date(as.character(date), "%d/%m/%y"))
+                      
+
+head(ices_unfilter);tail(ices_unfilter)
+```
+
+    ##   source country station      lat      lon year       date variable qflag
+    ## 1   ICES  Poland    LWLA 54.91667 18.66667 2009 2009-09-01    CB101      
+    ## 2   ICES  Poland    LWLA 54.91667 18.66667 2009 2009-09-01    CB101      
+    ## 3   ICES  Poland    LWLA 54.91667 18.66667 2009 2009-09-01    CB101      
+    ## 4   ICES  Poland    LWLA 54.91667 18.66667 2009 2009-09-01    CB101      
+    ## 5   ICES  Poland    LWLA 54.91667 18.66667 2009 2009-09-01    CB101      
+    ## 6   ICES  Poland    LWLA 54.91667 18.66667 2009 2009-09-01    CB101      
+    ##     value  unit vflag detli lmqnt sub_id  bio_id samp_id num_indiv_subsamp
+    ## 1 0.00049 mg/kg     A    NA  0.14     19 2971439 1109586                 1
+    ## 2 0.00048 mg/kg     A    NA  0.14     20 2971440 1109586                 1
+    ## 3 0.00091 mg/kg     A    NA  0.14     13 2971433 1109586                 1
+    ## 4 0.00078 mg/kg     A    NA  0.14     15 2971435 1109586                 1
+    ## 5 0.00054 mg/kg     A    NA  0.14     14 2971434 1109586                 1
+    ## 6 0.00046 mg/kg     A    NA  0.14     16 2971436 1109586                 1
+
+    ##      source country             station     lat     lon year       date
+    ## 4686   ICES  Sweden Vaestra Hanoebukten 55.7507 14.2833 2009 2009-10-29
+    ## 4687   ICES  Sweden           Byxelkrok 57.3167 17.5000 2011 2011-10-01
+    ## 4688   ICES  Sweden            Landsort 58.6936 18.0043 2011 2011-10-25
+    ## 4689   ICES  Sweden     Aengskaersklubb 60.5326 18.1624 2009 2009-05-11
+    ## 4690   ICES  Sweden     Aengskaersklubb 60.5326 18.1624 2009 2009-05-11
+    ## 4691   ICES  Sweden              Lagnoe 59.5652 18.8348 2009 2009-08-25
+    ##      variable qflag      value  unit vflag detli lmqnt     sub_id  bio_id
+    ## 4686     CB52       0.00069840 mg/kg       0.004    NA 1098710998 3403246
+    ## 4687     CB52       0.00075294 mg/kg       0.004    NA  615806169 3402760
+    ## 4688     CB52       0.00095520 mg/kg       0.004    NA       4139 3402744
+    ## 4689     CB52       0.00103950 mg/kg       0.004    NA  411804129 3403096
+    ## 4690     CB52       0.00119448 mg/kg       0.004    NA  413004141 3403097
+    ## 4691     CB52       0.00127494 mg/kg       0.004    NA  288102892 3403252
+    ##      samp_id num_indiv_subsamp
+    ## 4686 1661096                12
+    ## 4687 1660983                12
+    ## 4688 1660980                 1
+    ## 4689 1661053                12
+    ## 4690 1661053                12
+    ## 4691 1661099                12
+
+``` r
+ivl_unfilter %>% select(date) %>% head(.)
+```
+
+    ##         date
+    ## 1       2010
+    ## 2       2010
+    ## 3 2009-05-11
+    ## 4 2009-05-11
+    ## 5 2009-05-11
+    ## 6 2009-05-11
+
+``` r
+    ## date format is yyyy-mm-dd
+
+ivl_unfilter = ivl_unfilter  %>% 
+                mutate(date = as.Date(date,format="%Y-%m-%d"))%>%
+                select(-vflag,-detli,-lmqnt,-sub_id,-samp_id, -num_indiv_subsamp)
+
+
+head(ivl_unfilter);tail(ivl_unfilter)
+```
+
+    ##   source country         station     lat     lon year       date variable
+    ## 1    IVL  Sweden  Gaviksfjaerden 62.8645 18.2412 2010       <NA>    CB101
+    ## 2    IVL  Sweden  Gaviksfjaerden 62.8645 18.2412 2010       <NA>    CB101
+    ## 3    IVL  Sweden       Utlaengan 55.9491 15.7810 2009 2009-05-11    CB101
+    ## 4    IVL  Sweden       Utlaengan 55.9491 15.7810 2009 2009-05-11    CB101
+    ## 5    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-05-11    CB101
+    ## 6    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-05-11    CB101
+    ##   qflag     value  unit            bio_id
+    ## 1       0.0011508 mg/kg C2010/06042-06053
+    ## 2       0.0013760 mg/kg C2010/06030-06041
+    ## 3       0.0005891 mg/kg C2009/00146-00157
+    ## 4       0.0009114 mg/kg C2009/00158-00169
+    ## 5       0.0029260 mg/kg C2009/04118-04129
+    ## 6       0.0035910 mg/kg C2009/04130-04141
+
+    ##      source country      station     lat     lon year       date variable
+    ## 3551    IVL  Sweden Vaederoearna 58.5156 10.9001 2013 2013-11-25     CB52
+    ## 3552    IVL  Sweden Vaederoearna 58.5156 10.9001 2013 2013-11-25     CB52
+    ## 3553    IVL  Sweden Vaederoearna 58.5156 10.9001 2013 2013-11-25     CB52
+    ## 3554    IVL  Sweden Vaederoearna 58.5156 10.9001 2013 2013-11-25     CB52
+    ## 3555    IVL  Sweden Vaederoearna 58.5156 10.9001 2013 2013-11-25     CB52
+    ## 3556    IVL  Sweden Vaederoearna 58.5156 10.9001 2013 2013-11-25     CB52
+    ##      qflag    value  unit      bio_id
+    ## 3551       0.000462 mg/kg C2013/07222
+    ## 3552       0.000486 mg/kg C2013/07215
+    ## 3553       0.000496 mg/kg C2013/07221
+    ## 3554       0.000536 mg/kg C2013/07223
+    ## 3555       0.000549 mg/kg C2013/07217
+    ## 3556       0.000567 mg/kg C2013/07214
+
+### 4.1.4 Select only the CB153 congener
+
+``` r
+ices_unfilter = ices_unfilter %>% filter(variable == "CB153")
+dim(ices_unfilter) #658  18
+```
+
+    ## [1] 658  18
+
+``` r
+ivl_unfilter = ivl_unfilter %>% filter(variable == "CB153")
+dim(ivl_unfilter) #507  12
+```
+
+    ## [1] 507  12
+
+### 4.1.5 Combine ICES & IVL data, remove duplicates
+
+``` r
+pcb_153 = full_join(ices_unfilter,select(ivl_unfilter,-bio_id), 
+                    by=c("source","country","station","lat","lon", "year","date","variable","value","qflag","unit"))  # remove bio_id from IVL joined data, but retain in ivl_unfilter
+
+dim(pcb_153) ##1165   19
+```
+
+    ## [1] 1165   18
+
+``` r
+##appears no data is discarded
+pcb_153 %>% filter(station=="Aengskaersklubb") %>% arrange(date,value)
+```
+
+    ##     source country         station     lat     lon year       date
+    ## 1     ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-05-11
+    ## 2      IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-05-11
+    ## 3      IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-05-11
+    ## 4     ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-05-11
+    ## 5      IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 6     ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 7      IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 8     ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 9     ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 10     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 11     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 12    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 13     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 14    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 15     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 16    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 17    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 18     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 19    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 20     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 21    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 22     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 23    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 24     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 25     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 26    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 27    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 28     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2009 2009-10-22
+    ## 29     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-06-11
+    ## 30    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-06-11
+    ## 31    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-06-11
+    ## 32     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-06-11
+    ## 33    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 34     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 35    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 36     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 37    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 38     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 39    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 40     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 41    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 42     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 43    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 44     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 45     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 46    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 47    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 48     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 49    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 50     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 51     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 52    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 53    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 54     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 55    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 56     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2010 2010-10-01
+    ## 57    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-07-24
+    ## 58     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-07-24
+    ## 59     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-07-24
+    ## 60    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-07-24
+    ## 61     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 62    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 63    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 64     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 65    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 66     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 67     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 68    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 69    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 70     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 71    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 72     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 73     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 74    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 75    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 76     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 77     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 78    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 79     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 80    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 81     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 82    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 83     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 84    ICES  Sweden Aengskaersklubb 60.5326 18.1624 2011 2011-10-05
+    ## 85     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-06-11
+    ## 86     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-06-11
+    ## 87     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 88     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 89     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 90     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 91     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 92     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 93     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 94     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 95     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 96     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 97     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 98     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2012 2012-10-01
+    ## 99     IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 100    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 101    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 102    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 103    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 104    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 105    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 106    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 107    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 108    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 109    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ## 110    IVL  Sweden Aengskaersklubb 60.5326 18.1624 2013 2013-09-30
+    ##     variable qflag      value  unit vflag detli lmqnt    sub_id  bio_id
+    ## 1      CB153       0.00875490 mg/kg       0.005    NA 411804129 3403096
+    ## 2      CB153       0.00885500 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 3      CB153       0.01020600 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 4      CB153       0.01034208 mg/kg       0.005    NA 413004141 3403097
+    ## 5      CB153       0.00091960 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 6      CB153       0.00092378 mg/kg       0.005    NA     10711 3403101
+    ## 7      CB153       0.00097680 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 8      CB153       0.00097828 mg/kg       0.005    NA     10715 3403105
+    ## 9      CB153       0.00197145 mg/kg       0.005    NA     10713 3403103
+    ## 10     CB153       0.00198830 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 11     CB153       0.00208800 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 12     CB153       0.00213498 mg/kg       0.005    NA     10709 3403099
+    ## 13     CB153       0.00219600 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 14     CB153       0.00219960 mg/kg       0.005    NA     10708 3403098
+    ## 15     CB153       0.00235400 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 16     CB153       0.00236778 mg/kg       0.005    NA     10712 3403102
+    ## 17     CB153       0.00241178 mg/kg       0.005    NA     10710 3403100
+    ## 18     CB153       0.00241800 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 19     CB153       0.00260406 mg/kg       0.005    NA     10719 3403109
+    ## 20     CB153       0.00260820 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 21     CB153       0.00283257 mg/kg       0.005    NA     10717 3403107
+    ## 22     CB153       0.00295900 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 23     CB153       0.00319704 mg/kg       0.005    NA     10714 3403104
+    ## 24     CB153       0.00321780 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 25     CB153       0.00381000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 26     CB153       0.00393954 mg/kg       0.005    NA     10718 3403108
+    ## 27     CB153       0.00439850 mg/kg       0.005    NA     10716 3403106
+    ## 28     CB153       0.00439850 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 29     CB153       0.00495000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 30     CB153       0.00504240 mg/kg       0.005    NA  66100672 3402850
+    ## 31     CB153       0.00615126 mg/kg       0.005    NA  67200684 3402851
+    ## 32     CB153       0.00628000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 33     CB153       0.00100076 mg/kg       0.005    NA     11631 3402864
+    ## 34     CB153       0.00100470 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 35     CB153       0.00101840 mg/kg       0.005    NA     11629 3402862
+    ## 36     CB153       0.00104000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 37     CB153       0.00115824 mg/kg       0.005    NA     11628 3402861
+    ## 38     CB153       0.00116280 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 39     CB153       0.00120175 mg/kg       0.005    NA     11621 3402854
+    ## 40     CB153       0.00121220 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 41     CB153       0.00123420 mg/kg       0.005    NA     11623 3402856
+    ## 42     CB153       0.00124100 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 43     CB153       0.00134895 mg/kg       0.005    NA     11630 3402863
+    ## 44     CB153       0.00135150 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 45     CB153       0.00136320 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 46     CB153       0.00136746 mg/kg       0.005    NA     11627 3402860
+    ## 47     CB153       0.00164322 mg/kg       0.005    NA     11626 3402859
+    ## 48     CB153       0.00164680 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 49     CB153       0.00182790 mg/kg       0.005    NA     11632 3402865
+    ## 50     CB153       0.00189000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 51     CB153       0.00204600 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 52     CB153       0.00204930 mg/kg       0.005    NA     11624 3402857
+    ## 53     CB153       0.00210578 mg/kg       0.005    NA     11622 3402855
+    ## 54     CB153       0.00211000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 55     CB153       0.00222768 mg/kg       0.005    NA     11625 3402858
+    ## 56     CB153       0.00223380 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 57     CB153       0.00092484 mg/kg       0.005    NA 578705798 3402596
+    ## 58     CB153       0.00093240 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 59     CB153       0.00095850 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 60     CB153       0.00114912 mg/kg       0.005    NA 579905810 3402597
+    ## 61     CB153       0.00084000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 62     CB153       0.00084840 mg/kg       0.005    NA      7373 3402606
+    ## 63     CB153       0.00092964 mg/kg       0.005    NA      7375 3402608
+    ## 64     CB153       0.00093980 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 65     CB153       0.00095370 mg/kg       0.005    NA      7368 3402601
+    ## 66     CB153       0.00095370 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 67     CB153       0.00099000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 68     CB153       0.00099990 mg/kg       0.005    NA      7377 3402610
+    ## 69     CB153       0.00105651 mg/kg       0.005    NA      7374 3402607
+    ## 70     CB153       0.00105780 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 71     CB153       0.00120400 mg/kg       0.005    NA      7369 3402602
+    ## 72     CB153       0.00120400 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 73     CB153       0.00122500 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 74     CB153       0.00123480 mg/kg       0.005    NA      7366 3402599
+    ## 75     CB153       0.00132924 mg/kg       0.005    NA      7371 3402604
+    ## 76     CB153       0.00133760 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 77     CB153       0.00157440 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 78     CB153       0.00157768 mg/kg       0.005    NA      7376 3402609
+    ## 79     CB153       0.00164640 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 80     CB153       0.00165984 mg/kg       0.005    NA      7370 3402603
+    ## 81     CB153       0.00244140 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 82     CB153       0.00245079 mg/kg       0.005    NA      7367 3402600
+    ## 83     CB153       0.00256300 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 84     CB153       0.00263057 mg/kg       0.005    NA      7372 3402605
+    ## 85     CB153       0.00316200 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 86     CB153       0.00326700 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 87     CB153       0.00041800 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 88     CB153       0.00075000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 89     CB153       0.00084000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 90     CB153       0.00100300 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 91     CB153       0.00103500 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 92     CB153       0.00168000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 93     CB153       0.00182400 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 94     CB153       0.00183600 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 95     CB153       0.00187000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 96     CB153       0.00188000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 97     CB153       0.00243000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 98     CB153       0.00255000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 99     CB153       0.00094500 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 100    CB153       0.00104400 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 101    CB153       0.00108000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 102    CB153       0.00111000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 103    CB153       0.00115200 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 104    CB153       0.00121500 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 105    CB153       0.00123200 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 106    CB153       0.00129500 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 107    CB153       0.00136900 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 108    CB153       0.00188700 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 109    CB153       0.00248400 mg/kg  <NA>    NA    NA      <NA>      NA
+    ## 110    CB153       0.00256000 mg/kg  <NA>    NA    NA      <NA>      NA
+    ##     samp_id num_indiv_subsamp
+    ## 1   1661053                12
+    ## 2        NA                NA
+    ## 3        NA                NA
+    ## 4   1661053                12
+    ## 5        NA                NA
+    ## 6   1661054                 1
+    ## 7        NA                NA
+    ## 8   1661054                 1
+    ## 9   1661054                 1
+    ## 10       NA                NA
+    ## 11       NA                NA
+    ## 12  1661054                 1
+    ## 13       NA                NA
+    ## 14  1661054                 1
+    ## 15       NA                NA
+    ## 16  1661054                 1
+    ## 17  1661054                 1
+    ## 18       NA                NA
+    ## 19  1661054                 1
+    ## 20       NA                NA
+    ## 21  1661054                 1
+    ## 22       NA                NA
+    ## 23  1661054                 1
+    ## 24       NA                NA
+    ## 25       NA                NA
+    ## 26  1661054                 1
+    ## 27  1661054                 1
+    ## 28       NA                NA
+    ## 29       NA                NA
+    ## 30  1660999                12
+    ## 31  1660999                13
+    ## 32       NA                NA
+    ## 33  1661001                 1
+    ## 34       NA                NA
+    ## 35  1661001                 1
+    ## 36       NA                NA
+    ## 37  1661001                 1
+    ## 38       NA                NA
+    ## 39  1661001                 1
+    ## 40       NA                NA
+    ## 41  1661001                 1
+    ## 42       NA                NA
+    ## 43  1661001                 1
+    ## 44       NA                NA
+    ## 45       NA                NA
+    ## 46  1661001                 1
+    ## 47  1661001                 1
+    ## 48       NA                NA
+    ## 49  1661001                 1
+    ## 50       NA                NA
+    ## 51       NA                NA
+    ## 52  1661001                 1
+    ## 53  1661001                 1
+    ## 54       NA                NA
+    ## 55  1661001                 1
+    ## 56       NA                NA
+    ## 57  1660942                12
+    ## 58       NA                NA
+    ## 59       NA                NA
+    ## 60  1660942                12
+    ## 61       NA                NA
+    ## 62  1660943                 1
+    ## 63  1660943                 1
+    ## 64       NA                NA
+    ## 65  1660943                 1
+    ## 66       NA                NA
+    ## 67       NA                NA
+    ## 68  1660943                 1
+    ## 69  1660943                 1
+    ## 70       NA                NA
+    ## 71  1660943                 1
+    ## 72       NA                NA
+    ## 73       NA                NA
+    ## 74  1660943                 1
+    ## 75  1660943                 1
+    ## 76       NA                NA
+    ## 77       NA                NA
+    ## 78  1660943                 1
+    ## 79       NA                NA
+    ## 80  1660943                 1
+    ## 81       NA                NA
+    ## 82  1660943                 1
+    ## 83       NA                NA
+    ## 84  1660943                 1
+    ## 85       NA                NA
+    ## 86       NA                NA
+    ## 87       NA                NA
+    ## 88       NA                NA
+    ## 89       NA                NA
+    ## 90       NA                NA
+    ## 91       NA                NA
+    ## 92       NA                NA
+    ## 93       NA                NA
+    ## 94       NA                NA
+    ## 95       NA                NA
+    ## 96       NA                NA
+    ## 97       NA                NA
+    ## 98       NA                NA
+    ## 99       NA                NA
+    ## 100      NA                NA
+    ## 101      NA                NA
+    ## 102      NA                NA
+    ## 103      NA                NA
+    ## 104      NA                NA
+    ## 105      NA                NA
+    ## 106      NA                NA
+    ## 107      NA                NA
+    ## 108      NA                NA
+    ## 109      NA                NA
+    ## 110      NA                NA
+
+``` r
+#### THERE are CLEARLY DUPLICATES BUT THE VALUES ARE A LITTLE DIFFERENT -- NOT SURE HOW CONVERSIONS COULD BE OFF
+
+## ARE THERE ANY SAMPLE DATES & LOCATIONS ONLY IN IVL, NOT ICES???
+find_unique = full_join(select(ices_unfilter,source, country,station,date),select(ivl_unfilter,source, country,station,date))
+```
+
+    ## Joining by: c("source", "country", "station", "date")
+
+``` r
+find_unique = find_unique %>% filter(country=="Sweden") %>% distinct(.)
+dim(find_unique)
+```
+
+    ## [1] 157   4
+
+``` r
+find_unique %>% arrange(station,date)
+```
+
+    ##     source country                  station       date
+    ## 1     ICES  Sweden                  Abbekas 2009-11-30
+    ## 2      IVL  Sweden                  Abbekas 2009-11-30
+    ## 3     ICES  Sweden                  Abbekas 2011-11-14
+    ## 4      IVL  Sweden                  Abbekas 2011-11-14
+    ## 5      IVL  Sweden                  Abbekas 2012-12-03
+    ## 6      IVL  Sweden                  Abbekas 2013-11-05
+    ## 7     ICES  Sweden          Aengskaersklubb 2009-05-11
+    ## 8      IVL  Sweden          Aengskaersklubb 2009-05-11
+    ## 9     ICES  Sweden          Aengskaersklubb 2009-10-22
+    ## 10     IVL  Sweden          Aengskaersklubb 2009-10-22
+    ## 11    ICES  Sweden          Aengskaersklubb 2010-06-11
+    ## 12     IVL  Sweden          Aengskaersklubb 2010-06-11
+    ## 13    ICES  Sweden          Aengskaersklubb 2010-10-01
+    ## 14     IVL  Sweden          Aengskaersklubb 2010-10-01
+    ## 15    ICES  Sweden          Aengskaersklubb 2011-07-24
+    ## 16     IVL  Sweden          Aengskaersklubb 2011-07-24
+    ## 17    ICES  Sweden          Aengskaersklubb 2011-10-05
+    ## 18     IVL  Sweden          Aengskaersklubb 2011-10-05
+    ## 19     IVL  Sweden          Aengskaersklubb 2012-06-11
+    ## 20     IVL  Sweden          Aengskaersklubb 2012-10-01
+    ## 21     IVL  Sweden          Aengskaersklubb 2013-09-30
+    ## 22     IVL  Sweden Baltic Proper. Off shore 2009-10-19
+    ## 23     IVL  Sweden Baltic Proper. Off shore 2010-10-12
+    ## 24     IVL  Sweden Baltic Proper. Off shore 2011-10-09
+    ## 25     IVL  Sweden Baltic Proper. Off shore 2012-10-07
+    ## 26     IVL  Sweden Baltic Proper. Off shore 2013-10-08
+    ## 27     IVL  Sweden  Bothnian Sea. Off shore 2009-09-29
+    ## 28     IVL  Sweden  Bothnian Sea. Off shore 2010-09-29
+    ## 29     IVL  Sweden  Bothnian Sea. Off shore 2011-09-30
+    ## 30     IVL  Sweden  Bothnian Sea. Off shore 2012-10-12
+    ## 31     IVL  Sweden  Bothnian Sea. Off shore 2013-10-03
+    ## 32    ICES  Sweden                Byxelkrok 2009-09-20
+    ## 33     IVL  Sweden                Byxelkrok 2009-09-20
+    ## 34    ICES  Sweden                Byxelkrok 2010-09-30
+    ## 35     IVL  Sweden                Byxelkrok 2010-09-30
+    ## 36    ICES  Sweden                Byxelkrok 2011-10-01
+    ## 37     IVL  Sweden                Byxelkrok 2011-10-01
+    ## 38     IVL  Sweden                Byxelkrok 2012-10-01
+    ## 39     IVL  Sweden                Byxelkrok 2013-10-28
+    ## 40    ICES  Sweden               E/W FLADEN 2009-09-07
+    ## 41    ICES  Sweden               E/W FLADEN 2010-09-06
+    ## 42    ICES  Sweden               E/W FLADEN 2011-09-09
+    ## 43     IVL  Sweden                   Fladen 2009-09-07
+    ## 44     IVL  Sweden                   Fladen 2010-09-06
+    ## 45     IVL  Sweden                   Fladen 2011-09-09
+    ## 46     IVL  Sweden                   Fladen 2012-08-17
+    ## 47     IVL  Sweden                   Fladen 2013-08-28
+    ## 48    ICES  Sweden           Gaviksfjaerden 2009-08-07
+    ## 49     IVL  Sweden           Gaviksfjaerden 2009-08-07
+    ## 50    ICES  Sweden           Gaviksfjaerden 2011-08-03
+    ## 51     IVL  Sweden           Gaviksfjaerden 2011-08-03
+    ## 52     IVL  Sweden           Gaviksfjaerden 2012-08-13
+    ## 53     IVL  Sweden           Gaviksfjaerden 2013-08-02
+    ## 54     IVL  Sweden           Gaviksfjaerden       <NA>
+    ## 55    ICES  Sweden             Harufjaerden 2009-09-28
+    ## 56     IVL  Sweden             Harufjaerden 2009-09-28
+    ## 57    ICES  Sweden             Harufjaerden 2010-09-20
+    ## 58     IVL  Sweden             Harufjaerden 2010-09-20
+    ## 59    ICES  Sweden             Harufjaerden 2011-10-02
+    ## 60     IVL  Sweden             Harufjaerden 2011-10-02
+    ## 61     IVL  Sweden             Harufjaerden 2012-09-23
+    ## 62     IVL  Sweden             Harufjaerden 2013-09-22
+    ## 63    ICES  Sweden               Holmoearna 2009-09-15
+    ## 64     IVL  Sweden               Holmoearna 2009-09-15
+    ## 65    ICES  Sweden               Holmoearna 2010-09-13
+    ## 66     IVL  Sweden               Holmoearna 2010-09-13
+    ## 67    ICES  Sweden               Holmoearna 2011-09-01
+    ## 68     IVL  Sweden               Holmoearna 2011-09-01
+    ## 69     IVL  Sweden               Holmoearna 2012-08-28
+    ## 70     IVL  Sweden               Holmoearna 2013-09-02
+    ## 71    ICES  Sweden       Kinnbaecksfjaerden 2009-10-12
+    ## 72     IVL  Sweden       Kinnbaecksfjaerden 2009-10-12
+    ## 73    ICES  Sweden       Kinnbaecksfjaerden 2010-10-11
+    ## 74     IVL  Sweden       Kinnbaecksfjaerden 2010-10-11
+    ## 75    ICES  Sweden       Kinnbaecksfjaerden 2011-10-10
+    ## 76     IVL  Sweden       Kinnbaecksfjaerden 2011-10-10
+    ## 77     IVL  Sweden       Kinnbaecksfjaerden 2012-10-01
+    ## 78     IVL  Sweden       Kinnbaecksfjaerden 2013-09-30
+    ## 79    ICES  Sweden                   Kullen 2009-10-12
+    ## 80     IVL  Sweden                   Kullen 2009-10-12
+    ## 81    ICES  Sweden                   Kullen 2010-09-29
+    ## 82     IVL  Sweden                   Kullen 2010-09-29
+    ## 83    ICES  Sweden                   Kullen 2011-10-06
+    ## 84     IVL  Sweden                   Kullen 2011-10-06
+    ## 85     IVL  Sweden                   Kullen 2012-09-20
+    ## 86     IVL  Sweden                   Kullen 2013-09-25
+    ## 87    ICES  Sweden                   Lagnoe 2009-08-25
+    ## 88     IVL  Sweden                   Lagnoe 2009-08-25
+    ## 89    ICES  Sweden                   Lagnoe 2010-08-25
+    ## 90     IVL  Sweden                   Lagnoe 2010-08-25
+    ## 91    ICES  Sweden                   Lagnoe 2011-08-23
+    ## 92     IVL  Sweden                   Lagnoe 2011-08-23
+    ## 93     IVL  Sweden                   Lagnoe 2012-08-21
+    ## 94     IVL  Sweden                   Lagnoe 2013-08-22
+    ## 95    ICES  Sweden                 Landsort 2009-11-12
+    ## 96     IVL  Sweden                 Landsort 2009-11-12
+    ## 97    ICES  Sweden                 Landsort 2010-10-12
+    ## 98     IVL  Sweden                 Landsort 2010-10-12
+    ## 99    ICES  Sweden                 Landsort 2011-10-25
+    ## 100    IVL  Sweden                 Landsort 2011-10-25
+    ## 101    IVL  Sweden                 Landsort 2012-12-20
+    ## 102    IVL  Sweden                 Landsort 2013-10-06
+    ## 103   ICES  Sweden        Langvindsfjaerden 2009-08-13
+    ## 104    IVL  Sweden        Langvindsfjaerden 2009-08-13
+    ## 105   ICES  Sweden        Langvindsfjaerden 2010-08-10
+    ## 106    IVL  Sweden        Langvindsfjaerden 2010-08-10
+    ## 107   ICES  Sweden        Langvindsfjaerden 2011-08-09
+    ## 108    IVL  Sweden        Langvindsfjaerden 2011-08-09
+    ## 109    IVL  Sweden        Langvindsfjaerden 2012-08-07
+    ## 110    IVL  Sweden        Langvindsfjaerden 2013-08-14
+    ## 111    IVL  Sweden            Lilla Vaertan 2011-08-09
+    ## 112    IVL  Sweden  Oernskoeldsviksfjaerden 2011-08-16
+    ## 113   ICES  Sweden             Ranefjaerden 2009-09-17
+    ## 114    IVL  Sweden             Ranefjaerden 2009-09-17
+    ## 115   ICES  Sweden             Ranefjaerden 2010-09-17
+    ## 116    IVL  Sweden             Ranefjaerden 2010-09-17
+    ## 117   ICES  Sweden             Ranefjaerden 2011-09-12
+    ## 118    IVL  Sweden             Ranefjaerden 2011-09-12
+    ## 119    IVL  Sweden             Ranefjaerden 2012-09-17
+    ## 120    IVL  Sweden             Ranefjaerden 2013-09-09
+    ## 121    IVL  Sweden         Seskaroefjaerden 2009-10-13
+    ## 122    IVL  Sweden         Seskaroefjaerden 2011-09-27
+    ## 123    IVL  Sweden         Seskaroefjaerden 2012-10-07
+    ## 124    IVL  Sweden          Skelleftebukten 2011-08-24
+    ## 125    IVL  Sweden             Storfjaerden 2009-10-18
+    ## 126    IVL  Sweden             Storfjaerden 2012-10-19
+    ## 127    IVL  Sweden                   Torsas 2011-08-15
+    ## 128   ICES  Sweden                Utlaengan 2009-05-11
+    ## 129    IVL  Sweden                Utlaengan 2009-05-11
+    ## 130   ICES  Sweden                Utlaengan 2009-10-27
+    ## 131    IVL  Sweden                Utlaengan 2009-10-27
+    ## 132   ICES  Sweden                Utlaengan 2010-01-11
+    ## 133    IVL  Sweden                Utlaengan 2010-01-11
+    ## 134   ICES  Sweden                Utlaengan 2010-05-24
+    ## 135    IVL  Sweden                Utlaengan 2010-05-24
+    ## 136   ICES  Sweden                Utlaengan 2011-06-06
+    ## 137    IVL  Sweden                Utlaengan 2011-06-06
+    ## 138   ICES  Sweden                Utlaengan 2011-10-17
+    ## 139    IVL  Sweden                Utlaengan 2011-10-17
+    ## 140    IVL  Sweden                Utlaengan 2012-06-04
+    ## 141    IVL  Sweden                Utlaengan 2012-11-26
+    ## 142    IVL  Sweden                Utlaengan 2013-05-27
+    ## 143    IVL  Sweden                Utlaengan 2013-11-11
+    ## 144    IVL  Sweden             Vaederoearna 2009-09-02
+    ## 145    IVL  Sweden             Vaederoearna 2010-09-20
+    ## 146    IVL  Sweden             Vaederoearna 2011-11-29
+    ## 147    IVL  Sweden             Vaederoearna 2012-10-16
+    ## 148    IVL  Sweden             Vaederoearna 2013-11-25
+    ## 149   ICES  Sweden      Vaestra Hanoebukten 2009-10-29
+    ## 150    IVL  Sweden      Vaestra Hanoebukten 2009-10-29
+    ## 151   ICES  Sweden      Vaestra Hanoebukten 2010-10-04
+    ## 152    IVL  Sweden      Vaestra Hanoebukten 2010-10-04
+    ## 153   ICES  Sweden      Vaestra Hanoebukten 2011-11-29
+    ## 154    IVL  Sweden      Vaestra Hanoebukten 2011-11-29
+    ## 155    IVL  Sweden      Vaestra Hanoebukten 2012-10-01
+    ## 156    IVL  Sweden      Vaestra Hanoebukten 2013-10-23
+    ## 157    IVL  Sweden           Yttre fjaerden 2011-08-12
+
+``` r
+## ICES data from Sweden stops atfter 2011.  IVL has unique dates after.
+## unique IVL stations Baltic Proper. Off shore,Bothnian Sea. Off shore, Lilla Vaertan (1yr),  Oernskoeldsviksfjaerden (1yr), Seskaroefjaerden,Skelleftebukten,Storfjaerden ,  Torsas,Yttre fjaerden, Vaederoearna (this is west coast will be excluded)
+##unique ICES station  E/W FLADEN  but probably matches IVL's Fladen
+
+## NEED to check IVL unique sites against sweden national monitoring program list to see if these are there??  
+    ### unique IVL sites not national monitoring:  Lilla Vaertan,Oernskoeldsviksfjaerden, Seskaroefjaerden,Skelleftebukten,Storfjaerden,Torsas,Yttre fjaerden
+  ## all except Baltic proper off shore, and bothnian sea offshore are not national monitoring sites
+```
+
+OLD PREP FOR 6-PCB
+==================
+
+**PROBLEMS WITH DUPLICATES!!!** **NOT USING 6 PCB anymore**
 
 Data Prep 6-PCB indicator
 =========================
@@ -147,7 +1026,7 @@ Data Prep 6-PCB indicator
 ##------------------------#
 
 ## Read in data from csv
-pcb_data = readr::read_csv(file.path(dir_con, 'contaminants_data_database/pcb_data.csv'),
+pcb_data = readr::read_csv(file.path(dir_con, 'contaminants_data_database/pcb_data_filter.csv'),
                            col_types = cols(sub_id= "c",
                                             bio_id= "c") )#make sure these columns are read in as character
    
@@ -500,7 +1379,7 @@ ggplot(congener_count)+geom_point(aes(new_id,congener_count))+
   ylab("Number Congeners Measured")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/congener%20count-1.png)
+![](contaminants_prep_files/figure-markdown_github/congener%20count-1.png)<!-- -->
 
 ``` r
   #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count.png")
@@ -513,7 +1392,7 @@ ggplot(congener_count%>% left_join(.,id_lookup), by="new_id")+geom_point(aes(new
 
     ## Joining by: "new_id"
 
-![](contaminants_prep_files/figure-markdown_github/congener%20count-2.png)
+![](contaminants_prep_files/figure-markdown_github/congener%20count-2.png)<!-- -->
 
 ``` r
   #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country.png")
@@ -526,7 +1405,7 @@ ggplot(congener_count%>%left_join(.,id_lookup, by="new_id")%>%left_join(.,select
 
     ## Warning: Removed 12 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/congener%20count-3.png)
+![](contaminants_prep_files/figure-markdown_github/congener%20count-3.png)<!-- -->
 
 ``` r
   #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country_bydate.png")
@@ -540,7 +1419,7 @@ ggplot(congener_freq_date)+geom_point(aes(date,congener_freq))+
 
     ## Warning: Removed 6 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/congener%20count-4.png)
+![](contaminants_prep_files/figure-markdown_github/congener%20count-4.png)<!-- -->
 
 ### Overview plots
 
@@ -557,7 +1436,7 @@ ggplot(data4) + geom_point(aes(new_id, value,colour=variable))
 
     ## Warning: Removed 1138 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/overview%20plots-1.png)
+![](contaminants_prep_files/figure-markdown_github/overview%20plots-1.png)<!-- -->
 
 ``` r
 ##join data4 with country data and explore conger measurements by country
@@ -570,7 +1449,7 @@ ggplot(data5) + geom_point(aes(new_id, value, colour=variable))+
 
     ## Warning: Removed 1138 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/overview%20plots-2.png)
+![](contaminants_prep_files/figure-markdown_github/overview%20plots-2.png)<!-- -->
 
 ``` r
 ## At Date, By Country
@@ -581,7 +1460,7 @@ ggplot(data5) + geom_point(aes(date, value, colour=variable))+
 
     ## Warning: Removed 1146 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/overview%20plots-3.png)
+![](contaminants_prep_files/figure-markdown_github/overview%20plots-3.png)<!-- -->
 
 ``` r
 ## At Date, By BHI ID
@@ -592,7 +1471,7 @@ ggplot(data5) + geom_point(aes(date, value, colour = country))+
 
     ## Warning: Removed 1146 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/overview%20plots-4.png)
+![](contaminants_prep_files/figure-markdown_github/overview%20plots-4.png)<!-- -->
 
 ``` r
     ## German data assigned to 17 (Poland BHI region)
@@ -629,7 +1508,7 @@ ggplot(data5) + geom_point(aes(date, value, color=station))+
 
     ## Warning: Removed 1146 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/overview%20plots-5.png)
+![](contaminants_prep_files/figure-markdown_github/overview%20plots-5.png)<!-- -->
 
 ``` r
 ## at ID, By variable & country
@@ -639,7 +1518,7 @@ ggplot(data5) + geom_point(aes(new_id, value))+
 
     ## Warning: Removed 1138 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/overview%20plots-6.png)
+![](contaminants_prep_files/figure-markdown_github/overview%20plots-6.png)<!-- -->
 
 ``` r
     ## German values very high for a few congeners (CB138, CB153)
@@ -652,7 +1531,7 @@ ggplot(filter(data5, country=="Germany" & new_id < 200)) + geom_point(aes(new_id
 
     ## Warning: Removed 93 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/overview%20plots-7.png)
+![](contaminants_prep_files/figure-markdown_github/overview%20plots-7.png)<!-- -->
 
 ``` r
 data5 %>% filter(country=="Germany" & new_id < 200)%>%
@@ -748,7 +1627,7 @@ ggplot(distinct(data6,new_id)) + geom_point(aes(new_id, num_indiv_subsamp))+
 
     ## Warning: Removed 446 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/sample%20comp-1.png)
+![](contaminants_prep_files/figure-markdown_github/sample%20comp-1.png)<!-- -->
 
 ``` r
     ##need to investigate Swedish data - some id's with many individuals pooled
@@ -915,14 +1794,14 @@ ggplot(data8) + geom_point(aes(date,value, colour=variable))+
 facet_wrap(~station)
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%206%20congener%20data%20coverage-1.png)
+![](contaminants_prep_files/figure-markdown_github/plot%206%20congener%20data%20coverage-1.png)<!-- -->
 
 ``` r
 ggplot(data8) + geom_point(aes(date,value, colour=variable))+
 facet_wrap(~bhi_id, scales="free_y")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%206%20congener%20data%20coverage-2.png)
+![](contaminants_prep_files/figure-markdown_github/plot%206%20congener%20data%20coverage-2.png)<!-- -->
 
 ``` r
 ggplot(data8) + geom_point(aes(date,value, colour=variable,shape=factor(qflag)))+
@@ -931,7 +1810,7 @@ facet_wrap(~bhi_id, scales="free_y")
 
     ## Warning: Removed 2787 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%206%20congener%20data%20coverage-3.png)
+![](contaminants_prep_files/figure-markdown_github/plot%206%20congener%20data%20coverage-3.png)<!-- -->
 
 ### Plot data filtering for no qflags and all congeners measured
 
@@ -958,7 +1837,7 @@ ggplot(filter(data8_no_q, variable=="CB28")) + geom_point(aes(date,value))+
   facet_wrap(~bhi_id)
 ```
 
-![](contaminants_prep_files/figure-markdown_github/no%20qflag%20and%20all%20congener%20plot-1.png)
+![](contaminants_prep_files/figure-markdown_github/no%20qflag%20and%20all%20congener%20plot-1.png)<!-- -->
 
 ### Take 6 PCB total concentration for samples with no qflag
 
@@ -1054,7 +1933,7 @@ ggplot(data8_no_q_total) + geom_point(aes(date,pcb6_conc_ng_g))+
   ylab("6 PCB total concentration ng/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20samples%20and%20threshold-1.png) \#\#\# Mean total concentration value by station and date
+![](contaminants_prep_files/figure-markdown_github/plot%20samples%20and%20threshold-1.png)<!-- --> \#\#\# Mean total concentration value by station and date
 
 ``` r
 data8_no_q_total_sample_mean = data8_no_q_total %>% 
@@ -1101,7 +1980,7 @@ ggplot(data8_no_q_total_sample_mean) + geom_point(aes(date,pcb6_mean_sample_ng_g
     ## geom_path: Each group consists of only one observation. Do you need to
     ## adjust the group aesthetic?
 
-![](contaminants_prep_files/figure-markdown_github/mean%20value%20loc%20and%20date-1.png)
+![](contaminants_prep_files/figure-markdown_github/mean%20value%20loc%20and%20date-1.png)<!-- -->
 
 ### Incorporate data qflagged 2009-2013
 
@@ -1309,7 +2188,7 @@ ggplot(data8_q_adj_total) + geom_point(aes(date,pcb6_conc_ng_g))+
   ylab("6 PCB total concentration ng/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20total%20conc%20including%20qflagged%20samples-1.png)
+![](contaminants_prep_files/figure-markdown_github/plot%20total%20conc%20including%20qflagged%20samples-1.png)<!-- -->
 
 ### Mean total concentration value by station and date w/qflagged data
 
@@ -1347,7 +2226,7 @@ ggplot(data8_q_adj_sample_mean) + geom_point(aes(date,pcb6_mean_sample_ng_g))+
   ylab("Date Sample Mean 6 PCB total concentration ng/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/average%20station%20date%20with%20qflagged%20data-1.png)
+![](contaminants_prep_files/figure-markdown_github/average%20station%20date%20with%20qflagged%20data-1.png)<!-- -->
 
 Visualize mean sample points on a BHI region map
 ------------------------------------------------
@@ -1376,7 +2255,7 @@ str(map_data)
     ##  $ bhi_id               : int  14 42 NA NA 35 1 1 17 38 30 ...
     ##  $ pcb6_threshold       : num  75 75 75 75 75 75 75 75 75 75 ...
     ##  $ pcb6_mean_sample_ng_g: num  4.98 1.28 13.81 7.47 12.7 ...
-    ##  $ pcb6_sd_sample_ng_g  : num  0.843 0.998 NA 1.508 5.428 ...
+    ##  $ pcb6_sd_sample_ng_g  : num  0.843 0.998 NaN 1.508 5.428 ...
     ##  $ lat                  : num  55.9 64.2 62.9 61.5 59.6 ...
     ##  $ lon                  : num  15.8 23.3 18.2 17.2 18.8 ...
 
@@ -1397,7 +2276,7 @@ plot_map + scale_color_gradientn(colours=rainbow(5))+
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/samples%20on%20map-1.png)
+![](contaminants_prep_files/figure-markdown_github/samples%20on%20map-1.png)<!-- -->
 
 Next steps
 ----------

@@ -7,6 +7,25 @@ params:
 
 ```{r setup}
 ## source common libraries, directories, functions, etc
+# Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_cw    = file.path(dir_prep, 'CW')
 dir_con    = file.path(dir_prep, 'CW/contaminants')
@@ -140,7 +159,7 @@ dim(ivl_unfilter) # 3556   18
     
 ```{r format columns}
 
-ices_unfilter %>% select(date)
+ices_unfilter %>% select(date) %>% head(.)
     ## date format is dd/mm/yy
 
 ices_unfilter = ices_unfilter  %>% 
@@ -151,7 +170,7 @@ head(ices_unfilter);tail(ices_unfilter)
 
 
 
-ivl_unfilter %>% select(date)
+ivl_unfilter %>% select(date) %>% head(.)
     ## date format is yyyy-mm-dd
 
 ivl_unfilter = ivl_unfilter  %>% 
