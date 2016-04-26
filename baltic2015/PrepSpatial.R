@@ -2,6 +2,7 @@
 ## This function takes a dataframe of scores and plots them to appropriate OHI regions.
 ## 'scores' is a data frame with unique rows of variables rgn_id and score
 ## TODO: also enable optional land .shp
+## TODO: consider downres-ing shapefiles like downres_polygons.r: https://github.com/OHI-Science/ohiprep/blob/9daf812e910b80cf3042b24fcb458cf62e359b1a/globalprep/spatial/downres_polygons.R
 
 
 library(maptools) # install.packages('maptools')

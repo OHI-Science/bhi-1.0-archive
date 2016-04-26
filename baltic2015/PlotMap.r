@@ -37,10 +37,6 @@ PlotMap <- function(scores          = scores, # dataframe with at least 2 column
     goals = NULL
   }
 
-  ## join polygon with scores
-  spatial_regions = spatial_regions %>%
-    left_join(scores, by = fld_value_id)
-
   ## loop over each goal and subgoal ----
 
   for (g in goals){ # g ='AO'
@@ -64,10 +60,17 @@ PlotMap <- function(scores          = scores, # dataframe with at least 2 column
       scores_g = scores_g[scores_g[[fld_value_id]] != 0, ] # figure this out with filter() someday
     }
 
-    ## plot map!
-    if (overwrite | !file.exists(fig_png)){
+    ## join polygon with scores
+    sp_regions <- spatial_regions %>%
+      left_join(scores_g, by = fld_value_id)
 
-      df_plot = ggplot(data = spatial_regions,
+
+    ## plot map!
+    res = 100
+    if (overwrite | !file.exists(fig_png)){
+      png(fig_png, width=res*7, height=res*7)
+
+      df_plot = ggplot(data = sp_regions,
                        aes(x = long, y = lat, group = group, fill = score)) +
         theme(axis.ticks = element_blank(), axis.text = element_blank(),
               text = element_text(family = 'Helvetica', color = 'gray30', size = 12),
@@ -82,7 +85,9 @@ PlotMap <- function(scores          = scores, # dataframe with at least 2 column
              x = NULL, y = NULL)
 
       ## if save plots as .pngs
-      ggsave(fig_png, df_plot)
+
+      print(df_plot) # try ggsave(fig_png, df_plot) someday, but was taking forever
+      dev.off()
 
       ## else
       ## return(df_plot) -- save this into a list. create an empty list and add to it.
