@@ -33,7 +33,7 @@ dir_con    = file.path(dir_prep, 'CW/contaminants')
 
 
 ##----------------------------------------##
-## Read in IVL data
+## Read in ICES data
 ##----------------------------------------##
 ices_raw = read.csv(file.path(dir_con, '/raw_prep/ICES_herring_pcb_dowload_22april2016_cleaned.csv'),
                    sep=";")
@@ -41,10 +41,12 @@ head (ices_raw)
 dim(ices_raw)
 str(ices_raw)
 
-##----------------------------------------##
-## ICES data cleaning and manipulations
-##----------------------------------------##
 
+##----------------------------------------##
+## Read in unit conversion lookup
+##----------------------------------------##
+unit_lookup = read.csv(file.path(dir_con,'unit_conversion_lookup.csv'),sep=";")
+unit_lookup
 
 #----------------------------------------##
 ## ICES Check number of dates and years sample by country
@@ -68,6 +70,9 @@ ices_country_year %>% group_by(Country) %>% summarise(last(year)) %>% ungroup()
 # 5  Poland       2014
 # 6  Sweden       2013
 
+##----------------------------------------##
+## ICES data cleaning and manipulations
+##----------------------------------------##
 
 ##----------------------------------------##
 ## ICES change column names
@@ -153,22 +158,25 @@ ices3 %>% filter(is.na(sub_samp_ref))  ## all observations have a subsample ref
 
 ices3 %>% filter(vflag !="A") %>% select(vflag) %>%distinct(.)  ## A = acceptable, all others are blank, no problems
 
-
+##----------------------------------------##
 ##----------------------------------------##
 ## ICES separate data into 3 objects
+##----------------------------------------##
+
 ##----------------------------------------##
 ## Look-up methods
 ices_lookup= ices3 %>%
   select(c(monit_program:not_used_in_datatype,analyt_lab:samp_id, param_group,variable,qflag,detect_lim,quant_lim,uncert_val,method_uncert))
 str(ices_lookup)
+##----------------------------------------##
 
 
-#### TO DO
-
-
+##----------------------------------------##
 ## b-bio data
+## These data are length, weight, fat and lipid content
+
 ices3_bbio = ices3 %>%
-  select(c(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group,matrix_analyzed,variable,unit,value))%>% ## reorder columns, identifiers first, only variables and values
+  select(c(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group,matrix_analyzed,basis_determination,variable,unit,value))%>% ## reorder columns, identifiers first, only variables and values
   filter(param_group == "B-BIO") %>% ## select only B-BIO
   mutate(variable = paste(variable,unit,sep="_"))  %>%  #combine variable with measurement unit
   select(-unit)%>% ## no longer needed
@@ -193,7 +201,7 @@ ices3_bbio %>% group_by(station,date,sub_samp_ref,variable, matrix_analyzed)%>%s
            ## duplicated records
       duplicated_1_records = ices3 %>%
                               filter(sub_samp_ref %in% duplicated_1) %>%
-                              select(country,date,matrix_analyzed,sub_samp_ref,sub_samp_id,measurement_ref, param_group,variable,value)%>%
+                              select(country,date,matrix_analyzed,sub_samp_ref,sub_samp_id,measurement_ref, param_group,basis_determination,variable,value)%>%
                               arrange(sub_samp_ref,variable, measurement_ref)
       duplicated_1_records  ## All duplicates are two measurement of LIPIDWT% per sample, all from 2014
 
@@ -211,7 +219,7 @@ ices3_bbio %>% group_by(station,date,sub_samp_ref,variable, matrix_analyzed)%>%s
       dim(ices3_bbio) #12674    11
 
 #check for unique variables and matrix_analyzed
-      ices3_bbio %>% select(matrix_analyzed,variable) %>% distinct(.) %>% arrange(variable)
+      ices3_bbio %>% select(matrix_analyzed,basis_determination,variable) %>% distinct(.) %>% arrange(variable)
       ## unique combination of variables and matrix_analyzed
 
 
@@ -222,8 +230,97 @@ ices3_bbio %>% group_by(station,date,sub_samp_ref,variable, matrix_analyzed)%>%s
                         spread(variable,value)
 
       dim(ices3_bbio_wide); length(unique(ices3_bbio_wide$sub_samp_ref))  ## 1 row for every subsample ref.
+##----------------------------------------##
 
+
+##----------------------------------------##
 ## oc-cb data
+## This is congener concentration data
+
+ices3_occb = ices3 %>%
+  select(c(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group,matrix_analyzed,basis_determination,variable,unit,value))%>% ## reorder columns, identifiers first, only variables and values
+  filter(param_group == "OC-CB") %>% ## select only OC-CB
+  arrange(station,date,sub_samp_ref)
+
+dim(ices3_occb)
+head(ices3_occb)
+str(ices3_occb)
+
+## DUPLICATE PROBLEMS (data year >= 2000)
+dim(ices3_occb) #17593    11
+ices3_occb %>% select(-value)%>% distinct(.) %>% nrow()#17593; appears to be no duplicates
+
+## Any congeners with lipid weight
+ices3_occb %>% select(basis_determination) %>% distinct(.)
+ices3_occb %>% filter(basis_determination == "lipid weight")
+##YES
+
+ices3_occb %>% filter(basis_determination == "lipid weight") %>% select(sub_samp_ref) %>% distinct(.) %>% nrow()
+
+
+## Convert to shared units  (then will only have one column for each congener)
+
+    ## different units for the data
+    ices3_occb %>% select(unit) %>%distinct(.)  # ug/kg, mg/kg, pg/g, ng/g
+    ices3_occb %>% select(variable,unit) %>%distinct(.)
+
+    ## convert all to ug/kg (this is unit for the non-dioxin PCB GES boundary)
+
+    ## select only the part of the unit look up needed, all converstions to ug/kg
+    unit_lookup_ug_kg = unit_lookup %>% filter(ConvertUnit == "ug/kg")
+
+
+    ices3_occb = ices3_occb %>%
+                left_join(., unit_lookup_ug_kg, by=c("unit" = "OriginalUnit")) %>%  ## combine data with the conversion factor
+                mutate(value2 = value*ConvertFactor) ## calculate value in ug/kg
+
+    ices3_occb
+
+    ##save unit conversion data for reference
+    ## write.csv(ices3_occb, file.path(dir_con, 'raw_prep/ices_congener_unit_conversion.csv'))
+
+
+## Remove the original values and merge the congener with the unit
+
+    ices3_occb = ices3_occb %>%
+                select(-value,-unit, -ConvertFactor)%>%  ##remove columns not needed
+                mutate(variable = paste(variable,ConvertUnit,sep="_")) %>% ## now variable and unit single text
+                select(-ConvertUnit) %>%  ## column not needed
+                dplyr::rename(value=value2)
+
+    #check unique variables
+      ices3_occb %>% select(variable) %>% distinct(.)
+
+
+## Then spread data
+ices3_occb_wide = ices3_occb %>%
+  select(-matrix_analyzed) %>%
+  group_by(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group, basis_determination) %>%
+  spread(variable,value) %>%
+  arrange(station, date, sub_samp_ref)
+
+dim(ices3_occb_wide) #2468   25
+ices3_occb_wide %>% select(sub_samp_ref)%>%distinct(.) %>% nrow()#2468  ## one row for every unique sub_samp_ref
+
+
+##----------------------------------------##
+## Join ices3_occb_wide with ices3_bbio_wide
+## do this so can convert from wet weight to lipid weight
+##----------------------------------------##
+
+ices4 = left_join(ices3_occb_wide, ices3_bbio_wide,
+                  by=c("station","latitude","longitude",
+                       "date","sub_samp_ref","sub_samp_id", "samp_id","param_group"))
+head(ices4)
+dim(ices4) ##2468   38
+
+
+## TODO
+
+## CONVERT lipid weight measurements to wet weight
+
+
+## save and export
 
 ##----------------------------------------##
 ############################################
