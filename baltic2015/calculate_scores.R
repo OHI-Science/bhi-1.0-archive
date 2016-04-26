@@ -16,8 +16,14 @@ source('~/github/bhi/baltic2015/pre_scores.R')
 scores = CalculateAll(conf, layers, debug=T)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
+
 ## plot maps of scores
-source('~/github/bhi/baltic2015/PlotMapCall.r')
+source('PrepSpatial.r') # until added to ohicore
+source('PlotMap.r')     # until added to ohicore
+spatial_regions = PrepSpatial('spatial/regions_gcs.geojson') # can be .geojson or .shp
+PlotMap(scores          = scores,
+        spatial_regions = spatial_regions,
+        path_figures    = 'reports/figures')
 
 
 ## Display app locally.

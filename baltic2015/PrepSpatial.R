@@ -1,4 +1,4 @@
-## PlotMap.R
+## PrepSpatial.R
 ## This function takes a dataframe of scores and plots them to appropriate OHI regions.
 ## 'scores' is a data frame with unique rows of variables rgn_id and score
 ## TODO: also enable optional land .shp
