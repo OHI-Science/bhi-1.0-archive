@@ -76,6 +76,7 @@ ices_country_year %>% group_by(Country) %>% summarise(last(year)) %>% ungroup()
 
 ##----------------------------------------##
 ## ICES change column names
+## ICES column name descriptor(http://dome.ices.dk/Download/Contaminants%20and%20effects%20of%20contaminants%20in%20biota.pdf)
 ##----------------------------------------##
 
 ices1 = ices_raw %>% dplyr::rename(monit_program =MPROG, monit_purpose = PURPM,
