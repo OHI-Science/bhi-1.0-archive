@@ -397,17 +397,18 @@ ices6 = left_join(ices5,
                   ices_lookup,
                   by=c("station","date","latitude","longitude","sub_samp_id",
                                            "sub_samp_ref","samp_id", "congener"="congener_unit") )%>%
+        mutate(basis_determination_converted = "wet weight") %>%  ## add column to have current basis clear
         select(country,monit_program,monit_purpose,report_institute,station,
                 latitude,longitude, date, monit_year,date_ices,day, month, year,species,
                 sub_samp_ref,sub_samp_id, samp_id,num_indiv_subsample, bulk_id,
-                basis_determination_orginaldata,
+                basis_determination_orginaldata,basis_determination_converted,
                 AGMAX_y,AGMEA_y, AGMIN_y,`DRYWT%_%`, `EXLIP%_%`,`FATWT%_%`,`LIPIDWT%_%`,
                LNMAX_cm,LNMEA_cm,LNMIN_cm, WTMAX_g,WTMEA_g ,WTMIN_g ,
                qflag, detect_lim, quant_lim,uncert_val,method_uncert,congener, value) %>%  ## reorder columns
         dplyr::rename(basis_determination_originalcongener = basis_determination_orginaldata) %>%
         arrange(station,date, sub_samp_ref)
 
-dim(ices6) #16732    40
+dim(ices6) #16732    41
 dim(ices5) #16732    23
 
 
