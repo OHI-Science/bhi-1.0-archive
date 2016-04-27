@@ -168,13 +168,18 @@ ices3 %>% filter(vflag !="A") %>% select(vflag) %>%distinct(.)  ## A = acceptabl
 ices_lookup= ices3 %>%
   select(c(monit_program:not_used_in_datatype,analyt_lab:samp_id, param_group,variable,qflag,detect_lim,quant_lim,uncert_val,method_uncert))
 str(ices_lookup)
+
+##save ices lookup
+#write.csv(ices_lookup, file.path(dir_con, 'raw_prep/ices_lookup_unique_measurements.csv'))
+
 ##----------------------------------------##
+
 
 
 ##----------------------------------------##
 ## b-bio data
 ## These data are length, weight, fat and lipid content
-
+##----------------------------------------##
 ices3_bbio = ices3 %>%
   select(c(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group,matrix_analyzed,basis_determination,variable,unit,value))%>% ## reorder columns, identifiers first, only variables and values
   filter(param_group == "B-BIO") %>% ## select only B-BIO
@@ -203,8 +208,7 @@ ices3_bbio %>% group_by(station,date,sub_samp_ref,variable, matrix_analyzed)%>%s
                               filter(sub_samp_ref %in% duplicated_1) %>%
                               select(country,date,matrix_analyzed,sub_samp_ref,sub_samp_id,measurement_ref, param_group,basis_determination,variable,value)%>%
                               arrange(sub_samp_ref,variable, measurement_ref)
-      duplicated_1_records  ## All duplicates are two measurement of LIPIDWT% per sample, all from 2014
-
+      duplicated_1_records  ## All duplicates are two measurement of LIPIDWT% per sample, all from 2014  ## same tissue, no basis_determination entered
 
       ## countries
       duplicated_1_records %>% select(country) %>% distinct(.)  #Poland
@@ -218,25 +222,34 @@ ices3_bbio %>% group_by(station,date,sub_samp_ref,variable, matrix_analyzed)%>%s
                     distinct(.)  ## retain ony distinct rows
       dim(ices3_bbio) #12674    11
 
-#check for unique variables and matrix_analyzed
+##check for unique variables and matrix_analyzed
       ices3_bbio %>% select(matrix_analyzed,basis_determination,variable) %>% distinct(.) %>% arrange(variable)
       ## unique combination of variables and matrix_analyzed
 
 
-## b-bio data wide format
+##remove basis_determination  ##it is more important for the occb data, is haphazardly entered here.
+      ## LIPIDWT%_%  appears to be recorded as both wet weight and lipid weight but we do not use this column
+    ices3_bbio = ices3_bbio %>% select(-basis_determination)
+
+    ## b-bio data wide format
       ices3_bbio_wide = ices3_bbio %>%
                         select(-matrix_analyzed) %>%
                         group_by(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group) %>%
-                        spread(variable,value)
+                        spread(variable,value) %>%
+                        ungroup()%>%
+                        dplyr::rename(param_bbio = param_group)
+
 
       dim(ices3_bbio_wide); length(unique(ices3_bbio_wide$sub_samp_ref))  ## 1 row for every subsample ref.
 ##----------------------------------------##
 
 
+
+
 ##----------------------------------------##
 ## oc-cb data
 ## This is congener concentration data
-
+##----------------------------------------##
 ices3_occb = ices3 %>%
   select(c(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group,matrix_analyzed,basis_determination,variable,unit,value))%>% ## reorder columns, identifiers first, only variables and values
   filter(param_group == "OC-CB") %>% ## select only OC-CB
@@ -277,7 +290,7 @@ ices3_occb %>% filter(basis_determination == "lipid weight") %>% select(sub_samp
     ices3_occb
 
     ##save unit conversion data for reference
-    ## write.csv(ices3_occb, file.path(dir_con, 'raw_prep/ices_congener_unit_conversion.csv'))
+    #write.csv(ices3_occb, file.path(dir_con, 'raw_prep/ices_congener_unit_conversion.csv'))
 
 
 ## Remove the original values and merge the congener with the unit
@@ -297,6 +310,8 @@ ices3_occb_wide = ices3_occb %>%
   select(-matrix_analyzed) %>%
   group_by(station,latitude,longitude,date,sub_samp_ref,sub_samp_id,samp_id,param_group, basis_determination) %>%
   spread(variable,value) %>%
+  dplyr::rename(param_occb = param_group) %>%
+  ungroup() %>%
   arrange(station, date, sub_samp_ref)
 
 dim(ices3_occb_wide) #2468   25
@@ -310,23 +325,110 @@ ices3_occb_wide %>% select(sub_samp_ref)%>%distinct(.) %>% nrow()#2468  ## one r
 
 ices4 = left_join(ices3_occb_wide, ices3_bbio_wide,
                   by=c("station","latitude","longitude",
-                       "date","sub_samp_ref","sub_samp_id", "samp_id","param_group"))
+                       "date","sub_samp_ref","sub_samp_id", "samp_id"))
+
+
 head(ices4)
-dim(ices4) ##2468   38
+colnames(ices4)
+dim(ices4) ##2468   39   ## same number of rows as occb
+ices4 %>% select(sub_samp_ref) %>% distinct(.) %>% nrow()
 
+## save unconverted, merged data
+#write.csv(ices4, file.path(dir_con,'raw_prep/ices_congener_biodata_weight_basis_unconverted.csv'))
 
-## TODO
-
+##----------------------------------------##
 ## CONVERT lipid weight measurements to wet weight
+## multiple the congener concentration (if lipid based) by (EXLIP%_% / 100)
+##----------------------------------------##
+ices5 = ices4 %>%
+        ##group_by(c(station:basis_determination, param_bbio:WTMIN_g)) %>% ## group by all id and bbio variable
+        gather(congener, value,`CB101_ug/kg`:`CB77_ug/kg`) %>%
+        arrange(station,date, sub_samp_ref) %>%##long data format
+        mutate(value2 = ifelse(basis_determination=="lipid weight", (value* (`EXLIP%_%`/100)),value)) ## create new value column, if value is lipid weight convert, otherwise keep value
+dim(ices5) #39488    26
 
+
+## plot data to see if reasonable
+ggplot(ices5) + geom_point(aes(date,value2, colour=latitude))+
+  facet_wrap(~congener, scales="free_y")
+
+## which are the CB153 high values
+ices5 %>% filter(congener == "CB153_ug/kg", value2 > 50) %>% select(station,date, sub_samp_ref,basis_determination,congener,value2) %>% arrange(date,sub_samp_ref)
+  ices_lookup %>% filter(date =="2014-09-15" | date =="2014-08-28" ) %>% filter(station == "LKOL" | station == "LWLA")%>%
+      select(country, station, date,sub_samp_ref,variable, qflag) %>% mutate(variable = as.character(variable))%>%
+        filter(variable == "CB153")%>% arrange(date,sub_samp_ref)
+    ## need to check later for station type (eg. reference site, polluted site)
+    ## these outliers not due to converting wet weight
+
+
+## clean data set so only values based on wet weight
+ices5 = ices5 %>%
+        select(-value, -param_occb,-param_bbio) %>%
+       dplyr::rename(basis_determination_orginaldata = basis_determination,
+                      value=value2) %>%
+      filter(!is.na(value)) %>% ## remove the congeners not measured
+      arrange(station, date, sub_samp_ref)
+dim(ices5) #16732    23
+
+
+##----------------------------------------##
+## combine harmonized data with ices_lookup
+##do this so have country and monitoring program info, and qflaugs
+##----------------------------------------##
+
+## reduce ices_lookup to only relevant columns
+ices_lookup = ices_lookup %>%
+              select(-sex_specimen,-matrix_analyzed, -not_used_in_datatype, -analyt_lab,-ref_source,
+                     -method_storage, -method_pretreat,-method_pur_sep,-method_chem_fix,-method_chem_extract,
+                     -method_analysis,-formula_calc,-test_organism,-sampler_type,-factor_compli_interp,
+                     -analyt_method_id,-measurement_ref) %>%
+              filter(param_group == "OC-CB") %>% ## only select lookup info about congener variables
+              select(-param_group)%>% ## don't need param_group
+              mutate(congener_unit = paste(variable, "_ug/kg", sep=""))%>% ## this column will match the congener column in ices5
+              select(-variable) %>% ##no longer need this column
+              arrange(station, date, sub_samp_ref)
+
+dim(ices_lookup) #17593    25
+
+
+## join ices5 and ices_lookup
+ices6 = left_join(ices5,
+                  ices_lookup,
+                  by=c("station","date","latitude","longitude","sub_samp_id",
+                                           "sub_samp_ref","samp_id", "congener"="congener_unit") )%>%
+        select(country,monit_program,monit_purpose,report_institute,station,
+                latitude,longitude, date, monit_year,date_ices,day, month, year,species,
+                sub_samp_ref,sub_samp_id, samp_id,num_indiv_subsample, bulk_id,
+                basis_determination_orginaldata,
+                AGMAX_y,AGMEA_y, AGMIN_y,`DRYWT%_%`, `EXLIP%_%`,`FATWT%_%`,`LIPIDWT%_%`,
+               LNMAX_cm,LNMEA_cm,LNMIN_cm, WTMAX_g,WTMEA_g ,WTMIN_g ,
+               qflag, detect_lim, quant_lim,uncert_val,method_uncert,congener, value) %>%  ## reorder columns
+        dplyr::rename(basis_determination_originalcongener = basis_determination_orginaldata) %>%
+        arrange(station,date, sub_samp_ref)
+
+dim(ices6) #16732    40
+dim(ices5) #16732    23
+
+
+## do not want to spread the data because the qflag, detli etc is unique to each congener
 
 ## save and export
+write.csv(ices6, file.path(dir_con, "raw_prep/ices_herring_pcb_cleaned.csv"))
+
+
 
 ##----------------------------------------##
 ############################################
 ##----------------------------------------##
 
 
+
+
+
+
+############################################################
+## OLD CODE
+## if work with IVL data, would start here
 ##----------------------------------------##
 ## Read in IVL data
 ##----------------------------------------##
