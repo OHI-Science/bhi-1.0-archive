@@ -35,40 +35,51 @@ create_readme(dir_con, 'contaminants_prep.rmd')
 
 ```
 
-# 1. Contaminant Data Prep
+# Contaminant Data Prep
 
-## 1.2 Indicators
-3 indicators are proposed which would then be combined to give an overall comtanimant sub-component status.  
+## 1 Indicators
+3 indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
 
-### 1.2.1 (1) PCB concentration indicator
-**CB-153 concentration**
-    - Suggested by Anders Bignet and Elisabeth Nyberg.  
+### 1.2 (1) PCB concentration indicator
 
-This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.  
-
-Use the EU threshold for human health as the reference point.  
-
-
-
-#### 1.2.1a Original PCB indicator: ICES-6 PCB
-Sum  of  PCB28, PCB52,  PCB101, PCB138,  PCB153 and  PCB180.  
+#### 1.2.1 Original PCB indicator: ICES-6 PCB
+Non-dioxin like PCBs: sum of congeners (28, 52, 101, 138, 153, 180) 75 μg/kg ww fish muscle  
 
 This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).  
 
-75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
+75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF). This threshold was also agreed upon as GES boundary at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
 
-**Additional information from HELCOM on the Core Indicators**  
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)
 
-*Relevant text from the HELCOM core indicator report*  
-"The PCBs included in this core indicator report are the 7 PCB congeners that have been monitored since the beginning of the HELCOM and OSPARCOM monitoring programmes, carefully selected mainly by ICES working groups due to their relatively uncomplicated identification and quantification in gas chromatograms and as they usually contribute a very high proportion of the total PCB content in environmental samples. These are the ‘ICES 7’: CB-28, CB-52, CB-101, CB-118, CB-138, CB-153 and CB-180."  
+#### 1.2.2 Alternatie PCB indicator: CB-153 Concentration
+CB-153 concentration  
+    - Suggested by Anders Bignet and Elisabeth Nyberg.
+    - This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.  
+    - They suggest using the EU threshold for human health as the reference point.  
+
+EU documents seem to only focus on the ICES6 indicator.  However, OSPAR as individual CB thresholds.
+[OSPAR background](http://qsr2010.ospar.org/media/assessments/p00390_supplements/p00461_Background_Doc_CEMP_Assessmt_Criteria_Haz_Subs.pdf).  
+
+Table 1, p.14: Blue range = Status is acceptable. Concentrations are close to background or zero, i.e. the 
+ultimate aim of the OSPAR Strategy for Hazardous Substances has been achieved.   
+
+Table 5c. Blue < BAC  = CB153 0.2 μg/kg wet weight. *(this number differs in what is summarized for this report in the HELCOM core indicator document from 2013)*  
+
+**Older documents with background**  
+Additional information from HELCOM on the Core Indicators:  
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf). *This document is now outdated*
 
 *Determination of GES boundary*
 The CORESET expert group decided that, due to uncertainties in the target setting on the OSPAR and EU working groups, the seven PCBs should be monitored and concentrations analysed but the core indicator assesses primarily two congeners only: CB-118 (dioxin like) and 153 (non-dioxin like). Tentatively the OSPAR EACs for these two congeners are suggested to be used.
 
 
+
 ### 1.3 (2) TEQ value for PCBs and Dioxins
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)  *There should be a more recent document*  
+Dioxin and dioxin-like compounds:0.0065 TEQ/kg ww fish, crustaceans or molluscs (source of target:EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC).  
+
+This threshold was also agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
+
+**Older documents with background** 
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)  *This document is now outdated*  
 
 Dioxins are included in several international agreements, of which the Stockholm Convention and the Convention on Long Range Transboundary Air are among the most important for the control and reduction of sources to the environment. WHO and FAO have jointly established a maximum tolerable human intake level of dioxins via food, and within the EU there are limit values for dioxins in food and feed stuff (EC 2006). Several other EU legislations regulate dioxins, e.g. the plan for integrated pollution prevention and control (IPPC) and directives on waste incineration (EC, 2000, 2008). The EU has also adopted a Community Strategy for dioxins, furans and PCBs (EC 2001).
 
@@ -83,34 +94,139 @@ For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ fo
 [Faxneld et al. 2014](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators  
 
 
-# 2. Data
+## 2. Data
 
-## 2.1 Data sources
-ICES  
+### 2.1 Data sources
+
+#### 2.1.1 PCB data
+**ICES**
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
-Downloaded 20 October 2015 by Cornelia Ludwig
+Downloaded 22 April 2016 by Jennifer Griffiths
+Data selections:
+Year - 1990-2014
+Purpose of monitoring = All
+Country = ALL
+Monitoring Program = ALL
+Parameter Group = Chlorobiophenyls
+Reporting Laboratory = All
+Analytical laboratory = All
+Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
 
+#### 2.1.2 Dioxins
+
+#### 2..3 PFOS
+
+
+#### Other sources
 IVL (Svenska Miljönstitutet / Swedish Environmental Research Institute)  
 [IVL database](http://dvsb.ivl.se/)  
 Downloaded 2 December 2015 by Cornelia Ludwig  
-[IVL detection limit information](http://www.ivl.se/sidor/lab--analys/miljo/biota.html)  
-
-## 2.2 Data prep prior to database
-Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the BHI database.  
-**PCBs**  
-(1) Swedish data were given in lipid weight and were converted to wet weight.  Not all samples had a Extrlip (fat) percentage and therefore could not be converted.  These samples were not included in the database  
-(2) Data were in different units and were standardized to mg/kg (however the values listed for the detection limit and the quantification limit were not updated to reflect the value unit change)
 
 
-# 3. Other Info 
+### 2.2 Data prep prior to database
+#### 2.2.1 PCB
+Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminants/raw_contaminants_data_prep`
+    - If duplicate measurements were made from the same sample, values were averaged (all were two measurement of LIPIDWT% per sample, all from 2014, Poland). 
+    -  Data were standardized to the same unit ug/kg  
+    - If data were presented in lipid weight, they were converted to wet weight by: (EXLIP% / 100)*(CB-conc lipid weight).   
+
+
+## 3. Other Info 
 ........
 
-# 4. Data Prep - PCB Indicator
+## 4. Data Prep - PCB Indicator
+
+### 4.1 Basic data cleaning and organization
+
+#### 4.1.1 Read in PCB data
+```{r read in data, echo=FALSE, message=FALSE}
+## read in PCB data
+pcb1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_pcb.csv'))
+dim(pcb1)
 
 
-```{r TODO, echo=FALSE, message=FALSE}
-## read in data...
+## Read in lookup - BHI region to HOLAS basins
+lookup_basins = read.csv(file.path(dir_con,'baltic_rgns_to_bhi_rgns_lookup_holas.csv'))
 
-## plot data...
+
 
 ```
+
+#### 4.1.2 Organize
+Remove and rename columns, change column data types
+```{r organize data}
+str(pcb1)
+
+#format date as date
+pcb2 = pcb1 %>% 
+      dplyr::rename(date=Date, lat=Latitude, lon= Longitude, 
+                    month=Month, day=Day, doy=DoY,
+                    bhi_id = BHI_ID, helcom_id=HELCOM_ID, 
+                    helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,
+                    agmax_y = AGMAX_y, agmea_y=AGMEA_y, agmin_y = AGMIN_y,
+                    drywt_percent = DRYWT._., exlip_percent = EXLIP._.,fatwt_percent=FATWT._.,
+                    lipidwt_percent = LIPIDWT._., lnmax_cm = LNMAX_cm,
+                    lnmea_cm=LNMEA_cm, lnmin_cm=LNMIN_cm, wtmax_g=WTMAX_g, wtmea_g=WTMEA_g,
+                    wtmin_g=WTMIN_g) %>% # rename columns
+      select(-date_ices, -X) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"),
+             sub_samp_id= as.character(sub_samp_id)) %>%
+      select(country:lon,bhi_id:ices_area,date:year,month:doy,species:value)## reorder columns
+
+head(pcb2)
+
+```
+
+#### 4.1.3 Plot data
+Explore raw data.
+**Why are there unassigned BHI regions?**
+```{r plot data}
+
+ggplot(pcb2) + geom_point(aes(date,value, colour=congener)) +
+  facet_wrap(~bhi_id)
+
+```
+
+#### 4.1.4 Filter for ICES 6 PCBs
+```{r filter ices 6}
+ices6pcb = c("CB28_ug/kg", "CB52_ug/kg", "CB101_ug/kg", "CB138_ug/kg",
+            "CB153_ug/kg", "CB180_ug/kg")
+  
+pcb3 = pcb2 %>% 
+        filter(congener %in% ices6pcb)
+
+dim(pcb3); dim(pcb2)
+
+```
+
+#### 4.1.5 Plot data -ICES 6 pcbs
+```{r plot ices 6}
+ggplot(pcb3) + geom_point(aes(date,value, colour=congener)) +
+  facet_wrap(~bhi_id)
+```
+
+#### 4.1.6 Stations with No BHI ID
+Why were some data not assigned a BHI ID (through script in BHI database).  
+Will check with Marc, might be because very near coast and BHI regions don't extend?
+```{r  bhiid na}
+
+## which stations have no BHI ID assigned
+pcb3 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinct(.)
+
+##country            station     lat     lon
+##1  Sweden     Gaviksfjaerden 62.8645 18.2412
+##2  Sweden Kinnbaecksfjaerden 65.0568 21.4750
+##3  Sweden  Langvindsfjaerden 61.4554 17.1622
+
+```
+
+#### 4.1.7 Manually assign BHI to stations missing
+TO DO
+
+#### Join to HOLAS basins and evaluate data coverage
+TO DO
+
+#### Evaluate data with Qflags
+TO DO:
+    - data if only use CB153 with and without qflags
+    - data where all 6 congeners sampled with and without qflags
