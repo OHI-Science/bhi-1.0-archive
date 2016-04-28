@@ -1,0 +1,73 @@
+---
+title: "open_sea_anoxia_prep"
+output: github_document
+params: 
+    datasource: csv
+---
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+# source
+source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+dir_prep = make_path('baltic2015/prep') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_anox   = file.path(dir_prep, 'pressures/open_sea_anoxia')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_anox, 'open_sea_anoxia_prep.rmd') 
+```
+
+## 1. Background on open sea anoxia data  
+
+### 1.1 Why anoxia?
+
+
+## 2. Anoxia data  
+
+### 2.1 Data source
+
+## 3. Open sea anoxia rescaling
+### 3.1 Current value
+
+### 3.2 Max value
+
+### 3.3 Min value
+
+## 4. Open Sea Anoxia layer prep
+
+```{r TODO, echo=FALSE, message=FALSE}
+## read in data...
+
+## plot data...
+
+```
