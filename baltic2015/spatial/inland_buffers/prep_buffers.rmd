@@ -1,0 +1,95 @@
+---
+title: "Prepare BHI inland buffers"
+author: Julie Lowndes // github @jules32 
+date: 04-03-2016
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## SETUP
+
+```{r libraries}
+
+# libraries
+library(dplyr)
+library(tidyr)
+library(readr)
+library(stringr)
+library(rgdal)
+library(raster)
+library(rgeos)
+library(gdalUtils)
+
+```
+
+```{r libraries, eval=FALSE}
+
+# directory at NCEAS where spatial files are; can also add something like this for SRC
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+## read in cleaned BHI shapefiles  
+## BHI shape files cleaned here: github.com/OHI-Science/ohi-webapps/blob/master/custom/bhi/prep_bhi.Rmd
+rgns <- readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/bhi/spatial/custom'), 
+                layer = 'baltic_shp') 
+
+nuts2 <- readOGR(dsn = file.path(dir_M, 'git-annex/Baltic/regions_coastal'), 
+         layer = 'COAST_NUTS2') 
+
+nuts3 <- readOGR(dsn = file.path(dir_M, 'git-annex/Baltic/regions_coastal'), 
+         layer = 'COAST_NUTS3') 
+
+plot(nuts2)
+plot(nuts3)
+
+```
+
+## Workflow with GYE (smaller shape files)
+
+```{r gye workflow}
+
+## read in regions
+rgns <- readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/gye/spatial/custom'), 
+               layer = 'Regiones') 
+
+## make buffer
+buff_width = 25000 # meters
+rgns_buff <- rgeos::gBuffer(rgns, byid = FALSE, width = buff_width)
+
+rgns_buff <- raster::buffer(rgns, dissolve=FALSE, width = buff_width)
+
+plot(rgns)
+plot(rgns_buff, add=TRUE)
+
+plot(nuts2)
+
+# gdal_buffer, raster::buffer. look for somethign that has theissen polygons by default
+
+## merge buffers/extend rgns to land
+
+```
+
+
+## Make buffers on land
+
+```{r buffers}
+
+```
+
+## Identify which NUTS2 and NUTS3 are associated with each BHI region
+
+```{r nuts associations}
+
+```
+
+
+
+
