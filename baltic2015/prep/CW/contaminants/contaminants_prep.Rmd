@@ -4,8 +4,8 @@ output: github_document
 params: 
     datasource: csv
 ---
-
 ```{r setup}
+
 ## source common libraries, directories, functions, etc
 # Libraries
 library(readr)
@@ -33,42 +33,53 @@ dir_con    = file.path(dir_prep, 'CW/contaminants')
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
 create_readme(dir_con, 'contaminants_prep.rmd')
 
-
 ```
-# 1. Contaminant Data Prep
 
-## 1.2 Indicators
-3 indicators are proposed which would then be combined to give an overall comtanimant sub-component status.  
+# Contaminant Data Prep
 
-### 1.2.1 (1) PCB concentration indicator
-**CB-153 concentration**
-    - Suggested by Anders Bignet and Elisabeth Nyberg.  
+## 1 Indicators
+3 indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
 
-This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.  
+### 1.2 (1) PCB concentration indicator
 
-Use the EU threshold for human health as the reference point.  
-
-
-
-#### 1.2.1a Original PCB indicator: ICES-6 PCB
-Sum  of  PCB28, PCB52,  PCB101, PCB138,  PCB153 and  PCB180.  
+#### 1.2.1 Original PCB indicator: ICES-6 PCB
+Non-dioxin like PCBs: sum of congeners (28, 52, 101, 138, 153, 180) 75 μg/kg ww fish muscle  
 
 This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).  
 
-75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
+75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF). This threshold was also agreed upon as GES boundary at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
 
-**Additional information from HELCOM on the Core Indicators**  
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)
 
-*Relevant text from the HELCOM core indicator report*  
-"The PCBs included in this core indicator report are the 7 PCB congeners that have been monitored since the beginning of the HELCOM and OSPARCOM monitoring programmes, carefully selected mainly by ICES working groups due to their relatively uncomplicated identification and quantification in gas chromatograms and as they usually contribute a very high proportion of the total PCB content in environmental samples. These are the ‘ICES 7’: CB-28, CB-52, CB-101, CB-118, CB-138, CB-153 and CB-180."  
+#### 1.2.2 Alternatie PCB indicator: CB-153 Concentration
+CB-153 concentration  
+    - Suggested by Anders Bignet and Elisabeth Nyberg.
+    - This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.  
+    - They suggest using the EU threshold for human health as the reference point.  
+
+EU documents seem to only focus on the ICES6 indicator.  However, OSPAR as individual CB thresholds.
+[OSPAR background](http://qsr2010.ospar.org/media/assessments/p00390_supplements/p00461_Background_Doc_CEMP_Assessmt_Criteria_Haz_Subs.pdf).  
+
+Table 1, p.14: Blue range = Status is acceptable. Concentrations are close to background or zero, i.e. the 
+ultimate aim of the OSPAR Strategy for Hazardous Substances has been achieved.   
+
+Table 5c. Blue < BAC  = CB153 0.2 μg/kg wet weight. *(this number differs in what is summarized for this report in the HELCOM core indicator document from 2013)*  
+
+**Older documents with background**  
+Additional information from HELCOM on the Core Indicators:  
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf). *This document is now outdated*
 
 *Determination of GES boundary*
 The CORESET expert group decided that, due to uncertainties in the target setting on the OSPAR and EU working groups, the seven PCBs should be monitored and concentrations analysed but the core indicator assesses primarily two congeners only: CB-118 (dioxin like) and 153 (non-dioxin like). Tentatively the OSPAR EACs for these two congeners are suggested to be used.
 
 
+
 ### 1.3 (2) TEQ value for PCBs and Dioxins
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)  *There should be a more recent document*  
+Dioxin and dioxin-like compounds:0.0065 TEQ/kg ww fish, crustaceans or molluscs (source of target:EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC).  
+
+This threshold was also agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
+
+**Older documents with background** 
+[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)  *This document is now outdated*  
 
 Dioxins are included in several international agreements, of which the Stockholm Convention and the Convention on Long Range Transboundary Air are among the most important for the control and reduction of sources to the environment. WHO and FAO have jointly established a maximum tolerable human intake level of dioxins via food, and within the EU there are limit values for dioxins in food and feed stuff (EC 2006). Several other EU legislations regulate dioxins, e.g. the plan for integrated pollution prevention and control (IPPC) and directives on waste incineration (EC, 2000, 2008). The EU has also adopted a Community Strategy for dioxins, furans and PCBs (EC 2001).
 
@@ -83,692 +94,139 @@ For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ fo
 [Faxneld et al. 2014](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators  
 
 
-# 2. Data
+## 2. Data
 
-## 2.1 Data sources
-ICES  
+### 2.1 Data sources
+
+#### 2.1.1 PCB data
+**ICES**
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
-Downloaded 20 October 2015 by Cornelia Ludwig
+Downloaded 22 April 2016 by Jennifer Griffiths
+Data selections:
+Year - 1990-2014
+Purpose of monitoring = All
+Country = ALL
+Monitoring Program = ALL
+Parameter Group = Chlorobiophenyls
+Reporting Laboratory = All
+Analytical laboratory = All
+Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
 
+#### 2.1.2 Dioxins
+
+#### 2..3 PFOS
+
+
+#### Other sources
 IVL (Svenska Miljönstitutet / Swedish Environmental Research Institute)  
 [IVL database](http://dvsb.ivl.se/)  
 Downloaded 2 December 2015 by Cornelia Ludwig  
-[IVL detection limit information](http://www.ivl.se/sidor/lab--analys/miljo/biota.html)  
-
-## 2.2 Data prep prior to database
-Data were cleaned and harmonized by Cornelia Ludwig prior to being put into the BHI database.  
-**PCBs**  
-(1) Swedish data were given in lipid weight and were converted to wet weight.  Not all samples had a Extrlip (fat) percentage and therefore could not be converted.  These samples were not included in the database  
-(2) Data were in different units and were standardized to mg/kg (however the values listed for the detection limit and the quantification limit were not updated to reflect the value unit change)
 
 
-# 3. Other Info 
+### 2.2 Data prep prior to database
+#### 2.2.1 PCB
+Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminants/raw_contaminants_data_prep`
+    - If duplicate measurements were made from the same sample, values were averaged (all were two measurement of LIPIDWT% per sample, all from 2014, Poland). 
+    -  Data were standardized to the same unit ug/kg  
+    - If data were presented in lipid weight, they were converted to wet weight by: (EXLIP% / 100)*(CB-conc lipid weight).   
+
+
+## 3. Other Info 
 ........
 
-# 4. Data Prep - PCB Indicator
+## 4. Data Prep - PCB Indicator
 
-## 4.1 Initial data prep
+### 4.1 Basic data cleaning and organization
 
-### 4.1.1 Read in unfiltered data
-    - Read in data exported from database.  
-    - Read in unfiltered ICES and IVL data sources *there are duplicates*
-```{r read in unfiltered data}
-## Unfiltered data
-ices_unfilter =read.csv(file.path(dir_con, 'contaminants_data_database/ices_unfilter.csv'), stringsAsFactors = FALSE)
-
-                           
-dim(ices_unfilter) #[1] 18312    18
-str(ices_unfilter)   ## date is as.character  
-head(ices_unfilter)
-min(ices_unfilter$year); max(ices_unfilter$year)
+#### 4.1.1 Read in PCB data
+```{r read in data, echo=FALSE, message=FALSE}
+## read in PCB data
+pcb1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_pcb.csv'))
+dim(pcb1)
 
 
-
-ivl_unfilter = read.csv(file.path(dir_con, 'contaminants_data_database/ivl_unfilter.csv'),stringsAsFactors = FALSE)
-
-                         
-dim(ivl_unfilter)# 19716    18
-str(ivl_unfilter) ## date is as.character  ## mix of just year, just month & year, just full date  
-head(ivl_unfilter)
-min(ivl_unfilter$year); max(ivl_unfilter$year)
-
-## These data do not have BHI IDS affiliated with them
-```
-
-### 4.1.2 Filter data to years 2009-2013
-
-```{r filter to 2009-2013}
-
-ices_unfilter = ices_unfilter %>% filter(year %in% 2009:2013)
-dim(ices_unfilter) # 4691   18
-
-ivl_unfilter = ivl_unfilter %>% filter(year %in% 2009:2013)
-dim(ivl_unfilter) # 3556   18
+## Read in lookup - BHI region to HOLAS basins
+lookup_basins = read.csv(file.path(dir_con,'baltic_rgns_to_bhi_rgns_lookup_holas.csv'))
 
 
 
 ```
 
-### 4.1.3 Format columns
-1. date
-    - For these years, are full dates present (not just year or year and month)?
-2. Remove IVL columns
-    - Remove columns from IVL that were added to match ICES. These are all of type "logical" and will make joining dataframes difficult: *vflag,detli,lmqnt,sub_id,samp_id, num_indiv_subsamp*  
-3. ICES bio_id make character
+#### 4.1.2 Organize
+Remove and rename columns, change column data types
+```{r organize data}
+str(pcb1)
 
-    
-```{r format columns}
+#format date as date
+pcb2 = pcb1 %>% 
+      dplyr::rename(date=Date, lat=Latitude, lon= Longitude, 
+                    month=Month, day=Day, doy=DoY,
+                    bhi_id = BHI_ID, helcom_id=HELCOM_ID, 
+                    helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,
+                    agmax_y = AGMAX_y, agmea_y=AGMEA_y, agmin_y = AGMIN_y,
+                    drywt_percent = DRYWT._., exlip_percent = EXLIP._.,fatwt_percent=FATWT._.,
+                    lipidwt_percent = LIPIDWT._., lnmax_cm = LNMAX_cm,
+                    lnmea_cm=LNMEA_cm, lnmin_cm=LNMIN_cm, wtmax_g=WTMAX_g, wtmea_g=WTMEA_g,
+                    wtmin_g=WTMIN_g) %>% # rename columns
+      select(-date_ices, -X) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"),
+             sub_samp_id= as.character(sub_samp_id)) %>%
+      select(country:lon,bhi_id:ices_area,date:year,month:doy,species:value)## reorder columns
 
-ices_unfilter %>% select(date) %>% head(.)
-    ## date format is dd/mm/yy
-
-ices_unfilter = ices_unfilter  %>% 
-                mutate(date = as.Date(as.character(date), "%d/%m/%y"))
-                      
-
-head(ices_unfilter);tail(ices_unfilter)
-
-
-
-ivl_unfilter %>% select(date) %>% head(.)
-    ## date format is yyyy-mm-dd
-
-ivl_unfilter = ivl_unfilter  %>% 
-                mutate(date = as.Date(date,format="%Y-%m-%d"))%>%
-                select(-vflag,-detli,-lmqnt,-sub_id,-samp_id, -num_indiv_subsamp)
-
-
-head(ivl_unfilter);tail(ivl_unfilter)
-
+head(pcb2)
 
 ```
 
-### 4.1.4 Select only the CB153 congener
-
-```{r select cb153}
-ices_unfilter = ices_unfilter %>% filter(variable == "CB153")
-dim(ices_unfilter) #658  18
-
-ivl_unfilter = ivl_unfilter %>% filter(variable == "CB153")
-dim(ivl_unfilter) #507  12
-
-
-```
-
-### 4.1.5 Combine ICES & IVL data, remove duplicates
-```{r combine ices and ivl}
-
-pcb_153 = full_join(ices_unfilter,select(ivl_unfilter,-bio_id), 
-                    by=c("source","country","station","lat","lon", "year","date","variable","value","qflag","unit"))  # remove bio_id from IVL joined data, but retain in ivl_unfilter
-
-dim(pcb_153) ##1165   19
-##appears no data is discarded
-pcb_153 %>% filter(station=="Aengskaersklubb") %>% arrange(date,value)
-#### THERE are CLEARLY DUPLICATES BUT THE VALUES ARE A LITTLE DIFFERENT -- NOT SURE HOW CONVERSIONS COULD BE OFF
-
-## ARE THERE ANY SAMPLE DATES & LOCATIONS ONLY IN IVL, NOT ICES???
-find_unique = full_join(select(ices_unfilter,source, country,station,date),select(ivl_unfilter,source, country,station,date))
-
-find_unique = find_unique %>% filter(country=="Sweden") %>% distinct(.)
-dim(find_unique)
-find_unique %>% arrange(station,date)
-
-
-## ICES data from Sweden stops atfter 2011.  IVL has unique dates after.
-## unique IVL stations Baltic Proper. Off shore,Bothnian Sea. Off shore, Lilla Vaertan (1yr),  Oernskoeldsviksfjaerden (1yr), Seskaroefjaerden,Skelleftebukten,Storfjaerden ,  Torsas,Yttre fjaerden, Vaederoearna (this is west coast will be excluded)
-##unique ICES station  E/W FLADEN  but probably matches IVL's Fladen
-
-## NEED to check IVL unique sites against sweden national monitoring program list to see if these are there??  
-    ### unique IVL sites not national monitoring:  Lilla Vaertan,Oernskoeldsviksfjaerden, Seskaroefjaerden,Skelleftebukten,Storfjaerden,Torsas,Yttre fjaerden
-  ## all except Baltic proper off shore, and bothnian sea offshore are not national monitoring sites
-
-
-```
-
-
-
-# OLD PREP FOR 6-PCB
-**PROBLEMS WITH DUPLICATES!!!**
-**NOT USING 6 PCB anymore**
-
-# Data Prep 6-PCB indicator
-
-### Initial prep and notes
-```{r 6-pcb notes and initial prep}
-
-## Values for the detection limit (DETLI) and quantification limit (LMQNT) are in the original units provided by each country.
-## Measured values however, have been standardized to mg/kg.  This will make it challenging to check whether
-## values provided are given as simply the detection limit or the quantification limit
-
-## Manually reviewing original data for units and detection limit levels by country
-
-## looking in file "ICES sill original data 2015112.csc"
-## LMQNT is rarely reported
-## DETLI is more often reported but not always reported
-## summary csv in contaminants prep folder "pcb_country_units_detli.csv"
-    ## Some countries use multiple reporting units: Some countries have multiple detection limits reported for a single congener (must vary by machine by year)
-    ## this csv has all congeners, units, and detli/lmqnt unique by monitoring year
-## "unit_conversion_lookup.csv" created to help with different unit conversions
-
-## Checked years 2009-2013 in original data (use this file "raw_ICESdat_quant_detect_check.csv")
-    ## Did check in excel
-    ## Filtered by 2009 -2013
-    ## Looked for values with QFLAG entry
-    ## Looked to see if the value matched the DETLI or LMQNT value
-    ## For these years, if QFLAG == '<'or 'Q' then what is entered in the value column is equal to the value
-    ## given in LMQNT. if QFLAG == 'D' then the value is equal to what is entered for DETLI.
-    ## This might not be true for earlier years (either detection limit not given, or value not replaced)
-
-
-## Check years 2009-2013 for IVL data flags
-    ## Used file "raw_IVLdat_quant_detect_check.csv"
-    ## 3 congeners receive data flags ("b") for detection limit (CB28,CB52,CB180)
-    ## these data are  mg/kg lipid weight
-    ## Values are given as a less than symbol and number (eg. <0.004)
-    ## These values vary for the same congener in samples taken on the same day. These values are 
-        ## are likely not then the detection limit value entered but rather the raw machine values
-        ## How to deal with this?  Divide these values (eg value/2 like LOD/2) or need to replace
-          ## machine value with the LOD value then calculate LOD/2
-
-
-##------------------------#
-## INITIAL DATA SELECTION
-##------------------------#
-
-## Read in data from csv
-pcb_data = readr::read_csv(file.path(dir_con, 'contaminants_data_database/pcb_data_filter.csv'),
-                           col_types = cols(sub_id= "c",
-                                            bio_id= "c") )#make sure these columns are read in as character
-   
-
-##filter for years 2009-2013
-data2 = pcb_data %>%filter(year %in% c(2009:2013))
-
-head(data2)
-dim(data2) #[1] 6873   19
-##------------------------#
-## Station names
-    ##Finnish data in ICES does not have a station name. Create a station name with Lat-Lon if Station is NA
-
-data2 = data2 %>% mutate(station2= paste("lat",round(lat,2),"lon",round(lon,2),sep="")) %>% #create new station column
-        mutate(station = ifelse(is.na(station), station2, station))%>% #replace station if NA with station2
-        select(-station2) #remove station2 column
-
-head(data2)
-
-##------------------------#
-##unique variables
-unique(data2$variable) #"CB101" "CB118" "CB138" "CB153" "CB180" "CB28"  "CB52"  "CB105"
-##CB105 is not one of the ICES 7 variables, remove
-##CB118 is not in the ICES 6, remove
-
-data3 = data2 %>% filter(variable != "CB105") %>%
-                  filter(variable != "CB118") ;dim(data3) #5816   19
-
-##remove location :Vaederoearna 58.51560 10.90010 -- this is on the west coast
-
-data3 = data3 %>% filter(station!= "Vaederoearna")
-dim(data3) #5462   19
-
-##------------------------#
-##unique identifiers
-##number of unique bio_id
-data3%>% select(bio_id)%>%distinct(bio_id)%>% nrow(.) #1100
-length(unique(data3$bio_id)) #1100
-    ##any NA bio_id?
-    data3 %>% filter(is.na(bio_id)) %>% nrow(.)  #0 rows with NA in bio_id
-    
-##number unique samp_id
-data3%>% select(samp_id)%>%distinct(samp_id)%>% nrow(.) #219
-
-##number unique sub_id
-data3%>% select(sub_id)%>%distinct(sub_id)%>% nrow(.) #495
-
-
-```
-
-### Location & ID Lookup tables
-```{r lookup tables}
-##------------------------#
-## LOOKUP TABLES - LOCATION & ID
-##------------------------#
-##location lookup
-loc_lookup = data3 %>% select(country,bhi_id,station,lat,lon)%>%
-  distinct(.)
-print(loc_lookup,n=nrow(loc_lookup))
-
-## Swedish sites without a BHI ID
-  loc_lookup%>%filter(is.na(bhi_id))
-    ## Vaederoearna 58.51560 10.90010 -- this is on the west coast, this has now been removed above, so does not appear in the list
-    ## Storfjaerden       NA       NA  -- quick IVL search indicates is near Piteå -- Have email the IVL database manager for lat-lon
-        ##is sampled on 2 dates (between 2009-2013)
-  
-  ##the other stations have lat-lon , all are Bothian Sea / Bothnian Bay, not sure why these were not assigned to a BHI ID 
-  station_missing = loc_lookup%>%filter(is.na(bhi_id))%>% filter(!is.na(lat))%>%select(station)%>%
-                    as.matrix(.,1, nrow(station_missing ))
-  station_missing
-  
-  data3 %>% filter(station %in% station_missing) %>% select(bio_id)%>%distinct()%>%nrow() #47 unique samples from these stations not assigned to a BHI_ID
-  
-
-##country/bhi_id/bio_id/lat/long/station
-id_lookup = data3 %>% select(country,bhi_id,station,bio_id)%>%
-            distinct(.)%>%
-            arrange(bio_id) %>%
-            mutate(new_id = seq(1,length(bio_id))) #create new ID value that is numeric is paired with ICES/IVL bio_id. This should make is easier to work id columns
-head(id_lookup)
-
-
-```
-
-
-### Data exploration
-Want to make sure have an entry for all congeners for all unique samples.  Need to assess for each unique sample, which congeners are not measured.
-```{r data exploration}
-## spread data - so congeners across columns
-data4 = data3 %>% right_join(.,id_lookup, by="bio_id")%>% #join with bio_id
-  select(new_id,date,variable,value)%>%
-        spread(.,variable, value )%>%
-        arrange(new_id)
-head(data4)  #not all congeners measured for each bio_id
-
-nrow(data4) #1100
-
-##gather data again to long format for plotting, now have NA where congeners not measured
-data4=data4 %>% gather(key= variable, value = value ,CB101,CB138,CB153,CB180,CB28,CB52, na.rm=FALSE )%>%
-      arrange(new_id,variable)
-head(data4)
-
-```
-
-### Explore how often different congeners are measured
-```{r congener count}
-## summerise congeners per new_ID
-congener_count = data4 %>% group_by (new_id) %>%
-                summarise(congener_count = sum(!is.na(value)))%>%
-                ungroup()
-congener_count
-
-
-#how many time is each congener measured
-congener_freq = data4%>%group_by(variable)%>%
-                summarise(congener_freq = sum(!is.na(value)))%>%
-                ungroup()
-congener_freq
-
-#how many times was each congener counted by date
-congener_freq_date = data4%>%group_by(variable,date)%>%
-                summarise(congener_freq = sum(!is.na(value)))%>%
-                ungroup()
-congener_freq_date
-
-##PLOT
-ggplot(congener_count)+geom_point(aes(new_id,congener_count))+
-  xlab("Unique Sample ID")+
-  ylab("Number Congeners Measured")
-  #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count.png")
-##
-ggplot(congener_count%>% left_join(.,id_lookup), by="new_id")+geom_point(aes(new_id,congener_count))+
-  facet_wrap(~country)+
-  xlab("Unique Sample ID")+
-  ylab("Number Congeners Measured")
-  #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country.png")
-
-ggplot(congener_count%>%left_join(.,id_lookup, by="new_id")%>%left_join(.,select(data4,new_id,date),by="new_id"))+geom_point(aes(date,congener_count))+
-  facet_wrap(~country)+
-  xlab("Unique Sample ID")+
-  ylab("Number Congeners Measured")
-  #ggsave(file="baltic2015/prep/CW/contaminants/pcb7prepplot_congener_count_country_bydate.png")
-
-
-ggplot(congener_freq_date)+geom_point(aes(date,congener_freq))+
-  facet_wrap(~variable)+
-  xlab("Date")+
-  ylab("Numer Samples with Congener measured")
-
-
-```
-
-
-### Overview plots
-Overview plots of data distribution by country conducting the sampling, samples by date by BHI-ID
-```{r overview plots}
-##------------------------#
-## EXPLORATION PLOTS
-##------------------------#
-
-## plot by bio_id
-ggplot(data4) + geom_point(aes(new_id, value,colour=variable))
-
-
-##join data4 with country data and explore conger measurements by country
-data5 = data4 %>% full_join(.,id_lookup, by="new_id")
-
-## at ID, By Country
-ggplot(data5) + geom_point(aes(new_id, value, colour=variable))+
-  facet_wrap(~country)
-
-## At Date, By Country
-ggplot(data5) + geom_point(aes(date, value, colour=variable))+
-  facet_wrap(~country)+
-  scale_x_date(name= "Month-Year",date_breaks="1 year", date_labels = "%m-%y")
-
-## At Date, By BHI ID
-ggplot(data5) + geom_point(aes(date, value, colour = country))+
-  facet_wrap(~bhi_id)+
-  scale_x_date(date_breaks="1 year", date_labels = "%m-%y")
-    ## German data assigned to 17 (Poland BHI region)
-    data5 %>% filter(bhi_id==17 & country == "Germany") %>%
-      select(station)%>%
-      distinct(.)  #FOE-B11
-      loc_lookup %>% filter(station =="FOE-B11")
-      ## is a station off poland
-
-## At Date, By BHI ID
-ggplot(data5) + geom_point(aes(date, value, color=station))+
-  facet_wrap(~bhi_id)+
-  scale_x_date(name= "Month-Year",date_breaks="1 year", date_labels = "%m-%y")+
-  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"))
-
-## at ID, By variable & country
-ggplot(data5) + geom_point(aes(new_id, value))+
-  facet_wrap(~variable+country)
-    ## German values very high for a few congeners (CB138, CB153)
-    ## need to check closer to see if multiple measurement for the same sample ID
-
-
-ggplot(filter(data5, country=="Germany" & new_id < 200)) + geom_point(aes(new_id, value))+
-  facet_wrap(~variable)
-data5 %>% filter(country=="Germany" & new_id < 200)%>%
-    spread(variable, value)
-    ## data are multiple new_id/bio_id but many samples per station & data - as would expect
-    ##  different combos of congeners measured for different bio_ids at the same station and date
-
-
-```
-
-### Country and Congener measured
-```{r country and congener}
-data5 %>% select(variable,country) %>% distinct(.)%>% print (n=25)
-
-
-```
-
-
-### Assess sample composition
-How many individuals sampled in different samples?
-```{r sample comp}
-
-##------------------------#
-## ASSESS SAMPLE COMPOSITION - NUM INDIV FISH INCLUDED
-##------------------------#
-## join data to get source # num_indiv_subsamp
-data6 = data5 %>% left_join(.,select(data3,bio_id,source, num_indiv_subsamp), by="bio_id")
-head(data6) 
-
-ggplot(distinct(data6,new_id)) + geom_point(aes(new_id, num_indiv_subsamp))+
-  facet_wrap(~country)
-    ##need to investigate Swedish data - some id's with many individuals pooled
-
-  data6 %>% filter(country=="Sweden" & num_indiv_subsamp > 1)
-
-  #count samples with >1 indiv in sample
-  data6 %>% select(country, num_indiv_subsamp)%>%
-    group_by(country,num_indiv_subsamp) %>% summarise(count = n())
-
-  ##This has a large number of samples because each congener a separate "sample" here
-
-  # country num_indiv_subsamp count
-  # (chr)             (dbl) (int)
-  # 1 Finland                 1  5600
-  # 2 Germany                 1  2674
-  # 3  Poland                 1  7252
-  # 4  Sweden                 1  6818
-  # 5  Sweden                10     7
-  # 6  Sweden                11    49
-  # 7  Sweden                12  2891
-  # 8  Sweden                13    70
-  # 9  Sweden                NA 19439
-
-  ## Which data sources are NA?
-  data6 %>% select(country, num_indiv_subsamp, source,station)%>%
-    filter(is.na(num_indiv_subsamp))%>%
-    distinct(.)
-    ## IVL data (at least some) do not have number of individuals in subsample entered
-
-```
-
-
-### Assess data flagged
-What data are qflagged (detection or quantifcation limit)?
-```{r flagged data}
-
-data7 = data5 %>% left_join(.,select(data3,source,bio_id,variable,date,value, source,qflag,detli,lmqnt), by=c("bio_id","variable","date","value"))
-head(data7)
-dim(data7); dim(data5) #should have same number of rows
-
-```
-
-### Number of samples with all 6 congeners
-534 samples 2009-2013 with all 6 congeners measured (this is not unique dates)
-```{r samples all congeners}
-congener_count # number of congeners per new_id
-congener_count6 = congener_count %>% filter(congener_count == 6) #new_id with all six congeners
-congener_count6 %>% summarise(count=n()) #534 samples
-
-#select data for only samples with all 6 congeners
-data8 = data7 %>% right_join(congener_count6, by="new_id") %>% arrange(new_id)
-dim(data8)
-
-```
-
-### Plots of data with all 6 congeners measured
-Second two plots show qflags
-```{r plot 6 congener data coverage}
-ggplot(data8) + geom_point(aes(date,value, colour=variable))+
-facet_wrap(~station)
-
-ggplot(data8) + geom_point(aes(date,value, colour=variable))+
-facet_wrap(~bhi_id, scales="free_y")
-
-ggplot(data8) + geom_point(aes(date,value, colour=variable,shape=factor(qflag)))+
-facet_wrap(~bhi_id, scales="free_y")
-
-```
-
-
-### Plot data filtering for no qflags and all congeners measured
-Plot of just one congener to show sampling coverage  
-*limited data coverage over time and BHI region*
-```{r no qflag and all congener plot}
-## how many of the samples with all 6 congeners do not have any qflag?
-data8_no_q_id= data8 %>% group_by(new_id) %>% 
-          summarise(congener_no_q = sum(is.na(qflag)) )%>%
-          ungroup()%>%
-          filter(congener_no_q==6)
-
-          nrow(data8_no_q_id)  #214 samples with all 6 congeners and no qflags
-
-data8_no_q =data8 %>% right_join(data8_no_q_id, by=c("new_id"))
-
-##These are the samples over time avaiable with no qflags and all congeners measured
-ggplot(filter(data8_no_q, variable=="CB28")) + geom_point(aes(date,value))+
+#### 4.1.3 Plot data
+Explore raw data.
+**Why are there unassigned BHI regions?**
+```{r plot data}
+
+ggplot(pcb2) + geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~bhi_id)
 
 ```
 
-### Take 6 PCB total concentration for samples with no qflag
-```{r total conc., no qflag}
-data8_no_q
+#### 4.1.4 Filter for ICES 6 PCBs
+```{r filter ices 6}
+ices6pcb = c("CB28_ug/kg", "CB52_ug/kg", "CB101_ug/kg", "CB138_ug/kg",
+            "CB153_ug/kg", "CB180_ug/kg")
+  
+pcb3 = pcb2 %>% 
+        filter(congener %in% ices6pcb)
 
-data8_no_q_total = data8_no_q %>% select(new_id, date, variable,value,country, station, bhi_id) %>%
-                  group_by(new_id,date,country,station,bhi_id)%>%
-                  summarise( pcb6_conc = sum(value))%>%
-                  ungroup()
-
-data8_no_q_total
-```
-
-### Convert units to ng/g to match EU threshold value units
-
-```{r convert units}
-## Read in unit conversion table
-unit_lookup= readr::read_csv2(file.path(dir_con, 'unit_conversion_lookup.csv'))
-unit_lookup
-convert_ng_g = unit_lookup %>% filter(OriginalUnit == "mg/kg") %>% select(ConvertFactor_ng_g)%>% as.numeric()
-
-data8_no_q_total = data8_no_q_total %>%
-                    mutate(pcb6_conc_ng_g = pcb6_conc * convert_ng_g,
-                           pcb6_threshold = 75)
-
-#how many greater than the threshold?
-data8_no_q_total %>% filter(pcb6_conc_ng_g > pcb6_threshold) #one sample
+dim(pcb3); dim(pcb2)
 
 ```
 
-### Plot samples relative to threshold
-1 sample exceeds the threshold (when restricted to samples with no qflags)
-```{r plot samples and threshold}
-ggplot(data8_no_q_total) + geom_point(aes(date,pcb6_conc_ng_g))+
-  geom_line(aes(date,pcb6_threshold)) +
-  facet_wrap(~bhi_id, scales="free_y")+
-  ylab("6 PCB total concentration ng/g")
-
+#### 4.1.5 Plot data -ICES 6 pcbs
+```{r plot ices 6}
+ggplot(pcb3) + geom_point(aes(date,value, colour=congener)) +
+  facet_wrap(~bhi_id)
 ```
-### Mean total concentration value by station and date
-```{r mean value loc and date}
 
-data8_no_q_total_sample_mean = data8_no_q_total %>% 
-                              group_by(date,country,station,bhi_id, pcb6_threshold)%>%
-                              summarise(pcb6_mean_sample_ng_g = mean(pcb6_conc_ng_g),
-                                        pcb6_sd_sample_ng_g= sd(pcb6_conc_ng_g))%>%
-                              ungroup()
-data8_no_q_total_sample_mean
-dim(data8_no_q_total_sample_mean) #50 unique dates x station
+#### 4.1.6 Stations with No BHI ID
+Why were some data not assigned a BHI ID (through script in BHI database).  
+Will check with Marc, might be because very near coast and BHI regions don't extend?
+```{r  bhiid na}
 
+## which stations have no BHI ID assigned
+pcb3 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinct(.)
 
-ggplot(data8_no_q_total_sample_mean) + geom_point(aes(date,pcb6_mean_sample_ng_g))+
-  geom_line(aes(date,pcb6_threshold)) +
-  facet_wrap(~bhi_id, scales="free_y")+
-  ylab("Date Sample Mean 6 PCB total concentration ng/g")
+##country            station     lat     lon
+##1  Sweden     Gaviksfjaerden 62.8645 18.2412
+##2  Sweden Kinnbaecksfjaerden 65.0568 21.4750
+##3  Sweden  Langvindsfjaerden 61.4554 17.1622
 
 ```
 
-### Incorporate data qflagged 2009-2013
-Convert flagged congener values to LOD/2 or LOQ/sqrt(2)  
-Then sum to get a total sample concentration
-```{r qflag data incorporation}
-## Adjust value of those data with qflag
-data8_q_adj = data8 %>%
-              mutate(value_adj = ifelse(!is.na(qflag) & !is.na(detli) & source=="ICES",value/2,  
-                                 ifelse(!is.na(qflag) & !is.na(lmqnt) & source =="ICES", value/sqrt(2),
-                                 ifelse(!is.na(qflag)& source=="IVL",value / 2, value))))  #if ICES data, know that value is either detli or lmqnt if flagged, if is IVL data, do not have detli value if flagged, instead is raw data, but convert this to anyways to value /2 for now. May need to go back at replace with detect limit value but is not clear how to get the correct detection limit values from IVL website
+#### 4.1.7 Manually assign BHI to stations missing
+TO DO
 
-head(data8_q_adj)
-data8_q_adj %>% arrange(qflag) %>% print(n=100)
+#### Join to HOLAS basins and evaluate data coverage
+TO DO
 
-
-
-## Get total concentration per sample
-data8_q_adj_total = data8_q_adj %>% select(new_id, date, variable,value_adj,country, station, bhi_id) %>%
-                  group_by(new_id,date,country,station,bhi_id)%>%
-                  summarise(pcb6_conc = sum(value_adj))%>%
-                  ungroup()
-data8_q_adj_total
-
-## convert data to ng/g using convert_ng_g
-data8_q_adj_total = data8_q_adj_total %>%
-                    mutate(pcb6_conc_ng_g = pcb6_conc * convert_ng_g,
-                           pcb6_threshold = 75)
-
-data8_q_adj_total
-dim(data8_q_adj_total)
-
-```
-
-### Plot 6-PCB total conc included samples with qflagged data relative to threshold
-```{r plot total conc including qflagged samples}
-
-ggplot(data8_q_adj_total) + geom_point(aes(date,pcb6_conc_ng_g))+
-  geom_line(aes(date,pcb6_threshold)) +
-  facet_wrap(~bhi_id, scales="free_y")+
-  ylab("6 PCB total concentration ng/g")
-
-```
-
-### Mean total concentration value by station and date w/qflagged data
-```{r average station date with qflagged data}
-
-data8_q_adj_sample_mean = data8_q_adj_total %>% 
-                              group_by(date,country,station,bhi_id, pcb6_threshold)%>%
-                              summarise(pcb6_mean_sample_ng_g = mean(pcb6_conc_ng_g),
-                                        pcb6_sd_sample_ng_g= sd(pcb6_conc_ng_g))%>%
-                              ungroup()
-data8_q_adj_sample_mean
-
-ggplot(data8_q_adj_sample_mean) + geom_point(aes(date,pcb6_mean_sample_ng_g))+
-  geom_line(aes(date,pcb6_threshold)) +
-  facet_wrap(~bhi_id, scales="free_y")+
-  ylab("Date Sample Mean 6 PCB total concentration ng/g")
-
-
-```
-
-
-## Visualize mean sample points on a BHI region map
-```{r samples on map}
-# plot data in map
-library('ggmap')
-map = get_map(location = c(8.5, 53, 32, 67.5))
-
-
-map_data = data8_q_adj_sample_mean %>% left_join(.,loc_lookup, by=c("station","bhi_id","country"))
-str(map_data)
-
-#add year to map data
-map_data = map_data %>% mutate(year =as.numeric(format(date,"%Y")))
-
-
-#set up the plot
-plot_map = ggmap(map) +
-  geom_point(aes(x=lon, y=lat,colour=pcb6_mean_sample_ng_g, shape=factor(year)), data=map_data,size = 2) 
-
-#plot the map
-plot_map + scale_color_gradientn(colours=rainbow(5))+
-  ggtitle('6 PCB Mean Total Concentration, Dates 2009-2013') +
-  theme(title = element_text(size = 12)) 
-
-
-```
-
-
-
-## Next steps
-### Data steps
-**Make sure check with Marc on IVL stations with no BHI ID**  
-1. How many samples have all 6 congeners measured? Sufficient for status?  
-    -  534 samples 2009-2013 with all 6 congeners measured (this is not unique dates)  
-    -  Only 214 samples when exclude a sample that has any qflags associated with.  
-
-2. Need a final concentration value for each congener.  
-    -  How to calculate final concentration  
-        * if congener was at the detection or quantification limit, need to adjust value  
-        * if value given is detli, recommendation is adj_value = detect lim value / 2
-        * if value given is lmqnt,recommendation is adj_value = quant lim value / sqrt(2)
-    - Have done this adjustment (object: data8_q_adj)  
-        * If data source is IVL, value is not the detection limit itself but appears to be the raw machine value.  I have preliminarily divided this value by 2 as well.  
-
-3. Need to sum 6 PCB congeners within in a fish  
-    -   Have summed 6 PCB concentrations within a unique sample (sometimes represents 1 fish, other many fish (some Swedish data))  
-    -  Two datasets (if include qflagged samples or not)  
-
-4. Mean total concentration by station and sample date  
-    -   Average the samples taken on the same date and station (w/ and w/o qflagged samples)
-
-5. Inspect data variation within a BHI region and data coverage for the mean total concentration by date and station. Need to work at basin scale instead?  
-    -   Data coverage poor in time and also in space without qflagged samples included.  
-    -  109 unique date x station (2009-2013) if include the qflagged samples
-
-6. average/median value of samples taken within a BHI region.  
-
-7. gap-filling or data smoothing decisions  
+#### Evaluate data with Qflags
+TO DO:
+    - data if only use CB153 with and without qflags
+    - data where all 6 congeners sampled with and without qflags

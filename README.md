@@ -1,6 +1,16 @@
-# Ocean Health Index for  [bhi]
+# Ocean Health Index for the Baltic Sea [bhi]
 
-Build status of branches:
+## Learn More about the Baltic Health Index Project
+[BHI at the Stockholm Resilience Centre](http://www.stockholmresilience.org/21/research/research-themes/marine/baltic-health-index.html)  
+[BHI at the Baltic Sea Center in English](http://www.su.se/ostersjocentrum/english/baltic-eye/research/baltic-health-index)  
+[BHI at the Baltic Sea Center in Swedish] (http://www.su.se/ostersjocentrum/baltic-eye/forskning/baltic-health-index)  
+
+## Explore the BHI in Github
+[Data preparation](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/prep)  
+[Functions for Calculating Status and Trend](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/conf/functions.R)  
+
+
+### Build status of branches:
 
 - [**draft**](https://github.com/OHI-Science/bhi/tree/draft)
 
