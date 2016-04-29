@@ -221,12 +221,70 @@ pcb3 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinc
 ```
 
 #### 4.1.7 Manually assign BHI to stations missing
-TO DO
+```{r assign missing bhi regions}
 
-#### Join to HOLAS basins and evaluate data coverage
-TO DO
+##Gaviksfjaerden is BHI region 37
+##Kinnbaecksfjaerden is BHI region 41
+##Langvindsfjaerden is BHI region 37
 
-#### Evaluate data with Qflags
+pcb4 = pcb3 %>%
+      mutate(bhi_id = ifelse(station=="Gaviksfjaerden",37,
+                      ifelse(station=="Kinnbaecksfjaerden", 41,
+                      ifelse(station=="Langvindsfjaerden",37,bhi_id))))
+pcb4 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinct(.)
+
+##plot again
+ggplot(pcb4) + geom_point(aes(date,value, colour=congener)) +
+  facet_wrap(~bhi_id)
+
+
+```
+
+
+#### 4.1.8 Join to HOLAS basins and evaluate data coverage
+
+```{r join to HOLAS basins}
+pcb5 = full_join(select(lookup_basins, rgn_id, basin_name), pcb4, by= c("rgn_id"="bhi_id"))
+head(pcb5)
+
+
+
+
+```
+
+
+#### 4.1.9 Plot by basin
+```{r plot by basin}
+
+ggplot(pcb5) + geom_point(aes(date,value, colour=congener)) +
+  facet_wrap(~basin_name)
+
+```
+
+### 4.2 Evaluate sites sampled
+What are the site representing: baseline/reference conditions or local impact.  
+
+#### 4.2.1 Join PCB sites, station dictionary, and impact codes
+```{r join sites with site info }
+pcb_sites = pcb5 %>% 
+            select(country, station,basin_name,lat,lon,rgn_id) %>%
+            filter(!is.na(station)) %>%
+            distinct(.)
+pcb_sites
+
+
+## join with station dictionary
+pcb_sites = pcb_sites %>%
+            left_join(., station_dictionary, 
+                      by = c("country"="Country", "station" = "Station_name",
+                             "lat" = "Latitude", "lon"="Longitude"))
+
+
+```
+
+
+### 4.3 Data flagged for quality
+#### 4.3.1Evaluate data with Qflags
 TO DO:
     - data if only use CB153 with and without qflags
     - data where all 6 congeners sampled with and without qflags
