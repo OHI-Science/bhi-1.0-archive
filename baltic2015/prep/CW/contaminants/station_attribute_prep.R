@@ -115,18 +115,57 @@ station_dictionary %>% select(MSTAT) %>% distinct(.)  ## multiple categories in 
 
 station_RH = station_dictionary %>% filter(grepl("RH", MSTAT)) %>%
              select(Country, Station_Name, Latitude, Longitude) %>% distinct(.)%>%
-              mutate(impact_RH = 1)
+              mutate(impact_RH = 1)   ## WFD R(HZ) - Representative of general conditions in terms of hazardous substances
 
 
 
 station_B = station_dictionary %>% filter(grepl("B", MSTAT)) %>%
               select(Country, Station_Name, Latitude, Longitude) %>% distinct(.)%>%
-              mutate(impact_B = 1)
+              mutate(impact_B = 1)##WFD B - Baseline/Reference station
+
+station_I = station_dictionary %>% filter(grepl("I", MSTAT)) %>%
+  select(Country, Station_Name, Latitude, Longitude) %>% distinct(.)%>%
+  mutate(impact_I = 1)## any type of indentified impact
 
 
 ## Join impact categories
 station_dictionary = station_dictionary %>%
                     full_join(., station_RH, by=c("Country","Station_Name","Latitude","Longitude"))%>%
                     full_join(., station_B, by=c("Country","Station_Name","Latitude","Longitude")) %>%
+                    full_join(., station_I, by=c("Country","Station_Name","Latitude","Longitude")) %>%
                     arrange(impact_RH,Country,Station_Name)
 head(station_dictionary)
+
+station_dictionary %>% arrange(impact_B,Country,Station_Name) %>% head()
+
+station_dictionary %>% arrange(impact_I,Country,Station_Name) %>% head()
+
+
+##-------------------------------------------##
+## Clean and export
+
+station_dictionary = station_dictionary %>%
+                     select(ID:Purpose_temporal,Contaminant_parameters_in_biota,impact_RH:impact_I)
+head(station_dictionary)
+
+station_dictionary %>% select(Station_Name) %>% filter(grepl("ä", Station_Name))
+station_dictionary %>% select(Station_Name) %>% filter(grepl("ö", Station_Name))
+station_dictionary %>% select(Station_Name) %>% filter(grepl("å", Station_Name))
+station_dictionary %>% select(Station_Name) %>% filter(grepl("Ä", Station_Name))
+station_dictionary %>% select(Station_Name) %>% filter(grepl("Ö", Station_Name))
+station_dictionary %>% select(Station_Name) %>% filter(grepl("Å", Station_Name))
+
+##fix non-english letters
+station_dictionary = station_dictionary %>%
+                      mutate(Station_Name2 = tolower(Station_Name))%>% ## station names all lower case
+                     mutate(Station_Name2 = gsub("ä","ae",Station_Name2),
+                            Station_Name2 = gsub("ö","oe",Station_Name2),
+                            Station_Name2 = gsub("å","a",Station_Name2))
+head(station_dictionary)
+
+station_dictionary %>% filter(Country=="Sweden") %>% select(Station_Name, Station_Name2) %>% distinct(.)
+
+
+## save
+
+write.csv(station_dictionary, file.path(dir_con, 'raw_prep/station_impact_cleaned.csv'), row.names = FALSE)
