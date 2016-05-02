@@ -61,7 +61,7 @@ These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/
 Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
 
 #### 2.1.2 Bathymetry
-.....TO DO
+Downloaded from [HELCOM](http://maps.helcom.fi/website/mapservice/index.html) 28 April 2016 by Thorsten Blenckner
 
 
 ## 3. Open sea anoxia spatial data scale
