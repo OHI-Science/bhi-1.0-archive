@@ -145,7 +145,7 @@ station_dictionary %>% arrange(impact_I,Country,Station_Name) %>% head()
 ## Clean and export
 
 station_dictionary = station_dictionary %>%
-                     select(ID:Purpose_temporal,Contaminant_parameters_in_biota,impact_RH:impact_I)
+                     select(ID:Purpose_temporal,All_Biota_Data,Contaminant_parameters_in_biota,impact_RH:impact_I)
 head(station_dictionary)
 
 station_dictionary %>% select(Station_Name) %>% filter(grepl("ä", Station_Name))
