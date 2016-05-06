@@ -88,11 +88,12 @@ For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ fo
 
 ### 1.4 (3) PFOS indicator
 
-[HElCOM PFOS core indicator document](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
+[HELCOM PFOS core indicator document](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
 
 ### 1.5 Additional references
 [Faxneld et al. 2014](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators  
 
+[Bignert, A., Nyberg, E., Sundqvist, K.L., Wiberg, K., 2007. Spatial variation in concentrations and patterns of the PCDD/F and dioxin-like PCB content in herring from the northern Baltic Sea. J. Environ. Monit. 9, 550–556.](http://pubs.rsc.org/en/Content/ArticleLanding/2007/EM/b700667e#!divAbstract)
 
 ## 2. Data
 
@@ -102,19 +103,19 @@ For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ fo
 **ICES**
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
 Downloaded 22 April 2016 by Jennifer Griffiths
-Data selections:
-Year - 1990-2014
-Purpose of monitoring = All
-Country = ALL
-Monitoring Program = ALL
-Parameter Group = Chlorobiophenyls
-Reporting Laboratory = All
-Analytical laboratory = All
-Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
+Data selections:  
+Year - 1990-2014  
+Purpose of monitoring = All  
+Country = ALL  
+Monitoring Program = ALL  
+Parameter Group = Chlorobiophenyls  
+Reporting Laboratory = All  
+Analytical laboratory = All  
+Geographical Areas = (HELCOM) ALL HELCOM Sub-basins  
 
 #### 2.1.2 Dioxins
 
-#### 2..3 PFOS
+#### 2.1.3 PFOS
 
 
 #### Other sources
@@ -125,11 +126,12 @@ Downloaded 2 December 2015 by Cornelia Ludwig
 
 ### 2.2 Data prep prior to database
 #### 2.2.1 PCB
-Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminants/raw_contaminants_data_prep`
-    - If duplicate measurements were made from the same sample, values were averaged (all were two measurement of LIPIDWT% per sample, all from 2014, Poland). 
+Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminants/raw_contaminants_data_prep`  
+    - If duplicate measurements were made from the same sample, values were averaged (all were two measurement of LIPIDWT% per sample, all from 2014, Poland).  
     -  Data were standardized to the same unit ug/kg  
-    - If data were presented in lipid weight, they were converted to wet weight by: (EXLIP% / 100)*(CB-conc lipid weight).   
+    - If data were presented in lipid weight, they were converted to wet weight by: (EXLIP% / 100)*(CB-conc lipid weight).  
 
+**Note**: Detection limit (detect_lim) and Quantification limit (quant_lim) values are in the original units.  They are not standardized to ug/kg and not converted to wet weight if originally in lipid weight
 
 ## 3. Other Info 
 ........
@@ -148,6 +150,8 @@ dim(pcb1)
 ## Read in lookup - BHI region to HOLAS basins
 lookup_basins = read.csv(file.path(dir_con,'baltic_rgns_to_bhi_rgns_lookup_holas.csv'))
 
+## Read in station impact
+lookup_impact = read.csv(file.path(dir_con,'raw_prep/station_impact_cleaned.csv')) ## maybe move to database??
 
 
 ```
@@ -221,12 +225,878 @@ pcb3 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinc
 ```
 
 #### 4.1.7 Manually assign BHI to stations missing
-TO DO
+```{r assign missing bhi regions}
 
-#### Join to HOLAS basins and evaluate data coverage
-TO DO
+##Gaviksfjaerden is BHI region 37
+##Kinnbaecksfjaerden is BHI region 41
+##Langvindsfjaerden is BHI region 37
 
-#### Evaluate data with Qflags
-TO DO:
-    - data if only use CB153 with and without qflags
-    - data where all 6 congeners sampled with and without qflags
+pcb4 = pcb3 %>%
+      mutate(bhi_id = ifelse(station=="Gaviksfjaerden",37,
+                      ifelse(station=="Kinnbaecksfjaerden", 41,
+                      ifelse(station=="Langvindsfjaerden",37,bhi_id))))
+pcb4 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinct(.)
+
+##plot again
+ggplot(pcb4) + geom_point(aes(date,value, colour=congener)) +
+  facet_wrap(~bhi_id)
+
+
+```
+
+
+#### 4.1.8 Join to HOLAS basins and evaluate data coverage
+
+```{r join to HOLAS basins}
+pcb5 = full_join(select(lookup_basins, rgn_id, basin_name), pcb4, by= c("rgn_id"="bhi_id"))
+head(pcb5)
+
+
+
+
+```
+
+
+#### 4.1.9 Plot by basin
+```{r plot by basin}
+
+ggplot(pcb5) + geom_point(aes(date,value, colour=congener)) +
+  facet_wrap(~basin_name)
+
+```
+
+### 4.2 Evaluate sites sampled
+What are the site representing: baseline/reference conditions or local impact.  
+
+#### 4.2.1 Join PCB sites, station dictionary, and impact codes
+Some sites have had the site type recorded in the ICES station dictionary (see below). It is important to know which sites are catagorized as:  
+    1. *RH* = WFD R(HZ) - Representative of general conditions in terms of hazardous substances  
+    2. *B* =  WFD B - Baseline/Reference station  
+    3. Any of the codes containing "I" (IH, IH-A, IH-C, IH-D, IH-E, IH-F, IH-H, IH-I, IH-M, IH-O, IH-P, IH-S, IH-W, IP, IP-B, IP-N, IP-T) which refers to a specific type of impact at the site.  
+
+It appears that *only Swedish sites have this information entered* (see below),  Most are RH (19), while B  (4) and RP (1).  RP = WFD R(PHY) Representative of general conditions for nutrients/organic matter.  
+
+**Sites to Include/Exclude**  
+Given only Swedish sites have this information recorded, seems difficult to use this information to include or exclude sites.  
+```{r join sites with site info }
+pcb_sites = pcb5 %>% 
+            select(country, station,basin_name,lat,lon,rgn_id) %>%
+            filter(!is.na(station)) %>%  ## These are NA because when joined to BHI regions, were no station
+            mutate(station2 = tolower(station)) %>% ## station name all lower case to join with station_dictionary
+            distinct(.)
+pcb_sites
+dim(pcb_sites) #[1] 55  7
+
+## clean lookup table
+lookup_impact = lookup_impact %>%
+                mutate(Station_Name2 = as.character(Station_Name2))
+
+
+## join with station dictionary
+
+pcb_sites = pcb_sites %>% left_join(., lookup_impact, by=c("station2"="Station_Name2", "country"="Country"))
+dim(pcb_sites) # 55 26
+
+pcb_sites %>% select(country, station, basin_name, lat, lon, rgn_id,MSTAT,All_Biota_Data:impact_I) %>% arrange(impact_RH, impact_B, impact_I)
+
+## many sites do not have purpose entered in ICES
+## the Finnish sites with no station name could then not be found in the impact lookup
+## Many of the sites have "FALSE" under 'Contaminant_parameters_in_biota'
+## These sites are also "FALSE" under All_Biota_data 
+
+## from the station dictionary definitions:
+## All_Biota_Data: Data type (DTYPE) CF - all parameters - contaminants and biological effects of contaminants including disease in biota
+##Contaminant_parameters_in_biota: Data type (DTYPE) CF - Contaminant parameter groups
+
+
+```
+
+
+### 4.3 Data flagged for quality
+
+#### 4.3.1 Evaluate data with Qflags
+Codes:  
+**<** = less than  
+
+**>** = greather than  
+
+**D** = reported value is less than the detection limit (detli)  
+
+**Q** = reported value is less than the limit of quantification (lmqnt)  
+
+**~** separates multiple flags  
+
+No information is given for what **<** implies when is it is used alone (e.g. is it related to the detection limit?)
+**Values for detect_lim and quant_lim**: Remember these are in the original units (not standardized to ug_kg or to wet weight)
+```{r qflag eval}
+
+## what qflags are present
+pcb5 %>% select(qflag) %>% distinct(.) 
+##1      
+##2     D
+##3  <NA>
+##4     <
+##5     Q
+##6   <~D
+
+
+## "~"  separates multiple flags
+
+## which entries use '<'
+pcb5 %>% 
+  filter(.,grepl('<', qflag)) %>% select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% head()
+
+## appears to be variable usage of '<', values are not always provided for detect_lim when used, values of detect_lim are in original units so are not always comparable to the value column
+
+## which entries use "D"
+pcb5 %>% 
+  filter(.,grepl('D', qflag)) %>%
+select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% head()
+
+
+```
+
+#### 4.3.2 New qflag column
+Create second qflag column with "yes" if any symbol used to flag the data, and "no" if not
+
+```{r new qflag column}
+pcb6 = pcb5 %>%
+      mutate(qflag = as.character(qflag))%>%
+      mutate(qflag2 = ifelse(qflag == "", "no",
+                      ifelse(qflag== "D", "yes",
+                      ifelse(qflag== "<", "yes",
+                      ifelse(qflag== "Q", "yes",
+                      ifelse(qflag=="<~D", "yes", "")))))) %>%
+      mutate(qflag2 = replace(qflag2, is.na(qflag2),"no"))
+head(pcb6)
+
+pcb6 %>% filter(qflag2 == "yes") %>% select(qflag,qflag2) %>% distinct(.)
+pcb6 %>% filter(qflag2 == "no") %>% select(qflag,qflag2) %>% distinct(.)
+pcb6 %>% filter(qflag2 == "") %>% select(qflag,qflag2) %>% distinct(.)
+pcb6 %>% filter(is.na(qflag)) %>% select(qflag,qflag2) %>% distinct(.)
+
+```
+
+#### 4.3.3 Plot data with qflag 
+Plot each congener separately. CB 52, and CB 28 in particular have many flagged congeners.
+```{r}
+## congeners to plot
+# 1 CB101_ug/kg
+# 2 CB138_ug/kg
+# 3 CB153_ug/kg
+# 4 CB180_ug/kg
+# 5  CB28_ug/kg
+# 6  CB52_ug/kg
+
+ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
+  geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
+  facet_wrap(~basin_name) +
+  scale_shape_manual(values=c(1,2))+
+  ggtitle("CB101_ug/kg")
+
+ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
+  geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
+  facet_wrap(~basin_name) +
+  scale_shape_manual(values=c(1,2))+
+   ggtitle("CB138_ug/kg")
+
+ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
+  geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
+  facet_wrap(~basin_name) +
+  scale_shape_manual(values=c(1,2))+
+   ggtitle("CB153_ug/kg")
+
+ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
+  geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
+  facet_wrap(~basin_name) +
+  scale_shape_manual(values=c(1,2))+
+   ggtitle("CB180_ug/kg")
+
+ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
+  geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
+  facet_wrap(~basin_name) +
+  scale_shape_manual(values=c(1,2))+
+   ggtitle("CB28_ug/kg")
+
+ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
+  geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
+  facet_wrap(~basin_name) +
+  scale_shape_manual(values=c(1,2))+
+   ggtitle("CB52_ug/kg")
+
+
+
+```
+
+#### 4.3.4 Number of observations w/ and w/o qflag
+*2123* samples (not unique sample dates) where all 6 congeners measured; only *1031* have no qflagged congeners.  
+```{r obs }
+## number of C153 observations
+## including qflag observations
+pcb6 %>% filter(congener=="CB153_ug/kg")%>%nrow()
+##2199
+
+## w/o qflag observatons
+pcb6 %>% filter(congener=="CB153_ug/kg" & qflag2 =="no")%>%nrow()
+##2129
+
+
+
+## number of observations with all ICES 6
+ices6_obs = pcb6 %>% 
+  select(rgn_id:bulk_id,congener,value) %>%
+  filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
+  group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, report_institute,station,
+           lat,lon, helcom_id ,helcom_coastal_code,ices_area,date, monit_year, year, month,
+            day,doy,species, sub_samp_ref,sub_samp_id,samp_id, num_indiv_subsample, bulk_id)%>%
+  spread(congener, value) %>%
+  ungroup() %>%
+  mutate(sum_ices6 =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`)) %>%  ## sum all the congeners, if any are NA, result is NA
+  filter(!is.na(sum_ices6))
+ices6_obs %>% nrow() #2123
+
+## Number of observations without qflagged data
+ices6_obs_noq = pcb6 %>% 
+  select(rgn_id:bulk_id,qflag2,congener,value) %>%
+  filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
+  filter(qflag2 == "no") %>%  ## filter for only data not flagged
+  select(-qflag2) %>%
+  group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, report_institute,station,
+           lat,lon, helcom_id ,helcom_coastal_code,ices_area,date, monit_year, year, month,
+            day,doy,species, sub_samp_ref,sub_samp_id,samp_id, num_indiv_subsample, bulk_id)%>%
+  spread(congener, value) %>%
+  ungroup() %>%
+  mutate(sum_ices6 =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`)) %>%  ## sum all the congeners, if any are NA, result is NA
+  filter(!is.na(sum_ices6))
+
+  ices6_obs_noq %>% nrow()  #1031
+  
+  
+```
+
+#### 4.3.5 Second value column with qflag adjustment
+If the data have any qflag, apply LOD/2.  However, LOD (eg. detect_lim column) value is not always provided and values are in original units.  Instead, apply transformation to the reported data value.
+
+```{r ajdust for qflag}
+ pcb7 = pcb6 %>%
+        mutate(value2= ifelse(qflag2=="yes", value/2, value))
+
+```
+
+#### 4.3.5 Plot qflag adjusted values and not adjusted values
+Each congener plotted in separate plot.  
+
+**CB101**  
+Plot 1. First both raw values (red) and adjusted (black).  
+Plot 2 .Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+```{r plot adjusted values CB101}
+ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
+  geom_point(aes(date,value), color="red", shape=19) + 
+   geom_point(aes(date,value2), color="black",shape=1)+
+  facet_wrap(~basin_name, scales="free_y") +
+  ggtitle("Plot 1. CB101_ug/kg")
+
+ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
+   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+  facet_wrap(~basin_name, scales="free_y") +
+  scale_shape_manual(values=c(1,2))+
+  ggtitle("Plot 2. CB101_ug/kg")
+
+```
+
+**CB138**  
+Plot 1.First both raw values (red) and adjusted (black).  
+Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot adjusted values CB138}
+ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
+  geom_point(aes(date,value), color="red", shape=19) + 
+   geom_point(aes(date,value2), color="black",shape=1)+
+  facet_wrap(~basin_name, scales="free_y") +
+  ggtitle("Plot 1. CB138_ug/kg")
+
+ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
+   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+  facet_wrap(~basin_name, scales="free_y") +
+  scale_shape_manual(values=c(1,2))+
+  ggtitle("Plot 2. CB138_ug/kg")
+
+
+```
+
+**CB153**  
+Plot 1.First both raw values (red) and adjusted (black).  
+Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot adjusted values CB153}
+ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
+  geom_point(aes(date,value), color="red", shape=19) + 
+   geom_point(aes(date,value2), color="black",shape=1)+
+  facet_wrap(~basin_name, scales="free_y") +
+  ggtitle("Plot 1. CB153_ug/kg")
+
+ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
+   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+  facet_wrap(~basin_name, scales="free_y") +
+  scale_shape_manual(values=c(1,2))+
+  ggtitle("Plot 2.CB153_ug/kg")
+
+
+```
+
+**CB180**  
+Plot 1.First both raw values (red) and adjusted (black).  
+Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot adjusted values CB180}
+ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
+  geom_point(aes(date,value), color="red", shape=19) + 
+   geom_point(aes(date,value2), color="black",shape=1)+
+  facet_wrap(~basin_name, scales="free_y") +
+  ggtitle("Plot 1. CB180_ug/kg")
+
+ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
+   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+  facet_wrap(~basin_name, scales="free_y") +
+  scale_shape_manual(values=c(1,2))+
+  ggtitle("Plot 2. CB180_ug/kg")
+
+```
+
+**CB28**  
+Plot 1. First both raw values (red) and adjusted (black).  
+Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot adjusted values CB28}
+
+ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
+  geom_point(aes(date,value), color="red", shape=19) + 
+   geom_point(aes(date,value2), color="black",shape=1)+
+  facet_wrap(~basin_name, scales="free_y") +
+  ggtitle("Plot 1. CB28_ug/kg")
+
+ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
+   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+  facet_wrap(~basin_name, scales="free_y") +
+  scale_shape_manual(values=c(1,2))+
+  ggtitle("Plot 2. CB28_ug/kg")
+
+```
+
+**CB52**  
+Plot 1. First both raw values (red) and adjusted (black).  
+Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot adjusted values CB52}
+ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
+  geom_point(aes(date,value), color="red", shape=19) + 
+   geom_point(aes(date,value2), color="black",shape=1)+
+  facet_wrap(~basin_name, scales="free_y") +
+  ggtitle("Plot 1. CB52_ug/kg")
+
+ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
+   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+  facet_wrap(~basin_name, scales="free_y") +
+  scale_shape_manual(values=c(1,2))+
+  ggtitle("Plot 2. CB52_ug/kg")
+
+
+```
+
+#### 4.4 ICES6 PCB
+
+#### 4.4.1 ICES6 PCB sum
+1. Sum only samples with all 6 PCBs observed.  
+2. Sum1 = sum value2 (qflag adjusted)
+3. Sum2 = sum only observation with no qflag values
+```{r ices6 sum}
+
+ices6_1 =pcb7 %>%
+        select(rgn_id:bulk_id,congener,value2) %>%
+        filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
+        group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, 
+                 report_institute,station,lat,lon,helcom_id,helcom_coastal_code,
+                 ices_area,date, monit_year, year, month,day,doy,species,sub_samp_ref,
+                 sub_samp_id,samp_id, num_indiv_subsample, bulk_id)%>%
+        spread(congener, value2) %>%
+        ungroup() %>%
+        mutate(sum_ices6_ug_kg =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`)) %>%
+        filter(!is.na(sum_ices6_ug_kg))%>% ## remove any observations with NA (eg not all congeners observed)
+        arrange(country,station,date,sub_samp_ref)
+
+dim(ices6_1) #[1] 2123   31
+
+
+ices6_2 =pcb7 %>%
+        select(rgn_id:bulk_id,qflag2,congener,value2) %>%
+        filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
+        filter(qflag2 == "no") %>%  ## filter for only data not flagged
+        select(-qflag2) %>%
+        group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, 
+                 report_institute,station,lat,lon,helcom_id,helcom_coastal_code,
+                 ices_area,date, monit_year, year, month,day,doy,species,sub_samp_ref,
+                 sub_samp_id,samp_id, num_indiv_subsample, bulk_id)%>%
+        spread(congener, value2) %>%
+        ungroup() %>%
+        mutate(sum_ices6_ug_kg =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`))    %>%
+        filter(!is.na(sum_ices6_ug_kg)) %>% ## remove any observations with NA (eg not all congeners observed)            
+        arrange(country,station,date,sub_samp_ref)
+
+dim(ices6_2)#1031   31
+
+
+```
+
+#### 4.4.2 Plot ICES6
+
+```{r plot ices6 with qflag}
+
+ices6_1= ices6_1 %>%
+              select(-`CB101_ug/kg` ,-`CB138_ug/kg` , -`CB153_ug/kg` ,
+                     -`CB180_ug/kg`, -`CB28_ug/kg`,- `CB52_ug/kg`) %>% ## remove congener columns
+          mutate(health_threshold=75)  ## Add EU human health threshold 75 ug/kg
+
+ggplot(ices6_1) + 
+  geom_point(aes(date,sum_ices6_ug_kg))+
+  geom_line(aes(date,health_threshold))+
+  facet_wrap(~basin_name, scales="free_y")+
+  ggtitle("ICES6 including qflag-adjusted")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))
+
+
+ices6_2= ices6_2 %>%
+              select(-`CB101_ug/kg` ,-`CB138_ug/kg` , -`CB153_ug/kg` ,
+                     -`CB180_ug/kg`, -`CB28_ug/kg`,- `CB52_ug/kg`) %>% ## remove congener columns
+          mutate(health_threshold=75)  ## Add EU human health threshold 75 ug/kg
+
+ggplot(ices6_2) + 
+  geom_point(aes(date,sum_ices6_ug_kg))+
+  geom_line(aes(date,health_threshold))+
+  facet_wrap(~basin_name, scales="free_y")+
+  ggtitle("ICES6 excluded qflag")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))
+
+```
+
+
+
+#### 4.4.3 ICES6 mean value by date and location
+Take the mean value by date, do for both qflag-adjusted and no-qflag dataset
+
+```{r mean ices 6 by date}
+
+##including qflagged adjusted
+ices6_1datemean = ices6_1 %>% 
+                  select(-sub_samp_ref,-sub_samp_id,-samp_id, -num_indiv_subsample, -bulk_id) %>% ##remove unique id
+                  group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, 
+                 report_institute,station,lat,lon,helcom_id,helcom_coastal_code,
+                 ices_area,date, monit_year, year, month,day,doy,species) %>%
+                summarize(ices6_datemean_ug_kg = mean(sum_ices6_ug_kg))%>%
+                ungroup()
+
+dim(ices6_1datemean) # 227  20
+
+
+## excluding qflagged
+ices6_2datemean = ices6_2 %>% 
+                  select(-sub_samp_ref,-sub_samp_id,-samp_id, -num_indiv_subsample, -bulk_id) %>% ##remove unique id
+                  group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, 
+                 report_institute,station,lat,lon,helcom_id,helcom_coastal_code,
+                 ices_area,date, monit_year, year, month,day,doy,species) %>%
+                summarize(ices6_datemean_ug_kg = mean(sum_ices6_ug_kg))%>%
+                ungroup()
+
+dim(ices6_2datemean) #145  20
+
+
+```
+
+#### 4.4.4 Plot ICES6 mean value by date and location
+**Plot By Basin**
+Gray dots are the ices6 concentration mean by date and location including qflagg-adjusted values.  
+Red dots are the ices6 concentration mean by date and location excluding qflagged values.  
+    - Including the qflag-adjusted values lowers the mean concentration by date and location, provides more observations in the Kattegat, The Quark, and W. Gotland Basin
+
+```{r plot ices6 date mean by basin plot}
+
+##temporily merge ices6_1datemean and ices6_2datemean to more easily compare in a plot
+
+plotdata_temp = full_join(ices6_1datemean,ices6_2datemean,
+                          by=c("rgn_id", "basin_name", "country", "monit_program", 
+                               "monit_purpose", "report_institute", "station", "lat", 
+                               "lon", "helcom_id", "helcom_coastal_code", "ices_area", 
+                               "date", "monit_year", "year", "month", "day", "doy", "species")) %>%
+                          dplyr::rename(ices6_datemean_qflag_adj=ices6_datemean_ug_kg.x,
+                                        ices6_datemean_no_qflag=ices6_datemean_ug_kg.y) %>%
+                          mutate(health_threshold=75)
+
+##not showing human health threshold
+ggplot(plotdata_temp) +
+  geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
+  geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
+  facet_wrap(~basin_name, scales="free_y")+
+  ggtitle("Mean ICES6 concentration ug/kg by date & location")
+
+##plot by year
+ggplot(plotdata_temp) +
+  geom_point(aes(year,ices6_datemean_qflag_adj),colour="gray")+
+  geom_point(aes(year,ices6_datemean_no_qflag),colour="red")+
+  facet_wrap(~basin_name, scales="free_y")+
+  ggtitle("Mean ICES6 concentration ug/kg by date & location plot by year")
+
+##showing the human health threshold                    
+ggplot(plotdata_temp) +
+  geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
+  geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
+  geom_line(aes(date,health_threshold))+
+  facet_wrap(~basin_name, scales="free_y")+
+  ggtitle("Mean ICES6 concentration ug/kg by date & location w/ Human Health threshold")
+
+```
+
+**Plot By BHI Region**
+Gray dots are the ices6 concentration mean by date and location including qflagg-adjusted values.  
+Red dots are the ices6 concentration mean by date and location excluding qflagged values.  
+    - More observations for Regions 1, 11,26,35,36,39,41,42 when including qflagged values.  
+```{r ices6 mean date and location plot by bhi region}
+
+
+#not showing human health threshold
+ggplot(plotdata_temp) +
+  geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
+  geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
+  facet_wrap(~rgn_id, scales="free_y")+
+  ggtitle("Mean ICES6 concentration ug/kg by date & location")
+
+ #plot by year
+ggplot(plotdata_temp) +
+  geom_point(aes(year,ices6_datemean_qflag_adj),colour="gray")+
+  geom_point(aes(year,ices6_datemean_no_qflag),colour="red")+
+  facet_wrap(~rgn_id, scales="free_y")+
+  ggtitle("Mean ICES6 concentration ug/kg by date & location plot by year")
+
+
+##showing the human health threshold                    
+ggplot(plotdata_temp) +
+  geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
+  geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
+  geom_line(aes(date,health_threshold))+
+  facet_wrap(~rgn_id, scales="free_y")+
+  ggtitle("Mean ICES6 concentration ug/kg by date & location w/ Human Health threshold")
+
+
+```
+
+#### 4.4.5 Most recent year obs by each location
+Using 2009 -2013 for status assessment is most consistent (and 2014 are from Poland and look like extreme outliers).  There will be *no* status for Gulf of Finland, most recent data 2007.
+
+```{r most recent year}
+ices6_1datemean %>% arrange(year) %>%group_by(basin_name) %>% summarise(last(year))%>%ungroup()
+#                basin_name last(year)
+#                    (fctr)      (int)
+# 1               Aland Sea       2013
+# 2            Arkona Basin       2013
+# 3          Bornholm Basin       2014
+# 4            Bothnian Bay       2013
+# 5            Bothnian Sea       2013
+# 6   Eastern Gotland Basin       2014
+# 7         Gulf of Finland       2007
+# 8                Kattegat       2013
+# 9  Northern Baltic Proper       2013
+# 10              The Quark       2013
+# 11  Western Gotland Basin       2013
+
+ices6_2datemean %>% arrange(year) %>% group_by(basin_name) %>% summarise(last(year))%>%ungroup()
+
+#                basin_name last(year)
+#                    (fctr)      (int)
+# 1               Aland Sea       2011
+# 2            Arkona Basin       2013
+# 3          Bornholm Basin       2013
+# 4            Bothnian Bay       2013
+# 5            Bothnian Sea       2013
+# 6   Eastern Gotland Basin       2012
+# 7         Gulf of Finland       2007
+# 8                Kattegat       2013
+# 9  Northern Baltic Proper       2013
+# 10  Western Gotland Basin       2011
+
+```
+
+### 4.5 Status and Trend Evaluation
+**Status Alternatives**
+Compare calculating the status by BHI region or Basin.  
+Use data including qflag-adjusted (this could lower values).  
+Use 5 year mean ICES6 concentration.  
+
+Steps:  
+1. Have mean ICES conc. by date and location (our unique observations)  
+2. Take mean of all unique observations for 2009-2013 in either BHI region or basin  
+3. If done by basin, give basin score to all regions within basin  
+4. Compare results  
+5. Assess number of data points contributing  
+
+**Trend**
+Compare calculating trend by BHI region or basin.  
+Use data including qflag-adjusted (this could lower values).  
+
+Steps:  
+1. Linear regression of unique observations in a basin or region  
+2. Use a 10 year period: 2004-2013  
+3. Minimum of different observation years  
+4. Scale all observations relative to the human health threshold?  
+**Why Scale?**  If values are all below the threshold would not want an increase trend in observed values to suggest that the future status will be worse??
+4. **Need to have mixed-effects to account for different stations?**
+
+#### 4.5.1  Mean Basin
+Calculate the 2009-2013 mean value by basin and the number of observations. Assign basin values to BHI regions.
+```{r  mean basin }
+## calculate the mean value by basin
+ices6_mean_basin = ices6_1datemean %>% 
+                filter(year >=2009 & year <= 2013) %>% ## select years 2009
+                select(basin_name,ices6_datemean_ug_kg) %>%
+                group_by(basin_name) %>%
+                summarise(ices6_mean_ug_kg = round(mean(ices6_datemean_ug_kg),2))%>%
+                ungroup()
+                
+## number of observations by basin
+ices6_mean_basin_num_obs = ices6_1datemean %>%
+                             filter(year >=2009 & year <= 2013) %>% ## select years 2009 
+                             select(basin_name,ices6_datemean_ug_kg) %>%
+                             count(basin_name)
+
+## join mean and number of observations
+ices6_mean_basin  = ices6_mean_basin %>%
+                      full_join(., ices6_mean_basin_num_obs, by="basin_name") %>%
+                      dplyr::rename(num_obs=n)
+ices6_mean_basin
+
+## assign basin values to BHI regions
+ices6_mean_basin_rgn = ices6_mean_basin %>%
+                         full_join(., select(lookup_basins,rgn_id,basin_name),by="basin_name")%>%
+                          mutate(mean_type="basin")
+ices6_mean_basin_rgn
+
+ggplot(ices6_mean_basin_rgn) + 
+  geom_point(aes(basin_name,ices6_mean_ug_kg, size=num_obs))+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+    ggtitle("Mean ICES6 conc calculated by basin 2009-2013")
+
+
+
+```
+
+#### 4.5.2 Mean BHI Region
+Calculate the 2009-2013 mean value by BHI region and the number of observations. 
+```{r mean bhi region }
+ices6_mean_region = ices6_1datemean %>% 
+                filter(year >=2009 & year <= 2013) %>% ## select years 2009
+                select(rgn_id,ices6_datemean_ug_kg) %>%
+                group_by(rgn_id) %>%
+                summarise(ices6_mean_ug_kg = round(mean(ices6_datemean_ug_kg),2))%>%
+                ungroup()
+                
+## number of observations by basin
+ices6_mean_region_num_obs = ices6_1datemean %>%
+                             filter(year >=2009 & year <= 2013) %>% ## select years 2009 
+                             select(rgn_id,ices6_datemean_ug_kg) %>%
+                             count(rgn_id)
+
+## join mean and number of observations
+ices6_mean_region  = ices6_mean_region %>%
+                      full_join(., ices6_mean_region_num_obs, by="rgn_id") %>%
+                      dplyr::rename(num_obs=n)
+ices6_mean_region
+
+## join with lookup_basins so have rgns with NA
+ices6_mean_region = ices6_mean_region %>%
+                      full_join(., select(lookup_basins, rgn_id), by="rgn_id") %>%
+                      mutate(mean_type= "region")
+
+
+```
+
+#### 4.5.3  Mean BHI Region
+Compare mean calculations using region or basin.  
+```{r compare mean calculations}
+##join data so can plot together
+ices6_mean = bind_rows(ices6_mean_region,select(ices6_mean_basin_rgn, -basin_name))
+
+#ggplot(ices6_mean) + 
+  #geom_point(aes(rgn_id,ices6_mean_ug_kg, size=num_obs))+
+  #facet_wrap(~mean_type)+
+  #ggtitle("Mean ICES6 conc calculated by basin or BHI region")
+
+
+ggplot(ices6_mean) + 
+  geom_point(aes(rgn_id,ices6_mean_ug_kg, size=num_obs, colour=mean_type,shape=mean_type))+
+   scale_shape_manual(values=c(1,2))+
+    ggtitle("Mean ICES6 conc calculated by basin or BHI region")
+
+```
+
+#### 4.5.4 Calculate Status
+Xices6 = 1/ (Mean_ICES6_region / Reference_pt  )
+Reference_pt = health_threshold=  75ug/kg
+
+Scale between 0 and 1.  If value is below 75, score = 1
+```{r  status calculation}
+health_threshold = 75
+
+ices6_mean = ices6_mean %>%
+              mutate(ices6_status = pmin(1,1/(ices6_mean_ug_kg/health_threshold))) ## status calculation, scaled between 0-1
+
+## because no values exceed the human health threshold, status score is 1.      
+
+```
+
+#### 4.5.5 Plot status
+```{r plot status}
+
+ggplot(ices6_mean)+ 
+  geom_point(aes(rgn_id, ices6_status*100))+
+  facet_wrap(~mean_type)+
+  ylim(0,100)+
+  ggtitle("ICE6 Status based on 2009-2013, calculated for basin or region")
+
+```
+
+
+#### 4.5.6 Trend calculation by Basin
+Need to think abou the interpretation of the data treatment.  
+1. If use raw observations, then normalize (zscore data), then fit trend, if get increase or decrease but all values are below the threshold, does it make sense to apply a change in the trend to the status?  Would we really think the future status will be lower?  
+
+2. If take all raw observations, calculate "status" as done for the mean value, then fit trend, is this more true to the idea that variation below the human health threshold should not affect the trajectory of the future status?  
+
+3. Need to think if simple linear regression is okay, or if need to account for site?
+```{r basin trend calculation}
+## Key constant
+lag_win = 5 ## the value of the future year we are interested in (five years in the future)
+
+
+
+## number of years of observations ## Check to make sure all 5 or >
+ices_basin_num_years=ices6_1datemean %>%
+  filter(year >=2004 & year <= 2013) %>%
+  select(basin_name,year)%>%
+  distinct(.)%>%
+  group_by(basin_name,year) %>%
+  summarise(num=n())%>%
+  ungroup() %>% 
+  select(-num)%>%
+  group_by(basin_name)%>%
+  count(basin_name)%>%ungroup()
+
+## Exclude Gulf of Finland -- 3 year (also no status)
+
+## also exclude basins for which no status was calculated
+    basin_list = ices6_mean_basin_rgn %>% 
+                  filter(!is.na(ices6_mean_ug_kg)) %>%
+                  select(basin_name)%>%
+                  distinct()
+    basin_list = as.character(basin_list$basin_name)
+
+    
+
+## Calculate trend with zscore of data    
+ices6_basin_trend_alt1 = ices6_1datemean %>% 
+                    filter(year >=2004 & year <= 2013) %>% ## select years 2004-2013
+                    filter(basin_name %in%  basin_list ) %>%
+                    select(basin_name,year,date,ices6_datemean_ug_kg)%>%
+                    group_by(basin_name) %>%
+                    mutate(mean = mean(ices6_datemean_ug_kg),
+                           sd = sd(ices6_datemean_ug_kg),
+                           ices6_zscore = (ices6_datemean_ug_kg - mean)/sd) %>% ## zscore values
+                      select(basin_name, year,ices6_zscore) %>%
+                    do(trend_mdl = lm(ices6_zscore~year, data=.)) %>%  ## regression model to get trend from raw observations
+                    summarize(basin_name=basin_name,
+                              trend_score = coef(trend_mdl)['year']*lag_win) %>%  ## lag_win defined above, numbe of years in the future for future status
+                    ungroup()
+
+
+
+
+
+## Calculate trend by making each observation a "status" value
+ices6_basin_trend_alt2 = ices6_1datemean %>% 
+                    filter(year >=2004 & year <= 2013) %>% ## select years 2004-2013
+                    filter(basin_name %in%  basin_list ) %>%
+                    select(basin_name,year,date,ices6_datemean_ug_kg)%>%
+                    mutate(obs_status= pmin(1,1/(ices6_datemean_ug_kg/health_threshold))) %>%
+                    group_by(basin_name)%>%
+                    do(trend_mdl = lm(obs_status~year, data=.)) %>%  ## regression model to get trend from raw observations
+                    summarize(basin_name=basin_name,
+                              trend_score = coef(trend_mdl)['year']*lag_win) %>%  ## lag_win defined above, numbe of years in the future for future status
+                    ungroup()
+
+
+
+
+```
+
+### 4.5.7 Plot linear model trends - 2 approaches
+
+```{r  plot trend alternatives}
+ices6_basin_trend_alt1 = ices6_basin_trend_alt1 %>%
+                          mutate(trend_approach = "zscore")
+ices6_basin_trend_alt2 = ices6_basin_trend_alt2 %>%
+                          mutate(trend_approach = "status")
+trend_alts = bind_rows(ices6_basin_trend_alt1,ices6_basin_trend_alt2)
+
+ggplot(trend_alts)+
+  geom_point(aes(basin_name,trend_score))+
+  facet_wrap(~trend_approach)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Alternative Trend Model Fitting (2004-2013)")
+      
+
+
+```
+
+
+#### 4.5.8 Trend calculation by Basin with mixed-effects model
+IN PROGRESS.......errors  
+Only fitting for the z-score approach because with status approach all values are 1 and this causes model fitting problems.  
+Current error for fitting the zscore data seems to be an issue if there is only 1 factor (does not want fit the random effect) - so tried the if() statement.  But now get error "Error: cannot modify grouping variable"
+```{r mixed effects trend model}
+
+## calculate the trend on the zscored raw values, with a mixed effects model so that there is a random intercept by location.  Use lat because not all have a station name  (REML used for coefficient estimates)
+# library(lme4)
+# library(broom)
+# ices6_basin_trend_alt1b = ices6_1datemean %>% 
+#                     filter(year >=2004 & year <= 2013) %>% ## select years 2004-2013
+#                     filter(basin_name %in%  basin_list ) %>%
+#                     select(basin_name,year,date,lat, ices6_datemean_ug_kg)%>%
+#                     group_by(basin_name) %>%
+#                     mutate(mean = mean(ices6_datemean_ug_kg),
+#                            sd = sd(ices6_datemean_ug_kg),
+#                            ices6_zscore = (ices6_datemean_ug_kg - mean)/sd) %>% ## zscore values
+#                     ungroup()%>%
+#                     select(basin_name,lat, year,ices6_zscore) %>%
+#                     group_by(basin_name) %>%
+#                     #mutate(f_lat = factor(lat))%>% 
+#                     do({if(distinct(.,lat) %>% nrow() >1)
+#                       (trend_mdl = lmer(ices6_zscore ~ year + (1|lat), data =.))
+#                       else
+#                        (trend_mdl = lm(ices6_zscore ~ year, data =.))}) %>%  ## regression model to get trend from raw observations
+#                     summarize(basin_name=basin_name,
+#                               trend_score = coef(trend_mdl)['year']*lag_win) %>%  ## lag_win defined above, numbe of years in the future for future status
+#                     ungroup()
+
+```
+
+
+
+## TO DO  
+1. Indicator choice - *I think that the ICES6 is the most justifiable even if that reduces sample size*  
+2. Decision about use of qflagg-adjusted data - *Current preliminary status calculations include qflagged data that have been adjusted by (value/2)*  
+
+3. Decision about spatial scale of the data  - [Bignert et al. 2007](http://pubs.rsc.org/en/Content/ArticleLanding/2007/EM/b700667e#!divAbstract) shows spatial autocorrelation up to 100 km.  
+    - Do we want to average for BHI regions (will be large distances than 100 but only one coastline included). Have data in 17 regions (poor coverage in some of these).  
+    -  Could average at the basin scale - much larger spatial area, inferring similarity over much greater distances. Have data for 11 basin (out of 17)  
+    ** Have now calculated status for both of the above options**  
+    

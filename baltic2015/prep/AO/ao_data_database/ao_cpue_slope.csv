@@ -1,0 +1,134 @@
+"Basin_HOLAS","country","monitoring_area","core_indicator","taxa","slope","r2","nobs"
+"","Denmark","Ringkoebing Fjord and Nissum Fjord","Key Species","Flounder",0.509855912864112,0.909835681588551,6
+"","Sweden","Lagno","Functional groups","Cyprinids",-0.0066541307386956,0.000405876678970168,10
+"","Sweden","Lagno","Key Species","Perch",0.0892879891147211,0.0730798291680477,10
+"Aland Sea","Finland","Finbo","Functional groups","Cyprinids",-0.0210866085871225,0.00407591306564304,10
+"Aland Sea","Finland","Finbo","Functional groups","Piscivores",0.136312164261572,0.170325889485346,10
+"Aland Sea","Finland","Finbo","Key Species","Perch",0.143289376456743,0.188208582882489,10
+"Aland Sea","Finland","ICES SD 29","Functional groups","Cyprinids",0.299341099686712,0.821380027981802,10
+"Aland Sea","Finland","ICES SD 29","Functional groups","Piscivores",0.142766915158621,0.186838593919168,10
+"Aland Sea","Finland","ICES SD 29","Key Species","Perch",0.243190070342104,0.54212959453582,10
+"Aland Sea","Finland","Kumlinge","Functional groups","Cyprinids",0.0943937689772554,0.0816766831992062,10
+"Aland Sea","Finland","Kumlinge","Functional groups","Piscivores",0.150618521755228,0.207954441710861,10
+"Aland Sea","Finland","Kumlinge","Key Species","Perch",0.14923818727949,0.204160334972627,10
+"Aland Sea","Sweden","Lagno","Functional groups","Piscivores",0.0861213168457418,0.0679880778064103,10
+"Arkona Basin","Denmark","Area south of Zealand (Smalandsfarvandet)","Functional groups","Piscivores",0.0988637124042023,0.0781922690427092,6
+"Arkona Basin","Denmark","Area south of Zealand (Smalandsfarvandet)","Key Species","Flounder",0.14388503402966,0.0766007411655645,5
+"Arkona Basin","Denmark","Praestoe Fiord","Functional groups","Piscivores",-0.248816280555866,0.36526629467082,6
+"Arkona Basin","Denmark","Praestoe Fiord","Key Species","Flounder",-0.0786843352237473,0.0412748307306769,6
+"Arkona Basin","Germany","Boergerende","Functional groups","Piscivores",0.0285674105764532,0.0074808886812336,10
+"Arkona Basin","Germany","Boergerende","Key Species","Cod",0.0285674105764532,0.0074808886812336,10
+"Arkona Basin","Germany","Darss-Zingst Bodden chain","Functional groups","Piscivores",0.446127597908215,0.696604417653596,6
+"Arkona Basin","Germany","Darss-Zingst Bodden chain","Key Species","Perch",0.446127597908215,0.696604417653596,6
+"Arkona Basin","Germany","Greifswalder Bodden","Functional groups","Piscivores",0.0488649046982229,0.00835722618908069,6
+"Arkona Basin","Germany","Greifswalder Bodden","Key Species","Perch",0.0488649046982229,0.00835722618908069,6
+"Arkona Basin","Germany","North of Kuhlungsborn city","Functional groups","Piscivores",0.278610546455532,0.271683428086819,6
+"Arkona Basin","Germany","North of Kuhlungsborn city","Key Species","Flounder",0.407710324174766,0.581796979535305,6
+"Arkona Basin","Germany","Northeast of Ruegen Island","Functional groups","Piscivores",0.125414900206524,0.0550511401783317,6
+"Arkona Basin","Germany","Northeast of Ruegen Island","Key Species","Flounder",0.340534809839228,0.405873848492752,6
+"Arkona Basin","Germany","Strelasund","Functional groups","Piscivores",0.278610546455532,0.271683428086819,6
+"Arkona Basin","Germany","Strelasund","Key Species","Perch",0.278610546455532,0.271683428086819,6
+"Arkona Basin","Germany","Wismar Bight and Salzhaff","Functional groups","Piscivores",-0.322941837095572,0.260728575366648,5
+"Arkona Basin","Germany","Wismar Bight and Salzhaff","Key Species","Flounder",0.583377058403596,0.850821980679055,5
+"Bornholm Basin","Germany","East of Usedom Peninsula","Functional groups","Piscivores",-0.19353517886149,0.131095529099294,6
+"Bornholm Basin","Germany","East of Usedom Peninsula","Key Species","Flounder",-0.374720579233853,0.49145429375464,6
+"Bornholm Basin","Germany","Peene river / Achterwasser","Functional groups","Piscivores",0.31600464811705,0.249647344078943,5
+"Bornholm Basin","Germany","Peene river / Achterwasser","Key Species","Perch",0.31600464811705,0.249647344078943,5
+"Bornholm Basin","Germany","Pomeranian Bay, Outer","Functional groups","Piscivores",0.217007689708463,0.431679759432213,10
+"Bornholm Basin","Germany","Pomeranian Bay, Outer","Key Species","Flounder",0.217007689708463,0.431679759432213,10
+"Bornholm Basin","Germany","Stettin Lagoon (German part)","Functional groups","Piscivores",0.182285282296007,0.122943319324443,5
+"Bornholm Basin","Germany","Stettin Lagoon (German part)","Key Species","Perch",0.182285282296007,0.122943319324443,5
+"Bornholm Basin","Sweden","Torhamn","Functional groups","Cyprinids",-0.13588049390228,0.169248829045338,10
+"Bornholm Basin","Sweden","Torhamn","Functional groups","Piscivores",-0.0522788640728583,0.0250532299301939,10
+"Bornholm Basin","Sweden","Torhamn","Key Species","Perch",-0.0532353910906346,0.0259783962585845,10
+"Bothnian Bay","Finland","ICES SD 31","Functional groups","Cyprinids",0.0756022016475421,0.0523938515279272,10
+"Bothnian Bay","Finland","ICES SD 31","Functional groups","Piscivores",0.243986342541196,0.545685574010783,10
+"Bothnian Bay","Finland","ICES SD 31","Key Species","Perch",0.269527176334093,0.665911572174111,10
+"Bothnian Bay","Sweden","Kinnback","Functional groups","Cyprinids",0.00302029221123811,8.36198462116042e-05,10
+"Bothnian Bay","Sweden","Kinnback","Functional groups","Piscivores",0.230326895591786,0.486296055968711,10
+"Bothnian Bay","Sweden","Kinnback","Key Species","Perch",0.231513418291738,0.491319242783654,10
+"Bothnian Bay","Sweden","Ranea","Functional groups","Cyprinids",-0.231064173566457,0.489414312804547,10
+"Bothnian Bay","Sweden","Ranea","Functional groups","Piscivores",0.0890888667210165,0.072754239924989,10
+"Bothnian Bay","Sweden","Ranea","Key Species","Perch",0.0885299778056302,0.0718442722274337,10
+"Bothnian Sea","Finland","ICES SD 30","Functional groups","Cyprinids",0.237500179812898,0.517058074602297,10
+"Bothnian Sea","Finland","ICES SD 30","Functional groups","Piscivores",-0.00283393852470503,7.36194026499062e-05,10
+"Bothnian Sea","Finland","ICES SD 30","Key Species","Perch",0.15004076802947,0.206362127316341,10
+"Bothnian Sea","Sweden","Forsmark 09","Functional groups","Cyprinids",0.0563372957440917,0.0317389089175725,9
+"Bothnian Sea","Sweden","Forsmark 09","Functional groups","Piscivores",0.00046487134419004,2.1610536664908e-06,9
+"Bothnian Sea","Sweden","Forsmark 09","Key Species","Perch",0.0071032898454821,0.00050456726628929,9
+"Bothnian Sea","Sweden","Forsmark 64","Functional groups","Cyprinids",-0.0723596271312442,0.0479958933535836,10
+"Bothnian Sea","Sweden","Forsmark 64","Functional groups","Piscivores",0.228948180485771,0.48049163568767,10
+"Bothnian Sea","Sweden","Forsmark 64","Key Species","Perch",0.241193804111492,0.533265802132924,10
+"Bothnian Sea","Sweden","Gavik","Functional groups","Cyprinids",-0.0272948464208388,0.00682924587709089,10
+"Bothnian Sea","Sweden","Gavik","Functional groups","Piscivores",0.0920009213312217,0.0775882206531095,10
+"Bothnian Sea","Sweden","Gavik","Key Species","Perch",0.0924238159717465,0.0783031494554776,10
+"Bothnian Sea","Sweden","Langvindsfjaerden","Functional groups","Cyprinids",-0.168524764283347,0.260338798286949,10
+"Bothnian Sea","Sweden","Langvindsfjaerden","Functional groups","Piscivores",-0.00142637561107586,1.86500176854948e-05,10
+"Bothnian Sea","Sweden","Langvindsfjaerden","Key Species","Perch",0.000285415104812557,7.46733002171942e-07,10
+"Eastern Gotland Basin","Latvia","Jurkalne","Functional groups","Cyprinids",0.207507060913417,0.394709153015148,10
+"Eastern Gotland Basin","Latvia","Jurkalne","Functional groups","Piscivores",0.115455895276757,0.122192251079778,10
+"Eastern Gotland Basin","Latvia","Jurkalne","Key Species","Flounder",-0.0382362155575305,0.0134017416514845,10
+"Eastern Gotland Basin","Lithuania","Curonian Lagoon","Functional groups","Cyprinids",-0.13281625652016,0.161701448296934,10
+"Eastern Gotland Basin","Lithuania","Curonian Lagoon","Functional groups","Piscivores",-0.0118436652776028,0.00128583039940572,10
+"Eastern Gotland Basin","Lithuania","Curonian Lagoon","Key Species","Perch",-0.019996160247539,0.00366525889258159,10
+"Eastern Gotland Basin","Lithuania","Monciskes/Butinge","Functional groups","Cyprinids",0.215722282493571,0.426580945672169,10
+"Eastern Gotland Basin","Lithuania","Monciskes/Butinge","Functional groups","Piscivores",0.153423744873909,0.215772750335402,10
+"Eastern Gotland Basin","Lithuania","Monciskes/Butinge","Key Species","Flounder",0.168277057441208,0.259574040559828,10
+"Great Belt","Denmark","Arhus Bay","Functional groups","Piscivores",0.141932969690576,0.151087259138895,9
+"Great Belt","Denmark","Arhus Bay","Key Species","Flounder",-0.18081829060727,0.245214406636012,9
+"Great Belt","Denmark","Fiords of Eastern Jutland","Functional groups","Piscivores",-0.105721982320166,0.0796371050131543,8
+"Great Belt","Denmark","Fiords of Eastern Jutland","Key Species","Flounder",-0.210140047143674,0.314631730821532,8
+"Great Belt","Denmark","Odense Fiord","Key Species","Flounder",0.295638927575427,0.735116408206034,8
+"Great Belt","Denmark","Sejeroe Bay","Functional groups","Piscivores",0.00770378395144723,0.00035608972302346,8
+"Great Belt","Denmark","Sejeroe Bay","Key Species","Flounder",-0.0129199544956305,0.00125193918126872,9
+"Great Belt","Denmark","Southern Little Belt and the archipelago","Functional groups","Piscivores",-0.169175990215573,0.226919802775843,8
+"Great Belt","Denmark","Southern Little Belt and the archipelago","Key Species","Flounder",0.136639552198229,0.140027754186994,9
+"Great Belt","Denmark","The Great Belt","Key Species","Flounder",-0.03333867003554,0.00518684562544801,7
+"Gulf of Finland","Finland","ICES SD 32","Functional groups","Cyprinids",0.185727658317985,0.316201994755924,10
+"Gulf of Finland","Finland","ICES SD 32","Functional groups","Piscivores",0.070624024770313,0.0457210680186136,10
+"Gulf of Finland","Finland","ICES SD 32","Key Species","Perch",0.240762574191476,0.531360657036978,10
+"Gulf of Riga","Estonia","Hiiumaa","Functional groups","Cyprinids",0.154778729696578,0.219600839026128,10
+"Gulf of Riga","Estonia","Hiiumaa","Functional groups","Piscivores",0.238620670761,0.521948391382279,10
+"Gulf of Riga","Estonia","Hiiumaa","Key Species","Perch",0.238309137523297,0.520586412748404,10
+"Gulf of Riga","Latvia","Daugagriva","Functional groups","Cyprinids",0.198322355841783,0.360541104244156,10
+"Gulf of Riga","Latvia","Daugagriva","Functional groups","Piscivores",0.113209933350182,0.117484482583902,10
+"Gulf of Riga","Latvia","Daugagriva","Key Species","Perch",0.0817145630696739,0.0612083066619549,10
+"Kattegat","Denmark","Hjaraek Fjord","Functional groups","Piscivores",0.106411612756896,0.0819600743851319,7
+"Kattegat","Denmark","Isefjord and Roskilde Fjord","Functional groups","Piscivores",0.142975646908456,0.0953961661748104,6
+"Kattegat","Denmark","Isefjord and Roskilde Fjord","Key Species","Flounder",-0.0389054576189132,0.0113522597440279,9
+"Kattegat","Denmark","Northern Kattegat","Functional groups","Piscivores",0.261520730676261,0.41035855544072,8
+"Kattegat","Denmark","Northern Kattegat","Key Species","Flounder",-0.223285152285322,0.29913755538648,8
+"Kattegat","Denmark","Northern Limfjord","Functional groups","Piscivores",-0.322732120301375,0.38537727945469,5
+"Kattegat","Denmark","Northern Limfjord","Key Species","Flounder",-0.170687911664846,0.210877295459712,7
+"Kattegat","Denmark","Skive Fiord and Lovns Broad","Key Species","Flounder",-0.226086857002982,0.189126487565137,5
+"Kattegat","Denmark","Venoe Bay and Nissum Broad","Functional groups","Piscivores",-0.176575173437425,0.247945630620738,7
+"Kattegat","Denmark","Venoe Bay and Nissum Broad","Key Species","Flounder",-0.119246050298437,0.10664715383833,9
+"Northern Baltic Proper","Sweden","Askoe","Functional groups","Cyprinids",-0.202042778324546,0.306159632048263,9
+"Northern Baltic Proper","Sweden","Askoe","Functional groups","Piscivores",-0.000395755054273003,1.17466547236976e-06,9
+"Northern Baltic Proper","Sweden","Askoe","Key Species","Perch",0.0319543681025082,0.00765811230622946,9
+"The Quark","Finland","Rectangle 23","Functional groups","Cyprinids",-0.0263275466300617,0.00635378068928245,10
+"The Quark","Finland","Rectangle 23","Functional groups","Piscivores",0.279102182354793,0.714065258456085,10
+"The Quark","Finland","Rectangle 23","Key Species","Perch",0.286923382110083,0.754646082680322,10
+"The Quark","Finland","Rectangle 28","Functional groups","Cyprinids",0.19382651623076,0.344379918613074,10
+"The Quark","Finland","Rectangle 28","Functional groups","Piscivores",-0.156746292120724,0.225219500857962,10
+"The Quark","Finland","Rectangle 28","Key Species","Perch",-0.143958617183,0.189970765061383,10
+"The Quark","Sweden","Holmon 09","Functional groups","Cyprinids",0.0857766867079839,0.067445033173831,10
+"The Quark","Sweden","Holmon 09","Functional groups","Piscivores",-0.0868481172941387,0.0691404585440853,10
+"The Quark","Sweden","Holmon 09","Key Species","Perch",-0.0870408651398597,0.0694476952060406,10
+"The Quark","Sweden","Holmon 64","Functional groups","Cyprinids",0.278131436120442,0.709106711118854,10
+"The Quark","Sweden","Holmon 64","Functional groups","Piscivores",0.104880247288687,0.10083210748725,10
+"The Quark","Sweden","Holmon 64","Key Species","Perch",0.105318342791349,0.101676238842898,10
+"The Quark","Sweden","Norrbyn","Functional groups","Cyprinids",0.167023748519656,0.255721881887612,10
+"The Quark","Sweden","Norrbyn","Functional groups","Piscivores",-0.239017176641622,0.52368443168922,10
+"The Quark","Sweden","Norrbyn","Key Species","Perch",-0.239695665891954,0.526661778934391,10
+"The Sound","Denmark","The Sound","Functional groups","Piscivores",-0.0643921079162336,0.0328745810978895,8
+"The Sound","Denmark","The Sound","Key Species","Flounder",-0.0424501451860256,0.0142874032657808,8
+"Western Gotland Basin","Sweden","Kvado 53 / Kvaedoefjaerden","Functional groups","Cyprinids",0.0759095976973863,0.0528207810403085,10
+"Western Gotland Basin","Sweden","Kvado 53 / Kvaedoefjaerden","Functional groups","Piscivores",0.0913328031898553,0.0764654086030721,10
+"Western Gotland Basin","Sweden","Kvado 53 / Kvaedoefjaerden","Key Species","Perch",0.0774300551049236,0.0549579564742229,10
+"Western Gotland Basin","Sweden","Kvado 64 / Kvaedoefjaerden","Functional groups","Cyprinids",-0.135259636273147,0.167705717710155,10
+"Western Gotland Basin","Sweden","Kvado 64 / Kvaedoefjaerden","Functional groups","Piscivores",0.0586528067999626,0.0315347243338764,10
+"Western Gotland Basin","Sweden","Kvado 64 / Kvaedoefjaerden","Key Species","Perch",0.0341041277900982,0.0106616723796309,10
+"Western Gotland Basin","Sweden","Vino","Functional groups","Cyprinids",-0.0279321886489501,0.00715189899160502,10
+"Western Gotland Basin","Sweden","Vino","Functional groups","Piscivores",-0.139979291955597,0.179613519950247,10
+"Western Gotland Basin","Sweden","Vino","Key Species","Perch",-0.132840623880083,0.161760787401125,10
