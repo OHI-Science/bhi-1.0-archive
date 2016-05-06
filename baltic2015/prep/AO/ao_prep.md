@@ -13,9 +13,28 @@ This goal has three sub-components: *stock, access, and need*. For BHI we focus 
 
 ### Goal model
 
+#### Status
+
 Xao = Mean Stock Indicator Value / Reference pt
 Stock indicators = two HELCOM core indicators assessed for good environemental status (each scored between 0 and 1 by BHI)
 Reference pt = maximum possible good environmental status (value=1)
+
+#### Trend
+
+**Background**
+CPUE time series are available for all stations used for the HELCOM coastal fish populations core indicators. These data were provided by Jens Olsson (FISH PRO II project). To calculate GES status, full time series were used. Therefore, only one status time point and cannot calculate trend of status over time. Instead, follow approach from Bergström et al 2016, but only focus on the final time period for the slope (2004-2013).
+
+[Bergstrom et al. 2016. Long term changes in the status of coastal fish in the Baltic Sea. Estuarin, Coast and Shelf Science. 169:74-84](http://www.sciencedirect.com/science/article/pii/S0272771415301700http://www.sciencedirect.com/science/article/pii/S0272771415301700)
+
+**Trend Method** 1.Select final time period of trend assessment (2004-2013)
+2. Use time series from both indicators, Key Species and Functional groups. For functional groups,include both cyprinid and piscivore time series.
+3. For each time series: square-root transform data, z-score, fit linear regression, extract slope
+4. Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin
+5. Within each basin take a mean functional group indicator slope (mean of cyprinid mean and piscivore mean)
+6. For each basin take overall mean slope - mean of key species and functional group
+7. Multiple by five for future year value?
+8. Apply trend value for basin to all BHI regions (except in Gulf of Finland, do not apply Finnish site value to Estonia and Russian regions.)
+\*Steps 1-3 done in file `AO/ao_slope_calc.r`
 
 Data
 ----
@@ -23,12 +42,13 @@ Data
 [HELCOM Core Indicator Abundance of coastal fish key functional groups](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-coastal-fish-key-functional-groups/)
 
 [HELCOM Core Indicator Abundance of key coastal fish species](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species)
-
 Good Environmental Status (GES) is assessed as either *GES* or *sub-GES* based on data times series using either a baseline or a trend approach, [see explanation](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species/good-environmental-status/). There is only a single assessment for each region.
 
 *status qualifying comments*: for one dataset if a monitoring station receives a "sub-GES" assessment, it is given a qualifier as "low" or "high".
 
 Environmental status assessments provided by Jens Olsson (SLU). See [HELCOM FISH-PRO II](http://www.helcom.fi/helcom-at-work/projects/fish-pro/)
+
+CPUE data used in the GES assessment. Data provided by Jens Olsson, used in trend. Slopes from each analsysis available here, but CPUE data held internally in the BHI database.
 
 ### Data locations
 
@@ -224,7 +244,7 @@ str(coastal_fish_loc)
 ``` r
 #bhi region and HOLAS basin look up
  basin_lookup = readr::read_csv(file.path(
-  dir_prep,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
+  dir_ao,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
 basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
   mutate(basin_name = str_replace_all(basin_name,"_"," ")) 
 basin_lookup
@@ -1017,15 +1037,64 @@ head(shp_score3@data)
 
 ![](ao_prep_files/figure-markdown_github/plot%20BHI%20scores-1.png)<!-- -->
 
-5. Next steps
--------------
+Status review and decisions
+---------------------------
 
-1.  Have Jens assess scoring options for GES status assessment.
-    -   Should other scoring options be considered. Current methods don't differ when scaled up to basin or region.
+1.  Have Jens assess scoring options for GES status assessment - **Jens says alternative 2**
 
-2.  Have Jens assess method for scale up from monitoring location specific indicator status assessments to BHI region score.
-    -   Is it reasonable to
+2.  Have Jens assess method for scale up from monitoring location specific indicator status assessments to BHI region score - **Jens says generally reasonable, but GF score for Finland should not be applied to Russian and Estonian waters**
 
 3.  Check assignment of monitoring regions / assessment basins to HOLAS basins.
+    **Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data). *Should we gap-fill with adjacent areas?*- **Jens say do not gap fill from adjacent areas, there is not data and populations too local to extrapolate**
 
-**Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data). *Should we gap-fill with adjacent areas?*
+5. Calculate Trend
+------------------
+
+``` r
+slope = read.csv(file.path(dir_ao, 'ao_data_database/ao_cpue_slope.csv'))
+dim(slope)
+```
+
+    ## [1] 133   8
+
+``` r
+str(slope)
+```
+
+    ## 'data.frame':    133 obs. of  8 variables:
+    ##  $ Basin_HOLAS    : Factor w/ 15 levels "","Aland Sea",..: 1 1 1 2 2 2 2 2 2 2 ...
+    ##  $ country        : Factor w/ 7 levels "Denmark","Estonia",..: 1 7 7 3 3 3 3 3 3 3 ...
+    ##  $ monitoring_area: Factor w/ 55 levels "Area south of Zealand (Smalandsfarvandet)",..: 44 29 29 9 9 9 19 19 19 26 ...
+    ##  $ core_indicator : Factor w/ 2 levels "Functional groups",..: 2 1 2 1 1 2 1 1 2 1 ...
+    ##  $ taxa           : Factor w/ 5 levels "Cod","Cyprinids",..: 3 2 4 2 5 4 2 5 4 2 ...
+    ##  $ slope          : num  0.50986 -0.00665 0.08929 -0.02109 0.13631 ...
+    ##  $ r2             : num  0.909836 0.000406 0.07308 0.004076 0.170326 ...
+    ##  $ nobs           : int  6 10 10 10 10 10 10 10 10 10 ...
+
+``` r
+head(slope)
+```
+
+    ##   Basin_HOLAS country                    monitoring_area    core_indicator
+    ## 1             Denmark Ringkoebing Fjord and Nissum Fjord       Key Species
+    ## 2              Sweden                              Lagno Functional groups
+    ## 3              Sweden                              Lagno       Key Species
+    ## 4   Aland Sea Finland                              Finbo Functional groups
+    ## 5   Aland Sea Finland                              Finbo Functional groups
+    ## 6   Aland Sea Finland                              Finbo       Key Species
+    ##         taxa        slope           r2 nobs
+    ## 1   Flounder  0.509855913 0.9098356816    6
+    ## 2  Cyprinids -0.006654131 0.0004058767   10
+    ## 3      Perch  0.089287989 0.0730798292   10
+    ## 4  Cyprinids -0.021086609 0.0040759131   10
+    ## 5 Piscivores  0.136312164 0.1703258895   10
+    ## 6      Perch  0.143289376 0.1882085829   10
+
+TO DO Trend
+-----------
+
+1.  Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin
+2.  Within each basin take a mean functional group indicator slope (mean of cyprinid mean and piscivore mean)
+3.  For each basin take overall mean slope - mean of key species and functional group
+4.  Multiple by five for future year value?
+5.  Apply trend value for basin to all BHI regions (except in Gulf of Finland, do not apply Finnish site value to Estonia and Russian regions.)
