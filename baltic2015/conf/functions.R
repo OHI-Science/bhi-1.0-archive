@@ -411,6 +411,14 @@ AO = function(layers){
         dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
 
+      ## status value if NA for status
+        ## NA is because there has been no data, not because not applicable
+
+        ## status score NA changed to zero
+
+      ao_stock_status = ao_stock_status %>%
+                        mutate(score = replace(score, is.na(score),0))
+
       ## trend calc
         future_year = 5  ## number of years in the future for trend
 
