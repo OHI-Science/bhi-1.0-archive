@@ -264,11 +264,11 @@ MAR = function(layers){
 
 
   ## TEMP read in
-   library(dplyr)
-   library (tidyr)
-  harvest_tonnes = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv'); head(harvest_tonnes)
-  harvest_species = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv'); head(harvest_species)
-  sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
+  #  library(dplyr)
+  #  library (tidyr)
+  # harvest_tonnes = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv'); head(harvest_tonnes)
+  # harvest_species = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv'); head(harvest_species)
+  # sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
 
 
   # SETTING CONSTANTS
@@ -385,67 +385,133 @@ FP = function(layers, scores){
 }
 
 
-AO = function(layers,
-              year_max,
-              year_min=max(min(layers_data$year, na.rm=T), year_max - 10),
-              Sustainability=1.0){
+AO = function(layers){
+    ## AO Goal has thre components stock status, access, need
+    ## Currently BHI only addresses the stock  status
 
-  ## based off of the HELCOM coastal fish indicator
-  ## ohi-Fiji used this approach, although they calculated the fish indicator within functions.r. (but conceptually is the same)
-  ## http://www.sciencedirect.com/science/article/pii/S2212041614001363
-  ## github.com/OHI-Science/ohi-fiji/blob/master/fiji2013/conf/functions.R
+    ## updated 9 May 2016 Jennifer Griffiths
+
+    ##----------------------------##
+    ## STOCK STATUS SUB-COMPONENT
+
+    ## Status is calculated in the file ao_prep.rmd because calculated on the HOLAS basin scale
+    ##  and applied to BHI regions
+
+    ## The slope of the trend is also calculated in ao_prep.rmd on the HOLAS basin scale and
+    ##  applied to BHI regions
+          ## the slope is not yet modified by the future year of interest (5 years from now)
 
 
-  # cast data
-  layers_data = SelectLayersData(layers, targets='AO')
+    ## read in layers
 
-  ry = rename(dcast(layers_data, id_num + year ~ layer, value.var='val_num',
-                    subset = .(layer %in% c('ao_need'))),
-              c('id_num'='region_id', 'ao_need'='need')); head(ry); summary(ry)
+      ao_stock_status = SelectLayersData(layers, layers='ao_stock_status') %>%
+        dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-  r = na.omit(rename(dcast(layers_data, id_num ~ layer, value.var='val_num',
-                           subset = .(layer %in% c('ao_access'))),
-                     c('id_num'='region_id', 'ao_access'='access'))); head(r); summary(r)
+      ao_stock_slope = SelectLayersData(layers, layers='ao_stock_slope') %>%
+        dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-  ry = merge(ry, r); head(r); summary(r); dim(r)
 
-  # model
-  ry = within(ry,{
-    Du = (1.0 - need) * (1.0 - access)
-    statusData = ((1.0 - Du) * Sustainability)
-  })
+      ## status value if NA for status
+        ## NA is because there has been no data, not because not applicable
 
-  # status
-  r.status <- ry %>%
-    filter(year==year_max) %>%
-    select(region_id, statusData) %>%
-    mutate(status=statusData*100)
-summary(r.status); dim(r.status)
+        ## status score NA changed to zero
 
-  # trend
-  r.trend = ddply(subset(ry, year >= year_min), .(region_id), function(x)
-    {
-      if (length(na.omit(x$statusData))>1) {
-        # use only last valid 5 years worth of status data since year_min
-        d = data.frame(statusData=x$statusData, year=x$year)[tail(which(!is.na(x$statusData)), 5),]
-        trend = coef(lm(statusData ~ year, d))[['year']]*5
-      } else {
-        trend = NA
-      }
-      return(data.frame(trend=trend))
-    })
+      ao_stock_status = ao_stock_status %>%
+                        mutate(score = replace(score, is.na(score),0))
 
-  # return scores
-  scores = r.status %>%
-    select(region_id, score=status) %>%
-    mutate(dimension='status') %>%
-    rbind(
-      r.trend %>%
-        select(region_id, score=trend) %>%
-        mutate(dimension='trend')) %>%
-    mutate(goal='AO') # dlply(scores, .(dimension), summary)
-  return(scores)
-}
+      ## trend calc
+        future_year = 5  ## number of years in the future for trend
+
+        ao_stock_trend = ao_stock_slope %>%
+                          mutate(score = score* future_year)
+
+
+      ## join status and trend
+        ao_stock = full_join(ao_stock_status, ao_stock_trend, by = c('rgn_id','dimension','score')) %>%
+          dplyr::rename(region_id = rgn_id)
+
+
+        ##----------------------------##
+        ## OTHER sub-components
+
+        ## if have access or need data layers, bring in here
+
+
+        ##----------------------------##
+        ## AO SCORE object
+
+
+        scores = ao_stock %>%
+          mutate(goal   = 'A=')
+
+        return(scores)
+
+} ## END AO function
+
+
+  ## OLD AO function
+  # function(layers,
+  #          year_max,
+  #          year_min=max(min(layers_data$year, na.rm=T), year_max - 10),
+  #          Sustainability=1.0){
+  #
+
+#   ## based off of the HELCOM coastal fish indicator
+#   ## ohi-Fiji used this approach, although they calculated the fish indicator within functions.r. (but conceptually is the same)
+#   ## http://www.sciencedirect.com/science/article/pii/S2212041614001363
+#   ## github.com/OHI-Science/ohi-fiji/blob/master/fiji2013/conf/functions.R
+#
+#
+#   # cast data
+#   layers_data = SelectLayersData(layers, targets='AO')
+#
+#   ry = rename(dcast(layers_data, id_num + year ~ layer, value.var='val_num',
+#                     subset = .(layer %in% c('ao_need'))),
+#               c('id_num'='region_id', 'ao_need'='need')); head(ry); summary(ry)
+#
+#   r = na.omit(rename(dcast(layers_data, id_num ~ layer, value.var='val_num',
+#                            subset = .(layer %in% c('ao_access'))),
+#                      c('id_num'='region_id', 'ao_access'='access'))); head(r); summary(r)
+#
+#   ry = merge(ry, r); head(r); summary(r); dim(r)
+#
+#   # model
+#   ry = within(ry,{
+#     Du = (1.0 - need) * (1.0 - access)
+#     statusData = ((1.0 - Du) * Sustainability)
+#   })
+#
+#   # status
+#   r.status <- ry %>%
+#     filter(year==year_max) %>%
+#     select(region_id, statusData) %>%
+#     mutate(status=statusData*100)
+# summary(r.status); dim(r.status)
+#
+#   # trend
+#   r.trend = ddply(subset(ry, year >= year_min), .(region_id), function(x)
+#     {
+#       if (length(na.omit(x$statusData))>1) {
+#         # use only last valid 5 years worth of status data since year_min
+#         d = data.frame(statusData=x$statusData, year=x$year)[tail(which(!is.na(x$statusData)), 5),]
+#         trend = coef(lm(statusData ~ year, d))[['year']]*5
+#       } else {
+#         trend = NA
+#       }
+#       return(data.frame(trend=trend))
+#     })
+#
+#   # return scores
+#   scores = r.status %>%
+#     select(region_id, score=status) %>%
+#     mutate(dimension='status') %>%
+#     rbind(
+#       r.trend %>%
+#         select(region_id, score=trend) %>%
+#         mutate(dimension='trend')) %>%
+#     mutate(goal='AO') # dlply(scores, .(dimension), summary)
+#   return(scores)
+#}
 
 NP = function(scores, layers, year_max, debug=F){
   # TODO: add smoothing a la PLoS 2013 manuscript

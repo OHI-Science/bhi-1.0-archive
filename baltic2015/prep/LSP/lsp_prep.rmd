@@ -90,7 +90,41 @@ There is limited information on MPA area from previous assessments. Need to read
 Prep data layer
 
 ```{r TODO, echo=FALSE, message=FALSE}
+
+
+## directory setup
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+  warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
+}
+
+
+## libraries
+library(dplyr)
+library(rgdal)  # install.packages('rgdal')
+library(raster) # install.packages('raster')
+library(rgeos)  # install.packages('rgeos')
+
+```
+
+## Visualize MPA data
+```{r echo=FALSE, message=FALSE}
 ## read in data...
+
+ tmp_filepath <- '~/Desktop/bhi_4.27.16'
+
+HELCOM_MPAs = rgdal::readOGR(dsn = path.expand(tmp_filepath),
+                             layer = 'HELCOM_MPAs') # dsn is the path name & layer is the name of the file. 
+## plot
+plot(HELCOM_MPAs)
+
+## explore this spatial polygon and its data
+HELCOM_MPAs
+head(HELCOM_MPAs@data)
 
 ## Read in MPA management plan status file from "~/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_management_plans_20160415.csv"
 

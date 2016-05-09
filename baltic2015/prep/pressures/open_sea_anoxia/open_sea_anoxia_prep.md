@@ -94,7 +94,7 @@ Other areas are not included in this study but at the present time have no anoxi
 
 #### 2.1.2 Bathymetry
 
-.....TO DO
+Downloaded from [HELCOM](http://maps.helcom.fi/website/mapservice/index.html) 28 April 2016 by Thorsten Blenckner
 
 3. Open sea anoxia spatial data scale
 -------------------------------------
@@ -110,19 +110,20 @@ Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.
 
 ### 4.1 Current value
 
-    - Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  
-        - Need to decide if use most recent year (2014) or mean of recent years
-    - Gulf of Finland BHI regions =   
+    - Baltic Proper BHI regions =  of the area >= 70m deep the area with O2 <0 mg⋅L−1  
+        - Use the mean area for the most recent 3 years (2012-2014)  
+    - Gulf of Finland BHI regions = of the total surface area in each BHI region, the area with O2 <0 mg⋅L−1  
+        - Use the mean area for the most recent 3 years (2012-2014)  
 
 ### 4.2 Max value
 
-    - Baltic Proper BHI regions =  total area >= 70m depth  
-    - Gulf of Finland BHI regions =   
+    - Baltic Proper BHI regions =  of area >= 70m depth, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
+    - Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
 
 ### 4.3 Min value
 
      - Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  in 1906  
-     - Gulf of Finland BHI regions = 
+     - Gulf of Finland BHI regions = total surface area, the area with O2 <0 mg⋅L−1  in 1906
 
 5. Open Sea Anoxia layer prep
 -----------------------------
