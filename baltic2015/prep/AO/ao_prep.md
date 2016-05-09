@@ -1061,16 +1061,16 @@ bhi_score = bhi_mean_score_colors%>%
             select(bhi_id, mean_basin_score) %>%
             mutate(mean_basin_score = ifelse(bhi_id %in% c(33,34), NA, mean_basin_score),
                    dimension= "score")%>%  ## replace 33,34 with NA because no obs from that part of Gulf of Finland
-            dplyr::rename(region=bhi_id,
+            dplyr::rename(rgn_id=bhi_id,
                           score=mean_basin_score)%>%
             mutate(score = round(score*100)) %>%  ## score from 0-100
-            select(region,dimension,score)
+            select(rgn_id,dimension,score)
 
 str(bhi_score)
 ```
 
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    42 obs. of  3 variables:
-    ##  $ region   : int  1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ rgn_id   : int  1 2 3 4 5 6 7 8 9 10 ...
     ##  $ dimension: chr  "score" "score" "score" "score" ...
     ##  $ score    : num  20 20 27 27 20 20 NA NA 70 70 ...
 
@@ -1386,16 +1386,16 @@ par(mfrow=c(1,1))
 
 bhi_slope = slope4 %>%
             select(bhi_id, slope_mean_basin)%>%
-            dplyr::rename(region = bhi_id,
+            dplyr::rename(rgn_id = bhi_id,
                           score = slope_mean_basin) %>%
             mutate(dimension="trend",
                   score = round(score,2)) %>% ## round to 2 decimal places
-            select(region, dimension,score)
+            select(rgn_id, dimension,score)
 str(bhi_slope)
 ```
 
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    42 obs. of  3 variables:
-    ##  $ region   : int  1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ rgn_id   : int  1 2 3 4 5 6 7 8 9 10 ...
     ##  $ dimension: chr  "trend" "trend" "trend" "trend" ...
     ##  $ score    : num  -0.08 -0.08 -0.01 -0.01 -0.05 -0.05 NA NA NA NA ...
 
