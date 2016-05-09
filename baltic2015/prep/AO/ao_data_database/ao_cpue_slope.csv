@@ -1,7 +1,5 @@
 "Basin_HOLAS","country","monitoring_area","core_indicator","taxa","slope","r2","nobs"
 "","Denmark","Ringkoebing Fjord and Nissum Fjord","Key Species","Flounder",0.509855912864112,0.909835681588551,6
-"","Sweden","Lagno","Functional groups","Cyprinids",-0.0066541307386956,0.000405876678970168,10
-"","Sweden","Lagno","Key Species","Perch",0.0892879891147211,0.0730798291680477,10
 "Aland Sea","Finland","Finbo","Functional groups","Cyprinids",-0.0210866085871225,0.00407591306564304,10
 "Aland Sea","Finland","Finbo","Functional groups","Piscivores",0.136312164261572,0.170325889485346,10
 "Aland Sea","Finland","Finbo","Key Species","Perch",0.143289376456743,0.188208582882489,10
@@ -11,7 +9,9 @@
 "Aland Sea","Finland","Kumlinge","Functional groups","Cyprinids",0.0943937689772554,0.0816766831992062,10
 "Aland Sea","Finland","Kumlinge","Functional groups","Piscivores",0.150618521755228,0.207954441710861,10
 "Aland Sea","Finland","Kumlinge","Key Species","Perch",0.14923818727949,0.204160334972627,10
+"Aland Sea","Sweden","Lagno","Functional groups","Cyprinids",-0.0066541307386956,0.000405876678970168,10
 "Aland Sea","Sweden","Lagno","Functional groups","Piscivores",0.0861213168457418,0.0679880778064103,10
+"Aland Sea","Sweden","Lagno","Key Species","Perch",0.0892879891147211,0.0730798291680477,10
 "Arkona Basin","Denmark","Area south of Zealand (Smalandsfarvandet)","Functional groups","Piscivores",0.0988637124042023,0.0781922690427092,6
 "Arkona Basin","Denmark","Area south of Zealand (Smalandsfarvandet)","Key Species","Flounder",0.14388503402966,0.0766007411655645,5
 "Arkona Basin","Denmark","Praestoe Fiord","Functional groups","Piscivores",-0.248816280555866,0.36526629467082,6
