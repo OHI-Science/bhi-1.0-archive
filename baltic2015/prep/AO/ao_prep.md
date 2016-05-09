@@ -1417,10 +1417,12 @@ Here the status and slope value obejcts will be be saved as csv files in the lay
 **Score Object** Created in section 4.2
 
 ``` r
+## Data layers for the stock component of AO
+
 ## Status Score
-write.csv(bhi_score, file.path(dir_layers, 'ao_status_bhi2015.csv'),row.names=FALSE)
+write.csv(bhi_score, file.path(dir_layers, 'ao_stock_status_bhi2015.csv'),row.names=FALSE)
 
 
 ## Slope for Trend
-write.csv(bhi_slope, file.path(dir_layers, 'ao_slope_bhi2015.csv'),row.names=FALSE)
+write.csv(bhi_slope, file.path(dir_layers, 'ao_stock_slope_bhi2015.csv'),row.names=FALSE)
 ```
