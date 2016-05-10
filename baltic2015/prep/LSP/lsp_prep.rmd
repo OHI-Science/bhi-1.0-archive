@@ -82,8 +82,22 @@ Reference_pt_country = 10% of the area in a country's EEZ is designated as an MP
     - This is based on the Convention on Biodiversity [target](https://www.cbd.int/sp/targets/rationale/target-11/)
 
 ### 3.2 Trend
-We only have data for a single status assessment based on MPA and management status.  
+##### 3.2.1 Alternative 1
+MPA dbf contains the date the MPA was established. Therefore, we can calculate the cumulative area over time that are MPAs.  We can fit a cum. area ~ year. Calculate cumulative area from ealiest year of MPA established (1976) but for trend use the most recent 10 year period (2004 - 2013)?  It appears that countries mostly designate MPAs in chunks.
 
+Only allow a positive slope since countries are not removing mpas? This would be automatic since regressing cumulative area on year (and have no info on areas removed). Also, if country reaches 10% goal, then the rate at which new area is added should go to zero. Then it is okay to have zero slope because the status will not decline in future - the required area has been allocated and status can only improve if all areas are managed. Then score of 100 is achieved.   
+
+
+Cum_area_y = sum of all MPA areas established from year 1 to year y  
+
+Cum_area_y = m*year_y + b; m = slope  
+
+Trend = Future_year * m ; future_year = 5  
+
+How to rescale trend?  If all values are between 0-1, do we need to rescale?  
+
+
+#### 3.2.2 Alterative 2
 There is limited information on MPA area from previous assessments. Need to read historic overview provided in [Baltic Sea Environment Proceedings NO. 124B Towards an ecologically coherent network of well-managed Marine Protected Areas](http://www.helcom.fi/lists/publications/bsep124b.pdf). Use this for the trend?  If area increasing, get positive trend?  
 
 ## 4. MPA data prep
