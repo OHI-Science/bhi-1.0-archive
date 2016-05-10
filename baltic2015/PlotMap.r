@@ -5,6 +5,7 @@
 
 
 library(ggplot2) # install.packages('ggplot2')
+library(tmap)
 library(RColorBrewer) # install.packages('RColorBrewer')
 
 library(dplyr)
@@ -21,13 +22,13 @@ scale_limits <- c(0, 100)
 map_title       = 'craptastic'
 scale_label     = 'Biodiversity'
 
+mapfile_path = 'spatial/regions_gcs.geojson'
+rgn_poly <-     readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON")
 
-source('PrepSpatial.R')
-sp_rgn          = PrepSpatial('spatial/regions_gcs.geojson')
-PlotMap(scores, sp_rgn = sp_rgn, scale_label = 'test1', map_title = 'test2')
+PlotMap(scores, rgn_poly, scale_label = 'test1', map_title = 'test2')
 
 PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id and scores/values.
-                    sp_rgn          = PrepSpatial('spatial/regions_gcs.geojson'), ### default for OHI+
+                    rgn_poly,       # = rgdal::readOGR(dsn = 'spatial', layer = 'regions_gcs', ), ### default for OHI+
                     map_title       = element_blank(),
                     scale_label     = 'score',
                     scale_limits    = c(0, 100),
@@ -38,41 +39,43 @@ PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id 
 
   ### rename columns for convenience...
   names(scores)[names(scores) == fld_rgn]   <- 'rgn_id'
-  names(sp_rgn)[names(sp_rgn) == fld_rgn]   <- 'rgn_id'
+  names(rgn_poly@data)[names(rgn_poly@data) == fld_rgn]   <- 'rgn_id'
   names(scores)[names(scores) == fld_score] <- 'score'
 
   ### join polygon with scores
-  score_rgn <- sp_rgn %>%
+  rgn_poly@data <- rgn_poly@data %>%
     left_join(scores %>%
                 dplyr::select(rgn_id, score),
               by = 'rgn_id')
 
 
-  df_plot <- ggplot(data = score_rgn,
-                    aes(x = long, y = lat, group = group, fill = score)) +
-    theme(axis.ticks = element_blank(),
-          axis.text  = element_blank(),
-          axis.title = element_blank(),
-          text       = element_text(family = 'Helvetica', color = 'gray30', size = 12),
-          plot.title = element_text(size = rel(1.5), hjust = 0, face = 'bold'),
-          legend.position = 'right') +
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank()) +
-    scale_fill_gradientn(colours = brewer.pal(10, 'RdYlBu'),
-                         na.value = 'gray80',
-                         limits = scale_limits,
-                         name = scale_label) +
-    geom_polygon(color = 'gray80', size = 0.1) +
-    labs(title = map_title)
+  tmap_plot <- qtm(rgn_poly, fill = 'score')
+
+  # df_plot <- ggplot(data = score_rgn,
+  #                   aes(x = long, y = lat, group = group, fill = score)) +
+  #   theme(axis.ticks = element_blank(),
+  #         axis.text  = element_blank(),
+  #         axis.title = element_blank(),
+  #         text       = element_text(family = 'Helvetica', color = 'gray30', size = 12),
+  #         plot.title = element_text(size = rel(1.5), hjust = 0, face = 'bold'),
+  #         legend.position = 'right') +
+  #   theme(panel.grid.major = element_blank(),
+  #         panel.grid.minor = element_blank(),
+  #         panel.background = element_blank()) +
+  #   scale_fill_gradientn(colours = brewer.pal(10, 'RdYlBu'),
+  #                        na.value = 'gray80',
+  #                        limits = scale_limits,
+  #                        name = scale_label) +
+  #   geom_polygon(color = 'gray80', size = 0.1) +
+  #   labs(title = map_title)
 
   if(print_map) {
-    print(df_plot)
+    print(tmap_plot)
   }
 
   if(!is.null(fig_path)) {
-    ggsave(fig_path, plot = df_plot, width = 7, height = 7)
+    save_tmap(fig_path, plot = tmap_plot, width = 7, height = 7)
   }
 
-  return(invisible(df_plot))
+  return(invisible(tmap_plot))
 }
