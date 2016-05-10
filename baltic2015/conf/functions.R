@@ -442,7 +442,7 @@ AO = function(layers){
 
 
         scores = ao_stock %>%
-          mutate(goal   = 'A=')
+          mutate(goal   = 'AO')
 
         return(scores)
 
