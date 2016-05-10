@@ -29,12 +29,13 @@ PlotMap(scores, rgn_poly, scale_label = 'test1', map_title = 'test2')
 
 PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id and scores/values.
                     rgn_poly,       # = rgdal::readOGR(dsn = 'spatial', layer = 'regions_gcs', ), ### default for OHI+
+                    fld_rgn         = 'region_id',
+                    fld_score       = 'score',
                     map_title       = element_blank(),
                     scale_label     = 'score',
                     scale_limits    = c(0, 100),
                     print_map       = TRUE, ### print to display
-                    fig_path        = NULL, ### path to save the plot as an image
-                    # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on
+                    fig_path        = NULL, ### path to save the plot as an image; NULL doesn't save
                     overwrite       = TRUE) {
 
   ### rename columns for convenience...
