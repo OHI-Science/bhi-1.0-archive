@@ -73,31 +73,13 @@ Contaminant Data Prep
 
 ### 1.2 (1) PCB concentration indicator
 
-#### 1.2.1 Original PCB indicator: ICES-6 PCB
+#### 1.2.1 ICES-6 PCB
 
 Non-dioxin like PCBs: sum of congeners (28, 52, 101, 138, 153, 180) 75 μg/kg ww fish muscle
 
 This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).
 
 75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF). This threshold was also agreed upon as GES boundary at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*
-
-#### 1.2.2 Alternatie PCB indicator: CB-153 Concentration
-
-CB-153 concentration
- - Suggested by Anders Bignet and Elisabeth Nyberg. - This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.
- - They suggest using the EU threshold for human health as the reference point.
-
-EU documents seem to only focus on the ICES6 indicator. However, OSPAR as individual CB thresholds. [OSPAR background](http://qsr2010.ospar.org/media/assessments/p00390_supplements/p00461_Background_Doc_CEMP_Assessmt_Criteria_Haz_Subs.pdf).
-
-Table 1, p.14: Blue range = Status is acceptable. Concentrations are close to background or zero, i.e. the ultimate aim of the OSPAR Strategy for Hazardous Substances has been achieved.
-
-Table 5c. Blue &lt; BAC = CB153 0.2 μg/kg wet weight. *(this number differs in what is summarized for this report in the HELCOM core indicator document from 2013)*
-
-**Older documents with background**
-Additional information from HELCOM on the Core Indicators:
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf). *This document is now outdated*
-
-*Determination of GES boundary* The CORESET expert group decided that, due to uncertainties in the target setting on the OSPAR and EU working groups, the seven PCBs should be monitored and concentrations analysed but the core indicator assesses primarily two congeners only: CB-118 (dioxin like) and 153 (non-dioxin like). Tentatively the OSPAR EACs for these two congeners are suggested to be used.
 
 ### 1.3 (2) TEQ value for PCBs and Dioxins
 
@@ -129,7 +111,8 @@ Dioxins are included in several international agreements, of which the Stockholm
 #### 2.1.1 PCB data
 
 **ICES** [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)
-Downloaded 22 April 2016 by Jennifer Griffiths Data selections:
+Downloaded 22 April 2016 by Jennifer Griffiths
+Data selections:
 Year - 1990-2014
 Purpose of monitoring = All
 Country = ALL
@@ -1419,9 +1402,10 @@ dim(ices6_2datemean) #145  20
 Red dots are the ices6 concentration mean by date and location excluding qflagged values.
  - Including the qflag-adjusted values lowers the mean concentration by date and location, provides more observations in the Kattegat, The Quark, and W. Gotland Basin
 
+    - Outlier in Eastern Gotland Basin is from Polish observations 2014. Have checked unit conversions etc, have found not error.
+
 ``` r
 ##temporily merge ices6_1datemean and ices6_2datemean to more easily compare in a plot
-
 plotdata_temp = full_join(ices6_1datemean,ices6_2datemean,
                           by=c("rgn_id", "basin_name", "country", "monit_program", 
                                "monit_purpose", "report_institute", "station", "lat", 
@@ -1432,18 +1416,12 @@ plotdata_temp = full_join(ices6_1datemean,ices6_2datemean,
                           mutate(health_threshold=75)
 
 ##not showing human health threshold
-ggplot(plotdata_temp) +
-  geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
-  geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
-  facet_wrap(~basin_name, scales="free_y")+
-  ggtitle("Mean ICES6 concentration ug/kg by date & location")
-```
+# ggplot(plotdata_temp) +
+#   geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
+#   geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
+#   facet_wrap(~basin_name, scales="free_y")+
+#   ggtitle("Mean ICES6 concentration ug/kg by date & location")
 
-    ## Warning: Removed 82 rows containing missing values (geom_point).
-
-![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-1.png)<!-- -->
-
-``` r
 ##plot by year
 ggplot(plotdata_temp) +
   geom_point(aes(year,ices6_datemean_qflag_adj),colour="gray")+
@@ -1454,7 +1432,7 @@ ggplot(plotdata_temp) +
 
     ## Warning: Removed 82 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-1.png)<!-- -->
 
 ``` r
 ##showing the human health threshold                    
@@ -1467,6 +1445,17 @@ ggplot(plotdata_temp) +
 ```
 
     ## Warning: Removed 82 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-2.png)<!-- -->
+
+``` r
+##Plot variation in the 5 year status period
+ggplot(filter(plotdata_temp, year >2008 & year < 2013)) + 
+  geom_boxplot(aes(basin_name, ices6_datemean_qflag_adj))+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean ICES6 concentration (ug/kg) variation by basin, 2009-2013")
+```
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-3.png)<!-- -->
 
@@ -1627,28 +1616,37 @@ ices6_mean_basin_num_obs = ices6_1datemean %>%
                              filter(year >=2009 & year <= 2013) %>% ## select years 2009 
                              select(basin_name,ices6_datemean_ug_kg) %>%
                              count(basin_name)
+## number of locations sampled by basin
+ices6_mean_basin_num_loc = ices6_1datemean %>%
+                             filter(year >=2009 & year <= 2013) %>% ## select years 2009 
+                             select(basin_name,lat,lon) %>%
+                             distinct(.)%>%
+                             count(basin_name)
 
-## join mean and number of observations
+## join mean and number of observations and number of locations
 ices6_mean_basin  = ices6_mean_basin %>%
-                      full_join(., ices6_mean_basin_num_obs, by="basin_name") %>%
-                      dplyr::rename(num_obs=n)
+                      full_join(., ices6_mean_basin_num_obs, by="basin_name") %>% 
+                      dplyr::rename(num_obs=n) %>%
+                      full_join(.,ices6_mean_basin_num_loc, by="basin_name" ) %>%
+                      dplyr::rename(num_loc=n)
+                                    
 ices6_mean_basin
 ```
 
-    ## Source: local data frame [10 x 3]
+    ## Source: local data frame [10 x 4]
     ## 
-    ##                basin_name ices6_mean_ug_kg num_obs
-    ##                    (fctr)            (dbl)   (int)
-    ## 1               Aland Sea             9.71       5
-    ## 2            Arkona Basin             9.18       7
-    ## 3          Bornholm Basin             5.98      21
-    ## 4            Bothnian Bay             2.89      19
-    ## 5            Bothnian Sea             6.18      22
-    ## 6   Eastern Gotland Basin             5.77       5
-    ## 7                Kattegat             4.27       8
-    ## 8  Northern Baltic Proper             3.61      10
-    ## 9               The Quark             3.37       5
-    ## 10  Western Gotland Basin             7.51       5
+    ##                basin_name ices6_mean_ug_kg num_obs num_loc
+    ##                    (fctr)            (dbl)   (int)   (int)
+    ## 1               Aland Sea             9.71       5       1
+    ## 2            Arkona Basin             9.18       7       4
+    ## 3          Bornholm Basin             5.98      21       4
+    ## 4            Bothnian Bay             2.89      19       4
+    ## 5            Bothnian Sea             6.18      22       4
+    ## 6   Eastern Gotland Basin             5.77       5       1
+    ## 7                Kattegat             4.27       8       2
+    ## 8  Northern Baltic Proper             3.61      10       2
+    ## 9               The Quark             3.37       5       1
+    ## 10  Western Gotland Basin             7.51       5       1
 
 ``` r
 ## assign basin values to BHI regions
@@ -1658,25 +1656,29 @@ ices6_mean_basin_rgn = ices6_mean_basin %>%
 ices6_mean_basin_rgn
 ```
 
-    ## Source: local data frame [42 x 5]
+    ## Source: local data frame [42 x 6]
     ## 
-    ##        basin_name ices6_mean_ug_kg num_obs rgn_id mean_type
-    ##            (fctr)            (dbl)   (int)  (int)     (chr)
-    ## 1       Aland Sea             9.71       5     35     basin
-    ## 2       Aland Sea             9.71       5     36     basin
-    ## 3    Arkona Basin             9.18       7     11     basin
-    ## 4    Arkona Basin             9.18       7     12     basin
-    ## 5    Arkona Basin             9.18       7     13     basin
-    ## 6  Bornholm Basin             5.98      21     14     basin
-    ## 7  Bornholm Basin             5.98      21     15     basin
-    ## 8  Bornholm Basin             5.98      21     16     basin
-    ## 9  Bornholm Basin             5.98      21     17     basin
-    ## 10   Bothnian Bay             2.89      19     41     basin
-    ## ..            ...              ...     ...    ...       ...
+    ##        basin_name ices6_mean_ug_kg num_obs num_loc rgn_id mean_type
+    ##            (fctr)            (dbl)   (int)   (int)  (int)     (chr)
+    ## 1       Aland Sea             9.71       5       1     35     basin
+    ## 2       Aland Sea             9.71       5       1     36     basin
+    ## 3    Arkona Basin             9.18       7       4     11     basin
+    ## 4    Arkona Basin             9.18       7       4     12     basin
+    ## 5    Arkona Basin             9.18       7       4     13     basin
+    ## 6  Bornholm Basin             5.98      21       4     14     basin
+    ## 7  Bornholm Basin             5.98      21       4     15     basin
+    ## 8  Bornholm Basin             5.98      21       4     16     basin
+    ## 9  Bornholm Basin             5.98      21       4     17     basin
+    ## 10   Bothnian Bay             2.89      19       4     41     basin
+    ## ..            ...              ...     ...     ...    ...       ...
+
+##### 4.5.1.1 Plot Mean Basin
+
+Symbols represent the number of unique locations sampled within the basin. Size indicates the number of observations in the basin (unique date x location)
 
 ``` r
 ggplot(ices6_mean_basin_rgn) + 
-  geom_point(aes(basin_name,ices6_mean_ug_kg, size=num_obs))+
+  geom_point(aes(basin_name,ices6_mean_ug_kg, size=num_obs,shape=factor(num_loc)))+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
     ggtitle("Mean ICES6 conc calculated by basin 2009-2013")
@@ -1684,7 +1686,7 @@ ggplot(ices6_mean_basin_rgn) +
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/mean%20basin-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20basin-1.png)<!-- -->
 
 #### 4.5.2 Mean BHI Region
 
@@ -1698,38 +1700,47 @@ ices6_mean_region = ices6_1datemean %>%
                 summarise(ices6_mean_ug_kg = round(mean(ices6_datemean_ug_kg),2))%>%
                 ungroup()
                 
-## number of observations by basin
+## number of observations by region
 ices6_mean_region_num_obs = ices6_1datemean %>%
                              filter(year >=2009 & year <= 2013) %>% ## select years 2009 
                              select(rgn_id,ices6_datemean_ug_kg) %>%
                              count(rgn_id)
+## number of observations by region
+ices6_mean_region_num_loc= ices6_1datemean %>%
+                             filter(year >=2009 & year <= 2013) %>% ## select years 2009 
+                             select(rgn_id,lat,lon) %>%
+                             distinct(.)%>%
+                             count(rgn_id)
+
 
 ## join mean and number of observations
 ices6_mean_region  = ices6_mean_region %>%
                       full_join(., ices6_mean_region_num_obs, by="rgn_id") %>%
-                      dplyr::rename(num_obs=n)
+                      dplyr::rename(num_obs=n)%>%
+                      full_join(., ices6_mean_region_num_loc, by="rgn_id")%>%
+                     dplyr::rename(num_loc=n)
 ices6_mean_region
 ```
 
-    ## Source: local data frame [15 x 3]
+    ## Source: local data frame [15 x 4]
     ## 
-    ##    rgn_id ices6_mean_ug_kg num_obs
-    ##     (dbl)            (dbl)   (int)
-    ## 1       1             4.27       8
-    ## 2      11             8.41       4
-    ## 3      13            10.21       3
-    ## 4      14             6.31      15
-    ## 5      17             5.16       6
-    ## 6      21             5.77       5
-    ## 7      26             7.51       5
-    ## 8      29             4.07       5
-    ## 9      30             3.14       5
-    ## 10     35             9.71       5
-    ## 11     37             7.09      18
-    ## 12     38             2.07       4
-    ## 13     39             3.37       5
-    ## 14     41             3.22      15
-    ## 15     42             1.67       4
+    ##    rgn_id ices6_mean_ug_kg num_obs num_loc
+    ##     (dbl)            (dbl)   (int)   (int)
+    ## 1       1             4.27       8       2
+    ## 2      11             8.41       4       1
+    ## 3      13            10.21       3       3
+    ## 4      14             6.31      15       2
+    ## 5      17             5.16       6       2
+    ## 6      21             5.77       5       1
+    ## 7      26             7.51       5       1
+    ## 8      29             4.07       5       1
+    ## 9      30             3.14       5       1
+    ## 10     35             9.71       5       1
+    ## 11     37             7.09      18       3
+    ## 12     38             2.07       4       1
+    ## 13     39             3.37       5       1
+    ## 14     41             3.22      15       3
+    ## 15     42             1.67       4       1
 
 ``` r
 ## join with lookup_basins so have rgns with NA
@@ -1737,6 +1748,22 @@ ices6_mean_region = ices6_mean_region %>%
                       full_join(., select(lookup_basins, rgn_id), by="rgn_id") %>%
                       mutate(mean_type= "region")
 ```
+
+##### 4.5.2.1 Plot Mean Region
+
+Symbols represent the number of unique locations sampled within the region. Size indicates the number of observations in the region (unique date x location)
+
+``` r
+ggplot(ices6_mean_region) + 
+  geom_point(aes(rgn_id,ices6_mean_ug_kg, size=num_obs,shape=factor(num_loc)))+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+    ggtitle("Mean ICES6 conc calculated by BHI Region 2009-2013")
+```
+
+    ## Warning: Removed 27 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20region-1.png)<!-- -->
 
 #### 4.5.3 Mean BHI Region
 
@@ -1761,6 +1788,17 @@ ggplot(ices6_mean) +
     ## Warning: Removed 42 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-1.png)<!-- -->
+
+``` r
+ggplot(ices6_mean) + 
+  geom_point(aes(rgn_id,ices6_mean_ug_kg, size=num_loc, colour=mean_type,shape=mean_type))+
+   scale_shape_manual(values=c(1,2))+
+    ggtitle("Mean ICES6 conc calculated by basin or BHI region")
+```
+
+    ## Warning: Removed 42 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-2.png)<!-- -->
 
 #### 4.5.4 Calculate Status
 
@@ -1911,13 +1949,52 @@ Current error for fitting the zscore data seems to be an issue if there is only 
 #                     ungroup()
 ```
 
-TO DO
------
+### 4.6 Method discussion with Anna Sobek
 
-1.  Indicator choice - *I think that the ICES6 is the most justifiable even if that reduces sample size*
-2.  Decision about use of qflagg-adjusted data - *Current preliminary status calculations include qflagged data that have been adjusted by (value/2)*
+1.  Indicator choice: *We agreed that ICES6 is the best option *
+2.  Decision about use of qflagg-adjusted data: *use qflagged data with the adjustement of (congener conc/2)*
+3.  Decision about spatial scale of the data: *decide best approach is to calculate for each basin*
+4.  Trend decision: *best approach is first convert individual observations to a "status" relative to the human health threshold, then fit linear model by basin for 10 year period* **TREND CHECK - Does the trend value need to be rescaled to between -1 and 1? Does not exceed now but need to consider if method broadly works?)**
 
-3.  Decision about spatial scale of the data - [Bignert et al. 2007](http://pubs.rsc.org/en/Content/ArticleLanding/2007/EM/b700667e#!divAbstract) shows spatial autocorrelation up to 100 km.
-    -   Do we want to average for BHI regions (will be large distances than 100 but only one coastline included). Have data in 17 regions (poor coverage in some of these).
-    -   Could average at the basin scale - much larger spatial area, inferring similarity over much greater distances. Have data for 11 basin (out of 17)
-        \*\* Have now calculated status for both of the above options\*\*
+### 4.7 Final Status and Trend obejcts
+
+Create final status and trend objects to export as csv to layers folder. These layers are then registered in layers.csv
+
+``` r
+## STATUS
+## status calculated in 4.5.4
+status_ices6 = ices6_mean %>%
+              filter(mean_type=="basin")%>%  ## select status calculated by basin
+              select(rgn_id, ices6_status)%>%
+              dplyr::rename(score = ices6_status) %>%
+              mutate(dimension = "status",
+                     score = score*100) %>%
+              select(rgn_id, dimension,score) %>%
+              arrange(rgn_id)
+  
+
+## TREND
+## Trend calculated iin 4.5.6
+trend_ices6 = ices6_basin_trend_alt2 %>%
+              full_join(.,select(lookup_basins, rgn_id,basin_name), by= "basin_name")%>%
+              select(rgn_id, trend_score)%>%
+              rename(score = trend_score) %>%
+              mutate(dimension = "trend",
+                     score = round(score,2))%>%
+              select(rgn_id,dimension,score)%>%
+              arrange(rgn_id)
+              
+
+
+## WRITE AS CSV
+
+write.csv(status_ices6, file.path(dir_layers, 'cw_con_ices6_status_bhi2015.csv'), row.names=FALSE)
+
+write.csv(trend_ices6, file.path(dir_layers, 'cw_con_ices6_trend_bhi2015.csv'), row.names=FALSE)
+```
+
+5. Data Prep - Dioxin Indicator
+-------------------------------
+
+6. Data Prep - PFOS Indicator
+-----------------------------
