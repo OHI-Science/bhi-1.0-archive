@@ -1473,18 +1473,23 @@ CW = function(layers){
   ## Trend is calculated over a 10 year period with a minimum of 5 years of data
       ## expect slow response time in secchi observation so use longer time window for trend
 
-  cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
+    ## Read in from csv to test
+      #cw_nu_status= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_nu_status_bhi2015.csv')
+      #cw_nu_trend= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
+
+
+   cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
     dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-  cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
+    cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
     dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
 
     # join NUT status and trend to one dataframe
     cw_nu = full_join(cw_nu_status, cw_nu_trend, by = c('rgn_id','dimension','score')) %>%
-      dplyr::rename(region_id = rgn_id) %>%
-            mutate(subcom = 'NUT')  ##Label subcompoent with nut so can average later
-
+            dplyr::rename(region_id = rgn_id) %>%
+            mutate(subcom = 'NUT') %>%  ##Label subcompoent with nut so can average later
+            arrange(dimension,region_id)
     #####----------------------######
 
   #################################
@@ -1503,21 +1508,27 @@ CW = function(layers){
     ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
 
     ## ICES6
-    cw_con_ices6_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
+    ## read in csv to test
+      #cw_con_ices6_status= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
+      #cw_con_ices6_trend= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
+
+    cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
       dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-    cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
+    cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
       dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
-        ##Join ICES6
+
+       ##Join ICES6
           cw_con_ices6 = full_join(cw_con_ices6_status,cw_con_ices6_trend, by = c('rgn_id','dimension','score')) %>%
                          dplyr::rename(region_id = rgn_id)%>%
                          mutate(indicator = "ices6")
 
 
     ##Dioxin
+      ## TO DO...
 
     ##PFOS
-
+      ## TO DO...
 
 
     ## TODO.....DECIDE IF KEEP NA or TRANSFORM TO ZERO
@@ -1530,14 +1541,13 @@ CW = function(layers){
 
       ## Average CON indicators for Status and Trend
 
-    cw_con = cw_con %>%
-             select(-indicator) %>%
-             group_by(region_id,dimension)%>%
-             summarise(region_id = region_id,
-                       dimension=dimension,
-                       score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
-            ungroup() %>%
-            mutate(subcom = 'CON')
+      cw_con = cw_con %>%
+              select(-indicator) %>%
+              group_by(region_id,dimension)%>%
+              summarise(score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
+              ungroup() %>%
+              mutate(subcom = 'CON')%>%
+              arrange(dimension,region_id)
 
 
   #####----------------------######
@@ -1549,10 +1559,9 @@ CW = function(layers){
       scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
                ## full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>% ## include trash when ready
               select(-subcom)%>%
-              group_by("region_id","dimension") %>%
-              summarise(region_id = region_id,
-                        dimension = dimension,
-                        score = mean(score, na.rm=TRUE))%>%## If there is an NA, skip over now
+              arrange(dimension,region_id)%>%
+              group_by(region_id,dimension) %>%
+              summarise(score = mean(score, na.rm=TRUE))%>% ## If there is an NA, skip over now
               ungroup()%>%
               mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
