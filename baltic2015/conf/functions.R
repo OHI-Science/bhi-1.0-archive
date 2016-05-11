@@ -1455,7 +1455,7 @@ SP = function(scores){
 
 CW = function(layers){
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
-
+  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep
   ##TODO
       ## add contaminents and trash
       ## Combine status & trend for all components
@@ -1482,7 +1482,8 @@ CW = function(layers){
 
     # join NUT status and trend to one dataframe
     cw_nu = full_join(cw_nu_status, cw_nu_trend, by = c('rgn_id','dimension','score')) %>%
-      dplyr::rename(region_id = rgn_id)
+      dplyr::rename(region_id = rgn_id) %>%
+            mutate(subcom = 'NUT')  ##Label subcompoent with nut so can average later
 
     #####----------------------######
 
@@ -1499,6 +1500,44 @@ CW = function(layers){
   #####----------------------######
   ## Contaminents
   #####----------------------######
+    ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
+
+    ## ICES6
+    cw_con_ices6_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
+      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+    cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
+      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+        ##Join ICES6
+          cw_con_ices6 = full_join(cw_con_ices6_status,cw_con_ices6_trend, by = c('rgn_id','dimension','score')) %>%
+                         dplyr::rename(region_id = rgn_id)%>%
+                         mutate(indicator = "ices6")
+
+
+    ##Dioxin
+
+    ##PFOS
+
+
+
+    ## TODO.....DECIDE IF KEEP NA or TRANSFORM TO ZERO
+
+
+    ##Join all indicators
+        #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
+
+        cw_con = cw_con_ices6
+
+      ## Average CON indicators for Status and Trend
+
+    cw_con = cw_con %>%
+             select(-indicator) %>%
+             group_by(region_id,dimension)%>%
+             summarise(region_id = region_id,
+                       dimension=dimension,
+                       score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
+            ungroup() %>%
+            mutate(subcom = 'CON')
 
 
   #####----------------------######
@@ -1506,12 +1545,21 @@ CW = function(layers){
       ##TODO when have all components
       ##combine status and/or trend from all components
 
-
+      ## Average
+      scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
+               ## full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>% ## include trash when ready
+              select(-subcom)%>%
+              group_by("region_id","dimension") %>%
+              summarise(region_id = region_id,
+                        dimension = dimension,
+                        score = mean(score, na.rm=TRUE))%>%## If there is an NA, skip over now
+              ungroup()%>%
+              mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
 
       ##here scores based just upon secchi data
       # return scores
-        scores = cw_nu %>%
+        scores = scores %>%
                   mutate(goal   = 'CW')
 
       return(scores)
