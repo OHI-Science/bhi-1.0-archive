@@ -596,9 +596,40 @@ indicator_taxa_count %>%  spread(core_indicator,unique_taxa_func)%>%
 4.  Apply basin score to each BHI region
 
 ``` r
+## Number of time series that will contribute to the mean score in each basin
+## these are the number of GES assessments (across indicators and taxa)
+basin_n_obs = coastal_fish_scores_long %>% 
+                            filter(score_type=="score1") %>% ## only select 1 score type so no duplicates
+                            select(Basin_HOLAS)%>%
+    
+                            count(Basin_HOLAS)
+basin_n_obs                            
+```
+
+    ## Source: local data frame [15 x 2]
+    ## 
+    ##               Basin_HOLAS     n
+    ##                     (chr) (int)
+    ## 1               Aland Sea    12
+    ## 2            Arkona Basin    10
+    ## 3      Bay of Mecklenburg     8
+    ## 4          Bornholm Basin    11
+    ## 5            Bothnian Bay     9
+    ## 6            Bothnian Sea    12
+    ## 7   Eastern Gotland Basin     9
+    ## 8              Great Belt    10
+    ## 9         Gulf of Finland     3
+    ## 10           Gulf of Riga     6
+    ## 11               Kattegat    10
+    ## 12 Northern Baltic Proper     3
+    ## 13              The Quark     9
+    ## 14              The Sound     2
+    ## 15  Western Gotland Basin     6
+
+``` r
 ## indicator mean by monitoring area
-monitoring_indicator_mean = coastal_fish_scores_long %>% select(Basin_HOLAS, monitoring_area,
-                                                                core_indicator,score_type,score)%>%
+monitoring_indicator_mean = coastal_fish_scores_long %>% 
+                            select(Basin_HOLAS, monitoring_area,core_indicator,score_type,score)%>%
                             group_by(Basin_HOLAS, monitoring_area,core_indicator,score_type)%>%
                             summarise(mean_core_monitoring_score = mean(score, na.rm=TRUE))%>%
                             ungroup()
@@ -1037,8 +1068,7 @@ head(shp_score3@data)
 
 ![](ao_prep_files/figure-markdown_github/plot%20BHI%20scores-1.png)<!-- -->
 
-Status review and decisions
----------------------------
+### 4.1.6 Status review and decisions
 
 1.  Have Jens assess scoring options for GES status assessment - **Jens says alternative 2**
 
@@ -1077,6 +1107,28 @@ str(bhi_score)
 ``` r
 ## Export this object in section 6. ~ Line 835
 ```
+
+#### 4.2.1 Plot final score objects
+
+Size the points by number of time series with GES assessment
+
+``` r
+## Number of observations
+##basin_n_obs    
+
+plot_score = bhi_score %>% 
+             full_join(.,basin_lookup, by= c("rgn_id"= "bhi_id")) %>%
+             full_join(., basin_n_obs, by=c("basin_name" ="Basin_HOLAS"))
+
+ggplot(plot_score)+
+  geom_point(aes(rgn_id, score, size= n))+
+  ylim(0,100) +
+  ggtitle("AO Status Score")
+```
+
+    ## Warning: Removed 6 rows containing missing values (geom_point).
+
+![](ao_prep_files/figure-markdown_github/final%20score%20object%20plotted-1.png)<!-- -->
 
 5. Calculate Trend of the status
 --------------------------------
@@ -1197,6 +1249,7 @@ dim(slope) #132   8
 Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin
 
 ``` r
+## slope
 slope = slope %>%
         group_by(basin_name, core_indicator, taxa) %>%
         mutate(slope_mean_basin_taxa = mean(slope)) %>%
@@ -1217,6 +1270,34 @@ str(slope)
     ##  $ slope_mean_basin_taxa: num  0.0915 0.129 0.1563 0.0915 0.129 ...
 
 ``` r
+## number of time series for each basin
+basin_n_obs_slope = slope %>%
+                    select(basin_name)%>%
+                    count(basin_name)
+basin_n_obs_slope  ## the number of time series here are greater. This could be if more than one key species measured for a monitoring area (and were combined when GES status assigned)
+```
+
+    ## Source: local data frame [14 x 2]
+    ## 
+    ##                basin_name     n
+    ##                    (fctr) (int)
+    ## 1               Aland Sea    12
+    ## 2            Arkona Basin    18
+    ## 3          Bornholm Basin    11
+    ## 4            Bothnian Bay     9
+    ## 5            Bothnian Sea    15
+    ## 6   Eastern Gotland Basin     9
+    ## 7              Great Belt    10
+    ## 8         Gulf of Finland     3
+    ## 9            Gulf of Riga     6
+    ## 10               Kattegat    10
+    ## 11 Northern Baltic Proper     3
+    ## 12              The Quark    15
+    ## 13              The Sound     2
+    ## 14  Western Gotland Basin     9
+
+``` r
+## Plot
 ggplot(slope) + 
   geom_hline(yintercept =0) +
   geom_boxplot(aes(basin_name,slope))+
@@ -1403,6 +1484,34 @@ str(bhi_slope)
 ## Export this obejct in Section 6
 ```
 
+#### 5.1.2 Plot final slope object
+
+Size points by number of times series used
+
+``` r
+##object with number of observations
+##basin_n_obs_slope
+
+plot_slope = bhi_slope %>%
+                   full_join(., basin_lookup, by=c("rgn_id"="bhi_id")) %>%
+                   full_join(., basin_n_obs_slope, by="basin_name")
+```
+
+    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factor and character
+    ## vector, coercing into character vector
+
+``` r
+ggplot(plot_slope)+
+  geom_hline(yintercept =0) +
+  geom_point(aes(rgn_id, score, size= n))+
+  ylim(-1,1) +
+  ggtitle("AO Slope")
+```
+
+    ## Warning: Removed 8 rows containing missing values (geom_point).
+
+![](ao_prep_files/figure-markdown_github/plot%20final%20code%20object-1.png)<!-- -->
+
 #### Trend question??
 
 Multiple by five for future year value? If so, this is part of the calculation in functions.r
@@ -1420,9 +1529,9 @@ Here the status and slope value obejcts will be be saved as csv files in the lay
 ## Data layers for the stock component of AO
 
 ## Status Score
-write.csv(bhi_score, file.path(dir_layers, 'ao_stock_status_bhi2015.csv'),row.names=FALSE)
+#write.csv(bhi_score, file.path(dir_layers, 'ao_stock_status_bhi2015.csv'),row.names=FALSE)
 
 
 ## Slope for Trend
-write.csv(bhi_slope, file.path(dir_layers, 'ao_stock_slope_bhi2015.csv'),row.names=FALSE)
+#write.csv(bhi_slope, file.path(dir_layers, 'ao_stock_slope_bhi2015.csv'),row.names=FALSE)
 ```
