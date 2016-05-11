@@ -1474,8 +1474,8 @@ CW = function(layers){
       ## expect slow response time in secchi observation so use longer time window for trend
 
     ## Read in from csv to test
-      #cw_nu_status= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_nu_status_bhi2015.csv')
-      #cw_nu_trend= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
+      #cw_nu_status= read.csv('~github/bhi/baltic2015/layers/cw_nu_status_bhi2015.csv')
+      #cw_nu_trend= read.csv('~github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
 
 
    cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
@@ -1496,10 +1496,25 @@ CW = function(layers){
   #####----------------------######
   ## Trash
   #####----------------------######
-  ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
+    ## Status calcuated in prep file
+    ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
 
-      #... 1- po_trash layer
-      # trend: could trend for entire CW goal be based on one of these contributors (no trend for trash, but could back-calculate next year)
+    ## Read in csv to test
+       #cw_tra_score = read.csv('~github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
+
+    cw_tra_score = SelectLayersData(layers, layers='po_trash') %>%
+      dplyr::select(rgn_id = id_num, score = val_num)
+
+    cw_tra_status = cw_tra_score %>%
+                    mutate(score = round((1 - score)*100)) ## status is 1 - pressure, status is 0-100
+
+    ## no TRA trend
+
+    cw_tra = cw_tra_status %>%
+            dplyr::rename(region_id = rgn_id) %>%
+            mutate(dimension= "status",
+                   subcom = 'TRA') %>%  ##Label subcompoent with TRA so can average later
+            arrange(dimension,region_id)
 
   #################################
   #####----------------------######
@@ -1509,8 +1524,8 @@ CW = function(layers){
 
     ## ICES6
     ## read in csv to test
-      #cw_con_ices6_status= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
-      #cw_con_ices6_trend= read.csv('C:/Users/jgrif/Documents/github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
+      #cw_con_ices6_status= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
+      #cw_con_ices6_trend= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
 
     cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
       dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
@@ -1555,15 +1570,18 @@ CW = function(layers){
       ##TODO when have all components
       ##combine status and/or trend from all components
 
+      ## Status is the average of NUT, CON, TRA
+      ## Trend is the average of NUT, CON
+
       ## Average
       scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
-               ## full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>% ## include trash when ready
-              select(-subcom)%>%
-              arrange(dimension,region_id)%>%
-              group_by(region_id,dimension) %>%
-              summarise(score = mean(score, na.rm=TRUE))%>% ## If there is an NA, skip over now
-              ungroup()%>%
-              mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
+               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>% ## include trash when ready
+               select(-subcom)%>%
+               arrange(dimension,region_id)%>%
+               group_by(region_id,dimension) %>%
+               summarise(score = mean(score, na.rm=TRUE))%>% ## If there is an NA, skip over now
+               ungroup()%>%
+               mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
 
       ##here scores based just upon secchi data
