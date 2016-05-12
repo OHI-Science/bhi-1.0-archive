@@ -1,0 +1,17 @@
+
+## Dioxins data
+
+## Download from ICES DOME
+##http://dome.ices.dk/views/ContaminantsBiota.aspx
+##11 May 2016
+
+## Selections:
+##Year - 1998-2015  (earliest allowed)
+## Purpose of monitoring = All
+## Country = ALL
+## MOnitoring Program = ALL
+## Parameter Group = Dioxins
+## Reporting Laboratory = All
+## Analytical laboratory = All
+## Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
+

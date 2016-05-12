@@ -5,7 +5,7 @@
 
 
 ##-------------------##
-## ICES ##
+## ICES PCB ##
 ##-------------------##
 
 ## ICES data redownloaded by Jennifer on 22 April 2016. In excel downloaded data were cleaned to removed symbols and other formatting that would cause problem in R. No data manipulation was done
@@ -25,11 +25,24 @@
 
 
 ##-------------------##
-## IVL ##
+## ICES Dioxin ##
+##-------------------##
+
+## ICES dioxin data redownloaded by Jennifer on 11 May 2016. In excel downloaded data were cleaned to removed symbols and other formatting that would cause problem in R. No data manipulation was done
+
+#File names and descriptions
+
+###ICES_herring_dioxin_dowload_11may2016_cleaned  = original download, previously fixed in excel to remove non-English letters, etc.
+
+
+
+
+##-------------------##
+## IVL PCB##
 ##-------------------##
 
 
 ## IVL data were redownloaded by Jennifer on 21 April 2016.  In excel, downloaded data were cleaned to removed symbols and other formatting that would cause problem in R. No data manipulation was done  -- These data are currently not used, ICES data are updated so do not need IVL data
 
 
-## IVL_herring_pcb_download_21april2016_cleaned == original IVL file 
+## IVL_herring_pcb_download_21april2016_cleaned == original IVL file

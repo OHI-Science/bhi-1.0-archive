@@ -1,8 +1,8 @@
 ##----------------------------------------##
-## FILE:  raw_contaminants_data_prep.r
+## FILE:  raw_pcb_data_prep.r
 ##----------------------------------------##
 
-## This file is to prep raw data from ICES and IVL so there will be consistent data for the database at level 1
+## This file is to prep raw PCB data from ICES and IVL so there will be consistent data for the database at level 1
 
 ##----------------------------------------##
 ## LIBRARIES
@@ -31,6 +31,9 @@ dir_cw    = file.path(dir_prep, 'CW')
 dir_con    = file.path(dir_prep, 'CW/contaminants')
 
 
+########################################################################################
+## PCB ##
+########################################################################################
 
 ##----------------------------------------##
 ## Read in ICES data
@@ -422,6 +425,13 @@ write.csv(ices6, file.path(dir_con, "raw_prep/ices_herring_pcb_cleaned.csv"))
 ##----------------------------------------##
 ############################################
 ##----------------------------------------##
+
+
+########################################################################################
+## ICES DIOXIN ##
+########################################################################################
+
+
 
 
 
