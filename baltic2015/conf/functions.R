@@ -1457,9 +1457,10 @@ CW = function(layers){
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
   ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep
   ##TODO
-      ## add contaminents and trash
-      ## Combine status & trend for all components
-
+      ## add other CON components
+      ## currently use arithmetic mean for status and trend across subcomponents
+          ## global OHI uses geometric mean for status and the calculates the trend on the status
+          ## need to decide and make sure decision is transparent
 
   #################################
   #####----------------------######
