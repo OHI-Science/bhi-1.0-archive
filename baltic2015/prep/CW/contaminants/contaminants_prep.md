@@ -70,6 +70,7 @@ TABLE OF CONTENTS
 -----------------
 
 Section 1.......................Indicator Overview
+<<<<<<< HEAD
 
 Section 2.......................Data Overview
 
@@ -79,6 +80,12 @@ Section 4.......................ICES6 Indicator prep
 
 Section 5.......................Dioxin Indicator prep
 
+=======
+Section 2.......................Data Overview
+Section 3.......................Other Info
+Section 4.......................ICES6 Indicator prep
+Section 5.......................Dioxin Indicator prep
+>>>>>>> b842d7b0e429ea82f74a9d92f71a5bdd9a6a7060
 Section 6.......................PFOS Indicator prep
 
 1 Indicators
@@ -99,11 +106,19 @@ This is similar to the ICES-7 except that PCB 118 is excluded (since it is metab
 ### 1.3 (2) TEQ value for PCBs and Dioxins
 
 Dioxin and dioxin-like compounds:0.0065 TEQ ug /kg ww fish, crustaceans or molluscs (source of target:EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC).
+<<<<<<< HEAD
 
 This threshold was agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*
 
 Thisis consistent with the [EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)
 
+=======
+
+This threshold was agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*
+
+Thisis consistent with the [EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)
+
+>>>>>>> b842d7b0e429ea82f74a9d92f71a5bdd9a6a7060
 TEQ values from the [World Health Organization 2005](http://www.who.int/ipcs/assessment/tef_values.pdf)
 
 ### 1.4 (3) PFOS indicator
@@ -174,6 +189,7 @@ Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminant
 
 #### 3.1.1 PCB Congeners
 
+<<<<<<< HEAD
 CB101 2 2' 4 5 5'-pentachlorobiphenyl
 CB105 2 3 3' 4 4'-pentachlorobiphenyl
 CB118 2 3' 4 4' 5-pentachlorobiphenyl
@@ -190,6 +206,24 @@ CB180 2 2' 3 4 4' 5 5'-heptachlorobiphenyl
 CB28 2 4 4'-trichlorobiphenyl
 CB52 2 2' 5 5'-tetrachlorobiphenyl
 CB77 3 3' 4 4'-tetrachlorobiphenyl
+=======
+CB101 2 2' 4 5 5'-pentachlorobiphenyl (CB101)
+CB105 2 3 3' 4 4'-pentachlorobiphenyl (CB105)
+CB118 2 3' 4 4' 5-pentachlorobiphenyl (CB118)
+CB128 2 2' 3 3' 4 4'-hexachlorobiphenyl (CB128)
+CB138 2 2' 3 4 4' 5'-hexachlorobiphenyl (CB138)
+CB149 2 2' 3 4' 5' 6-hexachlorobiphenyl (CB149)
+CB153 2 2' 4 4' 5 5'-hexachlorobiphenyl (CB153)
+CB156 2 3 3' 4 4' 5-hexachlorobiphenyl (CB156)
+CB157 2 3 4 3' 4' 5'-hexachlorobiphenyl (CB157)
+CB167 2' 3 4 4' 5 5'-hexachlorobiphenyl (CB167)
+CB169 3 3' 4 4' 5 5'-hexachlorobiphenyl (CB169)
+CB170 2 2' 3 3' 4 4' 5-heptachlorobiphenyl (CB170)
+CB180 2 2' 3 4 4' 5 5'-heptachlorobiphenyl (CB180)
+CB28 2 4 4'-trichlorobiphenyl (CB28)
+CB52 2 2' 5 5'-tetrachlorobiphenyl (CB52)
+CB77 3 3' 4 4'-tetrachlorobiphenyl (CB77)
+>>>>>>> b842d7b0e429ea82f74a9d92f71a5bdd9a6a7060
 
 #### 3.1.2 Dioxin Congeners
 

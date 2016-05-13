@@ -50,7 +50,6 @@ Section 5.......................Dioxin Indicator prep
 Section 6.......................PFOS Indicator prep  
 
 
-
 ## 1 Indicators
 3 indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
 
@@ -153,6 +152,7 @@ CB28               2 4 4'-trichlorobiphenyl
 CB52          2 2' 5 5'-tetrachlorobiphenyl  
 CB77          3 3' 4 4'-tetrachlorobiphenyl  
 
+
 #### 3.1.2 Dioxin Congeners
 CDD1N         1 2 3 7 8-pentachlorodibenzo-p-dioxin  
 CDD4X        1 2 3 4 7 8-hexachlorodibenzo-p-dioxin  
@@ -170,6 +170,7 @@ CDF9X            1 2 3 7 8 9-hexachlorodibenzofuran
 CDFDN  1 2 3 7 8/1 2 3 4 8-pentachloro-dibenzofuran  
 CDFO               octachloro-dibenzofuran (group)   
 TCDD   2 3 7 8-tetrachlorodibenzo-p-dioxin   
+
 
 ## 4. Data Prep - PCB Indicator
 
