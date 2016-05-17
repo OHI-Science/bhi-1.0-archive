@@ -116,6 +116,9 @@ if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
   # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
 }
 
+dir_shp <- file.path(dir_M, 'git-annex/Baltic')
+
+
 
 ## libraries
 library(dplyr)
@@ -125,27 +128,58 @@ library(rgeos)  # install.packages('rgeos')
 
 ```
 
-## Visualize MPA data
-```{r echo=FALSE, message=FALSE}
-## read in data...
+## Read in MPA and BHI regions shapefiles 
+Also, get them in the same coordinate reference system for the Baltic. 
 
- tmp_filepath <- '~/Desktop/bhi_4.27.16'
+The MPA file is in the [LAEA coordinate reference system](http://spatialreference.org/ref/epsg/etrs89-etrs-laea/). 
+```{r read in shapefiles, echo=FALSE, message=FALSE}
 
-HELCOM_MPAs = rgdal::readOGR(dsn = path.expand(tmp_filepath),
-                             layer = 'HELCOM_MPAs') # dsn is the path name & layer is the name of the file. 
+## inspect BHI regions ----
+bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
+                      layer = 'BHI_MCG_11052016')  
+bhi # coord. ref. : +proj=longlat
+
+
+## explore/plot
+plot(bhi) #takes ~15 seconds
+bhi@data
+
+
+## inspect mpa file ----
+mpa = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'bhi_MPA')),
+                     layer = 'HELCOM_MPAs') 
+mpa # coord. ref. : +proj=laea
+
 ## plot
-plot(HELCOM_MPAs)
+plot(mpa) # quick
+head(mpa@data)
 
-## explore this spatial polygon and its data
-HELCOM_MPAs
-head(HELCOM_MPAs@data)
+
+## transform bhi to mpa coordinate reference system (CRS) ----
+## LAEA: http://spatialreference.org/ref/epsg/etrs89-etrs-laea/
+## https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf
+bhi = spTransform(bhi, mpa@proj4string)
+bhi # coord. ref. : +proj=laea
+
+
+```
+
+## Intersect BHI and HELCOM_MAP polygons
+
+```{r read in shapefiles, echo=FALSE, message=FALSE}
+
+## plot on top of each other
+plot(bhi); plot(mpa, add = TRUE)
+
+##mpa_bhi <- crop(mpa, bhi) # don't use crop, use raster::intersect
+
+mpa_bhi@data
+plot(mpa_bhi)
+
 
 ## Read in MPA management plan status file from "~/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_management_plans_20160415.csv"
 
-## shapefiles
 
-
-## plot data...
 
 ```
 
