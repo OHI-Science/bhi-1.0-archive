@@ -1455,11 +1455,12 @@ SP = function(scores){
 
 CW = function(layers){
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
-
+  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep
   ##TODO
-      ## add contaminents and trash
-      ## Combine status & trend for all components
-
+      ## add other CON components
+      ## currently use arithmetic mean for status and trend across subcomponents
+          ## global OHI uses geometric mean for status and the calculates the trend on the status
+          ## need to decide and make sure decision is transparent
 
   #################################
   #####----------------------######
@@ -1473,32 +1474,96 @@ CW = function(layers){
   ## Trend is calculated over a 10 year period with a minimum of 5 years of data
       ## expect slow response time in secchi observation so use longer time window for trend
 
-  cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
+    ## Read in from csv to test
+      #cw_nu_status= read.csv('~github/bhi/baltic2015/layers/cw_nu_status_bhi2015.csv')
+      #cw_nu_trend= read.csv('~github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
+
+
+   cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
     dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-  cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
+    cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
     dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
 
     # join NUT status and trend to one dataframe
     cw_nu = full_join(cw_nu_status, cw_nu_trend, by = c('rgn_id','dimension','score')) %>%
-      dplyr::rename(region_id = rgn_id)
-
+            dplyr::rename(region_id = rgn_id) %>%
+            mutate(subcom = 'NUT') %>%  ##Label subcompoent with nut so can average later
+            arrange(dimension,region_id)
     #####----------------------######
 
   #################################
   #####----------------------######
   ## Trash
   #####----------------------######
-  ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
+    ## Status calcuated in prep file
+    ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
 
-      #... 1- po_trash layer
-      # trend: could trend for entire CW goal be based on one of these contributors (no trend for trash, but could back-calculate next year)
+    ## Read in csv to test
+       #cw_tra_score = read.csv('~github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
+
+    cw_tra_score = SelectLayersData(layers, layers='po_trash') %>%
+      dplyr::select(rgn_id = id_num, score = val_num)
+
+    cw_tra_status = cw_tra_score %>%
+                    mutate(score = round((1 - score)*100)) ## status is 1 - pressure, status is 0-100
+
+    ## no TRA trend
+
+    cw_tra = cw_tra_status %>%
+            dplyr::rename(region_id = rgn_id) %>%
+            mutate(dimension= "status",
+                   subcom = 'TRA') %>%  ##Label subcompoent with TRA so can average later
+            arrange(dimension,region_id)
 
   #################################
   #####----------------------######
   ## Contaminents
   #####----------------------######
+    ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
+
+    ## ICES6
+    ## read in csv to test
+      #cw_con_ices6_status= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
+      #cw_con_ices6_trend= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
+
+    cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
+      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+    cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
+      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+       ##Join ICES6
+          cw_con_ices6 = full_join(cw_con_ices6_status,cw_con_ices6_trend, by = c('rgn_id','dimension','score')) %>%
+                         dplyr::rename(region_id = rgn_id)%>%
+                         mutate(indicator = "ices6")
+
+
+    ##Dioxin
+      ## TO DO...
+
+    ##PFOS
+      ## TO DO...
+
+
+    ## TODO.....DECIDE IF KEEP NA or TRANSFORM TO ZERO
+
+
+    ##Join all indicators
+        #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
+
+        cw_con = cw_con_ices6
+
+      ## Average CON indicators for Status and Trend
+
+      cw_con = cw_con %>%
+              select(-indicator) %>%
+              group_by(region_id,dimension)%>%
+              summarise(score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
+              ungroup() %>%
+              mutate(subcom = 'CON')%>%
+              arrange(dimension,region_id)
 
 
   #####----------------------######
@@ -1506,12 +1571,23 @@ CW = function(layers){
       ##TODO when have all components
       ##combine status and/or trend from all components
 
+      ## Status is the average of NUT, CON, TRA
+      ## Trend is the average of NUT, CON
 
+      ## Average
+      scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
+               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>% ## include trash when ready
+               select(-subcom)%>%
+               arrange(dimension,region_id)%>%
+               group_by(region_id,dimension) %>%
+               summarise(score = mean(score, na.rm=TRUE))%>% ## If there is an NA, skip over now
+               ungroup()%>%
+               mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
 
       ##here scores based just upon secchi data
       # return scores
-        scores = cw_nu %>%
+        scores = scores %>%
                   mutate(goal   = 'CW')
 
       return(scores)

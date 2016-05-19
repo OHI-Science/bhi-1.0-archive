@@ -221,7 +221,7 @@ baltic_layer = lookup_bhi %>%
          score = trash_score_2010); # baltic_layer
   
 ## save layer to layers folder, and register layer in layers.csv by hand
-write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
+write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
 
   
 ## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?

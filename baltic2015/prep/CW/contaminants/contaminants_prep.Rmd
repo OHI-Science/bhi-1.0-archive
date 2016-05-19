@@ -36,13 +36,26 @@ create_readme(dir_con, 'contaminants_prep.rmd')
 ```
 
 # Contaminant Data Prep
+## TABLE OF CONTENTS
+Section 1.......................Indicator Overview  
+
+Section 2.......................Data Overview  
+
+Section 3.......................Other Info  
+
+Section 4.......................ICES6 Indicator prep  
+
+Section 5.......................Dioxin Indicator prep  
+
+Section 6.......................PFOS Indicator prep  
+
 
 ## 1 Indicators
 3 indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
 
 ### 1.2 (1) PCB concentration indicator
 
-#### 1.2.1 Original PCB indicator: ICES-6 PCB
+#### 1.2.1 ICES-6 PCB
 Non-dioxin like PCBs: sum of congeners (28, 52, 101, 138, 153, 180) 75 μg/kg ww fish muscle  
 
 This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).  
@@ -50,41 +63,15 @@ This is similar to the ICES-7 except that PCB 118 is excluded (since it is metab
 75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF). This threshold was also agreed upon as GES boundary at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
 
 
-#### 1.2.2 Alternatie PCB indicator: CB-153 Concentration
-CB-153 concentration  
-    - Suggested by Anders Bignet and Elisabeth Nyberg.
-    - This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems.  
-    - They suggest using the EU threshold for human health as the reference point.  
-
-EU documents seem to only focus on the ICES6 indicator.  However, OSPAR as individual CB thresholds.
-[OSPAR background](http://qsr2010.ospar.org/media/assessments/p00390_supplements/p00461_Background_Doc_CEMP_Assessmt_Criteria_Haz_Subs.pdf).  
-
-Table 1, p.14: Blue range = Status is acceptable. Concentrations are close to background or zero, i.e. the 
-ultimate aim of the OSPAR Strategy for Hazardous Substances has been achieved.   
-
-Table 5c. Blue < BAC  = CB153 0.2 μg/kg wet weight. *(this number differs in what is summarized for this report in the HELCOM core indicator document from 2013)*  
-
-**Older documents with background**  
-Additional information from HELCOM on the Core Indicators:  
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans 2013](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf). *This document is now outdated*
-
-*Determination of GES boundary*
-The CORESET expert group decided that, due to uncertainties in the target setting on the OSPAR and EU working groups, the seven PCBs should be monitored and concentrations analysed but the core indicator assesses primarily two congeners only: CB-118 (dioxin like) and 153 (non-dioxin like). Tentatively the OSPAR EACs for these two congeners are suggested to be used.
-
-
-
 ### 1.3 (2) TEQ value for PCBs and Dioxins
-Dioxin and dioxin-like compounds:0.0065 TEQ/kg ww fish, crustaceans or molluscs (source of target:EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC).  
+Dioxin and dioxin-like compounds:0.0065 TEQ ug /kg ww fish, crustaceans or molluscs (source of target:EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC).  
 
-This threshold was also agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
+This threshold was agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
 
-**Older documents with background** 
-[HELCOM Core Indicator of Hazardous Substances Polychlorinated biphenyls (PCB) and dioxins and furans](http://www.helcom.fi/Core%20Indicators/HELCOM-CoreIndicator_Polychlorinated_biphenyls_and_dioxins_and_furans.pdf)  *This document is now outdated*  
+Thisis consistent with the [EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
 
-Dioxins are included in several international agreements, of which the Stockholm Convention and the Convention on Long Range Transboundary Air are among the most important for the control and reduction of sources to the environment. WHO and FAO have jointly established a maximum tolerable human intake level of dioxins via food, and within the EU there are limit values for dioxins in food and feed stuff (EC 2006). Several other EU legislations regulate dioxins, e.g. the plan for integrated pollution prevention and control (IPPC) and directives on waste incineration (EC, 2000, 2008). The EU has also adopted a Community Strategy for dioxins, furans and PCBs (EC 2001).
+TEQ values from the [World Health Organization 2005](http://www.who.int/ipcs/assessment/tef_values.pdf)  
 
-**Determination of GES boundary**
-For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ for dioxins and 8.0 ng kg-1 ww WHO-TEQ for dioxins and dl-PCBs.
 
 ### 1.4 (3) PFOS indicator
 
@@ -102,7 +89,7 @@ For dioxins, it was decided to use the GES boundary of 4.0 ng kg-1 ww WHO-TEQ fo
 #### 2.1.1 PCB data
 **ICES**
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
-Downloaded 22 April 2016 by Jennifer Griffiths
+Downloaded 22 April 2016 by Jennifer Griffiths  
 Data selections:  
 Year - 1990-2014  
 Purpose of monitoring = All  
@@ -114,6 +101,18 @@ Analytical laboratory = All
 Geographical Areas = (HELCOM) ALL HELCOM Sub-basins  
 
 #### 2.1.2 Dioxins
+**ICES**
+[ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
+Downloaded on 11 May 2016 by Jennifer Griffiths
+Selections:  
+Year - 1998-2015  (earliest allowed)  
+Purpose of monitoring = All  
+Country = ALL  
+MOnitoring Program = ALL  
+Parameter Group = Dioxins  
+Reporting Laboratory = All  
+Analytical laboratory = All  
+Geographical Areas = (HELCOM) ALL HELCOM Sub-basins  
 
 #### 2.1.3 PFOS
 
@@ -134,7 +133,44 @@ Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminant
 **Note**: Detection limit (detect_lim) and Quantification limit (quant_lim) values are in the original units.  They are not standardized to ug/kg and not converted to wet weight if originally in lipid weight
 
 ## 3. Other Info 
-........
+### 3.1 Congers in ICES database  
+#### 3.1.1 PCB Congeners
+CB101       2 2' 4 5 5'-pentachlorobiphenyl  
+CB105       2 3 3' 4 4'-pentachlorobiphenyl  
+CB118       2 3' 4 4' 5-pentachlorobiphenyl  
+CB128     2 2' 3 3' 4 4'-hexachlorobiphenyl  
+CB138     2 2' 3 4 4' 5'-hexachlorobiphenyl   
+CB149     2 2' 3 4' 5' 6-hexachlorobiphenyl  
+CB153     2 2' 4 4' 5 5'-hexachlorobiphenyl  
+CB156      2 3 3' 4 4' 5-hexachlorobiphenyl  
+CB157     2 3 4 3' 4' 5'-hexachlorobiphenyl  
+CB167     2' 3 4 4' 5 5'-hexachlorobiphenyl  
+CB169     3 3' 4 4' 5 5'-hexachlorobiphenyl  
+CB170  2 2' 3 3' 4 4' 5-heptachlorobiphenyl  
+CB180  2 2' 3 4 4' 5 5'-heptachlorobiphenyl  
+CB28               2 4 4'-trichlorobiphenyl  
+CB52          2 2' 5 5'-tetrachlorobiphenyl  
+CB77          3 3' 4 4'-tetrachlorobiphenyl  
+
+
+#### 3.1.2 Dioxin Congeners
+CDD1N         1 2 3 7 8-pentachlorodibenzo-p-dioxin  
+CDD4X        1 2 3 4 7 8-hexachlorodibenzo-p-dioxin  
+CDD6P     1 2 3 4 6 7 8-heptachlorodibenzo-p-dioxin  
+CDD6X        1 2 3 6 7 8-hexachlorodibenzo-p-dioxin  
+CDD9X        1 2 3 7 8 9-hexachlorodibenzo-p-dioxin  
+CDDO    1 2 3 4 6 7 8 9-octachlorodibenzo-p-dioxin   
+CDF2N             2 3 4 7 8-pentachlorodibenzofuran  
+CDF2T              2 3 7 8-tetrachloro-dibenzofuran  
+CDF4X            2 3 4 6 7 8-hexachlorodibenzofuran  
+CDF6P         1 2 3 4 6 7 8-heptachlorodibenzofuran  
+CDF6X            1 2 3 6 7 8-hexachlorodibenzofuran  
+CDF9P         1 2 3 4 7 8 9-heptachlorodibenzofuran  
+CDF9X            1 2 3 7 8 9-hexachlorodibenzofuran  
+CDFDN  1 2 3 7 8/1 2 3 4 8-pentachloro-dibenzofuran  
+CDFO               octachloro-dibenzofuran (group)   
+TCDD   2 3 7 8-tetrachlorodibenzo-p-dioxin   
+
 
 ## 4. Data Prep - PCB Indicator
 
@@ -717,12 +753,13 @@ dim(ices6_2datemean) #145  20
 **Plot By Basin**
 Gray dots are the ices6 concentration mean by date and location including qflagg-adjusted values.  
 Red dots are the ices6 concentration mean by date and location excluding qflagged values.  
-    - Including the qflag-adjusted values lowers the mean concentration by date and location, provides more observations in the Kattegat, The Quark, and W. Gotland Basin
+    - Including the qflag-adjusted values lowers the mean concentration by date and location, provides more observations in the Kattegat, The Quark, and W. Gotland Basin 
+    
+    - Outlier in Eastern Gotland Basin is from Polish observations 2014. Have checked unit conversions etc, have found not error.
 
 ```{r plot ices6 date mean by basin plot}
 
 ##temporily merge ices6_1datemean and ices6_2datemean to more easily compare in a plot
-
 plotdata_temp = full_join(ices6_1datemean,ices6_2datemean,
                           by=c("rgn_id", "basin_name", "country", "monit_program", 
                                "monit_purpose", "report_institute", "station", "lat", 
@@ -733,11 +770,11 @@ plotdata_temp = full_join(ices6_1datemean,ices6_2datemean,
                           mutate(health_threshold=75)
 
 ##not showing human health threshold
-ggplot(plotdata_temp) +
-  geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
-  geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
-  facet_wrap(~basin_name, scales="free_y")+
-  ggtitle("Mean ICES6 concentration ug/kg by date & location")
+# ggplot(plotdata_temp) +
+#   geom_point(aes(date,ices6_datemean_qflag_adj),colour="gray")+
+#   geom_point(aes(date,ices6_datemean_no_qflag),colour="red")+
+#   facet_wrap(~basin_name, scales="free_y")+
+#   ggtitle("Mean ICES6 concentration ug/kg by date & location")
 
 ##plot by year
 ggplot(plotdata_temp) +
@@ -753,6 +790,13 @@ ggplot(plotdata_temp) +
   geom_line(aes(date,health_threshold))+
   facet_wrap(~basin_name, scales="free_y")+
   ggtitle("Mean ICES6 concentration ug/kg by date & location w/ Human Health threshold")
+
+##Plot variation in the 5 year status period
+ggplot(filter(plotdata_temp, year >2008 & year < 2013)) + 
+  geom_boxplot(aes(basin_name, ices6_datemean_qflag_adj))+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean ICES6 concentration (ug/kg) variation by basin, 2009-2013")
 
 ```
 
@@ -788,6 +832,8 @@ ggplot(plotdata_temp) +
 
 
 ```
+
+
 
 #### 4.4.5 Most recent year obs by each location
 Using 2009 -2013 for status assessment is most consistent (and 2014 are from Poland and look like extreme outliers).  There will be *no* status for Gulf of Finland, most recent data 2007.
@@ -866,11 +912,20 @@ ices6_mean_basin_num_obs = ices6_1datemean %>%
                              filter(year >=2009 & year <= 2013) %>% ## select years 2009 
                              select(basin_name,ices6_datemean_ug_kg) %>%
                              count(basin_name)
+## number of locations sampled by basin
+ices6_mean_basin_num_loc = ices6_1datemean %>%
+                             filter(year >=2009 & year <= 2013) %>% ## select years 2009 
+                             select(basin_name,lat,lon) %>%
+                             distinct(.)%>%
+                             count(basin_name)
 
-## join mean and number of observations
+## join mean and number of observations and number of locations
 ices6_mean_basin  = ices6_mean_basin %>%
-                      full_join(., ices6_mean_basin_num_obs, by="basin_name") %>%
-                      dplyr::rename(num_obs=n)
+                      full_join(., ices6_mean_basin_num_obs, by="basin_name") %>% 
+                      dplyr::rename(num_obs=n) %>%
+                      full_join(.,ices6_mean_basin_num_loc, by="basin_name" ) %>%
+                      dplyr::rename(num_loc=n)
+                                    
 ices6_mean_basin
 
 ## assign basin values to BHI regions
@@ -879,15 +934,24 @@ ices6_mean_basin_rgn = ices6_mean_basin %>%
                           mutate(mean_type="basin")
 ices6_mean_basin_rgn
 
+
+
+
+```
+
+##### 4.5.1.1 Plot Mean Basin
+Symbols represent the number of unique locations sampled within the basin. Size indicates the number of observations in the basin (unique date x location)
+```{r plot mean basin}
+
 ggplot(ices6_mean_basin_rgn) + 
-  geom_point(aes(basin_name,ices6_mean_ug_kg, size=num_obs))+
+  geom_point(aes(basin_name,ices6_mean_ug_kg, size=num_obs,shape=factor(num_loc)))+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
     ggtitle("Mean ICES6 conc calculated by basin 2009-2013")
 
 
-
 ```
+
 
 #### 4.5.2 Mean BHI Region
 Calculate the 2009-2013 mean value by BHI region and the number of observations. 
@@ -899,16 +963,25 @@ ices6_mean_region = ices6_1datemean %>%
                 summarise(ices6_mean_ug_kg = round(mean(ices6_datemean_ug_kg),2))%>%
                 ungroup()
                 
-## number of observations by basin
+## number of observations by region
 ices6_mean_region_num_obs = ices6_1datemean %>%
                              filter(year >=2009 & year <= 2013) %>% ## select years 2009 
                              select(rgn_id,ices6_datemean_ug_kg) %>%
                              count(rgn_id)
+## number of observations by region
+ices6_mean_region_num_loc= ices6_1datemean %>%
+                             filter(year >=2009 & year <= 2013) %>% ## select years 2009 
+                             select(rgn_id,lat,lon) %>%
+                             distinct(.)%>%
+                             count(rgn_id)
+
 
 ## join mean and number of observations
 ices6_mean_region  = ices6_mean_region %>%
                       full_join(., ices6_mean_region_num_obs, by="rgn_id") %>%
-                      dplyr::rename(num_obs=n)
+                      dplyr::rename(num_obs=n)%>%
+                      full_join(., ices6_mean_region_num_loc, by="rgn_id")%>%
+                     dplyr::rename(num_loc=n)
 ices6_mean_region
 
 ## join with lookup_basins so have rgns with NA
@@ -918,6 +991,20 @@ ices6_mean_region = ices6_mean_region %>%
 
 
 ```
+
+##### 4.5.2.1 Plot Mean Region
+Symbols represent the number of unique locations sampled within the region. Size indicates the number of observations in the region (unique date x location)
+```{r plot mean region}
+
+ggplot(ices6_mean_region) + 
+  geom_point(aes(rgn_id,ices6_mean_ug_kg, size=num_obs,shape=factor(num_loc)))+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+    ggtitle("Mean ICES6 conc calculated by BHI Region 2009-2013")
+
+
+```
+
 
 #### 4.5.3  Mean BHI Region
 Compare mean calculations using region or basin.  
@@ -935,6 +1022,12 @@ ggplot(ices6_mean) +
   geom_point(aes(rgn_id,ices6_mean_ug_kg, size=num_obs, colour=mean_type,shape=mean_type))+
    scale_shape_manual(values=c(1,2))+
     ggtitle("Mean ICES6 conc calculated by basin or BHI region")
+
+ggplot(ices6_mean) + 
+  geom_point(aes(rgn_id,ices6_mean_ug_kg, size=num_loc, colour=mean_type,shape=mean_type))+
+   scale_shape_manual(values=c(1,2))+
+    ggtitle("Mean ICES6 conc calculated by basin or BHI region")
+
 
 ```
 
@@ -1090,13 +1183,64 @@ Current error for fitting the zscore data seems to be an issue if there is only 
 ```
 
 
+### 4.6 Method discussion with Anna Sobek  
+1. Indicator choice: *We agreed that ICES6 is the best option *  
+2. Decision about use of qflagg-adjusted data: *use qflagged data with the adjustement of (congener conc/2)*  
+3. Decision about spatial scale of the data: *decide best approach is to calculate for each basin*  
+4. Trend decision: *best approach is first convert individual observations to a "status" relative to the human health threshold, then fit linear model by basin for 10 year period* **TREND CHECK  - Does the trend value need to be rescaled to between -1 and 1? Does not exceed now but need to consider if method broadly works?)**  
 
-## TO DO  
-1. Indicator choice - *I think that the ICES6 is the most justifiable even if that reduces sample size*  
-2. Decision about use of qflagg-adjusted data - *Current preliminary status calculations include qflagged data that have been adjusted by (value/2)*  
 
-3. Decision about spatial scale of the data  - [Bignert et al. 2007](http://pubs.rsc.org/en/Content/ArticleLanding/2007/EM/b700667e#!divAbstract) shows spatial autocorrelation up to 100 km.  
-    - Do we want to average for BHI regions (will be large distances than 100 but only one coastline included). Have data in 17 regions (poor coverage in some of these).  
-    -  Could average at the basin scale - much larger spatial area, inferring similarity over much greater distances. Have data for 11 basin (out of 17)  
-    ** Have now calculated status for both of the above options**  
-    
+### 4.7 Final Status and Trend obejcts
+Create final status and trend objects to export as csv to layers folder. These layers are then registered in layers.csv
+
+```{r final ices6 objects}
+
+## STATUS
+## status calculated in 4.5.4
+status_ices6 = ices6_mean %>%
+              filter(mean_type=="basin")%>%  ## select status calculated by basin
+              select(rgn_id, ices6_status)%>%
+              dplyr::rename(score = ices6_status) %>%
+              mutate(dimension = "status",
+                     score = score*100) %>%
+              select(rgn_id, dimension,score) %>%
+              arrange(rgn_id)
+  
+
+## TREND
+## Trend calculated iin 4.5.6
+trend_ices6 = ices6_basin_trend_alt2 %>%
+              full_join(.,select(lookup_basins, rgn_id,basin_name), by= "basin_name")%>%
+              select(rgn_id, trend_score)%>%
+              rename(score = trend_score) %>%
+              mutate(dimension = "trend",
+                     score = round(score,2))%>%
+              select(rgn_id,dimension,score)%>%
+              arrange(rgn_id)
+              
+
+
+## WRITE AS CSV
+
+write.csv(status_ices6, file.path(dir_layers, 'cw_con_ices6_status_bhi2015.csv'), row.names=FALSE)
+
+write.csv(trend_ices6, file.path(dir_layers, 'cw_con_ices6_trend_bhi2015.csv'), row.names=FALSE)
+
+```
+
+
+
+## 5. Data Prep - Dioxin Indicator
+### TO DO  
+read in dioxin and pcb data  
+read in congener TEF values  
+select only dioxin-like pcbs  
+can I align sub samp ref for pcb data and dioxins  
+how many congeners measured by sample?  
+methods for how to sum up (fixed set of congeners or anything measured)?  
+
+
+
+## 6. Data Prep - PFOS Indicator
+
+
