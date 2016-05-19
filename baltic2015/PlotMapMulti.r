@@ -1,17 +1,6 @@
 ## PlotMapMulti
 ## Loops through multiple goals and map all calling PlotMap
 
-# library(dplyr)
-
-# mapfile_path = 'spatial/regions_gcs.geojson'
-# source('PlotMap_ggplot.r')
-
-# fld_rgn <- 'region_id'
-# fld_score <- 'score'
-# scale_limits <- c(0, 100)
-# map_title       = 'Ocean Health Index scores'
-# scale_label     = 'Biodiversity'
-
 PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe with regions, goals, dimensions, scores
                          spatial_poly    = PrepSpatial('spatial/regions_gcs.geojson'),
                          fld_value_id    = 'region_id', # likely 'rgn_id' or 'region_id' of map regions
@@ -23,9 +12,7 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe w
                          scale_label     = 'score',
                          scale_limits    = c(0, 100),
                          overwrite       = TRUE) {
-  # scores= read.csv('scores.csv'); spatial_poly = readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON"); fld_value_id = 'region_id';
-  # fld_value_score = 'score';dim_choice = 'score'; print_map = TRUE; save_map = TRUE;
-  # path_figures = 'reports/figures'; map_title= element_blank();  scale_label = 'score';  scale_limits = c(0, 100);overwrite = TRUE
+  # DEBUG: scores=read.csv('scores.csv'); spatial_poly = readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON"); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_map = TRUE; save_map = TRUE; path_figures = 'reports/figures'; map_title= element_blank();  scale_label = 'score';  scale_limits = c(0, 100);overwrite = TRUE
 
   ## setup ----
 
@@ -69,8 +56,7 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe w
             scale_label  = scale_label,
             scale_limits = scale_limits,
             overwrite    = overwrite)
-    scores = scores_g; rgn_poly = spatial_poly; fld_rgn= fld_value_id;fld_score = fld_value_score;print_map = print_map;
-    fig_path = sprintf('%s/map_%s.png', path_figures, g); map_title = map_title;scale_label = scale_label;scale_limits = scale_limits;overwrite = overwrite
+    #DEBUG scores = scores_g; rgn_poly = spatial_poly; fld_rgn= fld_value_id;fld_score = fld_value_score;print_map = print_map; fig_path = sprintf('%s/map_%s.png', path_figures, g); map_title = map_title;scale_label = scale_label;scale_limits = scale_limits; overwrite = overwrite
 
   }
 

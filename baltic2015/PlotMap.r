@@ -2,27 +2,10 @@
 ## If there are multiple goals, will loop through and map all
 
 
-
-
 library(ggplot2) # install.packages('ggplot2')
 library(RColorBrewer) # install.packages('RColorBrewer')
 library(dplyr)
 library(tidyr)
-
-### test call
-# setwd('baltic2015')
-# source('PrepSpatial.R')
-# scores_all <- read.csv('scores.csv')
-# scores <- scores_all %>%
-#   filter(goal == 'BD' & dimension == 'score') %>%
-#   filter(region_id != 0)
-# fld_rgn <- 'region_id'
-# fld_score <- 'score'
-# scale_limits <- c(0, 100)
-# map_title       = 'craptastic'
-# scale_label     = 'Biodiversity'
-# rgn_poly          = PrepSpatial('spatial/regions_gcs.geojson')
-# PlotMap(scores, rgn_poly = rgn_poly, scale_label = 'test1', map_title = 'test2')
 
 PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id and scores/values.
                     rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
@@ -35,6 +18,8 @@ PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id 
                     fig_path        = NULL, ### path to save the plot as an image
                     # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on
                     overwrite       = TRUE) {
+  ## DEBUG: setwd('baltic2015'); source('PrepSpatial.R'); scores_all <- read.csv('scores.csv'); scores <- scores_all %>% filter(goal == 'BD' & dimension == 'score') %>% filter(region_id != 0); fld_rgn <- 'region_id'; fld_score <- 'score'; scale_limits <- c(0, 100); map_title= 'Title'; scale_label = 'Biodiversity'; rgn_poly = PrepSpatial('spatial/regions_gcs.geojson'); PlotMap(scores, rgn_poly = rgn_poly, scale_label = 'test1', map_title = 'test2')
+
 
   ### rename columns for convenience...
   names(scores)[names(scores) == fld_rgn]   <- 'rgn_id'
