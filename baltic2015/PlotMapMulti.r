@@ -3,9 +3,9 @@
 
 PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe with regions, goals, dimensions, scores
                          spatial_poly    = PrepSpatial('spatial/regions_gcs.geojson'),
-                         fld_value_id    = 'region_id', # likely 'rgn_id' or 'region_id' of map regions
+                         fld_value_id    = 'region_id', # header of scores variable; likely 'rgn_id' or 'region_id'
                          fld_value_score = 'score', # value to display on map
-                         dim_choice      = 'score', # choice of "future", "pressures", "resilience", "score", "status", "trend"
+                         dim_choice      = 'score', # choose "future", "pressures", "resilience", "score", "status", "trend"
                          print_map       = FALSE,
                          save_map        = TRUE,
                          path_figures    = 'reports/figures',
