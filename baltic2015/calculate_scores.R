@@ -19,7 +19,7 @@ write.csv(scores, 'scores.csv', na='', row.names=F)
 
 ## plot maps of scores
 source('PrepSpatial.r') # until added to ohicore
-source('PlotMap.r')     # until added to ohicore
+source('PlotMapMulti.r')     # until added to ohicore
 spatial_regions = PrepSpatial('spatial/regions_gcs.geojson') # can be .geojson or .shp
 PlotMap(scores          = scores,
         spatial_regions = spatial_regions,

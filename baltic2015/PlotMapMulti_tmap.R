@@ -4,22 +4,17 @@
 # library(dplyr)
 
 # mapfile_path = 'spatial/regions_gcs.geojson'
-# source('PlotMap_ggplot.r')
-
-# fld_rgn <- 'region_id'
-# fld_score <- 'score'
-# scale_limits <- c(0, 100)
-# map_title       = 'Ocean Health Index scores'
-# scale_label     = 'Biodiversity'
+source('PlotMap_ggplot.r')
 
 PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe with regions, goals, dimensions, scores
-                         spatial_poly    = PrepSpatial('spatial/regions_gcs.geojson'),
+                         spatial_poly    = readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON"),
                          fld_value_id    = 'region_id', # likely 'rgn_id' or 'region_id' of map regions
                          fld_value_score = 'score', # value to display on map
                          dim_choice      = 'score', # choice of "future", "pressures", "resilience", "score", "status", "trend"
                          print_map       = FALSE,
                          save_map        = TRUE,
                          path_figures    = 'reports/figures',
+                         map_title       = element_blank(),
                          scale_label     = 'score',
                          scale_limits    = c(0, 100),
                          overwrite       = TRUE) {
@@ -65,7 +60,7 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe w
             fld_score    = fld_value_score,
             print_map    = print_map,
             fig_path     = sprintf('%s/map_%s.png', path_figures, g),
-            map_title    = sprintf('Ocean Health Index: %s', g),
+            map_title    = map_title,
             scale_label  = scale_label,
             scale_limits = scale_limits,
             overwrite    = overwrite)
