@@ -169,9 +169,12 @@ bhi # coord. ref. : +proj=laea
 ```{r read in shapefiles, echo=FALSE, message=FALSE}
 
 ## plot on top of each other
-plot(bhi); plot(mpa, add = TRUE)
+plot(bhi, col = 'red', border = "green"); plot(mpa, col = 'blue', add = TRUE)
 
-##mpa_bhi <- crop(mpa, bhi) # don't use crop, use raster::intersect
+# mpa_bhi <- raster::intersect(mpa, bhi, progress = "text") # didn't finish processing. took too long. May be becasue file size too large. bhi ~ 45.5 Mb, mpa ~ 8.7 Mb. 
+mpa_bhi <- rgeos::gIntersection(mpa, bhi) # worked but lost dataframe. need to reattach data frame in order to calculate area. a lot of trouble. try intersect again. 
+plot(mpa_bhi)
+
 
 mpa_bhi@data
 plot(mpa_bhi)
