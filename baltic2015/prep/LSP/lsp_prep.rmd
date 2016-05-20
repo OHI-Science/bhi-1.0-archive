@@ -132,6 +132,7 @@ library(rgeos)  # install.packages('rgeos')
 Also, get them in the same coordinate reference system for the Baltic. 
 
 The MPA file is in the [LAEA coordinate reference system](http://spatialreference.org/ref/epsg/etrs89-etrs-laea/). 
+
 ```{r read in shapefiles, echo=FALSE, message=FALSE}
 
 ## inspect BHI regions ----
@@ -161,28 +162,44 @@ head(mpa@data)
 bhi = spTransform(bhi, mpa@proj4string)
 bhi # coord. ref. : +proj=laea
 
-
 ```
 
-## Intersect BHI and HELCOM_MAP polygons
+## Intersect BHI and HELCOM_MPA polygons
 
-```{r read in shapefiles, echo=FALSE, message=FALSE}
+MPA regions were divided by with BHI region shape file, and thus we were able to calculate the total MPA area within each BHI region. MPA area per region is saved in the prep folder (`mpa_area_per_rgn.csv). 
+
+TODO: intersecting the two data files created 184 duplicates of the 42 regions... I removed them for now, but I need to dig deeper to find out why that happene and if that in any way affected the accuracy of the data. 
+
+
+
+```{r intersect BHI adn MPA, echo=FALSE, message=FALSE, cache=TRUE}
 
 ## plot on top of each other
 plot(bhi, col = 'red', border = "green"); plot(mpa, col = 'blue', add = TRUE)
 
-# mpa_bhi <- raster::intersect(mpa, bhi, progress = "text") # didn't finish processing. took too long. May be becasue file size too large. bhi ~ 45.5 Mb, mpa ~ 8.7 Mb. 
-mpa_bhi <- rgeos::gIntersection(mpa, bhi) # worked but lost dataframe. need to reattach data frame in order to calculate area. a lot of trouble. try intersect again. 
-plot(mpa_bhi)
+system.time({mpa_bhi <- raster::intersect(mpa, bhi)}) # large file size and took hours to run. bhi ~ 45.5 Mb, mpa ~ 8.7 Mb.
 
+plot(mpa_bhi, col ="red", border = "black")
+head(mpa_bhi@data)
 
-mpa_bhi@data
-plot(mpa_bhi)
+# save mpa_bhi data file to prep/LSP folder 
 
+dir_prep = '~/github/bhi/baltic2015/prep/LSP'
+write_csv(mpa_bhi@data, file.path(dir_prep, 'mpa_bhi_data.csv'))
+## has 227 entried with many duplicates. should only have 42 rows. 
 
-## Read in MPA management plan status file from "~/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_management_plans_20160415.csv"
+# remove duplicates and save to prep_LSP folder 
 
+mpa_bhi_data = read.csv(file.path(dir_prep, 'mpa_bhi_data.csv'))
+duplicates = mpa_bhi_data[duplicated(mpa_bhi_data[,c('rgn_key', 'Subbasin', 'HELCOM_ID', 'BHI_ID', 'Area_km2')]),] # revealed 184 duplicates
+mpa_area_per_rgn = unique(mpa_bhi_data[,c('rgn_key', 'Subbasin', 'HELCOM_ID', 'BHI_ID', 'Area_km2')]) %>%
+                   dplyr::select(BHI_ID, 
+                                 Area_km2) 
 
+write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv'))
 
 ```
 
+
+
+I did not read the read in MPA management plan status file from "~/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_management_plans_20160415.csv"
