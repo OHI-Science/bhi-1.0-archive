@@ -14,7 +14,7 @@ PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id 
                     fld_score       = 'score',
                     scale_label     = 'score',
                     scale_limits    = c(0, 100),
-                    print_map       = TRUE, ### print to display
+                    print_fig       = TRUE, ### print to display
                     fig_path        = NULL, ### path to save the plot as an image
                     # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on
                     overwrite       = TRUE) {
@@ -51,7 +51,7 @@ PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id 
     geom_polygon(color = 'gray80', size = 0.1) +
     labs(title = map_title)
 
-  if(print_map) {
+  if(print_fig) {
     print(df_plot)
   }
 
