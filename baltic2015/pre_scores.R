@@ -12,12 +12,13 @@
 
 if (!"ohicore" %in% (.packages())) {
 
-  # load required libraries
+  # load required libraries for functions.r
   suppressWarnings(require(ohicore))
 
   library(tidyr)
   library(dplyr)
   library(reshape2)
+  library(psych)
 
 }
 

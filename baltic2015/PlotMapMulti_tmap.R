@@ -1,19 +1,26 @@
 ## PlotMapMulti
 ## Loops through multiple goals and map all calling PlotMap
 
+# library(dplyr)
+
+# mapfile_path = 'spatial/regions_gcs.geojson'
+source('PlotMap_ggplot.r')
+
 PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe with regions, goals, dimensions, scores
-                         spatial_poly    = PrepSpatial('spatial/regions_gcs.geojson'),
-                         fld_value_id    = 'region_id', # header of scores variable; likely 'rgn_id' or 'region_id'
-                         fld_value_score = 'score', # header of scores variable; likely 'score' or 'value'
-                         dim_choice      = 'score', # header of scores variable; likely "future", "pressures", "resilience", "score", "status", "trend"
-                         print_fig       = FALSE,
-                         save_fig        = TRUE,
+                         spatial_poly    = readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON"),
+                         fld_value_id    = 'region_id', # likely 'rgn_id' or 'region_id' of map regions
+                         fld_value_score = 'score', # value to display on map
+                         dim_choice      = 'score', # choice of "future", "pressures", "resilience", "score", "status", "trend"
+                         print_map       = FALSE,
+                         save_map        = TRUE,
                          path_figures    = 'reports/figures',
+                         map_title       = element_blank(),
                          scale_label     = 'score',
                          scale_limits    = c(0, 100),
                          overwrite       = TRUE) {
-                         # TODO: interactive = FALSE
-  # DEBUG: scores=read.csv('scores.csv'); spatial_poly = readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON"); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; path_figures = 'reports/figures'; map_title= element_blank();  scale_label = 'score';  scale_limits = c(0, 100);overwrite = TRUE
+  # scores= read.csv('scores.csv'); spatial_poly = readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON"); fld_value_id = 'region_id';
+  # fld_value_score = 'score';dim_choice = 'score'; print_map = TRUE; save_map = TRUE;
+  # path_figures = 'reports/figures'; map_title= element_blank();  scale_label = 'score';  scale_limits = c(0, 100);overwrite = TRUE
 
   ## setup ----
 
@@ -51,13 +58,14 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe w
             rgn_poly     = spatial_poly,
             fld_rgn      = fld_value_id,
             fld_score    = fld_value_score,
-            print_fig    = print_fig,
+            print_map    = print_map,
             fig_path     = sprintf('%s/map_%s.png', path_figures, g),
-            map_title    = sprintf('Ocean Health Index: %s', g),
+            map_title    = map_title,
             scale_label  = scale_label,
             scale_limits = scale_limits,
             overwrite    = overwrite)
-    #DEBUG scores = scores_g; rgn_poly = spatial_poly; fld_rgn= fld_value_id;fld_score = fld_value_score;print_fig = print_fig; fig_path = sprintf('%s/map_%s.png', path_figures, g); map_title = map_title;scale_label = scale_label;scale_limits = scale_limits; overwrite = overwrite
+    scores = scores_g; rgn_poly = spatial_poly; fld_rgn= fld_value_id;fld_score = fld_value_score;print_map = print_map;
+    fig_path = sprintf('%s/map_%s.png', path_figures, g); map_title = map_title;scale_label = scale_label;scale_limits = scale_limits;overwrite = overwrite
 
   }
 
