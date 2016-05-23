@@ -204,12 +204,11 @@ mpa_area_per_rgn = mpa_bhi_data %>%
                                  Date_Est, 
                                  MPA_Status) %>%
                    group_by(BHI_ID) %>%
-                   summarize(mpa_area = sum(AreaTot_Ha)) # or should we use one of the other two areas?
+                   mutate(mpa_area = sum(AreaTot_Ha)) # or should we use one of the other two areas?
 
 write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv'))
 
 ```
-
 
 
 I did not read the read in MPA management plan status file from "~/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_management_plans_20160415.csv"
