@@ -4,7 +4,8 @@ output: github_document
 params: 
     datasource: csv
 ---
-```{r setup}
+
+```{r setup, echo = FALSE}
 
 ## Libraries
 library(readr)
@@ -138,29 +139,29 @@ The MPA file is in the [LAEA coordinate reference system](http://spatialreferenc
 ## inspect BHI regions ----
 bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
                       layer = 'BHI_MCG_11052016')  
-bhi # coord. ref. : +proj=longlat
+# bhi # coord. ref. : +proj=longlat
 
 
 ## explore/plot
 plot(bhi) #takes ~15 seconds
-bhi@data
+# bhi@data
 
 
 ## inspect mpa file ----
 mpa = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'bhi_MPA')),
                      layer = 'HELCOM_MPAs') 
-mpa # coord. ref. : +proj=laea
+# mpa # coord. ref. : +proj=laea
 
 ## plot
 plot(mpa) # quick
-head(mpa@data)
+# head(mpa@data)
 
 
 ## transform bhi to mpa coordinate reference system (CRS) ----
 ## LAEA: http://spatialreference.org/ref/epsg/etrs89-etrs-laea/
 ## https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf
 bhi = spTransform(bhi, mpa@proj4string)
-bhi # coord. ref. : +proj=laea
+# bhi # coord. ref. : +proj=laea
 
 ```
 
@@ -168,7 +169,7 @@ bhi # coord. ref. : +proj=laea
 
 MPA regions were divided by with BHI region shape file, and thus we were able to calculate the total MPA area within each BHI region. MPA area per region is saved in the prep folder (`mpa_area_per_rgn.csv). 
 
-TODO: there is one parameter in the BHI_MPA data set "Shape intersecting the two data files created 184 duplicates of the 42 regions... I removed them for now, but I need to dig deeper to find out why that happene and if that in any way affected the accuracy of the data. 
+The csv. file includes information: Area per MPA, Date established, MPA status, total MPA area per region.  
 
 
 
@@ -177,10 +178,10 @@ TODO: there is one parameter in the BHI_MPA data set "Shape intersecting the two
 ## plot on top of each other
 plot(bhi, col = 'red', border = "green"); plot(mpa, col = 'blue', add = TRUE)
 
-system.time({mpa_bhi <- raster::intersect(mpa, bhi)}) # large file size and took hours to run. bhi ~ 45.5 Mb, mpa ~ 8.7 Mb.
+## system.time({mpa_bhi <- raster::intersect(mpa, bhi)}) # large file size and took hours to run. bhi ~ 45.5 Mb, mpa ~ 8.7 Mb.
 
 plot(mpa_bhi, col ="red", border = "black")
-head(mpa_bhi@data)
+# head(mpa_bhi@data)
 
 ## save mpa_bhi_data file to prep/LSP folder 
 
@@ -192,19 +193,14 @@ write_csv(mpa_bhi@data, file.path(dir_prep, 'mpa_bhi_data.csv'))
 mpa_bhi_data = read.csv(file.path(dir_prep, 'mpa_bhi_data.csv'))
 duplicates = mpa_bhi_data[duplicated(mpa_bhi_data[,c('AreaTot_Ha', 'AreaMar_Ha', 'Shape_area', 'Date_Est', 'rgn_key', 'Subbasin', 'HELCOM_ID', 'BHI_ID')]),] # no duplicates if Shape_area is compared. Shape_area is from MPA data and Area_km2 is from BHI data.
 
-### potentially useful codes: 
-### duplicates = mpa_bhi_data[duplicated(mpa_bhi_data[,c('Shape_area', 'Date_Est', 'rgn_key', 'Subbasin', 'HELCOM_ID', 'BHI_ID', 'Area_km2')]),] # revealed 184 duplicates
-### unique(mpa_bhi_data[,c('rgn_key', 'Subbasin', 'HELCOM_ID', 'BHI_ID', 'Area_km2')]) %>%
-
 mpa_area_per_rgn = mpa_bhi_data %>%
                    dplyr::select(BHI_ID, 
-                                 AreaTot_Ha, 
-                                 AreaMar_Ha, 
-                                 Shape_area, # what's the difference among the three areas?
+                                 MPA_area_Ha = AreaTot_Ha, 
                                  Date_Est, 
                                  MPA_Status) %>%
                    group_by(BHI_ID) %>%
-                   mutate(mpa_area = sum(AreaTot_Ha)) # or should we use one of the other two areas?
+                   mutate(mpa_area = sum(MPA_area_Ha)) %>% # or should we use one of the other two?
+                   ungroup 
 
 write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv'))
 
