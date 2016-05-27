@@ -15,6 +15,7 @@ library(RMySQL)
 library(stringr)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
+library(raster)
 
 # source
 source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
@@ -39,8 +40,6 @@ dir_prep = make_path('baltic2015/prep') # replaces  file.path(dir_baltic, 'layer
 # withr::with_dir(
 #   root_file("DESCRIPTION"))
 
-
-
 dir_anox   = file.path(dir_prep, 'pressures/open_sea_anoxia')
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
@@ -56,18 +55,71 @@ create_readme(dir_anox, 'open_sea_anoxia_prep.rmd')
 
 ### 2.1 Data source 
 #### 2.1.1 Anoxia data layer
-These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract).  Jacob Carstensen provided dbf files containing O2 (mg⋅L−1) for a series of years for the Baltic Proper and the Gulf of Finland.  
+These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Jacob Carstensen provided dbf files containing O2 (mg⋅L−1) for a series of years for the Baltic Proper and the Gulf of Finland.  
 
 Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
+
+``` {r anoxia data setup, echo = FALSE, message = FALSE}
+## directory setup
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+  warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
+}
+
+dir_shp <- file.path(dir_M, 'git-annex/Baltic')
+
+## libraries
+library(dplyr)
+library(rgdal)  # install.packages('rgdal')
+library(raster) # install.packages('raster')
+library(rgeos)  # install.packages('rgeos')
+
+```
 
 #### 2.1.2 Bathymetry
 Downloaded from [HELCOM](http://maps.helcom.fi/website/mapservice/index.html) 28 April 2016 by Thorsten Blenckner
 
+``` {r read in bathymetry data, echo = FALSE}
+
+## read in bathymetry raster data
+bathymetry = raster::raster(file.path(dir_M, 'git-annex/Baltic/anoxia/Baltic_Sea_Bathymetry_Database_v091.tif'))
+# anox
+# plot(bathymetry)
+
+```
 
 ## 3. Open sea anoxia spatial data scale
 We will work on the BHI region scale. O2 rasters and Batlic bathymetry will be overlayed on BHI regions.  Different approaches will be used for BHI regions in the Baltic Proper and in the Gulf of Finland.  
 
-In "baltic_rgns_to_bhi_rgns_lookup_holas_basins.csv" in "~\github\bhi\baltic2015\prep\pressures\open_sea_anoxia" the BHI regions associated with the Baltic Proper and Gulf of Finland are listed.  
+In "baltic_rgns_to_bhi_rgns_lookup_holas_basins.csv" in "~\github\bhi\baltic2015\prep\pressures\open_sea_anoxia" the BHI regions associated with the Baltic Proper and Gulf of Finland are listed.
+
+``` {r read in anoxia data, echo = FALSE}
+
+
+  install.packages('foreign')
+  library(foreign)
+
+anox_file_list = c('CodRVmap_1906.dbf', 'CodRVmap_1931.dbf', 'CodRVmap_1955.dbf', 'CodRVmap_1974.dbf',
+                   'CodRVmap_1993.dbf', 'CodRVmap_2005.dbf', 'CodRVmap_2006.dbf', 'CodRVmap_2007.dbf', 
+                   'CodRVmap_2008.dbf', 'CodRVmap_2009.dbf', 'CodRVmap_2010.dbf', 'CodRVmap_2011.dbf', 
+                   'CodRVmap_2012.dbf', 'CodRVmap_2013.dbf', 'CodRVmap_2014.dbf')
+
+anox_file_list = list.files(path= file.path(dir_shp, 'anoxia'),
+                            pattern="CodRVmap_")
+
+for (anox_file in anox_file_list) {
+   
+  anox = foreign::read.dbf(file.path(dir_shp, 'anoxia', anox_file))
+  # head(anox) 
+
+}
+
+
+```
 
 ## 4. Open sea anoxia data rescaling
 Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.  In the Baltic Proper there is a strong halocline at 70m and it is the anoxic area below the halocline that is of interest (therefore we focus on areas with depths >= 70).  In the Gulf of Finland, there a less strong halocline and thermal stratification is important so we may have to think differently about which areas to focus on.  
