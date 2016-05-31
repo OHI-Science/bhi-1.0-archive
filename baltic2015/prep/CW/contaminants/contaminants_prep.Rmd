@@ -1250,17 +1250,312 @@ dim(pcb1)
 lookup_basins = read.csv(file.path(dir_con,'baltic_rgns_to_bhi_rgns_lookup_holas.csv'))
 
 ## Read in TEF conversions
-lookup_basins = read.csv(file.path(dir_con,'tef_conversion_lookup.csv', sep=';'))
+lookup_tef = read.csv(file.path(dir_con,'tef_conversion_lookup.csv'),sep=';')
+
+## read in unit conversion
+lookup_units = read.csv(file.path(dir_con,'unit_conversion_lookup.csv'),sep=";")
 
 ```
 
+#### 5.1.2 Organize
+Remove and rename columns, change column data types
+```{r organize pcb and dioxin data}
+## Organize Dioxin data
+str(dioxin1)
+
+dioxin2 = dioxin1 %>%
+          dplyr::rename(date=date, lat=latitude, lon= longitude, 
+                    #month=Month, day=Day, doy=DoY,##add when Marc has in database
+                    #bhi_id = BHI_ID, helcom_id=HELCOM_ID, ##add when Marc has in database
+                    #helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,##add when Marc has in database
+                    agmea_y=AGMEA_y,
+                    drywt_percent = DRYWT._., exlip_percent = EXLIP._.,
+                    lnmea_cm=LNMEA_cm, wtmea_g=WTMEA_g) %>% # rename columns
+      select(-date_ices) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"),
+             sub_samp_id= as.character(sub_samp_id)) %>%
+      select(country:lon,date:year,species:value)## reorder columns  ## will need to add columns if have additional database added columns (see those commented out above)
+
+## Organize PCB data same as in 4.1.2
+str(pcb1)
+##format date as date
+pcb2 = pcb1 %>% 
+      dplyr::rename(date=Date, lat=Latitude, lon= Longitude, 
+                    month=Month, day=Day, doy=DoY,
+                    bhi_id = BHI_ID, helcom_id=HELCOM_ID, 
+                    helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,
+                    agmax_y = AGMAX_y, agmea_y=AGMEA_y, agmin_y = AGMIN_y,
+                    drywt_percent = DRYWT._., exlip_percent = EXLIP._.,fatwt_percent=FATWT._.,
+                    lipidwt_percent = LIPIDWT._., lnmax_cm = LNMAX_cm,
+                    lnmea_cm=LNMEA_cm, lnmin_cm=LNMIN_cm, wtmax_g=WTMAX_g, wtmea_g=WTMEA_g,
+                    wtmin_g=WTMIN_g) %>% # rename columns
+      select(-date_ices, -X) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"),
+             sub_samp_id= as.character(sub_samp_id)) %>%
+      select(country:lon,bhi_id:ices_area,date:year,month:doy,species:value)## reorder columns
+
+head(pcb2)
+ 
+```
+
+#### 5.1.3 Filter for only Dioxin-like PCBs
+Use lookup_tef to filter for PCB congeners that are dioxin-like
+
+```{r filter for dioxin-like pcbs}
+
+pcb3 = pcb2 %>%
+      mutate(congener_match = str_replace(congener,"_ug/kg","")) %>%
+      inner_join(., lookup_tef, by=c("congener_match"="congener")) %>%  ## retain only congeners in both objects
+      filter(!is.na(TEF_2005)) %>% ## filter out congeners without a TEF conversion
+      select(-congener_match,-congener_full,-WHO_Compound_Name,-congener_category)
+
+dim(pcb2);dim(pcb3) 
+
+head(pcb3)
+
+
+```
+
+#### 5.1.4 Convert PCB from ug/kg to pg/g
+```{r convert pcb units}
+
+ug_kg_to_pg_g = lookup_units %>% 
+                filter(OriginalUnit =="ug/kg" & ConvertUnit == "pg/g")
+pcb4 = pcb3 %>%
+      mutate(ConvertFactor = ug_kg_to_pg_g$ConvertFactor,
+            value2 = value* ConvertFactor) %>%  ## convert to pg/g
+      mutate(congener = str_replace(congener, "ug/kg", "pg/g"))%>%  ## replace congener value unit
+      select(-value,-ConvertFactor)%>% ##remove ug/kg value and remove conversion
+      dplyr::rename(value=value2) ##
+            
+ggplot(pcb4) +
+  geom_point(aes(year,value))+
+  facet_wrap(~congener, scales = "free_y")+
+  ggtitle("Dioxin-like PCB pg/g")
+
+
+```
+
+### 5.2 Filter data for year
+Constrain data to between 2004-2013 (PCBs only in poland with questionable values in 2014).  Dioxin-data is only from Sweden
+
+```{r filter for 2004-2013}
+dioxin3 = dioxin2 %>%
+          arrange(year)%>%
+          filter(year>=2004 & year <=2013)
+dim(dioxin2);dim(dioxin3)
+
+pcb5 = pcb4 %>%
+        filter(year>=2004 & year <=2013)
+
+dim(pcb4);dim(pcb5)
+
+
+```
+
+
+### 5.3 Assess Qflagged data
+
+#### 5.3.1 How many congeners and sub_samp_ref for dioxins have qflags?
+```{r dioxin qflagged}
+dioxin3 %>% select(qflag) %>% distinct()  ## blank or D
+dioxin3 %>% filter(qflag=="D")%>%nrow()  ## 308 congener observations with qflag
+dioxin3 %>% filter(qflag=="D")%>%select(sub_samp_ref)%>%distinct(.)%>%nrow()  ## 152 different samples associated with 1 or more qflagged congeners
+
+
+```
+
+#### 5.3.2 Plot qflagged dioxin values
+```{r plot dixoin qflag}
+ggplot(dioxin3)+
+  geom_point(aes(year,value,shape=qflag, colour=qflag))+
+  facet_wrap(~congener, scales = "free_y")+
+  scale_shape_manual(values=c(2,19))+
+  ggtitle("Dioxins pg/g")
+
+```
+
+
+#### 5.3.3 How many congeners and sub_samp_ref for dioxin-like pcbs have qflags?
+```{r dioxin-like pcbs qflagged}
+pcb5 = pcb5 %>%
+      mutate(qflag= as.character(qflag))
+
+pcb5 %>% select(qflag) %>% distinct()  ## blank, <, Q ,D
+pcb5 %>% 
+  filter(qflag=="Q" | qflag=="D" | qflag =="<")%>%
+  nrow()  ## 95 congener observations with qflag
+
+pcb5 %>% 
+  filter(qflag=="Q" | qflag=="D" | qflag=="<") %>%
+  select(sub_samp_ref)%>% 
+  distinct(.) %>% 
+  nrow()  ## 95 different samples associated with qflagged congeners
+
+
+```
+
+
+#### 5.3.4 Plot qflagged dioxin-like pcb values
+```{r plot dioxin-like pcb qflag}
+ggplot(pcb5)+
+  geom_point(aes(year,value,shape=qflag, colour=qflag))+
+  facet_wrap(~congener, scales = "free_y")+
+  scale_shape_manual(values=c(2,19,19,19))+
+  ggtitle("Dioxin-like PCB pg/g")
+
+```
+
+#### 5.3.5 Adjust Qflagged values
+Use LOD/2 approach to adjust values. Because we do not have the LOD in all cases, use:  
+adjusted_value = value / 2
+
+```{r qflag value adjustment}
+## Dioxins
+dioxin4= dioxin3 %>%
+         mutate(value_adj = ifelse(qflag=="D",value/2,value))  
+
+pcb6 = pcb5 %>%
+      mutate(value_adj = ifelse(qflag=="Q",value/2,value)) 
+
+```
+
+
+### 5.4 Toxicity Equivalent (TEQ) values
+
+#### 5.4.1 Use TEF conversion factor to convert to TEQ
+Dioxins and dioxin-like PCBs still separate objects
+
+```{r convert to TEQ}
+## Dioxin
+## Join dioxins to the TEF conversion values
+dioxin5 = dioxin4 %>%
+          mutate(congener_match = str_replace(congener,"_pg/g","")) %>%
+          inner_join(., lookup_tef, by=c("congener_match"="congener")) %>%  ## retain only congeners in both objects
+          filter(!is.na(TEF_2005)) %>% ## filter out congeners without a TEF conversion
+          select(-congener_match,-congener_full,-WHO_Compound_Name,-congener_category)
+dim(dioxin4); dim(dioxin5)  ## same number of rows, all dioxins have a TEF conversion
+
+
+## convert to TEQ
+dioxin6 = dioxin5 %>%
+          mutate(value_TEQ = value_adj*TEF_2005)  ## convert concentration to TEQ from qflag adjusted value
+
+
+## PCB
+pcb7 = pcb6 %>%
+        mutate(value_TEQ = value_adj*TEF_2005)## convert concentration to TEQ from qflag adjusted value
+```
+
+#### 5.4.2 Plot TEQ by Congener
+```{r plot TEQ by congener}
+ggplot(dioxin6) +
+  geom_point(aes(year,value_TEQ))+
+  facet_wrap(~congener, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxins pg/g TEQ")
+
+
+ggplot(pcb7) +
+  geom_point(aes(year,value_TEQ))+
+  facet_wrap(~congener, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxin-like PCB pg/g TEQ")
+
+```
+
+#### 5.4.3 Plot TEQ by Country
+
+
+```{r plot TEQ by country}
+ggplot(dioxin6) +
+  geom_point(aes(year,value_TEQ, colour=congener))+
+  facet_wrap(~country, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxins pg/g TEQ")
+
+
+ggplot(pcb7) +
+  geom_point(aes(year,value_TEQ, colour=congener))+
+  facet_wrap(~country, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxin-like PCB pg/g TEQ")
+
+```
+
+
+
+### 5.5 Assess if dioxins and pcbs share sub_sample_ref
+Were dioxins and pcbs measured from the same samples such that a total TEQ value per sample can be calculated??
+
+#### 5.5.1 Unique and matching sub_sample_ref
+There are no matching sub_samp_ref numbers between dioxins and dioxin-like pcbs.  
+Swedish stations and dates are shared between dioxin and pcb datasets.
+```{r sub_sample_ref matching}
+
+## Are there shared sub_samp_ref values??
+sub_samp_diox = dioxin6 %>% 
+                select(sub_samp_ref)%>%
+                #arrange(date)%>%
+                distinct()%>%
+                mutate(dioxin= "yes")
+dim(sub_samp_diox)
+
+
+sub_samp_pcb = pcb7 %>% 
+                select(sub_samp_ref)%>%
+                #arrange(date)%>%
+                distinct()%>%
+                mutate(pcb= "yes")
+dim(sub_samp_pcb)
+
+##
+sub_samp_share = full_join(sub_samp_diox,sub_samp_pcb, by=c("sub_samp_ref")) %>% arrange(sub_samp_ref)
+
+dim(sub_samp_share)
+ ## are any sub_samp_ref shared?
+  sub_samp_share %>% filter(dioxin == "yes" & pcb == "yes")  ##NO
+
+##---------------------------#
+## Are there shared location and sample dates
+  diox_loc = dioxin6%>%
+                select(country,station,date)%>%
+                distinct()%>%
+                arrange(date)%>%
+                mutate(dioxin= "yes")
+  pcb_loc = pcb7%>%
+                select(country,station,date)%>%
+                distinct()%>%
+                arrange(date)%>%
+                mutate(pcb= "yes")
+  
+  loc_share= full_join(diox_loc,pcb_loc, by=c("country","station","date")) %>% arrange(date)
+   
+  ## are any dates and location hared?
+      loc_share %>% filter(dioxin == "yes" & pcb == "yes")  ##YES!
+  
+  ## do these shared dates and locations represent all swedish sites and dates or a subset
+      loc_share %>% filter(dioxin == "yes" & pcb == "yes") %>% nrow() #85
+   
+      loc_share %>% filter(country=="Sweden") %>% nrow() #130
+        ##Only a subset represented
+    
+  
+
+    
+```
+
+
+
 ### TO DO  
-read in dioxin and pcb data  
-read in congener TEF values  
-select only dioxin-like pcbs  
-can I align sub samp ref for pcb data and dioxins  
-how many congeners measured by sample?  
-methods for how to sum up (fixed set of congeners or anything measured)?  
+1. sum TEQ values by sub_samp_ref (track number of congeners included), do separately for dioxins and dioxin-like pcbs.  
+2. take mean TEQ concentration by date and location for each dioxins and dioxin-like pcbs. track number of observations averaged.  
+3. Only for locations with both dioxins and dioxin-like pcbs on a given sample date, get total TEQ conc. by summing the two mean values.  
+4. for sub-basins?? take a mean TEQ value across 2009-2013.  Track number of observations contributing and how many dates and locations these observations represent.
 
 
 

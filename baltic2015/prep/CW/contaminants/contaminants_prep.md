@@ -2058,14 +2058,722 @@ write.csv(trend_ices6, file.path(dir_layers, 'cw_con_ices6_trend_bhi2015.csv'), 
 5. Data Prep - Dioxin Indicator
 -------------------------------
 
+### 5.1 Basic data cleaning and organization
+
+#### 5.1.1 Read in Dioxin and PCB data
+
+Also read in WHO TEF value conversion lookup
+
+``` r
+dioxin1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_dioxin.csv'))
+dim(dioxin1)
+```
+
+    ## [1] 3208   31
+
+``` r
+## read in PCB data (same as read in for ICES6 indicator)
+pcb1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_pcb.csv'))
+dim(pcb1)
+```
+
+    ## [1] 16732    47
+
+``` r
+## Read in lookup - BHI region to HOLAS basins
+lookup_basins = read.csv(file.path(dir_con,'baltic_rgns_to_bhi_rgns_lookup_holas.csv'))
+
+## Read in TEF conversions
+lookup_tef = read.csv(file.path(dir_con,'tef_conversion_lookup.csv'),sep=';')
+
+## read in unit conversion
+lookup_units = read.csv(file.path(dir_con,'unit_conversion_lookup.csv'),sep=";")
+```
+
+#### 5.1.2 Organize
+
+Remove and rename columns, change column data types
+
+``` r
+## Organize Dioxin data
+str(dioxin1)
+```
+
+    ## 'data.frame':    3208 obs. of  31 variables:
+    ##  $ country                             : Factor w/ 1 level "Sweden": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ monit_program                       : Factor w/ 2 levels "CEMP~COMB","COMB": 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ monit_purpose                       : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+    ##  $ report_institute                    : Factor w/ 1 level "SERI": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ station                             : Factor w/ 15 levels "Abbekas","Aengskaersklubb",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ latitude                            : num  55.3 55.3 55.3 55.3 55.3 ...
+    ##  $ longitude                           : num  13.6 13.6 13.6 13.6 13.6 ...
+    ##  $ date                                : Factor w/ 97 levels "2001-09-10","2001-09-13",..: 20 20 20 20 20 20 20 20 20 20 ...
+    ##  $ monit_year                          : int  2009 2009 2009 2009 2009 2009 2009 2009 2009 2009 ...
+    ##  $ date_ices                           : Factor w/ 97 levels "01/09/2011","01/10/2010",..: 97 97 97 97 97 97 97 97 97 97 ...
+    ##  $ year                                : int  2009 2009 2009 2009 2009 2009 2009 2009 2009 2009 ...
+    ##  $ species                             : Factor w/ 1 level "Clupea harengus": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ sub_samp_ref                        : int  3686935 3686935 3686935 3686935 3686935 3686935 3686935 3686935 3686935 3686935 ...
+    ##  $ sub_samp_id                         : int  912409135 912409135 912409135 912409135 912409135 912409135 912409135 912409135 912409135 912409135 ...
+    ##  $ samp_id                             : int  1841609 1841609 1841609 1841609 1841609 1841609 1841609 1841609 1841609 1841609 ...
+    ##  $ num_indiv_subsample                 : int  12 12 12 12 12 12 12 12 12 12 ...
+    ##  $ bulk_id                             : logi  NA NA NA NA NA NA ...
+    ##  $ basis_determination_originalcongener: Factor w/ 2 levels "lipid weight",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ basis_determination_converted       : Factor w/ 1 level "wet weight": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ AGMEA_y                             : int  4 4 4 4 4 4 4 4 4 4 ...
+    ##  $ DRYWT._.                            : num  30 30 30 30 30 30 30 30 30 30 ...
+    ##  $ EXLIP._.                            : num  9.93 9.93 9.93 9.93 9.93 9.93 9.93 9.93 9.93 9.93 ...
+    ##  $ LNMEA_cm                            : num  23.4 23.4 23.4 23.4 23.4 23.4 23.4 23.4 23.4 23.4 ...
+    ##  $ WTMEA_g                             : num  95.7 95.7 95.7 95.7 95.7 95.7 95.7 95.7 95.7 95.7 ...
+    ##  $ qflag                               : Factor w/ 2 levels "","D": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ detect_lim                          : num  0.1688 0.0377 0.0745 0.1192 0.0169 ...
+    ##  $ quant_lim                           : logi  NA NA NA NA NA NA ...
+    ##  $ uncert_val                          : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ method_uncert                       : Factor w/ 2 levels "","U2": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ congener                            : Factor w/ 16 levels "CDD1N_pg/g","CDD4X_pg/g",..: 1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ value                               : num  0.1688 0.0377 0.0745 0.1192 0.0169 ...
+
+``` r
+dioxin2 = dioxin1 %>%
+          dplyr::rename(date=date, lat=latitude, lon= longitude, 
+                    #month=Month, day=Day, doy=DoY,##add when Marc has in database
+                    #bhi_id = BHI_ID, helcom_id=HELCOM_ID, ##add when Marc has in database
+                    #helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,##add when Marc has in database
+                    agmea_y=AGMEA_y,
+                    drywt_percent = DRYWT._., exlip_percent = EXLIP._.,
+                    lnmea_cm=LNMEA_cm, wtmea_g=WTMEA_g) %>% # rename columns
+      select(-date_ices) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"),
+             sub_samp_id= as.character(sub_samp_id)) %>%
+      select(country:lon,date:year,species:value)## reorder columns  ## will need to add columns if have additional database added columns (see those commented out above)
+
+## Organize PCB data same as in 4.1.2
+str(pcb1)
+```
+
+    ## 'data.frame':    16732 obs. of  47 variables:
+    ##  $ X                                   : int  1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ country                             : Factor w/ 5 levels "Finland","Germany",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ monit_program                       : Factor w/ 3 levels "CEMP~COMB","COMB",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ monit_purpose                       : Factor w/ 5 levels "","B~T~S","H",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ report_institute                    : Factor w/ 7 levels "ASLR","BFGG",..: 4 4 4 4 4 4 4 4 4 4 ...
+    ##  $ station                             : Factor w/ 31 levels "","Abbekas","Aengskaersklubb",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ Latitude                            : num  64.2 64.2 64.2 64.2 64.2 ...
+    ##  $ Longitude                           : num  23.3 23.3 23.3 23.3 23.3 ...
+    ##  $ Date                                : Factor w/ 208 levels "2000-05-12","2000-05-15",..: 92 92 92 92 92 92 92 92 92 92 ...
+    ##  $ monit_year                          : int  2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...
+    ##  $ date_ices                           : Factor w/ 208 levels "01/09/2008","01/09/2009",..: 33 33 33 33 33 33 33 33 33 33 ...
+    ##  $ year                                : int  2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...
+    ##  $ species                             : Factor w/ 1 level "Clupea harengus": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ sub_samp_ref                        : int  3149743 3149743 3149743 3149743 3149743 3149743 3149743 3149744 3149744 3149744 ...
+    ##  $ sub_samp_id                         : Factor w/ 1490 levels "1","10","1001",..: 457 457 457 457 457 457 457 458 458 458 ...
+    ##  $ samp_id                             : int  1423609 1423609 1423609 1423609 1423609 1423609 1423609 1423610 1423610 1423610 ...
+    ##  $ num_indiv_subsample                 : int  1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ bulk_id                             : logi  NA NA NA NA NA NA ...
+    ##  $ basis_determination_originalcongener: Factor w/ 2 levels "lipid weight",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ basis_determination_converted       : Factor w/ 1 level "wet weight": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ AGMAX_y                             : logi  NA NA NA NA NA NA ...
+    ##  $ AGMEA_y                             : int  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ AGMIN_y                             : logi  NA NA NA NA NA NA ...
+    ##  $ DRYWT._.                            : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ EXLIP._.                            : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ FATWT._.                            : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ LIPIDWT._.                          : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ LNMAX_cm                            : logi  NA NA NA NA NA NA ...
+    ##  $ LNMEA_cm                            : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ LNMIN_cm                            : logi  NA NA NA NA NA NA ...
+    ##  $ WTMAX_g                             : logi  NA NA NA NA NA NA ...
+    ##  $ WTMEA_g                             : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ WTMIN_g                             : logi  NA NA NA NA NA NA ...
+    ##  $ qflag                               : Factor w/ 5 levels "","<","<~D","D",..: 1 1 1 1 1 2 2 1 1 1 ...
+    ##  $ detect_lim                          : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ quant_lim                           : num  NA NA NA NA NA 0.04 0.04 NA NA NA ...
+    ##  $ uncert_val                          : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ method_uncert                       : Factor w/ 3 levels "","%","U2": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ congener                            : Factor w/ 16 levels "CB101_ug/kg",..: 1 3 5 7 13 14 15 1 3 5 ...
+    ##  $ value                               : num  0.3 0.27 0.66 0.84 0.3 0.04 0.04 0.18 0.25 0.61 ...
+    ##  $ Month                               : int  8 8 8 8 8 8 8 8 8 8 ...
+    ##  $ Day                                 : int  6 6 6 6 6 6 6 6 6 6 ...
+    ##  $ DoY                                 : int  219 219 219 219 219 219 219 219 219 219 ...
+    ##  $ BHI_ID                              : int  42 42 42 42 42 42 42 42 42 42 ...
+    ##  $ HELCOM_ID                           : Factor w/ 12 levels "SEA-001","SEA-006",..: 12 12 12 12 12 12 12 12 12 12 ...
+    ##  $ HELCOM_COASTAL_CODE                 : int  0 0 0 0 0 0 0 0 0 0 ...
+    ##  $ ICES_AREA                           : Factor w/ 10 levels "24","25","26",..: 8 8 8 8 8 8 8 8 8 8 ...
+
+``` r
+##format date as date
+pcb2 = pcb1 %>% 
+      dplyr::rename(date=Date, lat=Latitude, lon= Longitude, 
+                    month=Month, day=Day, doy=DoY,
+                    bhi_id = BHI_ID, helcom_id=HELCOM_ID, 
+                    helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,
+                    agmax_y = AGMAX_y, agmea_y=AGMEA_y, agmin_y = AGMIN_y,
+                    drywt_percent = DRYWT._., exlip_percent = EXLIP._.,fatwt_percent=FATWT._.,
+                    lipidwt_percent = LIPIDWT._., lnmax_cm = LNMAX_cm,
+                    lnmea_cm=LNMEA_cm, lnmin_cm=LNMIN_cm, wtmax_g=WTMAX_g, wtmea_g=WTMEA_g,
+                    wtmin_g=WTMIN_g) %>% # rename columns
+      select(-date_ices, -X) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"),
+             sub_samp_id= as.character(sub_samp_id)) %>%
+      select(country:lon,bhi_id:ices_area,date:year,month:doy,species:value)## reorder columns
+
+head(pcb2)
+```
+
+    ##   country monit_program monit_purpose report_institute station      lat
+    ## 1 Finland          COMB                           FEIF         64.17917
+    ## 2 Finland          COMB                           FEIF         64.17917
+    ## 3 Finland          COMB                           FEIF         64.17917
+    ## 4 Finland          COMB                           FEIF         64.17917
+    ## 5 Finland          COMB                           FEIF         64.17917
+    ## 6 Finland          COMB                           FEIF         64.17917
+    ##       lon bhi_id helcom_id helcom_coastal_code ices_area       date
+    ## 1 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 2 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 3 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 4 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 5 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 6 23.3265     42   SEA-017                   0        31 2008-08-06
+    ##   monit_year year month day doy         species sub_samp_ref sub_samp_id
+    ## 1       2008 2008     8   6 219 Clupea harengus      3149743       34000
+    ## 2       2008 2008     8   6 219 Clupea harengus      3149743       34000
+    ## 3       2008 2008     8   6 219 Clupea harengus      3149743       34000
+    ## 4       2008 2008     8   6 219 Clupea harengus      3149743       34000
+    ## 5       2008 2008     8   6 219 Clupea harengus      3149743       34000
+    ## 6       2008 2008     8   6 219 Clupea harengus      3149743       34000
+    ##   samp_id num_indiv_subsample bulk_id basis_determination_originalcongener
+    ## 1 1423609                   1      NA                           wet weight
+    ## 2 1423609                   1      NA                           wet weight
+    ## 3 1423609                   1      NA                           wet weight
+    ## 4 1423609                   1      NA                           wet weight
+    ## 5 1423609                   1      NA                           wet weight
+    ## 6 1423609                   1      NA                           wet weight
+    ##   basis_determination_converted agmax_y agmea_y agmin_y drywt_percent
+    ## 1                    wet weight      NA      NA      NA            NA
+    ## 2                    wet weight      NA      NA      NA            NA
+    ## 3                    wet weight      NA      NA      NA            NA
+    ## 4                    wet weight      NA      NA      NA            NA
+    ## 5                    wet weight      NA      NA      NA            NA
+    ## 6                    wet weight      NA      NA      NA            NA
+    ##   exlip_percent fatwt_percent lipidwt_percent lnmax_cm lnmea_cm lnmin_cm
+    ## 1            NA            NA              NA       NA       NA       NA
+    ## 2            NA            NA              NA       NA       NA       NA
+    ## 3            NA            NA              NA       NA       NA       NA
+    ## 4            NA            NA              NA       NA       NA       NA
+    ## 5            NA            NA              NA       NA       NA       NA
+    ## 6            NA            NA              NA       NA       NA       NA
+    ##   wtmax_g wtmea_g wtmin_g qflag detect_lim quant_lim uncert_val
+    ## 1      NA      NA      NA               NA        NA         NA
+    ## 2      NA      NA      NA               NA        NA         NA
+    ## 3      NA      NA      NA               NA        NA         NA
+    ## 4      NA      NA      NA               NA        NA         NA
+    ## 5      NA      NA      NA               NA        NA         NA
+    ## 6      NA      NA      NA     <         NA      0.04         NA
+    ##   method_uncert    congener value
+    ## 1               CB101_ug/kg  0.30
+    ## 2               CB118_ug/kg  0.27
+    ## 3               CB138_ug/kg  0.66
+    ## 4               CB153_ug/kg  0.84
+    ## 5               CB180_ug/kg  0.30
+    ## 6                CB28_ug/kg  0.04
+
+#### 5.1.3 Filter for only Dioxin-like PCBs
+
+Use lookup\_tef to filter for PCB congeners that are dioxin-like
+
+``` r
+pcb3 = pcb2 %>%
+      mutate(congener_match = str_replace(congener,"_ug/kg","")) %>%
+      inner_join(., lookup_tef, by=c("congener_match"="congener")) %>%  ## retain only congeners in both objects
+      filter(!is.na(TEF_2005)) %>% ## filter out congeners without a TEF conversion
+      select(-congener_match,-congener_full,-WHO_Compound_Name,-congener_category)
+```
+
+    ## Warning in inner_join_impl(x, y, by$x, by$y): joining character vector and
+    ## factor, coercing into character vector
+
+``` r
+dim(pcb2);dim(pcb3) 
+```
+
+    ## [1] 16732    45
+
+    ## [1] 3524   46
+
+``` r
+head(pcb3)
+```
+
+    ##   country monit_program monit_purpose report_institute station      lat
+    ## 1 Finland          COMB                           FEIF         64.17917
+    ## 2 Finland          COMB                           FEIF         64.17917
+    ## 3 Finland          COMB                           FEIF         64.17917
+    ## 4 Finland          COMB                           FEIF         64.17917
+    ## 5 Finland          COMB                           FEIF         64.17917
+    ## 6 Finland          COMB                           FEIF         64.17917
+    ##       lon bhi_id helcom_id helcom_coastal_code ices_area       date
+    ## 1 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 2 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 3 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 4 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 5 23.3265     42   SEA-017                   0        31 2008-08-06
+    ## 6 23.3265     42   SEA-017                   0        31 2008-08-06
+    ##   monit_year year month day doy         species sub_samp_ref sub_samp_id
+    ## 1       2008 2008     8   6 219 Clupea harengus      3149743       34000
+    ## 2       2008 2008     8   6 219 Clupea harengus      3149744       34001
+    ## 3       2008 2008     8   6 219 Clupea harengus      3149745       34002
+    ## 4       2008 2008     8   6 219 Clupea harengus      3149746       34003
+    ## 5       2008 2008     8   6 219 Clupea harengus      3149747       34004
+    ## 6       2008 2008     8   6 219 Clupea harengus      3149748       34005
+    ##   samp_id num_indiv_subsample bulk_id basis_determination_originalcongener
+    ## 1 1423609                   1      NA                           wet weight
+    ## 2 1423610                   1      NA                           wet weight
+    ## 3 1423611                   1      NA                           wet weight
+    ## 4 1423612                   1      NA                           wet weight
+    ## 5 1423613                   1      NA                           wet weight
+    ## 6 1423614                   1      NA                           wet weight
+    ##   basis_determination_converted agmax_y agmea_y agmin_y drywt_percent
+    ## 1                    wet weight      NA      NA      NA            NA
+    ## 2                    wet weight      NA      NA      NA            NA
+    ## 3                    wet weight      NA      NA      NA            NA
+    ## 4                    wet weight      NA      NA      NA            NA
+    ## 5                    wet weight      NA      NA      NA            NA
+    ## 6                    wet weight      NA      NA      NA            NA
+    ##   exlip_percent fatwt_percent lipidwt_percent lnmax_cm lnmea_cm lnmin_cm
+    ## 1            NA            NA              NA       NA       NA       NA
+    ## 2            NA            NA              NA       NA       NA       NA
+    ## 3            NA            NA              NA       NA       NA       NA
+    ## 4            NA            NA              NA       NA       NA       NA
+    ## 5            NA            NA              NA       NA       NA       NA
+    ## 6            NA            NA              NA       NA       NA       NA
+    ##   wtmax_g wtmea_g wtmin_g qflag detect_lim quant_lim uncert_val
+    ## 1      NA      NA      NA               NA        NA         NA
+    ## 2      NA      NA      NA               NA        NA         NA
+    ## 3      NA      NA      NA               NA        NA         NA
+    ## 4      NA      NA      NA               NA        NA         NA
+    ## 5      NA      NA      NA               NA        NA         NA
+    ## 6      NA      NA      NA               NA        NA         NA
+    ##   method_uncert    congener value TEF_2005
+    ## 1               CB118_ug/kg  0.27    3e-05
+    ## 2               CB118_ug/kg  0.25    3e-05
+    ## 3               CB118_ug/kg  0.11    3e-05
+    ## 4               CB118_ug/kg  0.29    3e-05
+    ## 5               CB118_ug/kg  0.16    3e-05
+    ## 6               CB118_ug/kg  0.28    3e-05
+
+#### 5.1.4 Convert PCB from ug/kg to pg/g
+
+``` r
+ug_kg_to_pg_g = lookup_units %>% 
+                filter(OriginalUnit =="ug/kg" & ConvertUnit == "pg/g")
+pcb4 = pcb3 %>%
+      mutate(ConvertFactor = ug_kg_to_pg_g$ConvertFactor,
+            value2 = value* ConvertFactor) %>%  ## convert to pg/g
+      mutate(congener = str_replace(congener, "ug/kg", "pg/g"))%>%  ## replace congener value unit
+      select(-value,-ConvertFactor)%>% ##remove ug/kg value and remove conversion
+      dplyr::rename(value=value2) ##
+            
+ggplot(pcb4) +
+  geom_point(aes(year,value))+
+  facet_wrap(~congener, scales = "free_y")+
+  ggtitle("Dioxin-like PCB pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/convert%20pcb%20units-1.png)<!-- -->
+
+### 5.2 Filter data for year
+
+Constrain data to between 2004-2013 (PCBs only in poland with questionable values in 2014). Dioxin-data is only from Sweden
+
+``` r
+dioxin3 = dioxin2 %>%
+          arrange(year)%>%
+          filter(year>=2004 & year <=2013)
+dim(dioxin2);dim(dioxin3)
+```
+
+    ## [1] 3208   30
+
+    ## [1] 2672   30
+
+``` r
+pcb5 = pcb4 %>%
+        filter(year>=2004 & year <=2013)
+
+dim(pcb4);dim(pcb5)
+```
+
+    ## [1] 3524   46
+
+    ## [1] 2906   46
+
+### 5.3 Assess Qflagged data
+
+#### 5.3.1 How many congeners and sub\_samp\_ref for dioxins have qflags?
+
+``` r
+dioxin3 %>% select(qflag) %>% distinct()  ## blank or D
+```
+
+    ##   qflag
+    ## 1      
+    ## 2     D
+
+``` r
+dioxin3 %>% filter(qflag=="D")%>%nrow()  ## 308 congener observations with qflag
+```
+
+    ## [1] 308
+
+``` r
+dioxin3 %>% filter(qflag=="D")%>%select(sub_samp_ref)%>%distinct(.)%>%nrow()  ## 152 different samples associated with 1 or more qflagged congeners
+```
+
+    ## [1] 152
+
+#### 5.3.2 Plot qflagged dioxin values
+
+``` r
+ggplot(dioxin3)+
+  geom_point(aes(year,value,shape=qflag, colour=qflag))+
+  facet_wrap(~congener, scales = "free_y")+
+  scale_shape_manual(values=c(2,19))+
+  ggtitle("Dioxins pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20dixoin%20qflag-1.png)<!-- -->
+
+#### 5.3.3 How many congeners and sub\_samp\_ref for dioxin-like pcbs have qflags?
+
+``` r
+pcb5 = pcb5 %>%
+      mutate(qflag= as.character(qflag))
+
+pcb5 %>% select(qflag) %>% distinct()  ## blank, <, Q ,D
+```
+
+    ##   qflag
+    ## 1      
+    ## 2     <
+    ## 3     D
+    ## 4     Q
+
+``` r
+pcb5 %>% 
+  filter(qflag=="Q" | qflag=="D" | qflag =="<")%>%
+  nrow()  ## 95 congener observations with qflag
+```
+
+    ## [1] 95
+
+``` r
+pcb5 %>% 
+  filter(qflag=="Q" | qflag=="D" | qflag=="<") %>%
+  select(sub_samp_ref)%>% 
+  distinct(.) %>% 
+  nrow()  ## 95 different samples associated with qflagged congeners
+```
+
+    ## [1] 95
+
+#### 5.3.4 Plot qflagged dioxin-like pcb values
+
+``` r
+ggplot(pcb5)+
+  geom_point(aes(year,value,shape=qflag, colour=qflag))+
+  facet_wrap(~congener, scales = "free_y")+
+  scale_shape_manual(values=c(2,19,19,19))+
+  ggtitle("Dioxin-like PCB pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20dioxin-like%20pcb%20qflag-1.png)<!-- -->
+
+#### 5.3.5 Adjust Qflagged values
+
+Use LOD/2 approach to adjust values. Because we do not have the LOD in all cases, use:
+adjusted\_value = value / 2
+
+``` r
+## Dioxins
+dioxin4= dioxin3 %>%
+         mutate(value_adj = ifelse(qflag=="D",value/2,value))  
+
+pcb6 = pcb5 %>%
+      mutate(value_adj = ifelse(qflag=="Q",value/2,value)) 
+```
+
+### 5.4 Toxicity Equivalent (TEQ) values
+
+#### 5.4.1 Use TEF conversion factor to convert to TEQ
+
+Dioxins and dioxin-like PCBs still separate objects
+
+``` r
+## Dioxin
+## Join dioxins to the TEF conversion values
+dioxin5 = dioxin4 %>%
+          mutate(congener_match = str_replace(congener,"_pg/g","")) %>%
+          inner_join(., lookup_tef, by=c("congener_match"="congener")) %>%  ## retain only congeners in both objects
+          filter(!is.na(TEF_2005)) %>% ## filter out congeners without a TEF conversion
+          select(-congener_match,-congener_full,-WHO_Compound_Name,-congener_category)
+```
+
+    ## Warning in inner_join_impl(x, y, by$x, by$y): joining character vector and
+    ## factor, coercing into character vector
+
+``` r
+dim(dioxin4); dim(dioxin5)  ## same number of rows, all dioxins have a TEF conversion
+```
+
+    ## [1] 2672   31
+
+    ## [1] 2672   32
+
+``` r
+## convert to TEQ
+dioxin6 = dioxin5 %>%
+          mutate(value_TEQ = value_adj*TEF_2005)  ## convert concentration to TEQ from qflag adjusted value
+
+
+## PCB
+pcb7 = pcb6 %>%
+        mutate(value_TEQ = value_adj*TEF_2005)## convert concentration to TEQ from qflag adjusted value
+```
+
+#### 5.4.2 Plot TEQ by Congener
+
+``` r
+ggplot(dioxin6) +
+  geom_point(aes(year,value_TEQ))+
+  facet_wrap(~congener, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxins pg/g TEQ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20congener-1.png)<!-- -->
+
+``` r
+ggplot(pcb7) +
+  geom_point(aes(year,value_TEQ))+
+  facet_wrap(~congener, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxin-like PCB pg/g TEQ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20congener-2.png)<!-- -->
+
+#### 5.4.3 Plot TEQ by Country
+
+``` r
+ggplot(dioxin6) +
+  geom_point(aes(year,value_TEQ, colour=congener))+
+  facet_wrap(~country, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxins pg/g TEQ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20country-1.png)<!-- -->
+
+``` r
+ggplot(pcb7) +
+  geom_point(aes(year,value_TEQ, colour=congener))+
+  facet_wrap(~country, scales = "free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Dioxin-like PCB pg/g TEQ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20country-2.png)<!-- -->
+
+### 5.5 Assess if dioxins and pcbs share sub\_sample\_ref
+
+Were dioxins and pcbs measured from the same samples such that a total TEQ value per sample can be calculated??
+
+#### 5.5.1 Unique and matching sub\_sample\_ref
+
+There are no matching sub\_samp\_ref numbers between dioxins and dioxin-like pcbs.
+Swedish stations and dates are shared between dioxin and pcb datasets.
+
+``` r
+## Are there shared sub_samp_ref values??
+sub_samp_diox = dioxin6 %>% 
+                select(sub_samp_ref)%>%
+                #arrange(date)%>%
+                distinct()%>%
+                mutate(dioxin= "yes")
+dim(sub_samp_diox)
+```
+
+    ## [1] 182   2
+
+``` r
+sub_samp_pcb = pcb7 %>% 
+                select(sub_samp_ref)%>%
+                #arrange(date)%>%
+                distinct()%>%
+                mutate(pcb= "yes")
+dim(sub_samp_pcb)
+```
+
+    ## [1] 1717    2
+
+``` r
+##
+sub_samp_share = full_join(sub_samp_diox,sub_samp_pcb, by=c("sub_samp_ref")) %>% arrange(sub_samp_ref)
+
+dim(sub_samp_share)
+```
+
+    ## [1] 1899    3
+
+``` r
+ ## are any sub_samp_ref shared?
+  sub_samp_share %>% filter(dioxin == "yes" & pcb == "yes")  ##NO
+```
+
+    ## [1] sub_samp_ref dioxin       pcb         
+    ## <0 rows> (or 0-length row.names)
+
+``` r
+##---------------------------#
+## Are there shared location and sample dates
+  diox_loc = dioxin6%>%
+                select(country,station,date)%>%
+                distinct()%>%
+                arrange(date)%>%
+                mutate(dioxin= "yes")
+  pcb_loc = pcb7%>%
+                select(country,station,date)%>%
+                distinct()%>%
+                arrange(date)%>%
+                mutate(pcb= "yes")
+  
+  loc_share= full_join(diox_loc,pcb_loc, by=c("country","station","date")) %>% arrange(date)
+```
+
+    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factors with
+    ## different levels, coercing to character vector
+
+    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factors with
+    ## different levels, coercing to character vector
+
+``` r
+  ## are any dates and location hared?
+      loc_share %>% filter(dioxin == "yes" & pcb == "yes")  ##YES!
+```
+
+    ##    country             station       date dioxin pcb
+    ## 1   Sweden          E/W FLADEN 2004-09-13    yes yes
+    ## 2   Sweden        Harufjaerden 2004-09-26    yes yes
+    ## 3   Sweden     Aengskaersklubb 2009-05-11    yes yes
+    ## 4   Sweden           Utlaengan 2009-05-11    yes yes
+    ## 5   Sweden      Gaviksfjaerden 2009-08-07    yes yes
+    ## 6   Sweden   Langvindsfjaerden 2009-08-13    yes yes
+    ## 7   Sweden              Lagnoe 2009-08-25    yes yes
+    ## 8   Sweden          E/W FLADEN 2009-09-07    yes yes
+    ## 9   Sweden          Holmoearna 2009-09-15    yes yes
+    ## 10  Sweden        Ranefjaerden 2009-09-17    yes yes
+    ## 11  Sweden           Byxelkrok 2009-09-20    yes yes
+    ## 12  Sweden        Harufjaerden 2009-09-28    yes yes
+    ## 13  Sweden  Kinnbaecksfjaerden 2009-10-12    yes yes
+    ## 14  Sweden              Kullen 2009-10-12    yes yes
+    ## 15  Sweden     Aengskaersklubb 2009-10-22    yes yes
+    ## 16  Sweden           Utlaengan 2009-10-27    yes yes
+    ## 17  Sweden Vaestra Hanoebukten 2009-10-29    yes yes
+    ## 18  Sweden            Landsort 2009-11-12    yes yes
+    ## 19  Sweden             Abbekas 2009-11-30    yes yes
+    ## 20  Sweden           Utlaengan 2010-01-11    yes yes
+    ## 21  Sweden           Utlaengan 2010-05-24    yes yes
+    ## 22  Sweden     Aengskaersklubb 2010-06-11    yes yes
+    ## 23  Sweden   Langvindsfjaerden 2010-08-10    yes yes
+    ## 24  Sweden              Lagnoe 2010-08-25    yes yes
+    ## 25  Sweden          E/W FLADEN 2010-09-06    yes yes
+    ## 26  Sweden          Holmoearna 2010-09-13    yes yes
+    ## 27  Sweden        Ranefjaerden 2010-09-17    yes yes
+    ## 28  Sweden        Harufjaerden 2010-09-20    yes yes
+    ## 29  Sweden              Kullen 2010-09-29    yes yes
+    ## 30  Sweden           Byxelkrok 2010-09-30    yes yes
+    ## 31  Sweden     Aengskaersklubb 2010-10-01    yes yes
+    ## 32  Sweden Vaestra Hanoebukten 2010-10-04    yes yes
+    ## 33  Sweden  Kinnbaecksfjaerden 2010-10-11    yes yes
+    ## 34  Sweden            Landsort 2010-10-12    yes yes
+    ## 35  Sweden             Abbekas 2010-10-21    yes yes
+    ## 36  Sweden           Utlaengan 2011-06-06    yes yes
+    ## 37  Sweden     Aengskaersklubb 2011-07-24    yes yes
+    ## 38  Sweden      Gaviksfjaerden 2011-08-03    yes yes
+    ## 39  Sweden   Langvindsfjaerden 2011-08-09    yes yes
+    ## 40  Sweden              Lagnoe 2011-08-23    yes yes
+    ## 41  Sweden          Holmoearna 2011-09-01    yes yes
+    ## 42  Sweden          E/W FLADEN 2011-09-09    yes yes
+    ## 43  Sweden        Ranefjaerden 2011-09-12    yes yes
+    ## 44  Sweden           Byxelkrok 2011-10-01    yes yes
+    ## 45  Sweden        Harufjaerden 2011-10-02    yes yes
+    ## 46  Sweden     Aengskaersklubb 2011-10-05    yes yes
+    ## 47  Sweden              Kullen 2011-10-06    yes yes
+    ## 48  Sweden  Kinnbaecksfjaerden 2011-10-10    yes yes
+    ## 49  Sweden           Utlaengan 2011-10-17    yes yes
+    ## 50  Sweden            Landsort 2011-10-25    yes yes
+    ## 51  Sweden             Abbekas 2011-11-14    yes yes
+    ## 52  Sweden Vaestra Hanoebukten 2011-11-29    yes yes
+    ## 53  Sweden           Utlaengan 2012-06-04    yes yes
+    ## 54  Sweden     Aengskaersklubb 2012-06-11    yes yes
+    ## 55  Sweden   Langvindsfjaerden 2012-08-07    yes yes
+    ## 56  Sweden      Gaviksfjaerden 2012-08-13    yes yes
+    ## 57  Sweden          E/W FLADEN 2012-08-17    yes yes
+    ## 58  Sweden              Lagnoe 2012-08-21    yes yes
+    ## 59  Sweden          Holmoearna 2012-08-28    yes yes
+    ## 60  Sweden        Ranefjaerden 2012-09-17    yes yes
+    ## 61  Sweden              Kullen 2012-09-20    yes yes
+    ## 62  Sweden        Harufjaerden 2012-09-23    yes yes
+    ## 63  Sweden     Aengskaersklubb 2012-10-01    yes yes
+    ## 64  Sweden           Byxelkrok 2012-10-01    yes yes
+    ## 65  Sweden  Kinnbaecksfjaerden 2012-10-01    yes yes
+    ## 66  Sweden Vaestra Hanoebukten 2012-10-01    yes yes
+    ## 67  Sweden           Utlaengan 2012-11-26    yes yes
+    ## 68  Sweden             Abbekas 2012-12-03    yes yes
+    ## 69  Sweden            Landsort 2012-12-20    yes yes
+    ## 70  Sweden           Utlaengan 2013-05-27    yes yes
+    ## 71  Sweden      Gaviksfjaerden 2013-08-02    yes yes
+    ## 72  Sweden   Langvindsfjaerden 2013-08-14    yes yes
+    ## 73  Sweden              Lagnoe 2013-08-22    yes yes
+    ## 74  Sweden          E/W FLADEN 2013-08-28    yes yes
+    ## 75  Sweden          Holmoearna 2013-09-02    yes yes
+    ## 76  Sweden        Ranefjaerden 2013-09-09    yes yes
+    ## 77  Sweden        Harufjaerden 2013-09-22    yes yes
+    ## 78  Sweden              Kullen 2013-09-25    yes yes
+    ## 79  Sweden     Aengskaersklubb 2013-09-30    yes yes
+    ## 80  Sweden  Kinnbaecksfjaerden 2013-09-30    yes yes
+    ## 81  Sweden            Landsort 2013-10-06    yes yes
+    ## 82  Sweden Vaestra Hanoebukten 2013-10-23    yes yes
+    ## 83  Sweden           Byxelkrok 2013-10-28    yes yes
+    ## 84  Sweden             Abbekas 2013-11-05    yes yes
+    ## 85  Sweden           Utlaengan 2013-11-11    yes yes
+
+``` r
+  ## do these shared dates and locations represent all swedish sites and dates or a subset
+      loc_share %>% filter(dioxin == "yes" & pcb == "yes") %>% nrow() #85
+```
+
+    ## [1] 85
+
+``` r
+      loc_share %>% filter(country=="Sweden") %>% nrow() #130
+```
+
+    ## [1] 130
+
+``` r
+        ##Only a subset represented
+```
+
 ### TO DO
 
-read in dioxin and pcb data
-read in congener TEF values
-select only dioxin-like pcbs
-can I align sub samp ref for pcb data and dioxins
-how many congeners measured by sample?
-methods for how to sum up (fixed set of congeners or anything measured)?
+1.  sum TEQ values by sub\_samp\_ref (track number of congeners included), do separately for dioxins and dioxin-like pcbs.
+2.  take mean TEQ concentration by date and location for each dioxins and dioxin-like pcbs. track number of observations averaged.
+3.  Only for locations with both dioxins and dioxin-like pcbs on a given sample date, get total TEQ conc. by summing the two mean values.
+4.  for sub-basins?? take a mean TEQ value across 2009-2013. Track number of observations contributing and how many dates and locations these observations represent.
 
 6. Data Prep - PFOS Indicator
 -----------------------------
