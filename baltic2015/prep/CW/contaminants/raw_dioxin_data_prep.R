@@ -419,6 +419,6 @@ dim(ices5) #3208   15  ## some how rows were added
 ## do not want to spread the data because the qflag, detli etc is unique to each congener
 
 ## save and export
-write.csv(ices6, file.path(dir_con, "raw_prep/ices_herring_dioxin_cleaned.csv"))
+write.csv(ices6, file.path(dir_con, "raw_prep/ices_herring_dioxin_cleaned.csv"),row.names = FALSE)
 
 

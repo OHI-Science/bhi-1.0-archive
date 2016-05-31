@@ -1231,6 +1231,29 @@ write.csv(trend_ices6, file.path(dir_layers, 'cw_con_ices6_trend_bhi2015.csv'), 
 
 
 ## 5. Data Prep - Dioxin Indicator
+
+### 5.1 Basic data cleaning and organization
+
+#### 5.1.1 Read in Dioxin and PCB data
+Also read in WHO TEF value conversion lookup
+```{r read in dixoin dioxin-like data}
+
+dioxin1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_dioxin.csv'))
+dim(dioxin1)
+
+## read in PCB data (same as read in for ICES6 indicator)
+pcb1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_pcb.csv'))
+dim(pcb1)
+
+
+## Read in lookup - BHI region to HOLAS basins
+lookup_basins = read.csv(file.path(dir_con,'baltic_rgns_to_bhi_rgns_lookup_holas.csv'))
+
+## Read in TEF conversions
+lookup_basins = read.csv(file.path(dir_con,'tef_conversion_lookup.csv', sep=';'))
+
+```
+
 ### TO DO  
 read in dioxin and pcb data  
 read in congener TEF values  
