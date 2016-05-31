@@ -1,0 +1,39 @@
+congener;congener_full;TEF_2005;WHO_Compound_Name;congener_category
+CB101; 2 2' 4 5 5'-pentachlorobiphenyl (CB101);NA;;
+CB105; 2 3 3' 4 4'-pentachlorobiphenyl (CB105);0.00003;105;mono-ortho substituted PCBs
+CB118; 2 3' 4 4' 5-pentachlorobiphenyl (CB118);0.00003;118;mono-ortho substituted PCBs
+CB128; 2 2' 3 3' 4 4'-hexachlorobiphenyl (CB128);NA;;
+CB138; 2 2' 3 4 4' 5'-hexachlorobiphenyl (CB138);NA;;
+CB149; 2 2' 3 4' 5' 6-hexachlorobiphenyl (CB149);NA;;
+CB153; 2 2' 4 4' 5 5'-hexachlorobiphenyl (CB153);NA;;
+CB156; 2 3 3' 4 4' 5-hexachlorobiphenyl (CB156);0.00003;156;mono-ortho substituted PCBs
+CB157; 2 3 4 3' 4' 5'-hexachlorobiphenyl (CB157);0.00003;157;mono-ortho substituted PCBs
+CB167; 2' 3 4 4' 5 5'-hexachlorobiphenyl (CB167);0.00003;167;mono-ortho substituted PCBs
+CB169; 3 3' 4 4' 5 5'-hexachlorobiphenyl (CB169);0.03;PCB 169;non-ortho substituted PCBs
+CB170; 2 2' 3 3' 4 4' 5-heptachlorobiphenyl (CB170);NA;;
+CB180; 2 2' 3 4 4' 5 5'-heptachlorobiphenyl (CB180);NA;;
+CB28; 2 4 4'-trichlorobiphenyl (CB28);NA;;
+CB52; 2 2' 5 5'-tetrachlorobiphenyl (CB52);NA;;
+CB77; 3 3' 4 4'-tetrachlorobiphenyl (CB77);0.0001;PCB 77;non-ortho substituted PCBs
+CDD1N; 1 2 3 7 8-pentachlorodibenzo-p-dioxin;1;1,2,3,7,8-PeCDD;chlorinated dibenzo-p-dioxins
+CDD4X; 1 2 3 4 7 8-hexachlorodibenzo-p-dioxin;0.1;1,2,3,4,7,8-HxCDD;chlorinated dibenzo-p-dioxins
+CDD6P; 1 2 3 4 6 7 8-heptachlorodibenzo-p-dioxin;0.01;1,2,3,4,6,7,8-HpCDD;chlorinated dibenzo-p-dioxins
+CDD6X; 1 2 3 6 7 8-hexachlorodibenzo-p-dioxin;0.1;1,2,3,6,7,8-HxCDD;chlorinated dibenzo-p-dioxins
+CDD9X; 1 2 3 7 8 9-hexachlorodibenzo-p-dioxin;0.1;1,2,3,7,8,9-HxCDD;chlorinated dibenzo-p-dioxins
+CDDO; 1 2 3 4 6 7 8 9-octachlorodibenzo-p-dioxin;0.0003;OCDD;chlorinated dibenzo-p-dioxins
+CDF2N; 2 3 4 7 8-pentachlorodibenzofuran;0.3;2,3,4,7,8-PeCDF;chlorinated dibenzofurans
+CDF2T; 2 3 7 8-tetrachloro-dibenzofuran;0.1;2,3,7,8-TCDF;chlorinated dibenzofurans
+CDF4X; 2 3 4 6 7 8-hexachlorodibenzofuran;0.1;2,3,4,6,7,8-HxCDF;chlorinated dibenzofurans
+CDF6P; 1 2 3 4 6 7 8-heptachlorodibenzofuran;0.01;1,2,3,4,6,7,8-HpCDF;chlorinated dibenzofurans
+CDF6X; 1 2 3 6 7 8-hexachlorodibenzofuran;0.1;1,2,3,6,7,8-HxCDF;chlorinated dibenzofurans
+CDF9P; 1 2 3 4 7 8 9-heptachlorodibenzofuran;0.01;1,2,3,4,7,8,9-HpCDF;chlorinated dibenzofurans
+CDF9X; 1 2 3 7 8 9-hexachlorodibenzofuran;0.1;1,2,3,7,8,9-HxCDF;chlorinated dibenzofurans
+CDFDN; 1 2 3 7 8/1 2 3 4 8-pentachloro-dibenzofuran;0.03;1,2,3,7,8-PeCDF;chlorinated dibenzofurans
+CDFO; octachloro-dibenzofuran (group);0.0003;OCDF;chlorinated dibenzofurans
+TCDD; 2 3 7 8-tetrachloro-dibenzo[b e][1 4]dioxin;1;2,3,7,8-TCDD;chlorinated dibenzo-p-dioxins
+;;0.1;1,2,3,4,7,8-HxCDF;chlorinated dibenzofurans
+;;0.0003;PCB 81;non-ortho substituted PCBs
+;;0.1;PCB 126;non-ortho substituted PCBs
+;;0.00003;114;mono-ortho substituted PCBs
+;;0.00003;123;mono-ortho substituted PCBs
+;;0.00003;189;mono-ortho substituted PCBs
