@@ -120,10 +120,11 @@ for (anox_file in anox_file_list) {
   bal_proj = crs("+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
 
   t <- raster::rasterFromXYZ( anox, crs = bal_proj ) 
-  class(t)
+  # class(t)
+  # plot(t)
   
-  plot(t)
-  plot(raster(t, layer = 'O2_bottom'))
+  O2_bottom = raster(t, layer = 'O2_bottom')
+  plot(O2_bottom)
 
 }
 
@@ -132,6 +133,15 @@ for (anox_file in anox_file_list) {
 
 ## 4. Open sea anoxia data rescaling
 Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.  In the Baltic Proper there is a strong halocline at 70m and it is the anoxic area below the halocline that is of interest (therefore we focus on areas with depths >= 70).  In the Gulf of Finland, there a less strong halocline and thermal stratification is important so we may have to think differently about which areas to focus on.  
+
+```{r anoxia rescaling, echo = FALSE}
+
+
+
+
+
+
+```
 
 ### 4.1 Current value  
     - Baltic Proper BHI regions =  of the area >= 70m deep the area with O2 <0 mg⋅L−1  
