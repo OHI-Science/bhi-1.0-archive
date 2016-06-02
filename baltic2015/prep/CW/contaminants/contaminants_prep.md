@@ -2768,12 +2768,391 @@ dim(sub_samp_share)
         ##Only a subset represented
 ```
 
+### 5.6 TEQ concentration for each sub\_sample\_ref
+
+#### 5.6.1 Dioxin sum TEQ by sub\_sample\_ref
+
+Sum dioxin TEQ values by sub\_sample\_ref.
+Count the number of congeners included in that sum
+
+``` r
+###this is good summarise but not necessary to sum
+dioxin6long = dioxin6 %>%
+              select(-sub_samp_id,-samp_id,-bulk_id,-basis_determination_originalcongener,
+                     -basis_determination_converted,-agmea_y,-drywt_percent,-exlip_percent,
+                     -lnmea_cm,-wtmea_g, -qflag,-detect_lim,-quant_lim,-uncert_val,-method_uncert,
+                     -value,-value_adj,-TEF_2005)%>%
+               group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                         species,sub_samp_ref) %>%
+               spread(congener,value_TEQ) %>%
+               ungroup()
+dim(dioxin6long) ## 182  29  ## there are also 182 unique sub_sample ref
+```
+
+    ## [1] 182  29
+
+``` r
+dioxin_sumteq1 = dioxin6 %>%
+                 select(-sub_samp_id,-samp_id,-bulk_id,-basis_determination_originalcongener,
+                     -basis_determination_converted,-agmea_y,-drywt_percent,-exlip_percent,
+                     -lnmea_cm,-wtmea_g, -qflag,-detect_lim,-quant_lim,-uncert_val,-method_uncert,
+                     -value,-value_adj,-TEF_2005)%>%   ## deselect extra columns
+                 group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                         species,sub_samp_ref) %>% ## group by location and date indentifiers
+                 summarise(sum_teq = sum(value_TEQ, na.rm=TRUE)) %>% ## sum all TEQ values for each subsample ref
+                 ungroup()
+str(dioxin_sumteq1)  ## sum_teq column is in pg/g
+```
+
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    182 obs. of  12 variables:
+    ##  $ country      : Factor w/ 1 level "Sweden": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ monit_program: Factor w/ 2 levels "CEMP~COMB","COMB": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ monit_purpose: logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+    ##  $ station      : Factor w/ 15 levels "Abbekas","Aengskaersklubb",..: 4 4 4 4 4 4 4 4 4 4 ...
+    ##  $ lat          : num  57.2 57.2 57.2 57.2 57.2 ...
+    ##  $ lon          : num  11.8 11.8 11.8 11.8 11.8 ...
+    ##  $ date         : Date, format: "2004-09-13" "2004-09-13" ...
+    ##  $ monit_year   : int  2004 2004 2004 2004 2004 2004 2004 2004 2009 2009 ...
+    ##  $ year         : int  2004 2004 2004 2004 2004 2004 2004 2004 2009 2009 ...
+    ##  $ species      : Factor w/ 1 level "Clupea harengus": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ sub_samp_ref : int  3668519 3668520 3668521 3668522 3668523 3668524 3668525 3668526 3685674 3685675 ...
+    ##  $ sum_teq      : num  0.102 0.084 0.096 0.102 0.087 ...
+
+``` r
+##count the number of congeners measured for each subsample,
+## make sure to exlude any congeners where value_TEQ is NA (these were not measured)
+dioxin_congener_count = dioxin6 %>%
+                        select(sub_samp_ref,congener,value_TEQ)%>%
+                        filter(!is.na(value_TEQ))%>%
+                        select(-value_TEQ)%>%
+                        arrange(sub_samp_ref)%>%
+                        count(sub_samp_ref)
+
+
+## join count to sum
+dioxin_sumteq1 = dioxin_sumteq1 %>%
+                  full_join(., dioxin_congener_count, by="sub_samp_ref")
+
+
+#
+```
+
+#### 5.6.2 Plot Dioxin sum TEQ by sub\_sample\_ref
+
+Points scaled by number of congeners included. All except early (2004) have 16 congeners. 2004 only has 1 congener measured.
+
+``` r
+# plot the TEQ sum by date and location. scale by number of congeners
+
+#facet_wrap by station
+ggplot(dioxin_sumteq1)+
+  geom_point(aes(date,sum_teq, size=n))+
+  facet_wrap(~station)+
+  scale_size_area(max_size = 4)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Total Dioxin TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-1.png)<!-- -->
+
+``` r
+## colour code station
+ggplot(dioxin_sumteq1)+
+  geom_point(aes(date,sum_teq, size=n, colour=station))+
+  scale_size_area(max_size = 4)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Total Dioxin TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-2.png)<!-- -->
+
+``` r
+## box plot
+
+ggplot(dioxin_sumteq1)+
+  geom_boxplot(aes(factor(year),sum_teq))+
+  facet_wrap(~station, scales= "free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Total Dioxin TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-3.png)<!-- -->
+
+#### 5.6.3 Dioxin-like PCB sum TEQ by sub\_sample\_ref
+
+Sum dioxin-like PCB TEQ values by sub\_sample\_ref.
+Count the number of congeners included in that sum
+
+``` r
+pcb_sumteq1 = pcb7 %>%
+                 select(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                         species,sub_samp_ref,value_TEQ) %>%
+                arrange(sub_samp_ref)%>%
+                group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                         species,sub_samp_ref)%>%## group by location and date indentifiers
+                 summarise(sum_teq = sum(value_TEQ, na.rm=TRUE)) %>% ## sum all TEQ values for each subsample ref
+                 ungroup()
+str(pcb_sumteq1)  ## sum_teq column is in pg/g
+```
+
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    1717 obs. of  12 variables:
+    ##  $ country      : Factor w/ 5 levels "Finland","Germany",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ monit_program: Factor w/ 3 levels "CEMP~COMB","COMB",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ monit_purpose: Factor w/ 5 levels "","B~T~S","H",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ station      : Factor w/ 31 levels "","Abbekas","Aengskaersklubb",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ lat          : num  59.5 59.5 59.5 59.5 59.5 ...
+    ##  $ lon          : num  22.6 22.6 22.6 22.6 22.6 ...
+    ##  $ date         : Date, format: "2008-10-07" "2008-10-07" ...
+    ##  $ monit_year   : int  2008 2008 2008 2008 2008 2008 2008 2008 2009 2009 ...
+    ##  $ year         : int  2008 2008 2008 2008 2008 2008 2008 2008 2009 2009 ...
+    ##  $ species      : Factor w/ 1 level "Clupea harengus": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ sub_samp_ref : int  3149813 3149814 3149815 3149816 3149817 3149818 3149819 3149820 3149902 3149903 ...
+    ##  $ sum_teq      : num  0.033 0.0183 0.0105 0.0096 0.0096 0.0177 0.021 0.042 0.0234 0.0123 ...
+
+``` r
+##count the number of congeners measured for each subsample,
+## make sure to exlude any congeners where value_TEQ is NA (these were not measured)
+pcb_congener_count = pcb7 %>%
+                        select(sub_samp_ref,congener,value_TEQ)%>%
+                        filter(!is.na(value_TEQ))%>%
+                        select(-value_TEQ)%>%
+                        arrange(sub_samp_ref)%>%
+                        count(sub_samp_ref)
+
+## join count to sum
+pcb_sumteq1 = pcb_sumteq1 %>%
+                  full_join(., pcb_congener_count, by="sub_samp_ref")
+```
+
+#### 5.6.4 Plot dioxin-like PCB sum TEQ by sub\_sample\_ref
+
+Points scaled by number of congeners included.
+Highly variable number of congners contributing to the total TEQ. More likely to have more congeners measured in later years.
+
+``` r
+# plot the TEQ sum by date and location. scale by number of congeners
+
+#facet_wrap by lat (not all obs have station name)
+ggplot(pcb_sumteq1)+
+  geom_point(aes(date,sum_teq, size=n))+
+  facet_wrap(~lat)+
+  scale_size_area(max_size = 4)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Total  dioxin-like PCB TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-1.png)<!-- -->
+
+``` r
+## colour code latitude
+ggplot(pcb_sumteq1)+
+  geom_point(aes(date,sum_teq, size=n, colour=factor(lat)))+
+  scale_size_area(max_size = 4)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Total dioxin-like PCB TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-2.png)<!-- -->
+
+``` r
+## box plot
+
+ggplot(pcb_sumteq1)+
+  geom_boxplot(aes(factor(year),sum_teq))+
+  facet_wrap(~lat, scales= "free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=5, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Total Dioxin TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-3.png)<!-- -->
+
+### 5.7 Mean TEQ value by date and location
+
+#### 5.7.1 dioxin mean TEQ value by date and location
+
+Mean TEQ by date and location. For observations averaged, track the mean, min, and max number of congeners in each of the observations. Count the number of observations for each date and location
+
+``` r
+## mean total TEQ by date and location
+
+dioxin_sumteq2 = dioxin_sumteq1%>%
+                 select(-sub_samp_ref) %>%
+                 arrange(station,year,date)%>%
+                 group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                         species)%>%
+                 summarise(mean_sumteq = sum(sum_teq),
+                          mean_cong_count=mean(n),
+                          max_cong_count = max(n),
+                          min_cong_count = min (n)) %>%
+                 ungroup()
+
+## count number of observations for each date and location
+dioxin_obs_count = dioxin_sumteq1 %>%
+                        select(station,date)%>%
+                        group_by(station)%>%
+                        count(station,date)%>%
+                        ungroup()
+                        
+## merge counts
+dioxin_sumteq2 = dioxin_sumteq2 %>%
+                 full_join(., dioxin_obs_count, by=c("station","date"))%>%
+                 dplyr::rename(n_obs=n)
+```
+
+#### 5.7.2 Plot dioxin mean TEQ value by date and location
+
+``` r
+ggplot(dioxin_sumteq2)+
+  geom_point(aes(year,mean_sumteq, size=n_obs, colour=factor(mean_cong_count)))+
+  facet_wrap(~station, scales= "free_y")+
+  scale_size_area(max_size=4)+
+  theme(axis.text.x = element_text(colour="grey20", size=5, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean Total Dioxin TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin%20TEQ%20by%20date%20and%20location-1.png)<!-- -->
+
+#### 5.7.3 dioxin-like PCB mean TEQ value by date and location
+
+Mean TEQ by date and location. For observations averaged, track the mean, min, and max number of congeners in each of the observations. Count the number of observations for each date and location
+
+``` r
+## mean total TEQ by date and location
+
+pcb_sumteq2 = pcb_sumteq1%>%
+                 select(-sub_samp_ref) %>%
+                 arrange(station,year,date)%>%
+                 group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                         species)%>%
+                 summarise(mean_sumteq = sum(sum_teq),
+                          mean_cong_count=mean(n),
+                          max_cong_count = max(n),
+                          min_cong_count = min (n)) %>%
+                 ungroup()
+
+## count number of observations for each date and location
+pcb_obs_count = pcb_sumteq1 %>%
+                        select(station,date)%>%
+                        group_by(station)%>%
+                        count(station,date)%>%
+                        ungroup()
+                        
+## merge counts
+pcb_sumteq2 = pcb_sumteq2 %>%
+                 full_join(., pcb_obs_count, by=c("station","date"))%>%
+                 dplyr::rename(n_obs=n)
+```
+
+#### 5.7.4 Plot dioxin-like PCB mean TEQ value by date and location
+
+``` r
+ggplot(pcb_sumteq2)+
+  geom_point(aes(year,mean_sumteq, size=n_obs, colour=factor(mean_cong_count)))+
+  facet_wrap(~lat, scales= "free_y")+
+  scale_size_area(max_size=4)+
+  theme(axis.text.x = element_text(colour="grey20", size=5, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean Total dioxin-like PCB TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin-like%20pcb%20TEQ%20by%20date%20and%20location-1.png)<!-- -->
+
+### 5.8 Join Dioxin and dioxin-like PCB obs for same date and location
+
+Retain only observations where both dioxin and dioxin-like PCBs were measured. This means Swedish locations only
+
+#### 5.8.1 Merge
+
+``` r
+## add identifier column in objects, so when joined is more clear, remove a few columns
+dioxin_sumteq3 = dioxin_sumteq2 %>%
+                 dplyr::rename(mean_sumteq_diox = mean_sumteq,
+mean_cong_count_diox= mean_cong_count,
+max_cong_count_diox= max_cong_count,
+min_cong_count_diox =min_cong_count,
+n_obs_diox = n_obs) %>%
+                 select(-monit_program,-monit_purpose,
+                        -monit_year)
+
+pcb_sumteq3 = pcb_sumteq2 %>%
+              dplyr::rename(mean_sumteq_pcb = mean_sumteq,
+mean_cong_count_pcb= mean_cong_count,
+max_cong_count_pcb= max_cong_count,
+min_cong_count_pcb =min_cong_count,
+n_obs_pcb = n_obs) %>%
+              select(-monit_program,-monit_purpose,
+                        -monit_year)
+
+join_teq = inner_join(dioxin_sumteq3,pcb_sumteq3)
+```
+
+    ## Joining by: c("country", "station", "lat", "lon", "date", "year", "species")
+
+    ## Warning in inner_join_impl(x, y, by$x, by$y): joining factors with
+    ## different levels, coercing to character vector
+
+    ## Warning in inner_join_impl(x, y, by$x, by$y): joining factors with
+    ## different levels, coercing to character vector
+
+#### 5.8.2 Plot Dioxin and dioxin-like observations
+
+Red triangles are the dioxins and black-filled circles are the dioxion-like PCBs
+
+``` r
+ggplot(join_teq)+
+  geom_point(aes(date,mean_sumteq_diox), shape=2, colour="red")+
+   geom_point(aes(date,mean_sumteq_pcb), shape=19)+
+  ggtitle("Mean total TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-1.png)<!-- -->
+
+``` r
+ggplot(join_teq)+
+  geom_point(aes(date,mean_sumteq_diox), shape=2, colour="red")+
+   geom_point(aes(date,mean_sumteq_pcb), shape=19)+
+  facet_wrap(~station)+
+  ggtitle("Mean total TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-2.png)<!-- -->
+
+#### 5.8.3 Sum dioxin and dioxin-like PCB mean TEQ values by date and location
+
+``` r
+join_teq = join_teq %>%
+           mutate(tot_teq =mean_sumteq_diox+mean_sumteq_pcb,
+                  teq_threshold_pg_g = 6.5)  ## get total teq, add threshold value to dataset
+```
+
+#### 5.8.4 Plot Total TEQ pg/g
+
+This is the sum of the mean dioxin and the mean dioxin-like PCB TEQ value for each date and location.
+Horizontal line is the EU human health threshold (6.5 TEQ pg/g ww) (equivalent to suggested HELCOM level of 0.0065 TEQ ug/kg ww)
+
+``` r
+ggplot(join_teq)+
+  geom_point(aes(date,tot_teq))+
+  geom_line(aes(date,teq_threshold_pg_g))+
+  facet_wrap(~station, scales="free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Total TEQ pg/g")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20total%20TEQ-1.png)<!-- -->
+
 ### TO DO
 
-1.  sum TEQ values by sub\_samp\_ref (track number of congeners included), do separately for dioxins and dioxin-like pcbs.
-2.  take mean TEQ concentration by date and location for each dioxins and dioxin-like pcbs. track number of observations averaged.
-3.  Only for locations with both dioxins and dioxin-like pcbs on a given sample date, get total TEQ conc. by summing the two mean values.
-4.  for sub-basins?? take a mean TEQ value across 2009-2013. Track number of observations contributing and how many dates and locations these observations represent.
+1.  assign points to sub-basins. these data are not yet in the database so do not have a way to assign to basin (was previously done by assigning BHI ID which was linked to basin)
+2.  Dioxin status for sub-basins?? take a mean TEQ value across 2009-2013. Track number of observations contributing and how many dates and locations these observations represent.
 
 6. Data Prep - PFOS Indicator
 -----------------------------
