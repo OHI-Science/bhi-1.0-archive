@@ -201,7 +201,8 @@ mpa_area_per_rgn = mpa_bhi_data %>%
                                  MPA_Status) %>%
                    group_by(BHI_ID) %>%
                    mutate(mpa_area_rgn = sum(MPA_area_Ha)) %>% # or should we use one of the other two?
-                   ungroup 
+                   ungroup %>%
+                   arrange(BHI_ID)
 
 write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv'))
 

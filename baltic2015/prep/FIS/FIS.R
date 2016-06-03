@@ -16,11 +16,11 @@ scores <- read.csv(file.path(dir_fis,
   spread(metric, score)
 
 ###########################################################################
-## STEP 1: converting bbmsy and ffmsy to scores
+## STEP 1: converting B/Bmsy and F/Fmsy to F-scores
 ## see plot describing the relationship between these variables and scores
 ## this may need to be adjusted:
 ###########################################################################
-scores <- scores %>%
+F_scores <- scores %>%
   mutate(score = ifelse(bbmsy < 0.8 & ffmsy >= (bbmsy+1.5), 0, NA),
          score = ifelse(bbmsy < 0.8 & ffmsy < (bbmsy - 0.2), ffmsy/(bbmsy-0.2), score),
          score = ifelse(bbmsy < 0.8 & ffmsy >= (bbmsy + 0.2) & ffmsy < (bbmsy + 1.5), (bbmsy + 1.5 - ffmsy)/1.5, score),
@@ -28,13 +28,35 @@ scores <- scores %>%
   mutate(score = ifelse(bbmsy >= 0.8 & ffmsy < 0.8, ffmsy/0.8, score),
          score = ifelse(bbmsy >= 0.8 & ffmsy >= 0.8 & ffmsy < 1.2, 1, score),
          score = ifelse(bbmsy >= 0.8 & ffmsy >= 1.2, (2.5 - ffmsy)/1.3, score)) %>%
-  mutate(score = ifelse(score <= 0, 0.1, score))
+  mutate(score = ifelse(score <= 0, 0.1, score)) %>%
+  mutate(score_type = "F_score")
 ### NOTE: The reason the last score is 0.1 rather than zero is because
 ### scores can't be zero if using a geometric mean because otherwise, 1 zero
 ### results in a zero score.
 
+###########################################################################
+## STEP 2: converting B/Bmsy to B-scores
+###########################################################################
+B_scores <- scores %>%
+  mutate(score = ifelse(bbmsy < 0.8 , bbmsy/0.8, NA),
+         score = ifelse(bbmsy >= 0.8 & bbmsy < 1.5, 1, score),
+         score = ifelse(bbmsy >= 1.5, (3.35 - bbmsy)/1.8, score)) %>%
+  mutate(score = ifelse(score <= 0.1, 0.1, score)) %>%
+  mutate(score = ifelse(score > 1, 1, score))%>%
+  mutate(score_type = "B_score")
+
+# to see what relationship between B/Bmsy and B_score looks like:
+plot(score ~ bbmsy, data=B_scores, type="p")
+###########################################################################
+## STEP 3: Averaging the F and B-scores to get the stock status score
+###########################################################################
+scores <- rbind(B_scores, F_scores) %>%
+  group_by(region_id, stock, year) %>%
+  summarize(score = mean(score, na.rm=TRUE)) %>%
+  data.frame()
+
 #############################################
-## STEP 2: cacluting the weights.
+## STEP 4: calculating the weights.
 #############################################
 
 landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
@@ -66,7 +88,7 @@ weights <- weights %>%
 filter(weights, region_id ==3, year==2014)
 
 ############################################################
-#####  STEP 3: Join scores and weights to calculate status
+#####  STEP 5: Join scores and weights to calculate status
 ############################################################
 
 status <- weights %>%
