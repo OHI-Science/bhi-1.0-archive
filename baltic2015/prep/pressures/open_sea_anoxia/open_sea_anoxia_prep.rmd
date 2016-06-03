@@ -113,18 +113,21 @@ anox_file_list = list.files(path= file.path(dir_shp, 'anoxia'),
 
 for (anox_file in anox_file_list) {
    
-  anox = foreign::read.dbf(file.path(dir_shp, 'anoxia', anox_file)) # %>%
-  #  dplyr::select(longitude, latitude, O2_bottom)
+  anox = foreign::read.dbf(file.path(dir_shp, 'anoxia', anox_file))  %>%
+  dplyr::select(x_utm, y_utm, O2_bottom)
   # head(anox) 
   
-  bal_proj = crs("+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+  bal_proj = bathymetry@crs
+  bal_res = res(bathymetry)
 
-  t <- raster::rasterFromXYZ( anox, crs = bal_proj ) 
+  t <- raster::rasterFromXYZ( anox, res = bal_res, crs = bal_proj ) 
   # class(t)
   # plot(t)
   
   O2_bottom = raster(t, layer = 'O2_bottom')
-  plot(O2_bottom)
+  writeRaster(O2_bottom, file_path_sans_ext(anox_file))
+  # plot(O2_bottom)
+  
 
 }
 
@@ -136,10 +139,24 @@ Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.
 
 ```{r anoxia rescaling, echo = FALSE}
 
+# create bathymetry mask: remove cells with depth higher than -70 m
+
+halocline_70 = bathymetry # to not overwrite the original data
+halocline_70[halocline_70 > -70] = NA
+plot(halocline_70)
+
+# area with O2<0 
+
+O2_below_0 = O2_bottom
+O2_below_0[O2_below_0 >= 0] = NA
+plot(O2_below_0)
+
+O2_below_70 = mask(O2_below_0, halocline_70) 
+# O2_below_70 = crop(O2_below_0, halocline_70) 
 
 
-
-
+# resample to set the same extent
+new = resample(O2_below_0, halocline_70, "bilinear" )
 
 ```
 
