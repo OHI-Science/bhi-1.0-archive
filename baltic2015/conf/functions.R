@@ -33,27 +33,28 @@ FIS = function(layers, status_year){
                     year,
                     score= val_num)%>%
             dplyr::rename(region_id = rgn_id)
-
-  #**********************#
-  # ## TO TEST
-  # library(dplyr)
-  # library(tidyr)
-  #
-  # ## Directories
-  # dir_baltic = '~/github/bhi/baltic2015'
-  # dir_layers = file.path(dir_baltic, 'layers')
-  # dir_prep   = file.path(dir_baltic, 'prep')
-  # dir_fis = file.path(dir_prep, 'FIS')
-  #
-  # bbmsy = read.csv(file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'))%>%
-  #   mutate(metric ="bbmsy") %>%
-  #   dplyr::rename(region_id = rgn_id)
-  #
-  # ffmsy = read.csv(file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'))%>%
-  #   mutate(metric ="ffmsy") %>%
-  #   dplyr::rename(region_id = rgn_id)
-  # landings = read.csv(file.path(dir_layers ,'fis_landings_bhi2015.csv'))%>%
-  #   dplyr::rename(region_id = rgn_id)
+#
+#   #**********************#
+#   ## TO TEST
+#   library(dplyr)
+#   library(tidyr)
+#
+#   ## Directories
+#   dir_baltic = '~/github/bhi/baltic2015'
+#   dir_layers = file.path(dir_baltic, 'layers')
+#   dir_prep   = file.path(dir_baltic, 'prep')
+#   dir_fis = file.path(dir_prep, 'FIS')
+#
+#   bbmsy = read.csv(file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'))%>%
+#     mutate(metric ="bbmsy") %>%
+#     dplyr::rename(region_id = rgn_id)
+#
+#   ffmsy = read.csv(file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'))%>%
+#     mutate(metric ="ffmsy") %>%
+#     dplyr::rename(region_id = rgn_id)
+#
+#   landings = read.csv(file.path(dir_layers ,'fis_landings_bhi2015.csv'))%>%
+#     dplyr::rename(region_id = rgn_id)
 
 
 
@@ -120,7 +121,7 @@ FIS = function(layers, status_year){
     data.frame()
 
   ## each region/stock will have the same average catch across years:
-  filter(weights, region_id==3)
+  #filter(weights, region_id==3)
 
   ## determine the total proportion of catch each stock accounts for:
   weights <- weights %>%
@@ -130,7 +131,7 @@ FIS = function(layers, status_year){
     mutate(propCatch = avgCatch/totCatch)
 
   #### The total proportion of landings for each region/year will sum to one:
-  filter(weights, region_id ==3, year==2014)
+  #filter(weights, region_id ==3, year==2014)
 
   ############################################################
   #####  STEP 5: Join scores and weights to calculate status
