@@ -194,7 +194,8 @@ mpa_bhi_data = read.csv(file.path(dir_prep, 'mpa_bhi_data.csv'))
 duplicates = mpa_bhi_data[duplicated(mpa_bhi_data[,c('AreaTot_Ha', 'AreaMar_Ha', 'Shape_area', 'Date_Est', 'rgn_key', 'Subbasin', 'HELCOM_ID', 'BHI_ID')]),] # no duplicates if Shape_area is compared. Shape_area is from MPA data and Area_km2 is from BHI data.
 
 mpa_area_per_rgn = mpa_bhi_data %>%
-                   dplyr::select(BHI_ID, 
+                   dplyr::select(BSPA_ID,
+                                 BHI_ID, 
                                  Name,
                                  MPA_area_Ha = AreaTot_Ha, 
                                  Date_Est, 
@@ -204,9 +205,50 @@ mpa_area_per_rgn = mpa_bhi_data %>%
                    ungroup %>%
                    arrange(BHI_ID)
 
-write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv'))
+write_csv(mpa_area_per_rgn, file.path(dir_prep, 'LSP', 'mpa_area_per_rgn.csv'))
 
 ```
 
 
-I did not read the read in MPA management plan status file from "~/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_management_plans_20160415.csv"
+## Status Calculation
+
+Xlsp_country =  sum(w_i * MPA area)_m / Reference_pt_country  
+    - Numerator is the sum over all MPAs within a country's EEZ of the MPA area weighted by the management status.  
+    - w_i = value between 0 -1  
+        - Need to assign weights to levels of management status.  
+        - **One option**: *No plan* = 0.3, *In development* = .6, *Implemented* = 1.0.  **NEED FEEDBACK** 
+    - Each country's status is applied to all BHI regions associated with that country.  
+
+Reference_pt_country = 10% of the area in a country's EEZ is designated as an MPA and is 100% managed = 10% area country's EEZ  
+
+``` {r combine mpa area with management status, echo = FALSE}
+
+mgmt_status = read_csv(file.path(dir_prep, 'LSP/mpa_data_database/MPA_management_plans_20160415.csv')) %>%
+              dplyr::select(Name = helcom_mpa,
+                            Plan = management_plan_name, 
+                            BSPA_ID = id, 
+                            mgmt_status = management_plan_status, 
+                            implem_date = implementation_date_of_current_management_plan)
+              
+
+#  Combining managment status data with MPA area data. 
+## There are MPAs with BHI_ID from MPA area data with no match in the management status data... 
+## TODO: decide whether to treat those ones as "no plan", or remove them from calculations all together (with filter(!is.na(Plan))).  
+## for now, i'm proceeding with option one, treat as "no plan"
+
+mpa_mgmt = right_join(mgmt_status, mpa_area_per_rgn, # select only MPAs with BHI_ID
+                      by = c("BSPA_ID", "Name")) %>%
+           mutate(mgmt_status = ifelse(is.na(mgmt_status), "No plan", mgmt_status),
+                  weight = ifelse(mgmt_status = "No Plan", 0.3,
+                           ifelse(mgmt_status = "In development", 0.6,
+                           1))) %>%k
+
+# temporary code to save csv of mpa_mgmt with NA's            
+# write_csv(mpa_mgmt, file.path(dir_prep, "mpa_management_with_NA.csv"))
+
+          # filter(!is.na(Plan))
+
+````
+
+Note: status calc: use all plans, take ave. add a col to track how many plans are used for each MPA. 
+
