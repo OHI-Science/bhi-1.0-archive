@@ -11,8 +11,33 @@ dir_layers = file.path(dir_baltic, 'layers')
 dir_prep   = file.path(dir_baltic, 'prep')
 dir_fis = file.path(dir_prep, 'FIS')
 
+
+###########################################################################
+## Layers for layers.csv
+
+## Read in data layers
 scores <- read.csv(file.path(dir_fis,
-'data/FIS_scores.csv')) %>%
+                             'data/FIS_scores.csv'))
+colnames(scores) # "region_id" "stock"     "year"      "metric"    "score"
+
+landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
+colnames(landings) # "region_id" "stock"     "year"      "landings"
+
+## save to layers folder
+write.csv(scores, file.path(dir_layers ,'fis_scores_bhi2015.csv'), row.names=FALSE)
+write.csv(landings, file.path(dir_layers ,'fis_landings_bhi2015.csv'), row.names=FALSE)
+##########################################################################
+
+
+
+##########################################################################
+## STATUS AND TREND CALCULATIONS
+##########################################################################
+#### The code below is now incorporated into functions.r
+
+
+scores <- read.csv(file.path(dir_fis,
+                             'data/FIS_scores.csv')) %>%
   spread(metric, score)
 
 ###########################################################################
