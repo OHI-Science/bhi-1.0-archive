@@ -35,7 +35,7 @@ FIS = function(layers, status_year){
             dplyr::rename(region_id = rgn_id)
 
   ## combine bbmsy and ffmsy to single object
-  metric.score = rbind(bbmsy, ffmsy)
+  metric.scores = rbind(bbmsy, ffmsy)
 
   ###########################################################################
   ## STEP 1: converting B/Bmsy and F/Fmsy to F-scores
