@@ -22,6 +22,15 @@ colnames(scores) # "region_id" "stock"     "year"      "metric"    "score"
 scores = scores %>%
          dplyr::rename(rgn_id=region_id)
 
+## separate objects for bbmsy and ffmsy
+scores.bbmsy = scores %>%
+               filter(metric == "bbmsy") %>%
+               select(-metric)
+scores.ffmsy = scores %>%
+              filter(metric == "ffmsy") %>%
+              select(-metric)
+
+
 landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
 colnames(landings) # "region_id" "stock"     "year"      "landings"
 
@@ -29,7 +38,8 @@ landings = landings %>%
   dplyr::rename(rgn_id=region_id)
 
 ## save to layers folder
-write.csv(scores, file.path(dir_layers ,'fis_scores_bhi2015.csv'), row.names=FALSE)
+write.csv(scores.bbmsy, file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'), row.names=FALSE)
+write.csv(scores.ffmsy, file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'), row.names=FALSE)
 write.csv(landings, file.path(dir_layers ,'fis_landings_bhi2015.csv'), row.names=FALSE)
 ##########################################################################
 
