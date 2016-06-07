@@ -15,7 +15,7 @@ FIS = function(layers, status_year){
             select(rgn_id = id_num,
                    stock = category,
                    year,
-                   scores= val_num) %>%
+                   score= val_num) %>%
             mutate(metric ="bbmsy") %>%
             dplyr::rename(region_id = rgn_id)
 
@@ -23,7 +23,7 @@ FIS = function(layers, status_year){
           select(rgn_id = id_num,
                   stock = category,
                   year,
-                  scores= val_num) %>%
+                  score= val_num) %>%
           mutate(metric= "ffmsy")%>%
           dplyr::rename(region_id = rgn_id)
 
@@ -31,11 +31,39 @@ FIS = function(layers, status_year){
              select(rgn_id =id_num,
                     stock = category,
                     year,
-                    scores= val_num)%>%
+                    score= val_num)%>%
             dplyr::rename(region_id = rgn_id)
 
+  #**********************#
+  # ## TO TEST
+  # library(dplyr)
+  # library(tidyr)
+  #
+  # ## Directories
+  # dir_baltic = '~/github/bhi/baltic2015'
+  # dir_layers = file.path(dir_baltic, 'layers')
+  # dir_prep   = file.path(dir_baltic, 'prep')
+  # dir_fis = file.path(dir_prep, 'FIS')
+  #
+  # bbmsy = read.csv(file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'))%>%
+  #   mutate(metric ="bbmsy") %>%
+  #   dplyr::rename(region_id = rgn_id)
+  #
+  # ffmsy = read.csv(file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'))%>%
+  #   mutate(metric ="ffmsy") %>%
+  #   dplyr::rename(region_id = rgn_id)
+  # landings = read.csv(file.path(dir_layers ,'fis_landings_bhi2015.csv'))%>%
+  #   dplyr::rename(region_id = rgn_id)
+
+
+
   ## combine bbmsy and ffmsy to single object
-  metric.scores = rbind(bbmsy, ffmsy)
+
+  metric.scores = rbind(bbmsy, ffmsy) %>%
+                  select(region_id, stock, year, metric, score) %>%
+                  mutate(metric = as.factor(metric))%>%
+                   spread(metric, score)
+
 
   ###########################################################################
   ## STEP 1: converting B/Bmsy and F/Fmsy to F-scores
@@ -147,12 +175,13 @@ FIS = function(layers, status_year){
   ############################################################
 
   scores = status %>%
-    select(region_id,status)%>%
+    select(region_id,
+           score = status)%>%
     mutate(dimension='status') %>%
     rbind(
       trend %>%
         select(region_id,
-               score     = trend) %>%
+               score = trend) %>%
         mutate(dimension = 'trend')) %>%
     mutate(goal='FIS')
   return(scores)
