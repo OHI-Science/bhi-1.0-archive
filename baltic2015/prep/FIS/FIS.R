@@ -11,8 +11,48 @@ dir_layers = file.path(dir_baltic, 'layers')
 dir_prep   = file.path(dir_baltic, 'prep')
 dir_fis = file.path(dir_prep, 'FIS')
 
+
+###########################################################################
+## Layers for layers.csv
+
+## Read in data layers
 scores <- read.csv(file.path(dir_fis,
-'data/FIS_scores.csv')) %>%
+                             'data/FIS_scores.csv'))
+colnames(scores) # "region_id" "stock"     "year"      "metric"    "score"
+scores = scores %>%
+         dplyr::rename(rgn_id=region_id)
+
+## separate objects for bbmsy and ffmsy
+scores.bbmsy = scores %>%
+               filter(metric == "bbmsy") %>%
+               select(-metric)
+scores.ffmsy = scores %>%
+              filter(metric == "ffmsy") %>%
+              select(-metric)
+
+
+landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
+colnames(landings) # "region_id" "stock"     "year"      "landings"
+
+landings = landings %>%
+  dplyr::rename(rgn_id=region_id)
+
+## save to layers folder
+write.csv(scores.bbmsy, file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'), row.names=FALSE)
+write.csv(scores.ffmsy, file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'), row.names=FALSE)
+write.csv(landings, file.path(dir_layers ,'fis_landings_bhi2015.csv'), row.names=FALSE)
+##########################################################################
+
+
+
+##########################################################################
+## STATUS AND TREND CALCULATIONS
+##########################################################################
+#### The code below is now incorporated into functions.r
+
+
+scores <- read.csv(file.path(dir_fis,
+                             'data/FIS_scores.csv')) %>%
   spread(metric, score)
 
 ###########################################################################
@@ -107,8 +147,7 @@ status <- status %>%
 ### To get trend, get slope of regression model based on most recent 5 years
 ### of data
 
-##TODO where is the object status_trend_data????
-trend_years <- (max(status_trend_data$year)-4):max(status_trend_data$year)
+trend_years <- (max(status$year)-4):max(status$year)
 
 trend <- status %>%
   group_by(region_id) %>%
@@ -121,9 +160,8 @@ trend <- status %>%
 
 # can do a check to make sure it looks right:
 data.frame(filter(status, region_id==3))
-
-lm(c(0.8811878, 0.9390962, 0.9390962, 0.7916069, 0.7145114) ~ trend_years)
--0.04808 * 5
+lm(c(0.8209574,0.9523321,0.9685960, 0.8845136, 0.8571231) ~ trend_years)
+0.0004513 * 5
 ## results match....looks like everything went well!
 
 ### final formatting of status data:
@@ -134,8 +172,8 @@ status <- status %>%
 
 
 ##### save the data (eventually these steps will be incorporated into the OHI toolbox)
-write.csv(status, "data/FIS_status.csv", row.names=FALSE)
-write.csv(trend, "data/FIS_trend.csv", row.names = FALSE)
+write.csv(status, file.path(dir_fis ,'data/FIS_status.csv'), row.names=FALSE)
+write.csv(trend,  file.path(dir_fis ,'data/FIS_trend.csv'), row.names = FALSE)
 
 
 

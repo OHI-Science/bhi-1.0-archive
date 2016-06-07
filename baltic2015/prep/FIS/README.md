@@ -1,4 +1,4 @@
-### Fisheries
+Lan### Fisheries
 
 #### Relevant files:
 * B/Bmsy and F/Fmsy scores are found [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/1.1_FIS/data/FIS_scores.csv)
@@ -13,7 +13,7 @@
 #### B/Bmsy and F/msy to score
 B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this [general relationship](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/1.1_FIS/ffms%3By_bbmsy_2_score.png).
 
-These parameters can be changed in this [part](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/1.1_FIS/FIS.R#L11-L27) of the code
+These parameters can be changed in this [part](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/FIS.R#L11-L27) of the code
 
 Here is some more information about these scores:
 
