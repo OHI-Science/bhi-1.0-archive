@@ -11,25 +11,28 @@ FIS = function(layers, status_year){
 
 
  ## Call Layers
-  bbmsy = SelectLayersData(layers, layers='fis_bbmsy') %>%
-            select(region_id = id_num,
+  bbmsy = SelectLayersData(layers, layers='fis_bbmsy', narrow=T) %>%
+            select(rgn_id = id_num,
                    stock = category,
                    year,
                    scores= val_num) %>%
-            mutate(metric ="bbmsy")
+            mutate(metric ="bbmsy") %>%
+            dplyr::rename(region_id = rgn_id)
 
-  ffmsy = SelectLayersData(layers, layers='fis_ffmsy') %>%
-          select(region_id = id_num,
+  ffmsy = SelectLayersData(layers, layers='fis_ffmsy', narrow=T) %>%
+          select(rgn_id = id_num,
                   stock = category,
                   year,
                   scores= val_num) %>%
-          mutate(metric= "ffmsy")
+          mutate(metric= "ffmsy")%>%
+          dplyr::rename(region_id = rgn_id)
 
-  landings = SelectLayersData(layers, layers='fis_landings') %>%
-              select(region_id =id_num,
+  landings = SelectLayersData(layers, layers='fis_landings', narrow=T) %>%
+             select(rgn_id =id_num,
                     stock = category,
                     year,
-                    scores= val_num)
+                    scores= val_num)%>%
+            dplyr::rename(region_id = rgn_id)
 
   ## combine bbmsy and ffmsy to single object
   metric.score = rbind(bbmsy, ffmsy)
