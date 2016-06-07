@@ -11,15 +11,15 @@ FIS = function(layers, status_year){
 
 
  ## Call Layers
-  metric.scores = SelectLayersData(layers, layers='fis_scores', narrow=T) %>%
-            select(region_id    = id_chr,
+  metric.scores = SelectLayersData(layers, layers='fis_scores') %>%
+            select(region_id = id_num,
                    stock = category,
                    year,
                    metric,
                    scores= val_num)
 
-  landings = SelectLayersData(layers, layers='fis_landings', narrow=T) %>%
-              select(region_id    = id_chr,
+  landings = SelectLayersData(layers, layers='fis_landings') %>%
+              select(region_id =id_num,
                     stock = category,
                     year,
                     scores= val_num)

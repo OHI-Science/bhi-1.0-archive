@@ -19,9 +19,14 @@ dir_fis = file.path(dir_prep, 'FIS')
 scores <- read.csv(file.path(dir_fis,
                              'data/FIS_scores.csv'))
 colnames(scores) # "region_id" "stock"     "year"      "metric"    "score"
+scores = scores %>%
+         dplyr::rename(rgn_id=region_id)
 
 landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
 colnames(landings) # "region_id" "stock"     "year"      "landings"
+
+landings = landings %>%
+  dplyr::rename(rgn_id=region_id)
 
 ## save to layers folder
 write.csv(scores, file.path(dir_layers ,'fis_scores_bhi2015.csv'), row.names=FALSE)
