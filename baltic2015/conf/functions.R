@@ -11,18 +11,28 @@ FIS = function(layers, status_year){
 
 
  ## Call Layers
-  metric.scores = SelectLayersData(layers, layers='fis_scores') %>%
+  bbmsy = SelectLayersData(layers, layers='fis_bbmsy') %>%
             select(region_id = id_num,
                    stock = category,
                    year,
-                   metric,
-                   scores= val_num)
+                   scores= val_num) %>%
+            mutate(metric ="bbmsy")
+
+  ffmsy = SelectLayersData(layers, layers='fis_ffmsy') %>%
+          select(region_id = id_num,
+                  stock = category,
+                  year,
+                  scores= val_num) %>%
+          mutate(metric= "ffmsy")
 
   landings = SelectLayersData(layers, layers='fis_landings') %>%
               select(region_id =id_num,
                     stock = category,
                     year,
                     scores= val_num)
+
+  ## combine bbmsy and ffmsy to single object
+  metric.score = rbind(bbmsy, ffmsy)
 
   ###########################################################################
   ## STEP 1: converting B/Bmsy and F/Fmsy to F-scores
