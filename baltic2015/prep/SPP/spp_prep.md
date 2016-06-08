@@ -278,6 +278,33 @@ dim(data3);dim(data2)
 
     ## [1] 2340    4
 
+#### 4.1.6 Check for duplicates
+
+``` r
+data3 %>% nrow() #2205
+```
+
+    ## [1] 2205
+
+``` r
+data3 %>% distinct() %>% nrow() #2096
+```
+
+    ## [1] 2096
+
+``` r
+## appears to be duplicates
+
+##remove duplicates by selecting the distinct columns
+data3 = data3 %>% 
+        arrange(rgn_id,species_name) %>%
+        distinct()
+        
+dim(data3) #2096
+```
+
+    ## [1] 2096    4
+
 ### 4.2 Data layer for functions.r
 
 ``` r
@@ -317,6 +344,21 @@ data3%>% filter(rgn_id== 1) %>% nrow() ## check to make sure works
 ```
 
     ## [1] 83
+
+``` r
+head(sum_spp)
+```
+
+    ## Source: local data frame [6 x 2]
+    ## 
+    ##   rgn_id     n
+    ##    (int) (int)
+    ## 1      1    83
+    ## 2      2    87
+    ## 3      3    60
+    ## 4      4    45
+    ## 5      5    72
+    ## 6      6    71
 
 ``` r
 spp_status = full_join(sum_wi,sum_spp, by="rgn_id") %>%
