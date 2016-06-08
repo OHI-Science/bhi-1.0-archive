@@ -1,0 +1,2206 @@
+"rgn_id","species_name","weights"
+2,"Abra prismatica",0.4
+1,"Abra prismatica",0.4
+5,"Abra prismatica",0.4
+6,"Abra prismatica",0.4
+3,"Alderia modesta",0.2
+31,"Alderia modesta",0.2
+28,"Alderia modesta",0.2
+34,"Alderia modesta",0.2
+32,"Alderia modesta",0.2
+37,"Alderia modesta",0.2
+2,"Alderia modesta",0.2
+8,"Alderia modesta",0.2
+36,"Alderia modesta",0.2
+38,"Alderia modesta",0.2
+10,"Alderia modesta",0.2
+1,"Amauropsis islandica",0.2
+3,"Amauropsis islandica",0.2
+7,"Amauropsis islandica",0.2
+2,"Amauropsis islandica",0.2
+8,"Amauropsis islandica",0.2
+13,"Amauropsis islandica",0.2
+1,"Atelecyclus rotundatus",0.4
+2,"Atelecyclus rotundatus",0.4
+1,"Boreotrophon truncatus",0.2
+3,"Boreotrophon truncatus",0.2
+7,"Boreotrophon truncatus",0.2
+2,"Boreotrophon truncatus",0.2
+8,"Boreotrophon truncatus",0.2
+1,"Clelandella miliaris",0.4
+2,"Clelandella miliaris",0.4
+1,"Cliona celata",0.4
+2,"Cliona celata",0.4
+16,"Corophium multisetosum",0.2
+17,"Corophium multisetosum",0.2
+18,"Corophium multisetosum",0.2
+23,"Corophium multisetosum",0.2
+2,"Corophium multisetosum",0.2
+13,"Corophium multisetosum",0.2
+3,"Corophium multisetosum",0.2
+10,"Corophium multisetosum",0.2
+1,"Corystes cassivelaunus",0.2
+2,"Corystes cassivelaunus",0.2
+2,"Epitonium clathrus",0.4
+1,"Epitonium clathrus",0.4
+5,"Epitonium clathrus",0.4
+6,"Epitonium clathrus",0.4
+1,"Euspira pallida",0.4
+2,"Euspira pallida",0.4
+3,"Euspira pallida",0.4
+5,"Euspira pallida",0.4
+6,"Euspira pallida",0.4
+13,"Deshayesorchestia deshayesii",0.4
+2,"Deshayesorchestia deshayesii",0.4
+11,"Deshayesorchestia deshayesii",0.4
+14,"Deshayesorchestia deshayesii",0.4
+3,"Deshayesorchestia deshayesii",0.4
+15,"Deshayesorchestia deshayesii",0.4
+18,"Deshayesorchestia deshayesii",0.4
+10,"Deshayesorchestia deshayesii",0.4
+26,"Deshayesorchestia deshayesii",0.4
+21,"Deshayesorchestia deshayesii",0.4
+5,"Deshayesorchestia deshayesii",0.4
+6,"Deshayesorchestia deshayesii",0.4
+8,"Deshayesorchestia deshayesii",0.4
+5,"Haploops tenuis",0.6
+1,"Haploops tenuis",0.6
+6,"Haploops tenuis",0.6
+2,"Haploops tenuis",0.6
+3,"Haploops tenuis",0.6
+3,"Haploops tubicola",0.4
+2,"Haploops tubicola",0.4
+1,"Haploops tubicola",0.4
+5,"Haploops tubicola",0.4
+6,"Haploops tubicola",0.4
+1,"Hippasteria phrygiana",0.4
+2,"Hippasteria phrygiana",0.4
+1,"Hippolyte varians",0.4
+2,"Hippolyte varians",0.4
+2,"Inachus dorsettensis",0.2
+1,"Inachus dorsettensis",0.2
+2,"Macoma calcarea",0.4
+3,"Macoma calcarea",0.4
+7,"Macoma calcarea",0.4
+8,"Macoma calcarea",0.4
+1,"Macoma calcarea",0.4
+10,"Macoma calcarea",0.4
+9,"Macoma calcarea",0.4
+6,"Macoma calcarea",0.4
+15,"Macoma calcarea",0.4
+17,"Macoma calcarea",0.4
+14,"Macoma calcarea",0.4
+4,"Macoma calcarea",0.4
+5,"Macoma calcarea",0.4
+12,"Macoma calcarea",0.4
+13,"Macoma calcarea",0.4
+11,"Macoma calcarea",0.4
+21,"Macoma calcarea",0.4
+37,"Macroplea mutica",0
+39,"Macroplea mutica",0
+32,"Macroplea mutica",0
+3,"Macroplea mutica",0
+9,"Macroplea mutica",0
+12,"Macroplea mutica",0
+1,"Macroplea mutica",0
+11,"Macroplea mutica",0
+5,"Macroplea mutica",0
+6,"Macroplea mutica",0
+26,"Macroplea mutica",0
+29,"Macroplea mutica",0
+35,"Macroplea mutica",0
+20,"Macroplea mutica",0
+30,"Macroplea mutica",0
+36,"Macroplea mutica",0
+31,"Macroplea mutica",0
+28,"Macroplea mutica",0
+38,"Macroplea mutica",0
+42,"Macroplea mutica",0
+3,"Modiolus modiolus",0.4
+2,"Modiolus modiolus",0.4
+1,"Modiolus modiolus",0.4
+5,"Modiolus modiolus",0.4
+6,"Modiolus modiolus",0.4
+10,"Modiolus modiolus",0.4
+4,"Modiolus modiolus",0.4
+8,"Modiolus modiolus",0.4
+9,"Modiolus modiolus",0.4
+7,"Modiolus modiolus",0.4
+12,"Modiolus modiolus",0.4
+12,"Monoporeia affinis",0
+13,"Monoporeia affinis",0
+11,"Monoporeia affinis",0
+16,"Monoporeia affinis",0
+17,"Monoporeia affinis",0
+14,"Monoporeia affinis",0
+26,"Monoporeia affinis",0
+37,"Monoporeia affinis",0
+29,"Monoporeia affinis",0
+35,"Monoporeia affinis",0
+38,"Monoporeia affinis",0
+20,"Monoporeia affinis",0
+36,"Monoporeia affinis",0
+41,"Monoporeia affinis",0
+40,"Monoporeia affinis",0
+42,"Monoporeia affinis",0
+19,"Monoporeia affinis",0
+22,"Monoporeia affinis",0
+24,"Monoporeia affinis",0
+10,"Monoporeia affinis",0
+15,"Monoporeia affinis",0
+21,"Monoporeia affinis",0
+39,"Monoporeia affinis",0
+18,"Monoporeia affinis",0
+30,"Monoporeia affinis",0
+25,"Monoporeia affinis",0
+31,"Monoporeia affinis",0
+28,"Monoporeia affinis",0
+27,"Monoporeia affinis",0
+34,"Monoporeia affinis",0
+23,"Monoporeia affinis",0
+32,"Monoporeia affinis",0
+33,"Monoporeia affinis",0
+9,"Monoporeia affinis",0
+3,"Mya truncata",0.2
+7,"Mya truncata",0.2
+1,"Mya truncata",0.2
+2,"Mya truncata",0.2
+8,"Mya truncata",0.2
+10,"Mya truncata",0.2
+9,"Mya truncata",0.2
+5,"Mya truncata",0.2
+6,"Mya truncata",0.2
+4,"Mya truncata",0.2
+12,"Mya truncata",0.2
+13,"Mya truncata",0.2
+11,"Mya truncata",0.2
+7,"Nucula nucleus",0.4
+3,"Nucula nucleus",0.4
+1,"Nucula nucleus",0.4
+2,"Nucula nucleus",0.4
+8,"Nucula nucleus",0.4
+5,"Nucula nucleus",0.4
+6,"Nucula nucleus",0.4
+9,"Nucula nucleus",0.4
+10,"Nucula nucleus",0.4
+3,"Parvicardium hauniense",0.4
+9,"Parvicardium hauniense",0.4
+12,"Parvicardium hauniense",0.4
+11,"Parvicardium hauniense",0.4
+13,"Parvicardium hauniense",0.4
+16,"Parvicardium hauniense",0.4
+26,"Parvicardium hauniense",0.4
+29,"Parvicardium hauniense",0.4
+36,"Parvicardium hauniense",0.4
+32,"Parvicardium hauniense",0.4
+10,"Parvicardium hauniense",0.4
+6,"Parvicardium hauniense",0.4
+2,"Pelonaia corrugata",0.4
+1,"Pelonaia corrugata",0.4
+12,"Pontoporeia femorata",0
+13,"Pontoporeia femorata",0
+11,"Pontoporeia femorata",0
+16,"Pontoporeia femorata",0
+15,"Pontoporeia femorata",0
+14,"Pontoporeia femorata",0
+17,"Pontoporeia femorata",0
+26,"Pontoporeia femorata",0
+29,"Pontoporeia femorata",0
+10,"Pontoporeia femorata",0
+3,"Pontoporeia femorata",0
+7,"Pontoporeia femorata",0
+9,"Pontoporeia femorata",0
+1,"Pontoporeia femorata",0
+21,"Pontoporeia femorata",0
+20,"Pontoporeia femorata",0
+22,"Pontoporeia femorata",0
+24,"Pontoporeia femorata",0
+36,"Pontoporeia femorata",0
+18,"Pontoporeia femorata",0
+23,"Pontoporeia femorata",0
+30,"Pontoporeia femorata",0
+19,"Pontoporeia femorata",0
+25,"Pontoporeia femorata",0
+31,"Pontoporeia femorata",0
+28,"Pontoporeia femorata",0
+27,"Pontoporeia femorata",0
+34,"Pontoporeia femorata",0
+37,"Pontoporeia femorata",0
+35,"Pontoporeia femorata",0
+38,"Pontoporeia femorata",0
+39,"Pontoporeia femorata",0
+40,"Pontoporeia femorata",0
+41,"Pontoporeia femorata",0
+32,"Pontoporeia femorata",0
+4,"Pontoporeia femorata",0
+8,"Pontoporeia femorata",0
+5,"Pontoporeia femorata",0
+6,"Pontoporeia femorata",0
+2,"Pontoporeia femorata",0
+33,"Pontoporeia femorata",0
+2,"Sabella pavonina",0.2
+1,"Sabella pavonina",0.2
+12,"Sabella pavonina",0.2
+5,"Sabella pavonina",0.2
+6,"Sabella pavonina",0.2
+12,"Saduria entomon",0
+10,"Saduria entomon",0
+13,"Saduria entomon",0
+11,"Saduria entomon",0
+16,"Saduria entomon",0
+14,"Saduria entomon",0
+17,"Saduria entomon",0
+15,"Saduria entomon",0
+26,"Saduria entomon",0
+37,"Saduria entomon",0
+29,"Saduria entomon",0
+35,"Saduria entomon",0
+21,"Saduria entomon",0
+39,"Saduria entomon",0
+20,"Saduria entomon",0
+38,"Saduria entomon",0
+40,"Saduria entomon",0
+36,"Saduria entomon",0
+41,"Saduria entomon",0
+18,"Saduria entomon",0
+30,"Saduria entomon",0
+22,"Saduria entomon",0
+23,"Saduria entomon",0
+42,"Saduria entomon",0
+19,"Saduria entomon",0
+24,"Saduria entomon",0
+31,"Saduria entomon",0
+25,"Saduria entomon",0
+27,"Saduria entomon",0
+28,"Saduria entomon",0
+32,"Saduria entomon",0
+34,"Saduria entomon",0
+33,"Saduria entomon",0
+3,"Scrobicularia plana",0.4
+4,"Scrobicularia plana",0.4
+8,"Scrobicularia plana",0.4
+10,"Scrobicularia plana",0.4
+1,"Scrobicularia plana",0.4
+2,"Scrobicularia plana",0.4
+5,"Scrobicularia plana",0.4
+6,"Scrobicularia plana",0.4
+12,"Scrobicularia plana",0.4
+12,"Solaster endeca",0.4
+1,"Solaster endeca",0.4
+2,"Solaster endeca",0.4
+2,"Stomphia coccinea",0.4
+1,"Stomphia coccinea",0.4
+5,"Stomphia coccinea",0.4
+6,"Stomphia coccinea",0.4
+2,"Arenaria interpres ",0.4
+5,"Arenaria interpres ",0.4
+6,"Arenaria interpres ",0.4
+11,"Arenaria interpres ",0.4
+12,"Arenaria interpres ",0.4
+14,"Arenaria interpres ",0.4
+1,"Aythya fuligula ",0.2
+2,"Aythya fuligula ",0.2
+3,"Aythya fuligula ",0.2
+4,"Aythya fuligula ",0.2
+5,"Aythya fuligula ",0.2
+6,"Aythya fuligula ",0.2
+7,"Aythya fuligula ",0.2
+8,"Aythya fuligula ",0.2
+9,"Aythya fuligula ",0.2
+10,"Aythya fuligula ",0.2
+11,"Aythya fuligula ",0.2
+12,"Aythya fuligula ",0.2
+13,"Aythya fuligula ",0.2
+14,"Aythya fuligula ",0.2
+15,"Aythya fuligula ",0.2
+16,"Aythya fuligula ",0.2
+17,"Aythya fuligula ",0.2
+18,"Aythya fuligula ",0.2
+19,"Aythya fuligula ",0.2
+20,"Aythya fuligula ",0.2
+21,"Aythya fuligula ",0.2
+22,"Aythya fuligula ",0.2
+23,"Aythya fuligula ",0.2
+24,"Aythya fuligula ",0.2
+25,"Aythya fuligula ",0.2
+26,"Aythya fuligula ",0.2
+27,"Aythya fuligula ",0.2
+28,"Aythya fuligula ",0.2
+29,"Aythya fuligula ",0.2
+30,"Aythya fuligula ",0.2
+31,"Aythya fuligula ",0.2
+32,"Aythya fuligula ",0.2
+33,"Aythya fuligula ",0.2
+34,"Aythya fuligula ",0.2
+35,"Aythya fuligula ",0.2
+36,"Aythya fuligula ",0.2
+37,"Aythya fuligula ",0.2
+38,"Aythya fuligula ",0.2
+39,"Aythya fuligula ",0.2
+40,"Aythya fuligula ",0.2
+41,"Aythya fuligula ",0.2
+42,"Aythya fuligula ",0.2
+20,"Aythya marila ",0.4
+26,"Aythya marila ",0.4
+28,"Aythya marila ",0.4
+33,"Aythya marila ",0.4
+36,"Aythya marila ",0.4
+37,"Aythya marila ",0.4
+38,"Aythya marila ",0.4
+39,"Aythya marila ",0.4
+40,"Aythya marila ",0.4
+41,"Aythya marila ",0.4
+42,"Aythya marila ",0.4
+2,"Calidris alpina schinzii ",0.6
+3,"Calidris alpina schinzii ",0.6
+5,"Calidris alpina schinzii ",0.6
+6,"Calidris alpina schinzii ",0.6
+9,"Calidris alpina schinzii ",0.6
+11,"Calidris alpina schinzii ",0.6
+12,"Calidris alpina schinzii ",0.6
+13,"Calidris alpina schinzii ",0.6
+17,"Calidris alpina schinzii ",0.6
+18,"Calidris alpina schinzii ",0.6
+26,"Calidris alpina schinzii ",0.6
+27,"Calidris alpina schinzii ",0.6
+28,"Calidris alpina schinzii ",0.6
+30,"Calidris alpina schinzii ",0.6
+33,"Calidris alpina schinzii ",0.6
+36,"Calidris alpina schinzii ",0.6
+37,"Calidris alpina schinzii ",0.6
+38,"Calidris alpina schinzii ",0.6
+42,"Calidris alpina schinzii ",0.6
+41,"Calidris temminckii ",0.2
+42,"Calidris temminckii ",0.2
+1,"Cepphus grylle arcticus ",0
+2,"Cepphus grylle arcticus ",0
+3,"Cepphus grylle arcticus ",0
+5,"Cepphus grylle arcticus ",0
+14,"Cepphus grylle grylle ",0.2
+20,"Cepphus grylle grylle ",0.2
+25,"Cepphus grylle grylle ",0.2
+26,"Cepphus grylle grylle ",0.2
+28,"Cepphus grylle grylle ",0.2
+29,"Cepphus grylle grylle ",0.2
+30,"Cepphus grylle grylle ",0.2
+31,"Cepphus grylle grylle ",0.2
+32,"Cepphus grylle grylle ",0.2
+33,"Cepphus grylle grylle ",0.2
+34,"Cepphus grylle grylle ",0.2
+35,"Cepphus grylle grylle ",0.2
+36,"Cepphus grylle grylle ",0.2
+37,"Cepphus grylle grylle ",0.2
+38,"Cepphus grylle grylle ",0.2
+39,"Cepphus grylle grylle ",0.2
+40,"Cepphus grylle grylle ",0.2
+41,"Cepphus grylle grylle ",0.2
+42,"Cepphus grylle grylle ",0.2
+5,"Charadrius alexandirinus ",0.8
+6,"Charadrius alexandirinus ",0.8
+11,"Charadrius alexandirinus ",0.8
+13,"Charadrius alexandirinus ",0.8
+26,"Charadrius alexandirinus ",0.8
+1,"Charadrius hiaticula hiaticula ",0.2
+2,"Charadrius hiaticula hiaticula ",0.2
+3,"Charadrius hiaticula hiaticula ",0.2
+4,"Charadrius hiaticula hiaticula ",0.2
+5,"Charadrius hiaticula hiaticula ",0.2
+6,"Charadrius hiaticula hiaticula ",0.2
+7,"Charadrius hiaticula hiaticula ",0.2
+8,"Charadrius hiaticula hiaticula ",0.2
+9,"Charadrius hiaticula hiaticula ",0.2
+10,"Charadrius hiaticula hiaticula ",0.2
+11,"Charadrius hiaticula hiaticula ",0.2
+12,"Charadrius hiaticula hiaticula ",0.2
+13,"Charadrius hiaticula hiaticula ",0.2
+14,"Charadrius hiaticula hiaticula ",0.2
+15,"Charadrius hiaticula hiaticula ",0.2
+16,"Charadrius hiaticula hiaticula ",0.2
+17,"Charadrius hiaticula hiaticula ",0.2
+18,"Charadrius hiaticula hiaticula ",0.2
+19,"Charadrius hiaticula hiaticula ",0.2
+20,"Charadrius hiaticula hiaticula ",0.2
+21,"Charadrius hiaticula hiaticula ",0.2
+22,"Charadrius hiaticula hiaticula ",0.2
+23,"Charadrius hiaticula hiaticula ",0.2
+24,"Charadrius hiaticula hiaticula ",0.2
+25,"Charadrius hiaticula hiaticula ",0.2
+26,"Charadrius hiaticula hiaticula ",0.2
+27,"Charadrius hiaticula hiaticula ",0.2
+28,"Charadrius hiaticula hiaticula ",0.2
+29,"Charadrius hiaticula hiaticula ",0.2
+30,"Charadrius hiaticula hiaticula ",0.2
+31,"Charadrius hiaticula hiaticula ",0.2
+32,"Charadrius hiaticula hiaticula ",0.2
+33,"Charadrius hiaticula hiaticula ",0.2
+34,"Charadrius hiaticula hiaticula ",0.2
+35,"Charadrius hiaticula hiaticula ",0.2
+36,"Charadrius hiaticula hiaticula ",0.2
+37,"Charadrius hiaticula hiaticula ",0.2
+38,"Charadrius hiaticula hiaticula ",0.2
+39,"Charadrius hiaticula hiaticula ",0.2
+40,"Charadrius hiaticula hiaticula ",0.2
+41,"Charadrius hiaticula hiaticula ",0.2
+42,"Charadrius hiaticula hiaticula ",0.2
+2,"Hydroprogne caspia ",0.4
+5,"Hydroprogne caspia ",0.4
+6,"Hydroprogne caspia ",0.4
+11,"Hydroprogne caspia ",0.4
+12,"Hydroprogne caspia ",0.4
+13,"Hydroprogne caspia ",0.4
+14,"Hydroprogne caspia ",0.4
+20,"Hydroprogne caspia ",0.4
+25,"Hydroprogne caspia ",0.4
+26,"Hydroprogne caspia ",0.4
+28,"Hydroprogne caspia ",0.4
+29,"Hydroprogne caspia ",0.4
+30,"Hydroprogne caspia ",0.4
+31,"Hydroprogne caspia ",0.4
+32,"Hydroprogne caspia ",0.4
+33,"Hydroprogne caspia ",0.4
+35,"Hydroprogne caspia ",0.4
+36,"Hydroprogne caspia ",0.4
+37,"Hydroprogne caspia ",0.4
+38,"Hydroprogne caspia ",0.4
+39,"Hydroprogne caspia ",0.4
+40,"Hydroprogne caspia ",0.4
+41,"Hydroprogne caspia ",0.4
+42,"Hydroprogne caspia ",0.4
+14,"Larus fuscus fuscus ",0.4
+20,"Larus fuscus fuscus ",0.4
+25,"Larus fuscus fuscus ",0.4
+26,"Larus fuscus fuscus ",0.4
+28,"Larus fuscus fuscus ",0.4
+29,"Larus fuscus fuscus ",0.4
+30,"Larus fuscus fuscus ",0.4
+31,"Larus fuscus fuscus ",0.4
+32,"Larus fuscus fuscus ",0.4
+33,"Larus fuscus fuscus ",0.4
+34,"Larus fuscus fuscus ",0.4
+35,"Larus fuscus fuscus ",0.4
+36,"Larus fuscus fuscus ",0.4
+37,"Larus fuscus fuscus ",0.4
+38,"Larus fuscus fuscus ",0.4
+39,"Larus fuscus fuscus ",0.4
+40,"Larus fuscus fuscus ",0.4
+41,"Larus fuscus fuscus ",0.4
+42,"Larus fuscus fuscus ",0.4
+2,"Larus melanocephalus ",0.6
+3,"Larus melanocephalus ",0.6
+5,"Larus melanocephalus ",0.6
+6,"Larus melanocephalus ",0.6
+8,"Larus melanocephalus ",0.6
+10,"Larus melanocephalus ",0.6
+11,"Larus melanocephalus ",0.6
+12,"Larus melanocephalus ",0.6
+13,"Larus melanocephalus ",0.6
+14,"Larus melanocephalus ",0.6
+16,"Larus melanocephalus ",0.6
+17,"Larus melanocephalus ",0.6
+18,"Larus melanocephalus ",0.6
+1,"Limosa limosa ",0.2
+2,"Limosa limosa ",0.2
+3,"Limosa limosa ",0.2
+5,"Limosa limosa ",0.2
+6,"Limosa limosa ",0.2
+8,"Limosa limosa ",0.2
+11,"Limosa limosa ",0.2
+12,"Limosa limosa ",0.2
+13,"Limosa limosa ",0.2
+14,"Limosa limosa ",0.2
+16,"Limosa limosa ",0.2
+17,"Limosa limosa ",0.2
+18,"Limosa limosa ",0.2
+20,"Limosa limosa ",0.2
+22,"Limosa limosa ",0.2
+23,"Limosa limosa ",0.2
+24,"Limosa limosa ",0.2
+25,"Limosa limosa ",0.2
+26,"Limosa limosa ",0.2
+27,"Limosa limosa ",0.2
+28,"Limosa limosa ",0.2
+31,"Limosa limosa ",0.2
+33,"Limosa limosa ",0.2
+34,"Limosa limosa ",0.2
+42,"Limosa limosa ",0.2
+14,"Melanitta fusca ",0.6
+20,"Melanitta fusca ",0.6
+25,"Melanitta fusca ",0.6
+26,"Melanitta fusca ",0.6
+28,"Melanitta fusca ",0.6
+29,"Melanitta fusca ",0.6
+30,"Melanitta fusca ",0.6
+31,"Melanitta fusca ",0.6
+32,"Melanitta fusca ",0.6
+33,"Melanitta fusca ",0.6
+34,"Melanitta fusca ",0.6
+35,"Melanitta fusca ",0.6
+36,"Melanitta fusca ",0.6
+37,"Melanitta fusca ",0.6
+38,"Melanitta fusca ",0.6
+39,"Melanitta fusca ",0.6
+40,"Melanitta fusca ",0.6
+41,"Melanitta fusca ",0.6
+42,"Melanitta fusca ",0.6
+1,"Oenanthe oenanthe ",0.2
+2,"Oenanthe oenanthe ",0.2
+3,"Oenanthe oenanthe ",0.2
+4,"Oenanthe oenanthe ",0.2
+5,"Oenanthe oenanthe ",0.2
+6,"Oenanthe oenanthe ",0.2
+7,"Oenanthe oenanthe ",0.2
+8,"Oenanthe oenanthe ",0.2
+9,"Oenanthe oenanthe ",0.2
+10,"Oenanthe oenanthe ",0.2
+11,"Oenanthe oenanthe ",0.2
+12,"Oenanthe oenanthe ",0.2
+13,"Oenanthe oenanthe ",0.2
+14,"Oenanthe oenanthe ",0.2
+15,"Oenanthe oenanthe ",0.2
+16,"Oenanthe oenanthe ",0.2
+17,"Oenanthe oenanthe ",0.2
+18,"Oenanthe oenanthe ",0.2
+19,"Oenanthe oenanthe ",0.2
+20,"Oenanthe oenanthe ",0.2
+21,"Oenanthe oenanthe ",0.2
+22,"Oenanthe oenanthe ",0.2
+23,"Oenanthe oenanthe ",0.2
+24,"Oenanthe oenanthe ",0.2
+25,"Oenanthe oenanthe ",0.2
+26,"Oenanthe oenanthe ",0.2
+27,"Oenanthe oenanthe ",0.2
+28,"Oenanthe oenanthe ",0.2
+29,"Oenanthe oenanthe ",0.2
+30,"Oenanthe oenanthe ",0.2
+31,"Oenanthe oenanthe ",0.2
+32,"Oenanthe oenanthe ",0.2
+33,"Oenanthe oenanthe ",0.2
+34,"Oenanthe oenanthe ",0.2
+35,"Oenanthe oenanthe ",0.2
+36,"Oenanthe oenanthe ",0.2
+37,"Oenanthe oenanthe ",0.2
+38,"Oenanthe oenanthe ",0.2
+39,"Oenanthe oenanthe ",0.2
+40,"Oenanthe oenanthe ",0.2
+41,"Oenanthe oenanthe ",0.2
+42,"Oenanthe oenanthe ",0.2
+5,"Philomachus pugnax ",0.4
+6,"Philomachus pugnax ",0.4
+11,"Philomachus pugnax ",0.4
+12,"Philomachus pugnax ",0.4
+13,"Philomachus pugnax ",0.4
+14,"Philomachus pugnax ",0.4
+20,"Philomachus pugnax ",0.4
+23,"Philomachus pugnax ",0.4
+24,"Philomachus pugnax ",0.4
+26,"Philomachus pugnax ",0.4
+27,"Philomachus pugnax ",0.4
+28,"Philomachus pugnax ",0.4
+33,"Philomachus pugnax ",0.4
+37,"Philomachus pugnax ",0.4
+38,"Philomachus pugnax ",0.4
+39,"Philomachus pugnax ",0.4
+40,"Philomachus pugnax ",0.4
+41,"Philomachus pugnax ",0.4
+42,"Philomachus pugnax ",0.4
+20,"Podiceps auritus ",0.4
+24,"Podiceps auritus ",0.4
+25,"Podiceps auritus ",0.4
+26,"Podiceps auritus ",0.4
+27,"Podiceps auritus ",0.4
+28,"Podiceps auritus ",0.4
+29,"Podiceps auritus ",0.4
+30,"Podiceps auritus ",0.4
+31,"Podiceps auritus ",0.4
+32,"Podiceps auritus ",0.4
+33,"Podiceps auritus ",0.4
+34,"Podiceps auritus ",0.4
+35,"Podiceps auritus ",0.4
+36,"Podiceps auritus ",0.4
+37,"Podiceps auritus ",0.4
+38,"Podiceps auritus ",0.4
+39,"Podiceps auritus ",0.4
+40,"Podiceps auritus ",0.4
+41,"Podiceps auritus ",0.4
+42,"Podiceps auritus ",0.4
+1,"Rissa tridactyla ",0.6
+1,"Somateria mollissima ",0.4
+2,"Somateria mollissima ",0.4
+3,"Somateria mollissima ",0.4
+4,"Somateria mollissima ",0.4
+5,"Somateria mollissima ",0.4
+6,"Somateria mollissima ",0.4
+7,"Somateria mollissima ",0.4
+8,"Somateria mollissima ",0.4
+9,"Somateria mollissima ",0.4
+10,"Somateria mollissima ",0.4
+11,"Somateria mollissima ",0.4
+12,"Somateria mollissima ",0.4
+13,"Somateria mollissima ",0.4
+14,"Somateria mollissima ",0.4
+15,"Somateria mollissima ",0.4
+16,"Somateria mollissima ",0.4
+20,"Somateria mollissima ",0.4
+25,"Somateria mollissima ",0.4
+26,"Somateria mollissima ",0.4
+28,"Somateria mollissima ",0.4
+29,"Somateria mollissima ",0.4
+30,"Somateria mollissima ",0.4
+31,"Somateria mollissima ",0.4
+32,"Somateria mollissima ",0.4
+33,"Somateria mollissima ",0.4
+34,"Somateria mollissima ",0.4
+35,"Somateria mollissima ",0.4
+36,"Somateria mollissima ",0.4
+37,"Somateria mollissima ",0.4
+38,"Somateria mollissima ",0.4
+39,"Somateria mollissima ",0.4
+40,"Somateria mollissima ",0.4
+41,"Somateria mollissima ",0.4
+42,"Somateria mollissima ",0.4
+1,"Tringa totanus ",0.2
+2,"Tringa totanus ",0.2
+3,"Tringa totanus ",0.2
+4,"Tringa totanus ",0.2
+5,"Tringa totanus ",0.2
+6,"Tringa totanus ",0.2
+7,"Tringa totanus ",0.2
+8,"Tringa totanus ",0.2
+9,"Tringa totanus ",0.2
+10,"Tringa totanus ",0.2
+11,"Tringa totanus ",0.2
+12,"Tringa totanus ",0.2
+13,"Tringa totanus ",0.2
+14,"Tringa totanus ",0.2
+16,"Tringa totanus ",0.2
+17,"Tringa totanus ",0.2
+18,"Tringa totanus ",0.2
+19,"Tringa totanus ",0.2
+20,"Tringa totanus ",0.2
+21,"Tringa totanus ",0.2
+22,"Tringa totanus ",0.2
+23,"Tringa totanus ",0.2
+24,"Tringa totanus ",0.2
+25,"Tringa totanus ",0.2
+26,"Tringa totanus ",0.2
+27,"Tringa totanus ",0.2
+28,"Tringa totanus ",0.2
+29,"Tringa totanus ",0.2
+30,"Tringa totanus ",0.2
+31,"Tringa totanus ",0.2
+32,"Tringa totanus ",0.2
+33,"Tringa totanus ",0.2
+34,"Tringa totanus ",0.2
+35,"Tringa totanus ",0.2
+36,"Tringa totanus ",0.2
+37,"Tringa totanus ",0.2
+38,"Tringa totanus ",0.2
+39,"Tringa totanus ",0.2
+40,"Tringa totanus ",0.2
+41,"Tringa totanus ",0.2
+42,"Tringa totanus ",0.2
+1,"Vanellus vanellus ",0.2
+2,"Vanellus vanellus ",0.2
+3,"Vanellus vanellus ",0.2
+4,"Vanellus vanellus ",0.2
+5,"Vanellus vanellus ",0.2
+6,"Vanellus vanellus ",0.2
+7,"Vanellus vanellus ",0.2
+8,"Vanellus vanellus ",0.2
+9,"Vanellus vanellus ",0.2
+10,"Vanellus vanellus ",0.2
+11,"Vanellus vanellus ",0.2
+12,"Vanellus vanellus ",0.2
+13,"Vanellus vanellus ",0.2
+14,"Vanellus vanellus ",0.2
+15,"Vanellus vanellus ",0.2
+16,"Vanellus vanellus ",0.2
+17,"Vanellus vanellus ",0.2
+18,"Vanellus vanellus ",0.2
+19,"Vanellus vanellus ",0.2
+20,"Vanellus vanellus ",0.2
+21,"Vanellus vanellus ",0.2
+22,"Vanellus vanellus ",0.2
+23,"Vanellus vanellus ",0.2
+24,"Vanellus vanellus ",0.2
+25,"Vanellus vanellus ",0.2
+26,"Vanellus vanellus ",0.2
+27,"Vanellus vanellus ",0.2
+28,"Vanellus vanellus ",0.2
+29,"Vanellus vanellus ",0.2
+30,"Vanellus vanellus ",0.2
+31,"Vanellus vanellus ",0.2
+32,"Vanellus vanellus ",0.2
+33,"Vanellus vanellus ",0.2
+34,"Vanellus vanellus ",0.2
+35,"Vanellus vanellus ",0.2
+36,"Vanellus vanellus ",0.2
+37,"Vanellus vanellus ",0.2
+38,"Vanellus vanellus ",0.2
+39,"Vanellus vanellus ",0.2
+40,"Vanellus vanellus ",0.2
+41,"Vanellus vanellus ",0.2
+42,"Vanellus vanellus ",0.2
+33,"Xenus cinereus ",0.6
+42,"Xenus cinereus ",0.6
+18,"Alburnus alburnus",0
+19,"Alburnus alburnus",0
+20,"Alburnus alburnus",0
+21,"Alburnus alburnus",0
+22,"Alburnus alburnus",0
+23,"Alburnus alburnus",0
+24,"Alburnus alburnus",0
+25,"Alburnus alburnus",0
+5,"Alburnus alburnus",0
+6,"Alburnus alburnus",0
+32,"Alburnus alburnus",0
+33,"Alburnus alburnus",0
+34,"Alburnus alburnus",0
+27,"Alburnus alburnus",0
+28,"Alburnus alburnus",0
+9,"Alburnus alburnus",0
+10,"Alburnus alburnus",0
+7,"Alburnus alburnus",0
+8,"Alburnus alburnus",0
+41,"Alburnus alburnus",0
+42,"Alburnus alburnus",0
+39,"Alburnus alburnus",0
+40,"Alburnus alburnus",0
+37,"Alburnus alburnus",0
+38,"Alburnus alburnus",0
+35,"Alburnus alburnus",0
+36,"Alburnus alburnus",0
+29,"Alburnus alburnus",0
+30,"Alburnus alburnus",0
+31,"Alburnus alburnus",0
+14,"Alburnus alburnus",0
+15,"Alburnus alburnus",0
+16,"Alburnus alburnus",0
+17,"Alburnus alburnus",0
+11,"Alburnus alburnus",0
+12,"Alburnus alburnus",0
+13,"Alburnus alburnus",0
+36,"Alburnus alburnus",0
+26,"Alburnus alburnus",0
+20,"Alburnus alburnus",0
+21,"Alburnus alburnus",0
+22,"Alburnus alburnus",0
+23,"Alburnus alburnus",0
+24,"Alburnus alburnus",0
+25,"Alburnus alburnus",0
+27,"Alosa fallax",0
+28,"Alosa fallax",0
+14,"Alosa fallax",0
+15,"Alosa fallax",0
+16,"Alosa fallax",0
+17,"Alosa fallax",0
+11,"Alosa fallax",0
+12,"Alosa fallax",0
+13,"Alosa fallax",0
+18,"Alosa fallax",0
+19,"Alosa fallax",0
+18,"Alosa fallax",0
+19,"Alosa fallax",0
+22,"Alosa fallax",0
+23,"Alosa fallax",0
+20,"Alosa fallax",0
+21,"Alosa fallax",0
+22,"Alosa fallax",0
+23,"Alosa fallax",0
+24,"Alosa fallax",0
+25,"Alosa fallax",0
+1,"Amblyraja radiata",0
+2,"Amblyraja radiata",0
+5,"Amblyraja radiata",0
+6,"Amblyraja radiata",0
+1,"Ammodytes marinus",0
+2,"Ammodytes marinus",0
+5,"Ammodytes marinus",0
+6,"Ammodytes marinus",0
+18,"Ammodytes tobianus",0
+19,"Ammodytes tobianus",0
+1,"Ammodytes tobianus",0
+2,"Ammodytes tobianus",0
+5,"Ammodytes tobianus",0
+6,"Ammodytes tobianus",0
+32,"Ammodytes tobianus",0
+33,"Ammodytes tobianus",0
+34,"Ammodytes tobianus",0
+27,"Ammodytes tobianus",0
+28,"Ammodytes tobianus",0
+9,"Ammodytes tobianus",0
+10,"Ammodytes tobianus",0
+7,"Ammodytes tobianus",0
+8,"Ammodytes tobianus",0
+3,"Ammodytes tobianus",0
+3,"Ammodytes tobianus",0
+4,"Ammodytes tobianus",0
+41,"Ammodytes tobianus",0
+42,"Ammodytes tobianus",0
+39,"Ammodytes tobianus",0
+40,"Ammodytes tobianus",0
+37,"Ammodytes tobianus",0
+38,"Ammodytes tobianus",0
+35,"Ammodytes tobianus",0
+36,"Ammodytes tobianus",0
+29,"Ammodytes tobianus",0
+30,"Ammodytes tobianus",0
+31,"Ammodytes tobianus",0
+14,"Ammodytes tobianus",0
+15,"Ammodytes tobianus",0
+16,"Ammodytes tobianus",0
+17,"Ammodytes tobianus",0
+11,"Ammodytes tobianus",0
+12,"Ammodytes tobianus",0
+13,"Ammodytes tobianus",0
+36,"Ammodytes tobianus",0
+26,"Ammodytes tobianus",0
+20,"Ammodytes tobianus",0
+21,"Ammodytes tobianus",0
+22,"Ammodytes tobianus",0
+23,"Ammodytes tobianus",0
+24,"Ammodytes tobianus",0
+25,"Ammodytes tobianus",0
+1,"Anarhichas lupus",0.6
+2,"Anarhichas lupus",0.6
+5,"Anarhichas lupus",0.6
+6,"Anarhichas lupus",0.6
+3,"Anarhichas lupus",0.6
+3,"Anarhichas lupus",0.6
+4,"Anarhichas lupus",0.6
+18,"Anguilla anguilla",0.8
+19,"Anguilla anguilla",0.8
+20,"Anguilla anguilla",0.8
+21,"Anguilla anguilla",0.8
+22,"Anguilla anguilla",0.8
+23,"Anguilla anguilla",0.8
+24,"Anguilla anguilla",0.8
+25,"Anguilla anguilla",0.8
+1,"Anguilla anguilla",0.8
+2,"Anguilla anguilla",0.8
+5,"Anguilla anguilla",0.8
+6,"Anguilla anguilla",0.8
+32,"Anguilla anguilla",0.8
+33,"Anguilla anguilla",0.8
+34,"Anguilla anguilla",0.8
+27,"Anguilla anguilla",0.8
+28,"Anguilla anguilla",0.8
+9,"Anguilla anguilla",0.8
+10,"Anguilla anguilla",0.8
+7,"Anguilla anguilla",0.8
+8,"Anguilla anguilla",0.8
+3,"Anguilla anguilla",0.8
+3,"Anguilla anguilla",0.8
+4,"Anguilla anguilla",0.8
+37,"Anguilla anguilla",0.8
+38,"Anguilla anguilla",0.8
+35,"Anguilla anguilla",0.8
+36,"Anguilla anguilla",0.8
+29,"Anguilla anguilla",0.8
+30,"Anguilla anguilla",0.8
+31,"Anguilla anguilla",0.8
+14,"Anguilla anguilla",0.8
+15,"Anguilla anguilla",0.8
+16,"Anguilla anguilla",0.8
+17,"Anguilla anguilla",0.8
+11,"Anguilla anguilla",0.8
+12,"Anguilla anguilla",0.8
+13,"Anguilla anguilla",0.8
+36,"Anguilla anguilla",0.8
+26,"Anguilla anguilla",0.8
+20,"Anguilla anguilla",0.8
+21,"Anguilla anguilla",0.8
+22,"Anguilla anguilla",0.8
+23,"Anguilla anguilla",0.8
+24,"Anguilla anguilla",0.8
+25,"Anguilla anguilla",0.8
+32,"Aspius aspius",0.2
+33,"Aspius aspius",0.2
+34,"Aspius aspius",0.2
+37,"Aspius aspius",0.2
+38,"Aspius aspius",0.2
+18,"Clupea harengus",0
+19,"Clupea harengus",0
+20,"Clupea harengus",0
+21,"Clupea harengus",0
+22,"Clupea harengus",0
+23,"Clupea harengus",0
+24,"Clupea harengus",0
+25,"Clupea harengus",0
+1,"Clupea harengus",0
+2,"Clupea harengus",0
+5,"Clupea harengus",0
+6,"Clupea harengus",0
+32,"Clupea harengus",0
+33,"Clupea harengus",0
+34,"Clupea harengus",0
+27,"Clupea harengus",0
+28,"Clupea harengus",0
+9,"Clupea harengus",0
+10,"Clupea harengus",0
+7,"Clupea harengus",0
+8,"Clupea harengus",0
+3,"Clupea harengus",0
+3,"Clupea harengus",0
+4,"Clupea harengus",0
+41,"Clupea harengus",0
+42,"Clupea harengus",0
+39,"Clupea harengus",0
+40,"Clupea harengus",0
+37,"Clupea harengus",0
+38,"Clupea harengus",0
+35,"Clupea harengus",0
+36,"Clupea harengus",0
+29,"Clupea harengus",0
+30,"Clupea harengus",0
+31,"Clupea harengus",0
+14,"Clupea harengus",0
+15,"Clupea harengus",0
+16,"Clupea harengus",0
+17,"Clupea harengus",0
+11,"Clupea harengus",0
+12,"Clupea harengus",0
+13,"Clupea harengus",0
+36,"Clupea harengus",0
+26,"Clupea harengus",0
+20,"Clupea harengus",0
+21,"Clupea harengus",0
+22,"Clupea harengus",0
+23,"Clupea harengus",0
+24,"Clupea harengus",0
+25,"Clupea harengus",0
+18,"Cobitis taenia",0
+19,"Cobitis taenia",0
+20,"Cobitis taenia",0
+21,"Cobitis taenia",0
+22,"Cobitis taenia",0
+23,"Cobitis taenia",0
+24,"Cobitis taenia",0
+25,"Cobitis taenia",0
+32,"Cobitis taenia",0
+33,"Cobitis taenia",0
+34,"Cobitis taenia",0
+27,"Cobitis taenia",0
+28,"Cobitis taenia",0
+32,"Coregonus albula",0
+33,"Coregonus albula",0
+34,"Coregonus albula",0
+41,"Coregonus albula",0
+42,"Coregonus albula",0
+39,"Coregonus albula",0
+40,"Coregonus albula",0
+37,"Coregonus albula",0
+38,"Coregonus albula",0
+18,"Coregonus maraena",0.6
+19,"Coregonus maraena",0.6
+20,"Coregonus maraena",0.6
+21,"Coregonus maraena",0.6
+22,"Coregonus maraena",0.6
+23,"Coregonus maraena",0.6
+24,"Coregonus maraena",0.6
+25,"Coregonus maraena",0.6
+1,"Coregonus maraena",0.6
+2,"Coregonus maraena",0.6
+32,"Coregonus maraena",0.6
+33,"Coregonus maraena",0.6
+34,"Coregonus maraena",0.6
+27,"Coregonus maraena",0.6
+28,"Coregonus maraena",0.6
+9,"Coregonus maraena",0.6
+10,"Coregonus maraena",0.6
+7,"Coregonus maraena",0.6
+8,"Coregonus maraena",0.6
+41,"Coregonus maraena",0.6
+42,"Coregonus maraena",0.6
+39,"Coregonus maraena",0.6
+40,"Coregonus maraena",0.6
+37,"Coregonus maraena",0.6
+38,"Coregonus maraena",0.6
+35,"Coregonus maraena",0.6
+36,"Coregonus maraena",0.6
+29,"Coregonus maraena",0.6
+30,"Coregonus maraena",0.6
+31,"Coregonus maraena",0.6
+14,"Coregonus maraena",0.6
+15,"Coregonus maraena",0.6
+16,"Coregonus maraena",0.6
+17,"Coregonus maraena",0.6
+11,"Coregonus maraena",0.6
+12,"Coregonus maraena",0.6
+13,"Coregonus maraena",0.6
+36,"Coregonus maraena",0.6
+26,"Coregonus maraena",0.6
+20,"Coregonus maraena",0.6
+21,"Coregonus maraena",0.6
+22,"Coregonus maraena",0.6
+23,"Coregonus maraena",0.6
+24,"Coregonus maraena",0.6
+25,"Coregonus maraena",0.6
+32,"Cottus gobio",0
+33,"Cottus gobio",0
+34,"Cottus gobio",0
+27,"Cottus gobio",0
+28,"Cottus gobio",0
+41,"Cottus gobio",0
+42,"Cottus gobio",0
+39,"Cottus gobio",0
+40,"Cottus gobio",0
+37,"Cottus gobio",0
+38,"Cottus gobio",0
+35,"Cottus gobio",0
+36,"Cottus gobio",0
+29,"Cottus gobio",0
+30,"Cottus gobio",0
+31,"Cottus gobio",0
+36,"Cottus gobio",0
+18,"Cyclopterus lumpus",0.2
+19,"Cyclopterus lumpus",0.2
+18,"Cyclopterus lumpus",0.2
+19,"Cyclopterus lumpus",0.2
+1,"Cyclopterus lumpus",0.2
+2,"Cyclopterus lumpus",0.2
+5,"Cyclopterus lumpus",0.2
+6,"Cyclopterus lumpus",0.2
+32,"Cyclopterus lumpus",0.2
+33,"Cyclopterus lumpus",0.2
+34,"Cyclopterus lumpus",0.2
+27,"Cyclopterus lumpus",0.2
+28,"Cyclopterus lumpus",0.2
+9,"Cyclopterus lumpus",0.2
+10,"Cyclopterus lumpus",0.2
+7,"Cyclopterus lumpus",0.2
+8,"Cyclopterus lumpus",0.2
+3,"Cyclopterus lumpus",0.2
+3,"Cyclopterus lumpus",0.2
+4,"Cyclopterus lumpus",0.2
+41,"Cyclopterus lumpus",0.2
+42,"Cyclopterus lumpus",0.2
+39,"Cyclopterus lumpus",0.2
+40,"Cyclopterus lumpus",0.2
+37,"Cyclopterus lumpus",0.2
+38,"Cyclopterus lumpus",0.2
+35,"Cyclopterus lumpus",0.2
+36,"Cyclopterus lumpus",0.2
+29,"Cyclopterus lumpus",0.2
+30,"Cyclopterus lumpus",0.2
+31,"Cyclopterus lumpus",0.2
+14,"Cyclopterus lumpus",0.2
+15,"Cyclopterus lumpus",0.2
+16,"Cyclopterus lumpus",0.2
+17,"Cyclopterus lumpus",0.2
+11,"Cyclopterus lumpus",0.2
+12,"Cyclopterus lumpus",0.2
+13,"Cyclopterus lumpus",0.2
+36,"Cyclopterus lumpus",0.2
+26,"Cyclopterus lumpus",0.2
+20,"Cyclopterus lumpus",0.2
+21,"Cyclopterus lumpus",0.2
+22,"Cyclopterus lumpus",0.2
+23,"Cyclopterus lumpus",0.2
+24,"Cyclopterus lumpus",0.2
+25,"Cyclopterus lumpus",0.2
+18,"Enchelyopus cimbrius",0.2
+19,"Enchelyopus cimbrius",0.2
+18,"Enchelyopus cimbrius",0.2
+19,"Enchelyopus cimbrius",0.2
+1,"Enchelyopus cimbrius",0.2
+2,"Enchelyopus cimbrius",0.2
+5,"Enchelyopus cimbrius",0.2
+6,"Enchelyopus cimbrius",0.2
+9,"Enchelyopus cimbrius",0.2
+10,"Enchelyopus cimbrius",0.2
+7,"Enchelyopus cimbrius",0.2
+8,"Enchelyopus cimbrius",0.2
+3,"Enchelyopus cimbrius",0.2
+3,"Enchelyopus cimbrius",0.2
+4,"Enchelyopus cimbrius",0.2
+29,"Enchelyopus cimbrius",0.2
+30,"Enchelyopus cimbrius",0.2
+31,"Enchelyopus cimbrius",0.2
+14,"Enchelyopus cimbrius",0.2
+15,"Enchelyopus cimbrius",0.2
+16,"Enchelyopus cimbrius",0.2
+17,"Enchelyopus cimbrius",0.2
+11,"Enchelyopus cimbrius",0.2
+12,"Enchelyopus cimbrius",0.2
+13,"Enchelyopus cimbrius",0.2
+26,"Enchelyopus cimbrius",0.2
+20,"Enchelyopus cimbrius",0.2
+21,"Enchelyopus cimbrius",0.2
+22,"Enchelyopus cimbrius",0.2
+23,"Enchelyopus cimbrius",0.2
+24,"Enchelyopus cimbrius",0.2
+25,"Enchelyopus cimbrius",0.2
+18,"Entelurus aequoreus",0
+19,"Entelurus aequoreus",0
+1,"Entelurus aequoreus",0
+2,"Entelurus aequoreus",0
+5,"Entelurus aequoreus",0
+6,"Entelurus aequoreus",0
+3,"Entelurus aequoreus",0
+4,"Entelurus aequoreus",0
+18,"Gadus morhua",0.4
+19,"Gadus morhua",0.4
+1,"Gadus morhua",0.4
+2,"Gadus morhua",0.4
+5,"Gadus morhua",0.4
+6,"Gadus morhua",0.4
+32,"Gadus morhua",0.4
+33,"Gadus morhua",0.4
+34,"Gadus morhua",0.4
+27,"Gadus morhua",0.4
+28,"Gadus morhua",0.4
+9,"Gadus morhua",0.4
+10,"Gadus morhua",0.4
+7,"Gadus morhua",0.4
+8,"Gadus morhua",0.4
+3,"Gadus morhua",0.4
+3,"Gadus morhua",0.4
+4,"Gadus morhua",0.4
+41,"Gadus morhua",0.4
+42,"Gadus morhua",0.4
+39,"Gadus morhua",0.4
+40,"Gadus morhua",0.4
+37,"Gadus morhua",0.4
+38,"Gadus morhua",0.4
+35,"Gadus morhua",0.4
+36,"Gadus morhua",0.4
+29,"Gadus morhua",0.4
+30,"Gadus morhua",0.4
+31,"Gadus morhua",0.4
+14,"Gadus morhua",0.4
+15,"Gadus morhua",0.4
+16,"Gadus morhua",0.4
+17,"Gadus morhua",0.4
+11,"Gadus morhua",0.4
+12,"Gadus morhua",0.4
+13,"Gadus morhua",0.4
+36,"Gadus morhua",0.4
+26,"Gadus morhua",0.4
+20,"Gadus morhua",0.4
+21,"Gadus morhua",0.4
+22,"Gadus morhua",0.4
+23,"Gadus morhua",0.4
+24,"Gadus morhua",0.4
+25,"Gadus morhua",0.4
+1,"Galeorhinus galeus",0.4
+2,"Galeorhinus galeus",0.4
+1,"Labrus bergylta",0
+2,"Labrus bergylta",0
+5,"Labrus bergylta",0
+6,"Labrus bergylta",0
+1,"Labrus mixtus",0
+2,"Labrus mixtus",0
+5,"Labrus mixtus",0
+6,"Labrus mixtus",0
+1,"Lamna nasus",0.8
+2,"Lamna nasus",0.8
+18,"Lampetra fluviatilis",0.2
+19,"Lampetra fluviatilis",0.2
+20,"Lampetra fluviatilis",0.2
+21,"Lampetra fluviatilis",0.2
+22,"Lampetra fluviatilis",0.2
+23,"Lampetra fluviatilis",0.2
+24,"Lampetra fluviatilis",0.2
+25,"Lampetra fluviatilis",0.2
+1,"Lampetra fluviatilis",0.2
+2,"Lampetra fluviatilis",0.2
+5,"Lampetra fluviatilis",0.2
+6,"Lampetra fluviatilis",0.2
+32,"Lampetra fluviatilis",0.2
+33,"Lampetra fluviatilis",0.2
+34,"Lampetra fluviatilis",0.2
+27,"Lampetra fluviatilis",0.2
+28,"Lampetra fluviatilis",0.2
+9,"Lampetra fluviatilis",0.2
+10,"Lampetra fluviatilis",0.2
+7,"Lampetra fluviatilis",0.2
+8,"Lampetra fluviatilis",0.2
+41,"Lampetra fluviatilis",0.2
+42,"Lampetra fluviatilis",0.2
+39,"Lampetra fluviatilis",0.2
+40,"Lampetra fluviatilis",0.2
+37,"Lampetra fluviatilis",0.2
+38,"Lampetra fluviatilis",0.2
+35,"Lampetra fluviatilis",0.2
+36,"Lampetra fluviatilis",0.2
+29,"Lampetra fluviatilis",0.2
+30,"Lampetra fluviatilis",0.2
+31,"Lampetra fluviatilis",0.2
+14,"Lampetra fluviatilis",0.2
+15,"Lampetra fluviatilis",0.2
+16,"Lampetra fluviatilis",0.2
+17,"Lampetra fluviatilis",0.2
+11,"Lampetra fluviatilis",0.2
+12,"Lampetra fluviatilis",0.2
+13,"Lampetra fluviatilis",0.2
+36,"Lampetra fluviatilis",0.2
+26,"Lampetra fluviatilis",0.2
+20,"Lampetra fluviatilis",0.2
+21,"Lampetra fluviatilis",0.2
+22,"Lampetra fluviatilis",0.2
+23,"Lampetra fluviatilis",0.2
+24,"Lampetra fluviatilis",0.2
+25,"Lampetra fluviatilis",0.2
+18,"Liparis liparis",0
+19,"Liparis liparis",0
+1,"Liparis liparis",0
+2,"Liparis liparis",0
+5,"Liparis liparis",0
+6,"Liparis liparis",0
+32,"Liparis liparis",0
+33,"Liparis liparis",0
+34,"Liparis liparis",0
+27,"Liparis liparis",0
+28,"Liparis liparis",0
+37,"Liparis liparis",0
+38,"Liparis liparis",0
+35,"Liparis liparis",0
+36,"Liparis liparis",0
+29,"Liparis liparis",0
+30,"Liparis liparis",0
+31,"Liparis liparis",0
+36,"Liparis liparis",0
+26,"Liparis liparis",0
+20,"Liparis liparis",0
+21,"Liparis liparis",0
+22,"Liparis liparis",0
+23,"Liparis liparis",0
+24,"Liparis liparis",0
+25,"Liparis liparis",0
+1,"Liparis montagui",0
+2,"Liparis montagui",0
+5,"Liparis montagui",0
+6,"Liparis montagui",0
+3,"Liparis montagui",0
+3,"Liparis montagui",0
+4,"Liparis montagui",0
+18,"Lota lota",0.2
+19,"Lota lota",0.2
+20,"Lota lota",0.2
+21,"Lota lota",0.2
+22,"Lota lota",0.2
+23,"Lota lota",0.2
+24,"Lota lota",0.2
+25,"Lota lota",0.2
+32,"Lota lota",0.2
+33,"Lota lota",0.2
+34,"Lota lota",0.2
+27,"Lota lota",0.2
+28,"Lota lota",0.2
+41,"Lota lota",0.2
+42,"Lota lota",0.2
+39,"Lota lota",0.2
+40,"Lota lota",0.2
+37,"Lota lota",0.2
+38,"Lota lota",0.2
+35,"Lota lota",0.2
+36,"Lota lota",0.2
+29,"Lota lota",0.2
+30,"Lota lota",0.2
+31,"Lota lota",0.2
+14,"Lota lota",0.2
+15,"Lota lota",0.2
+16,"Lota lota",0.2
+17,"Lota lota",0.2
+36,"Lota lota",0.2
+26,"Lota lota",0.2
+1,"Lumpenus lampretaeformis",0
+2,"Lumpenus lampretaeformis",0
+5,"Lumpenus lampretaeformis",0
+6,"Lumpenus lampretaeformis",0
+32,"Lumpenus lampretaeformis",0
+33,"Lumpenus lampretaeformis",0
+34,"Lumpenus lampretaeformis",0
+9,"Lumpenus lampretaeformis",0
+10,"Lumpenus lampretaeformis",0
+7,"Lumpenus lampretaeformis",0
+8,"Lumpenus lampretaeformis",0
+3,"Lumpenus lampretaeformis",0
+3,"Lumpenus lampretaeformis",0
+4,"Lumpenus lampretaeformis",0
+39,"Lumpenus lampretaeformis",0
+40,"Lumpenus lampretaeformis",0
+37,"Lumpenus lampretaeformis",0
+38,"Lumpenus lampretaeformis",0
+35,"Lumpenus lampretaeformis",0
+36,"Lumpenus lampretaeformis",0
+29,"Lumpenus lampretaeformis",0
+30,"Lumpenus lampretaeformis",0
+31,"Lumpenus lampretaeformis",0
+14,"Lumpenus lampretaeformis",0
+15,"Lumpenus lampretaeformis",0
+16,"Lumpenus lampretaeformis",0
+17,"Lumpenus lampretaeformis",0
+11,"Lumpenus lampretaeformis",0
+12,"Lumpenus lampretaeformis",0
+13,"Lumpenus lampretaeformis",0
+36,"Lumpenus lampretaeformis",0
+26,"Lumpenus lampretaeformis",0
+5,"Melanogrammus aeglefinus",0.2
+6,"Melanogrammus aeglefinus",0.2
+1,"Melanogrammus aeglefinus",0.2
+2,"Melanogrammus aeglefinus",0.2
+3,"Melanogrammus aeglefinus",0.2
+4,"Melanogrammus aeglefinus",0.2
+1,"Merlangius merlangus",0.4
+2,"Merlangius merlangus",0.4
+5,"Merlangius merlangus",0.4
+6,"Merlangius merlangus",0.4
+9,"Merlangius merlangus",0.4
+10,"Merlangius merlangus",0.4
+7,"Merlangius merlangus",0.4
+8,"Merlangius merlangus",0.4
+3,"Merlangius merlangus",0.4
+3,"Merlangius merlangus",0.4
+4,"Merlangius merlangus",0.4
+14,"Merlangius merlangus",0.4
+15,"Merlangius merlangus",0.4
+16,"Merlangius merlangus",0.4
+17,"Merlangius merlangus",0.4
+11,"Merlangius merlangus",0.4
+12,"Merlangius merlangus",0.4
+13,"Merlangius merlangus",0.4
+5,"Merluccius merluccius",0.2
+6,"Merluccius merluccius",0.2
+1,"Merluccius merluccius",0.2
+2,"Merluccius merluccius",0.2
+1,"Molva molva",0.6
+2,"Molva molva",0.6
+5,"Molva molva",0.6
+6,"Molva molva",0.6
+18,"Myoxocephalus scorpius",0
+19,"Myoxocephalus scorpius",0
+1,"Myoxocephalus scorpius",0
+2,"Myoxocephalus scorpius",0
+5,"Myoxocephalus scorpius",0
+6,"Myoxocephalus scorpius",0
+32,"Myoxocephalus scorpius",0
+33,"Myoxocephalus scorpius",0
+34,"Myoxocephalus scorpius",0
+27,"Myoxocephalus scorpius",0
+28,"Myoxocephalus scorpius",0
+9,"Myoxocephalus scorpius",0
+10,"Myoxocephalus scorpius",0
+7,"Myoxocephalus scorpius",0
+8,"Myoxocephalus scorpius",0
+3,"Myoxocephalus scorpius",0
+3,"Myoxocephalus scorpius",0
+4,"Myoxocephalus scorpius",0
+39,"Myoxocephalus scorpius",0
+40,"Myoxocephalus scorpius",0
+37,"Myoxocephalus scorpius",0
+38,"Myoxocephalus scorpius",0
+35,"Myoxocephalus scorpius",0
+36,"Myoxocephalus scorpius",0
+29,"Myoxocephalus scorpius",0
+30,"Myoxocephalus scorpius",0
+31,"Myoxocephalus scorpius",0
+14,"Myoxocephalus scorpius",0
+15,"Myoxocephalus scorpius",0
+16,"Myoxocephalus scorpius",0
+17,"Myoxocephalus scorpius",0
+11,"Myoxocephalus scorpius",0
+12,"Myoxocephalus scorpius",0
+13,"Myoxocephalus scorpius",0
+36,"Myoxocephalus scorpius",0
+26,"Myoxocephalus scorpius",0
+20,"Myoxocephalus scorpius",0
+21,"Myoxocephalus scorpius",0
+22,"Myoxocephalus scorpius",0
+23,"Myoxocephalus scorpius",0
+24,"Myoxocephalus scorpius",0
+25,"Myoxocephalus scorpius",0
+1,"Nerophis lumbriciformis",0
+2,"Nerophis lumbriciformis",0
+5,"Nerophis lumbriciformis",0
+6,"Nerophis lumbriciformis",0
+18,"Pelecus cultratus",0
+19,"Pelecus cultratus",0
+18,"Pelecus cultratus",0
+19,"Pelecus cultratus",0
+22,"Pelecus cultratus",0
+23,"Pelecus cultratus",0
+32,"Pelecus cultratus",0
+33,"Pelecus cultratus",0
+34,"Pelecus cultratus",0
+1,"Petromyzon marinus",0.4
+2,"Petromyzon marinus",0.4
+5,"Petromyzon marinus",0.4
+6,"Petromyzon marinus",0.4
+14,"Petromyzon marinus",0.4
+15,"Petromyzon marinus",0.4
+16,"Petromyzon marinus",0.4
+17,"Petromyzon marinus",0.4
+32,"Phoxinus phoxinus",0
+33,"Phoxinus phoxinus",0
+34,"Phoxinus phoxinus",0
+27,"Phoxinus phoxinus",0
+28,"Phoxinus phoxinus",0
+41,"Phoxinus phoxinus",0
+42,"Phoxinus phoxinus",0
+39,"Phoxinus phoxinus",0
+40,"Phoxinus phoxinus",0
+37,"Phoxinus phoxinus",0
+38,"Phoxinus phoxinus",0
+35,"Phoxinus phoxinus",0
+36,"Phoxinus phoxinus",0
+29,"Phoxinus phoxinus",0
+30,"Phoxinus phoxinus",0
+31,"Phoxinus phoxinus",0
+36,"Phoxinus phoxinus",0
+20,"Phoxinus phoxinus",0
+21,"Phoxinus phoxinus",0
+22,"Phoxinus phoxinus",0
+23,"Phoxinus phoxinus",0
+24,"Phoxinus phoxinus",0
+25,"Phoxinus phoxinus",0
+1,"Raja clavata",0.4
+2,"Raja clavata",0.4
+18,"Salmo salar",0.4
+19,"Salmo salar",0.4
+20,"Salmo salar",0.4
+21,"Salmo salar",0.4
+22,"Salmo salar",0.4
+23,"Salmo salar",0.4
+24,"Salmo salar",0.4
+25,"Salmo salar",0.4
+1,"Salmo salar",0.4
+2,"Salmo salar",0.4
+5,"Salmo salar",0.4
+6,"Salmo salar",0.4
+32,"Salmo salar",0.4
+33,"Salmo salar",0.4
+34,"Salmo salar",0.4
+27,"Salmo salar",0.4
+28,"Salmo salar",0.4
+9,"Salmo salar",0.4
+10,"Salmo salar",0.4
+7,"Salmo salar",0.4
+8,"Salmo salar",0.4
+3,"Salmo salar",0.4
+3,"Salmo salar",0.4
+4,"Salmo salar",0.4
+41,"Salmo salar",0.4
+42,"Salmo salar",0.4
+39,"Salmo salar",0.4
+40,"Salmo salar",0.4
+37,"Salmo salar",0.4
+38,"Salmo salar",0.4
+35,"Salmo salar",0.4
+36,"Salmo salar",0.4
+29,"Salmo salar",0.4
+30,"Salmo salar",0.4
+31,"Salmo salar",0.4
+14,"Salmo salar",0.4
+15,"Salmo salar",0.4
+16,"Salmo salar",0.4
+17,"Salmo salar",0.4
+11,"Salmo salar",0.4
+12,"Salmo salar",0.4
+13,"Salmo salar",0.4
+36,"Salmo salar",0.4
+26,"Salmo salar",0.4
+20,"Salmo salar",0.4
+21,"Salmo salar",0.4
+22,"Salmo salar",0.4
+23,"Salmo salar",0.4
+24,"Salmo salar",0.4
+25,"Salmo salar",0.4
+18,"Salmo trutta",0.4
+19,"Salmo trutta",0.4
+20,"Salmo trutta",0.4
+21,"Salmo trutta",0.4
+22,"Salmo trutta",0.4
+23,"Salmo trutta",0.4
+24,"Salmo trutta",0.4
+25,"Salmo trutta",0.4
+1,"Salmo trutta",0.4
+2,"Salmo trutta",0.4
+5,"Salmo trutta",0.4
+6,"Salmo trutta",0.4
+32,"Salmo trutta",0.4
+33,"Salmo trutta",0.4
+34,"Salmo trutta",0.4
+27,"Salmo trutta",0.4
+28,"Salmo trutta",0.4
+9,"Salmo trutta",0.4
+10,"Salmo trutta",0.4
+7,"Salmo trutta",0.4
+8,"Salmo trutta",0.4
+3,"Salmo trutta",0.4
+3,"Salmo trutta",0.4
+4,"Salmo trutta",0.4
+41,"Salmo trutta",0.4
+42,"Salmo trutta",0.4
+39,"Salmo trutta",0.4
+40,"Salmo trutta",0.4
+37,"Salmo trutta",0.4
+38,"Salmo trutta",0.4
+35,"Salmo trutta",0.4
+36,"Salmo trutta",0.4
+29,"Salmo trutta",0.4
+30,"Salmo trutta",0.4
+31,"Salmo trutta",0.4
+14,"Salmo trutta",0.4
+15,"Salmo trutta",0.4
+16,"Salmo trutta",0.4
+17,"Salmo trutta",0.4
+11,"Salmo trutta",0.4
+12,"Salmo trutta",0.4
+13,"Salmo trutta",0.4
+36,"Salmo trutta",0.4
+26,"Salmo trutta",0.4
+20,"Salmo trutta",0.4
+21,"Salmo trutta",0.4
+22,"Salmo trutta",0.4
+23,"Salmo trutta",0.4
+24,"Salmo trutta",0.4
+25,"Salmo trutta",0.4
+18,"Scophthalmus maximus",0.2
+19,"Scophthalmus maximus",0.2
+1,"Scophthalmus maximus",0.2
+2,"Scophthalmus maximus",0.2
+5,"Scophthalmus maximus",0.2
+6,"Scophthalmus maximus",0.2
+32,"Scophthalmus maximus",0.2
+33,"Scophthalmus maximus",0.2
+34,"Scophthalmus maximus",0.2
+27,"Scophthalmus maximus",0.2
+28,"Scophthalmus maximus",0.2
+9,"Scophthalmus maximus",0.2
+10,"Scophthalmus maximus",0.2
+7,"Scophthalmus maximus",0.2
+8,"Scophthalmus maximus",0.2
+3,"Scophthalmus maximus",0.2
+3,"Scophthalmus maximus",0.2
+4,"Scophthalmus maximus",0.2
+37,"Scophthalmus maximus",0.2
+38,"Scophthalmus maximus",0.2
+35,"Scophthalmus maximus",0.2
+36,"Scophthalmus maximus",0.2
+29,"Scophthalmus maximus",0.2
+30,"Scophthalmus maximus",0.2
+31,"Scophthalmus maximus",0.2
+14,"Scophthalmus maximus",0.2
+15,"Scophthalmus maximus",0.2
+16,"Scophthalmus maximus",0.2
+17,"Scophthalmus maximus",0.2
+11,"Scophthalmus maximus",0.2
+12,"Scophthalmus maximus",0.2
+13,"Scophthalmus maximus",0.2
+36,"Scophthalmus maximus",0.2
+26,"Scophthalmus maximus",0.2
+20,"Scophthalmus maximus",0.2
+21,"Scophthalmus maximus",0.2
+22,"Scophthalmus maximus",0.2
+23,"Scophthalmus maximus",0.2
+24,"Scophthalmus maximus",0.2
+25,"Scophthalmus maximus",0.2
+1,"Scyliorhinus canicula",0
+2,"Scyliorhinus canicula",0
+1,"Spinachia spinachia",0
+2,"Spinachia spinachia",0
+5,"Spinachia spinachia",0
+6,"Spinachia spinachia",0
+32,"Spinachia spinachia",0
+33,"Spinachia spinachia",0
+34,"Spinachia spinachia",0
+27,"Spinachia spinachia",0
+28,"Spinachia spinachia",0
+9,"Spinachia spinachia",0
+10,"Spinachia spinachia",0
+7,"Spinachia spinachia",0
+8,"Spinachia spinachia",0
+3,"Spinachia spinachia",0
+3,"Spinachia spinachia",0
+4,"Spinachia spinachia",0
+37,"Spinachia spinachia",0
+38,"Spinachia spinachia",0
+35,"Spinachia spinachia",0
+36,"Spinachia spinachia",0
+29,"Spinachia spinachia",0
+30,"Spinachia spinachia",0
+31,"Spinachia spinachia",0
+14,"Spinachia spinachia",0
+15,"Spinachia spinachia",0
+16,"Spinachia spinachia",0
+17,"Spinachia spinachia",0
+11,"Spinachia spinachia",0
+12,"Spinachia spinachia",0
+13,"Spinachia spinachia",0
+36,"Spinachia spinachia",0
+26,"Spinachia spinachia",0
+20,"Spinachia spinachia",0
+21,"Spinachia spinachia",0
+22,"Spinachia spinachia",0
+23,"Spinachia spinachia",0
+24,"Spinachia spinachia",0
+25,"Spinachia spinachia",0
+1,"Squalus acanthias",0.8
+2,"Squalus acanthias",0.8
+1,"Symphodus melops",0
+2,"Symphodus melops",0
+5,"Symphodus melops",0
+6,"Symphodus melops",0
+3,"Symphodus melops",0
+4,"Symphodus melops",0
+1,"Syngnathus acus",0
+2,"Syngnathus acus",0
+5,"Syngnathus acus",0
+6,"Syngnathus acus",0
+3,"Syngnathus acus",0
+4,"Syngnathus acus",0
+18,"Syngnathus typhle",0
+19,"Syngnathus typhle",0
+1,"Syngnathus typhle",0
+2,"Syngnathus typhle",0
+5,"Syngnathus typhle",0
+6,"Syngnathus typhle",0
+32,"Syngnathus typhle",0
+33,"Syngnathus typhle",0
+34,"Syngnathus typhle",0
+27,"Syngnathus typhle",0
+28,"Syngnathus typhle",0
+9,"Syngnathus typhle",0
+10,"Syngnathus typhle",0
+7,"Syngnathus typhle",0
+8,"Syngnathus typhle",0
+3,"Syngnathus typhle",0
+3,"Syngnathus typhle",0
+4,"Syngnathus typhle",0
+37,"Syngnathus typhle",0
+38,"Syngnathus typhle",0
+35,"Syngnathus typhle",0
+36,"Syngnathus typhle",0
+29,"Syngnathus typhle",0
+30,"Syngnathus typhle",0
+31,"Syngnathus typhle",0
+14,"Syngnathus typhle",0
+15,"Syngnathus typhle",0
+16,"Syngnathus typhle",0
+17,"Syngnathus typhle",0
+11,"Syngnathus typhle",0
+12,"Syngnathus typhle",0
+13,"Syngnathus typhle",0
+36,"Syngnathus typhle",0
+26,"Syngnathus typhle",0
+20,"Syngnathus typhle",0
+21,"Syngnathus typhle",0
+22,"Syngnathus typhle",0
+23,"Syngnathus typhle",0
+24,"Syngnathus typhle",0
+25,"Syngnathus typhle",0
+1,"Taurulus bubalis",0
+2,"Taurulus bubalis",0
+5,"Taurulus bubalis",0
+6,"Taurulus bubalis",0
+32,"Taurulus bubalis",0
+33,"Taurulus bubalis",0
+34,"Taurulus bubalis",0
+27,"Taurulus bubalis",0
+28,"Taurulus bubalis",0
+9,"Taurulus bubalis",0
+10,"Taurulus bubalis",0
+7,"Taurulus bubalis",0
+8,"Taurulus bubalis",0
+3,"Taurulus bubalis",0
+3,"Taurulus bubalis",0
+4,"Taurulus bubalis",0
+37,"Taurulus bubalis",0
+38,"Taurulus bubalis",0
+35,"Taurulus bubalis",0
+36,"Taurulus bubalis",0
+29,"Taurulus bubalis",0
+30,"Taurulus bubalis",0
+31,"Taurulus bubalis",0
+14,"Taurulus bubalis",0
+15,"Taurulus bubalis",0
+16,"Taurulus bubalis",0
+17,"Taurulus bubalis",0
+11,"Taurulus bubalis",0
+12,"Taurulus bubalis",0
+13,"Taurulus bubalis",0
+36,"Taurulus bubalis",0
+26,"Taurulus bubalis",0
+20,"Taurulus bubalis",0
+21,"Taurulus bubalis",0
+22,"Taurulus bubalis",0
+23,"Taurulus bubalis",0
+24,"Taurulus bubalis",0
+25,"Taurulus bubalis",0
+32,"Thymallus thymallus",0.8
+33,"Thymallus thymallus",0.8
+34,"Thymallus thymallus",0.8
+41,"Thymallus thymallus",0.8
+42,"Thymallus thymallus",0.8
+39,"Thymallus thymallus",0.8
+40,"Thymallus thymallus",0.8
+37,"Thymallus thymallus",0.8
+38,"Thymallus thymallus",0.8
+1,"Trachinus draco",0
+2,"Trachinus draco",0
+5,"Trachinus draco",0
+6,"Trachinus draco",0
+3,"Trachinus draco",0
+4,"Trachinus draco",0
+32,"Triglopsis quadricornis",0
+33,"Triglopsis quadricornis",0
+34,"Triglopsis quadricornis",0
+27,"Triglopsis quadricornis",0
+28,"Triglopsis quadricornis",0
+41,"Triglopsis quadricornis",0
+42,"Triglopsis quadricornis",0
+39,"Triglopsis quadricornis",0
+40,"Triglopsis quadricornis",0
+37,"Triglopsis quadricornis",0
+38,"Triglopsis quadricornis",0
+35,"Triglopsis quadricornis",0
+36,"Triglopsis quadricornis",0
+29,"Triglopsis quadricornis",0
+30,"Triglopsis quadricornis",0
+31,"Triglopsis quadricornis",0
+36,"Triglopsis quadricornis",0
+26,"Triglopsis quadricornis",0
+20,"Triglopsis quadricornis",0
+21,"Triglopsis quadricornis",0
+22,"Triglopsis quadricornis",0
+23,"Triglopsis quadricornis",0
+24,"Triglopsis quadricornis",0
+25,"Triglopsis quadricornis",0
+18,"Zoarces viviparus",0.2
+19,"Zoarces viviparus",0.2
+1,"Zoarces viviparus",0.2
+2,"Zoarces viviparus",0.2
+5,"Zoarces viviparus",0.2
+6,"Zoarces viviparus",0.2
+32,"Zoarces viviparus",0.2
+33,"Zoarces viviparus",0.2
+34,"Zoarces viviparus",0.2
+27,"Zoarces viviparus",0.2
+28,"Zoarces viviparus",0.2
+9,"Zoarces viviparus",0.2
+10,"Zoarces viviparus",0.2
+7,"Zoarces viviparus",0.2
+8,"Zoarces viviparus",0.2
+3,"Zoarces viviparus",0.2
+3,"Zoarces viviparus",0.2
+4,"Zoarces viviparus",0.2
+41,"Zoarces viviparus",0.2
+42,"Zoarces viviparus",0.2
+39,"Zoarces viviparus",0.2
+40,"Zoarces viviparus",0.2
+37,"Zoarces viviparus",0.2
+38,"Zoarces viviparus",0.2
+35,"Zoarces viviparus",0.2
+36,"Zoarces viviparus",0.2
+29,"Zoarces viviparus",0.2
+30,"Zoarces viviparus",0.2
+31,"Zoarces viviparus",0.2
+14,"Zoarces viviparus",0.2
+15,"Zoarces viviparus",0.2
+16,"Zoarces viviparus",0.2
+17,"Zoarces viviparus",0.2
+11,"Zoarces viviparus",0.2
+12,"Zoarces viviparus",0.2
+13,"Zoarces viviparus",0.2
+36,"Zoarces viviparus",0.2
+26,"Zoarces viviparus",0.2
+20,"Zoarces viviparus",0.2
+21,"Zoarces viviparus",0.2
+22,"Zoarces viviparus",0.2
+23,"Zoarces viviparus",0.2
+24,"Zoarces viviparus",0.2
+25,"Zoarces viviparus",0.2
+29,"Alisma wahlenbergii",0.4
+41,"Alisma wahlenbergii",0.4
+40,"Alisma wahlenbergii",0.4
+42,"Alisma wahlenbergii",0.4
+33,"Alisma wahlenbergii",0.4
+32,"Alisma wahlenbergii",0.4
+41,"Chara braunii",0.4
+32,"Chara braunii",0.4
+42,"Chara braunii",0.4
+33,"Chara braunii",0.4
+31,"Chara connivens",0
+28,"Chara connivens",0
+37,"Chara connivens",0
+25,"Chara connivens",0
+34,"Chara connivens",0
+36,"Chara connivens",0
+38,"Chara connivens",0
+35,"Chara connivens",0
+13,"Chara connivens",0
+16,"Chara connivens",0
+14,"Chara horrida",0.2
+36,"Chara horrida",0.2
+13,"Chara horrida",0.2
+8,"Chara horrida",0.2
+29,"Chara horrida",0.2
+26,"Chara horrida",0.2
+20,"Chara horrida",0.2
+38,"Chara horrida",0.2
+37,"Chara horrida",0.2
+35,"Chara horrida",0.2
+32,"Chara horrida",0.2
+3,"Chara horrida",0.2
+4,"Chara horrida",0.2
+10,"Chara horrida",0.2
+25,"Chara horrida",0.2
+31,"Chara horrida",0.2
+28,"Chara horrida",0.2
+36,"Chara tomentosa",0
+13,"Chara tomentosa",0
+38,"Chara tomentosa",0
+37,"Chara tomentosa",0
+26,"Chara tomentosa",0
+29,"Chara tomentosa",0
+35,"Chara tomentosa",0
+32,"Chara tomentosa",0
+28,"Chara tomentosa",0
+39,"Chara tomentosa",0
+33,"Chara tomentosa",0
+10,"Chara tomentosa",0
+16,"Chara tomentosa",0
+14,"Chara tomentosa",0
+31,"Chara tomentosa",0
+30,"Chara tomentosa",0
+25,"Chara tomentosa",0
+40,"Chara tomentosa",0
+36,"Crassula aquatica",0.2
+38,"Crassula aquatica",0.2
+37,"Crassula aquatica",0.2
+32,"Crassula aquatica",0.2
+33,"Crassula aquatica",0.2
+41,"Crassula aquatica",0.2
+42,"Crassula aquatica",0.2
+34,"Crassula aquatica",0.2
+39,"Crassula aquatica",0.2
+14,"Crassula aquatica",0.2
+29,"Crassula aquatica",0.2
+40,"Crassula aquatica",0.2
+3,"Fucus serratus",0
+2,"Fucus serratus",0
+12,"Fucus serratus",0
+11,"Fucus serratus",0
+1,"Fucus serratus",0
+13,"Fucus serratus",0
+8,"Fucus serratus",0
+4,"Fucus serratus",0
+7,"Fucus serratus",0
+10,"Fucus serratus",0
+5,"Fucus serratus",0
+6,"Fucus serratus",0
+14,"Fucus serratus",0
+15,"Fucus serratus",0
+26,"Fucus serratus",0
+20,"Fucus serratus",0
+36,"Fucus vesiculosus",0
+26,"Fucus vesiculosus",0
+40,"Fucus vesiculosus",0
+31,"Fucus vesiculosus",0
+28,"Fucus vesiculosus",0
+34,"Fucus vesiculosus",0
+32,"Fucus vesiculosus",0
+33,"Fucus vesiculosus",0
+3,"Fucus vesiculosus",0
+13,"Fucus vesiculosus",0
+18,"Fucus vesiculosus",0
+27,"Fucus vesiculosus",0
+12,"Fucus vesiculosus",0
+8,"Fucus vesiculosus",0
+2,"Fucus vesiculosus",0
+10,"Fucus vesiculosus",0
+15,"Fucus vesiculosus",0
+37,"Fucus vesiculosus",0
+29,"Fucus vesiculosus",0
+35,"Fucus vesiculosus",0
+38,"Fucus vesiculosus",0
+20,"Fucus vesiculosus",0
+25,"Fucus vesiculosus",0
+11,"Fucus vesiculosus",0
+1,"Fucus vesiculosus",0
+4,"Fucus vesiculosus",0
+7,"Fucus vesiculosus",0
+5,"Fucus vesiculosus",0
+6,"Fucus vesiculosus",0
+16,"Fucus vesiculosus",0
+19,"Fucus vesiculosus",0
+22,"Fucus vesiculosus",0
+30,"Fucus vesiculosus",0
+14,"Fucus vesiculosus",0
+21,"Fucus vesiculosus",0
+3,"Furcellaria lumbricalis",0
+8,"Furcellaria lumbricalis",0
+2,"Furcellaria lumbricalis",0
+7,"Furcellaria lumbricalis",0
+10,"Furcellaria lumbricalis",0
+9,"Furcellaria lumbricalis",0
+12,"Furcellaria lumbricalis",0
+13,"Furcellaria lumbricalis",0
+15,"Furcellaria lumbricalis",0
+14,"Furcellaria lumbricalis",0
+37,"Furcellaria lumbricalis",0
+26,"Furcellaria lumbricalis",0
+17,"Furcellaria lumbricalis",0
+29,"Furcellaria lumbricalis",0
+21,"Furcellaria lumbricalis",0
+35,"Furcellaria lumbricalis",0
+39,"Furcellaria lumbricalis",0
+36,"Furcellaria lumbricalis",0
+38,"Furcellaria lumbricalis",0
+20,"Furcellaria lumbricalis",0
+40,"Furcellaria lumbricalis",0
+18,"Furcellaria lumbricalis",0
+24,"Furcellaria lumbricalis",0
+25,"Furcellaria lumbricalis",0
+31,"Furcellaria lumbricalis",0
+23,"Furcellaria lumbricalis",0
+28,"Furcellaria lumbricalis",0
+34,"Furcellaria lumbricalis",0
+27,"Furcellaria lumbricalis",0
+32,"Furcellaria lumbricalis",0
+33,"Furcellaria lumbricalis",0
+11,"Furcellaria lumbricalis",0
+1,"Furcellaria lumbricalis",0
+4,"Furcellaria lumbricalis",0
+5,"Furcellaria lumbricalis",0
+6,"Furcellaria lumbricalis",0
+19,"Furcellaria lumbricalis",0
+37,"Hippuris tetraphylla",0.6
+39,"Hippuris tetraphylla",0.6
+38,"Hippuris tetraphylla",0.6
+40,"Hippuris tetraphylla",0.6
+36,"Hippuris tetraphylla",0.6
+32,"Hippuris tetraphylla",0.6
+42,"Hippuris tetraphylla",0.6
+3,"Lamprothamnium papulosum",0.6
+8,"Lamprothamnium papulosum",0.6
+10,"Lamprothamnium papulosum",0.6
+13,"Lamprothamnium papulosum",0.6
+5,"Lamprothamnium papulosum",0.6
+6,"Lamprothamnium papulosum",0.6
+1,"Lamprothamnium papulosum",0.6
+4,"Lamprothamnium papulosum",0.6
+12,"Lamprothamnium papulosum",0.6
+32,"Nitella hyalina",0.4
+33,"Nitella hyalina",0.4
+23,"Nitellopsis obtusa",0.2
+32,"Nitellopsis obtusa",0.2
+36,"Nitellopsis obtusa",0.2
+33,"Nitellopsis obtusa",0.2
+33,"Persicaria foliosa",0.6
+37,"Persicaria foliosa",0.6
+41,"Persicaria foliosa",0.6
+38,"Persicaria foliosa",0.6
+40,"Persicaria foliosa",0.6
+42,"Persicaria foliosa",0.6
+32,"Persicaria foliosa",0.6
+37,"Potamogeton friesii",0.2
+29,"Potamogeton friesii",0.2
+41,"Potamogeton friesii",0.2
+38,"Potamogeton friesii",0.2
+42,"Potamogeton friesii",0.2
+36,"Potamogeton friesii",0.2
+11,"Potamogeton friesii",0.2
+5,"Potamogeton friesii",0.2
+26,"Potamogeton friesii",0.2
+30,"Potamogeton friesii",0.2
+3,"Zostera marina",0
+8,"Zostera marina",0
+4,"Zostera marina",0
+2,"Zostera marina",0
+7,"Zostera marina",0
+10,"Zostera marina",0
+9,"Zostera marina",0
+1,"Zostera marina",0
+12,"Zostera marina",0
+5,"Zostera marina",0
+6,"Zostera marina",0
+13,"Zostera marina",0
+11,"Zostera marina",0
+16,"Zostera marina",0
+14,"Zostera marina",0
+15,"Zostera marina",0
+17,"Zostera marina",0
+29,"Zostera marina",0
+26,"Zostera marina",0
+35,"Zostera marina",0
+20,"Zostera marina",0
+36,"Zostera marina",0
+38,"Zostera marina",0
+18,"Zostera marina",0
+19,"Zostera marina",0
+22,"Zostera marina",0
+30,"Zostera marina",0
+25,"Zostera marina",0
+31,"Zostera marina",0
+23,"Zostera marina",0
+28,"Zostera marina",0
+32,"Zostera marina",0
+34,"Zostera marina",0
+3,"Zostera noltii",0.4
+4,"Zostera noltii",0.4
+2,"Zostera noltii",0.4
+1,"Zostera noltii",0.4
+8,"Zostera noltii",0.4
+10,"Zostera noltii",0.4
+12,"Zostera noltii",0.4
+13,"Zostera noltii",0.4
+18,"Halichoerus grypus",0
+19,"Halichoerus grypus",0
+18,"Halichoerus grypus",0
+19,"Halichoerus grypus",0
+22,"Halichoerus grypus",0
+23,"Halichoerus grypus",0
+1,"Halichoerus grypus",0
+2,"Halichoerus grypus",0
+32,"Halichoerus grypus",0
+33,"Halichoerus grypus",0
+34,"Halichoerus grypus",0
+27,"Halichoerus grypus",0
+28,"Halichoerus grypus",0
+9,"Halichoerus grypus",0
+10,"Halichoerus grypus",0
+7,"Halichoerus grypus",0
+8,"Halichoerus grypus",0
+3,"Halichoerus grypus",0
+3,"Halichoerus grypus",0
+4,"Halichoerus grypus",0
+41,"Halichoerus grypus",0
+42,"Halichoerus grypus",0
+39,"Halichoerus grypus",0
+40,"Halichoerus grypus",0
+37,"Halichoerus grypus",0
+38,"Halichoerus grypus",0
+35,"Halichoerus grypus",0
+36,"Halichoerus grypus",0
+29,"Halichoerus grypus",0
+30,"Halichoerus grypus",0
+31,"Halichoerus grypus",0
+14,"Halichoerus grypus",0
+15,"Halichoerus grypus",0
+16,"Halichoerus grypus",0
+17,"Halichoerus grypus",0
+11,"Halichoerus grypus",0
+12,"Halichoerus grypus",0
+13,"Halichoerus grypus",0
+36,"Halichoerus grypus",0
+26,"Halichoerus grypus",0
+20,"Halichoerus grypus",0
+21,"Halichoerus grypus",0
+22,"Halichoerus grypus",0
+23,"Halichoerus grypus",0
+24,"Halichoerus grypus",0
+25,"Halichoerus grypus",0
+5,"Halichoerus grypus",0
+6,"Halichoerus grypus",0
+1,"Phoca vitulina vitulina",0.4
+2,"Phoca vitulina vitulina",0.4
+9,"Phoca vitulina vitulina",0.4
+10,"Phoca vitulina vitulina",0.4
+7,"Phoca vitulina vitulina",0.4
+8,"Phoca vitulina vitulina",0.4
+3,"Phoca vitulina vitulina",0.4
+3,"Phoca vitulina vitulina",0.4
+4,"Phoca vitulina vitulina",0.4
+14,"Phoca vitulina vitulina",0.4
+15,"Phoca vitulina vitulina",0.4
+16,"Phoca vitulina vitulina",0.4
+17,"Phoca vitulina vitulina",0.4
+11,"Phoca vitulina vitulina",0.4
+12,"Phoca vitulina vitulina",0.4
+13,"Phoca vitulina vitulina",0.4
+26,"Phoca vitulina vitulina",0.4
+5,"Phoca vitulina vitulina",0.4
+6,"Phoca vitulina vitulina",0.4
+22,"Pusa hispida botnica",0.4
+23,"Pusa hispida botnica",0.4
+32,"Pusa hispida botnica",0.4
+33,"Pusa hispida botnica",0.4
+34,"Pusa hispida botnica",0.4
+27,"Pusa hispida botnica",0.4
+28,"Pusa hispida botnica",0.4
+41,"Pusa hispida botnica",0.4
+42,"Pusa hispida botnica",0.4
+39,"Pusa hispida botnica",0.4
+40,"Pusa hispida botnica",0.4
+37,"Pusa hispida botnica",0.4
+38,"Pusa hispida botnica",0.4
+35,"Pusa hispida botnica",0.4
+36,"Pusa hispida botnica",0.4
+29,"Pusa hispida botnica",0.4
+30,"Pusa hispida botnica",0.4
+31,"Pusa hispida botnica",0.4
+36,"Pusa hispida botnica",0.4
+20,"Pusa hispida botnica",0.4
+21,"Pusa hispida botnica",0.4
+22,"Pusa hispida botnica",0.4
+23,"Pusa hispida botnica",0.4
+24,"Pusa hispida botnica",0.4
+25,"Pusa hispida botnica",0.4
+1,"Phocoena phocoena",0.8
+2,"Phocoena phocoena",0.8
+9,"Phocoena phocoena",0.8
+10,"Phocoena phocoena",0.8
+7,"Phocoena phocoena",0.8
+8,"Phocoena phocoena",0.8
+3,"Phocoena phocoena",0.8
+3,"Phocoena phocoena",0.8
+4,"Phocoena phocoena",0.8
+14,"Phocoena phocoena",0.8
+15,"Phocoena phocoena",0.8
+16,"Phocoena phocoena",0.8
+17,"Phocoena phocoena",0.8
+11,"Phocoena phocoena",0.8
+12,"Phocoena phocoena",0.8
+13,"Phocoena phocoena",0.8
+26,"Phocoena phocoena",0.8
+5,"Phocoena phocoena",0.8
+6,"Phocoena phocoena",0.8
+18,"Lutra lutra",0.2
+19,"Lutra lutra",0.2
+18,"Lutra lutra",0.2
+19,"Lutra lutra",0.2
+22,"Lutra lutra",0.2
+23,"Lutra lutra",0.2
+1,"Lutra lutra",0.2
+2,"Lutra lutra",0.2
+32,"Lutra lutra",0.2
+33,"Lutra lutra",0.2
+34,"Lutra lutra",0.2
+27,"Lutra lutra",0.2
+28,"Lutra lutra",0.2
+9,"Lutra lutra",0.2
+10,"Lutra lutra",0.2
+7,"Lutra lutra",0.2
+8,"Lutra lutra",0.2
+3,"Lutra lutra",0.2
+3,"Lutra lutra",0.2
+4,"Lutra lutra",0.2
+41,"Lutra lutra",0.2
+42,"Lutra lutra",0.2
+39,"Lutra lutra",0.2
+40,"Lutra lutra",0.2
+37,"Lutra lutra",0.2
+38,"Lutra lutra",0.2
+35,"Lutra lutra",0.2
+36,"Lutra lutra",0.2
+29,"Lutra lutra",0.2
+30,"Lutra lutra",0.2
+31,"Lutra lutra",0.2
+14,"Lutra lutra",0.2
+15,"Lutra lutra",0.2
+16,"Lutra lutra",0.2
+17,"Lutra lutra",0.2
+11,"Lutra lutra",0.2
+12,"Lutra lutra",0.2
+13,"Lutra lutra",0.2
+36,"Lutra lutra",0.2
+26,"Lutra lutra",0.2
+20,"Lutra lutra",0.2
+21,"Lutra lutra",0.2
+22,"Lutra lutra",0.2
+23,"Lutra lutra",0.2
+24,"Lutra lutra",0.2
+25,"Lutra lutra",0.2
