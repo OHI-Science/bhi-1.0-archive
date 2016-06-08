@@ -94,9 +94,9 @@ Three international treaties are assessed for all BHI countries for *existence* 
 [Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES)](https://www.cites.org)
 [Paris Climate Agreement (COP21)](https://treaties.un.org/pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVII-7-d&chapter=27&lang=en)
 
-Two Baltic Region agreements will be assessed for *existence* and *comliance* for all countries. These are: Baltic Sea Action Plan (BSAP); Helsinki Convention (HELCOM).
+Two Baltic Region agreements will be assessed for *existence* and *compliance* for all countries. These are: Baltic Sea Action Plan (BSAP); Helsinki Convention (HELCOM).
 
-13 EU directives will be assessed for *existence* and *comliance* for BHI countries that are EU member states. These are: Water Framework Directive (WFD), Marine Spatial Planning Directive (MSPD), Marine Strategy Framework Directive (MSFD), Habitat Directive (HD), Common Fisheries Policy (CFP), National Emmissions Ceilings (NEC), Industrial Emissions Directive (IED), Urban Waste Water Treatment Directive (UWWTD), Bathing Water Directive (BWD), Conservation of Wild Birds (BIRDS), Registration, Evaluation, Authorisation and Restriction of Chemicals (REACH), Peristent Organic Pollutants (POP), Nitrates Directive (ND).
+13 EU directives will be assessed for *existence* and *compliance* for BHI countries that are EU member states. These are: Water Framework Directive (WFD), Marine Spatial Planning Directive (MSPD), Marine Strategy Framework Directive (MSFD), Habitat Directive (HD), Common Fisheries Policy (CFP), National Emmissions Ceilings (NEC), Industrial Emissions Directive (IED), Urban Waste Water Treatment Directive (UWWTD), Bathing Water Directive (BWD), Conservation of Wild Birds (BIRDS), Registration, Evaluation, Authorisation and Restriction of Chemicals (REACH), Peristent Organic Pollutants (POP), Nitrates Directive (ND).
 
 ### 1.2.2 Scoring
 
@@ -116,13 +116,13 @@ Country\_compliance\_directive = Mean (compliance score)\_all\_compliance\_compo
 
 #### 1.2.2.3 Total regulation score
 
-Score\_Existence + Country\_compliance\_directive / (Possible\_Existence + Possible\_Compliance) - *Needs to be rescaled between 0-1?*
+Score\_Existence + Country\_compliance\_directive / (Possible\_Existence + Possible\_Compliance)
 
 Compliance is weighted more heavily than existence when both are scored.
 
-### 1.2.3 Goal Weighting
+### 1.2.3 Goal Weighting & Mapping
 
-Each regulation will be weighted (1 or 2) for each goal to which is it applied.
+Each regulation will be weighted (1 or 2) for each goal to which is it applied. Regulations are mapped to all the goals to which they directly influence/combat pressures.
 
 ### 1.2.4 Resilience Data Layer
 
@@ -285,72 +285,134 @@ ggplot(goal_spec) +
 
 ![](resilience_prep_files/figure-markdown_github/plot%20raw%20score-2.png)<!-- -->
 
-#### 1.2.5.5 Exclude Compliance Components that have NA
-
-If a component has NA for assessment, have to exclude. This will lead to differences in the number of components scored for different countries in the same directive. Depends on case, but could be that country did not assess or report so then review of report does not assess.
+#### 1.2.5.5 Separate Existance and Compliance
 
 ``` r
-goal_spec2 = goal_spec %>%
-            filter(!is.na(compli_numeric))
+goal_spec_exist = goal_spec %>%
+                  select(DirectiveAbbreviation:ExistenceNotes, exist_numeric)
 
-dim(goal_spec);dim(goal_spec2)
+goal_spec_compli = goal_spec %>%
+                  select(DirectiveAbbreviation:CountryName, IsCountryComplianceAssessed:Comments, compli_numeric)
 ```
 
-    ## [1] 818  13
+#### 1.2.5.6 How many compliance components assessed?
 
-    ## [1] 590  13
+Some directives have no components assessed. Others have a subset that could not be assessed - these might differ by country. Minimal differences by country. WDF not assessed for Denmark. Germany assessed for one more POP component. Poland asssesse for one fewer UWWTD component.
+**Gray bars are components not assessed**
 
 ``` r
-## count to see if the same directive has a different number of components assessed for each country
-check_compli_n = goal_spec2 %>%
-                 select(DirectiveAbbreviation,CountryName,compli_numeric) %>%
-                 group_by(DirectiveAbbreviation,CountryName)%>% 
-                 count(DirectiveAbbreviation,CountryName)
+goal_spec_compli_n1 = goal_spec_compli %>%
+                      count(DirectiveAbbreviation, CountryName,compli_numeric)
 
-ggplot(check_compli_n) +
-  geom_point(aes(CountryName,n))+
+ggplot(goal_spec_compli, aes(CountryName,fill=as.character(compli_numeric)))+ 
+  geom_bar(position="stack")+
   facet_wrap(~DirectiveAbbreviation)+
+  ylab("Count of Compliance Componenets")+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
-  ggtitle("Do Compliance Components differ by Country")
+  ggtitle("Compliance Components Assessed by Country & Directive")
 ```
 
-![](resilience_prep_files/figure-markdown_github/exclude%20NA%20compliance-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)<!-- -->
 
-#### 1.2.5.5 Mean Compliance score
+#### 1.2.5.7 Mean Compliance score
 
 ``` r
-goal_spec3 = goal_spec2 %>%
-            select(DirectiveAbbreviation,CountryName,exist_numeric,compli_numeric) %>%
-            group_by(DirectiveAbbreviation,CountryName)%>%          
-            transmute(exist_mean = mean(exist_numeric),
-                      compli_mean = mean(compli_numeric))
-                      
-goal_compli_n = goal_spec2 %>%
+## calculate the mean value for all scored compliance by directive and country
+goal_spec_compli_mean = goal_spec_compli%>%
             select(DirectiveAbbreviation,CountryName,compli_numeric) %>%
-            filter(!is.na(compli_numeric)) %>% ## remove NAs
-            group_by(DirectiveAbbreviation,CountryName)%>%  count(DirectiveAbbreviation,CountryName) ## number of compliance components assessed
+            group_by(DirectiveAbbreviation,CountryName)%>%          
+            summarise(compli_mean = mean(compli_numeric, na.rm=TRUE)) %>%
+            ungroup()
 
+                      
+## get the number of components assessed
+goal_spec_compli_n2 = goal_spec_compli%>%
+                      select(DirectiveAbbreviation,CountryName,compli_numeric) %>%
+                      filter(!is.na(compli_numeric))%>%
+                      count(DirectiveAbbreviation,CountryName)
 
-goal_spec3 = goal_spec3 %>%
-        left_join(., goal_compli_n, by=c("DirectiveAbbreviation", "CountryName")) ## join n_obs
+## merge the mean score and the count of components
+goal_spec_compli_mean = goal_spec_compli_mean %>%
+                        left_join(., goal_spec_compli_n2, 
+                                  by= c("DirectiveAbbreviation","CountryName"))
+               
+
+dim(goal_spec_compli_mean)
 ```
 
-#### 1.2.5.6 Overall score
+    ## [1] 149   4
+
+#### 1.2.5.8 Plot Mean Compliance score
+
+**Max compliance score can be 3**
+
+``` r
+ggplot(goal_spec_compli_mean)+
+  geom_point(aes(CountryName,compli_mean,size=n))+
+  facet_wrap(~DirectiveAbbreviation)+
+  ylim(0,4)+
+  ylab("Mean compliance score")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean Compliance Score")
+```
+
+    ## Warning: Removed 45 rows containing missing values (geom_point).
+
+![](resilience_prep_files/figure-markdown_github/plot%20mean%20compliance%20score-1.png)<!-- -->
+
+#### 1.2.5.9 Existence score
+
+``` r
+dim(goal_spec_exist)#818   7
+```
+
+    ## [1] 818   7
+
+``` r
+goal_spec_exist = goal_spec_exist %>%
+                  select(DirectiveAbbreviation,CountryName,exist_numeric,ExistenceLevel) %>%
+                  distinct(.)
+                  
+dim(goal_spec_exist)#149   4
+```
+
+    ## [1] 149   4
+
+``` r
+head(goal_spec_exist)
+```
+
+    ##   DirectiveAbbreviation CountryName exist_numeric ExistenceLevel
+    ## 1                   WFD     Denmark             1         EU_Law
+    ## 2                   WFD     Estonia             1         EU_Law
+    ## 3                   WFD     Finland             1         EU_Law
+    ## 4                   WFD     Germany             1         EU_Law
+    ## 5                   WFD      Latvia             1         EU_Law
+    ## 6                   WFD   Lithuania             1         EU_Law
+
+#### 1.2.5.10 Overall score
 
 Max score is 4 (1 for existence, 3 for compliance)
 
 ``` r
-goal_spec4 = goal_spec3 %>%
-              mutate(max_score = 4,
-                     overall_score = (exist_mean + compli_mean)/max_score)
+## merge existence and compliance
+goal_spec_overall = full_join(goal_spec_exist, goal_spec_compli_mean,
+                              by=c("DirectiveAbbreviation","CountryName")) %>%
+                    mutate(compli_mean2 = ifelse(is.na(compli_mean),0,compli_mean)) %>% ## make a column where NA are zero so that it does not screw up the total score
+                    mutate(total = exist_numeric + compli_mean2, 
+                           max_score = ifelse(!is.na(compli_mean),4,1),
+                           overall_score = total/max_score) %>% ## if compli_mean is not NA, the max total score is 4; if it is NA, then only existence assessend and max is 1
+                    mutate(score_level = ifelse(max_score == 1, "existence", "existence and compliance")) %>%
+  select(DirectiveAbbreviation, CountryName,overall_score, score_level)
 ```
 
-#### 1.2.5.7 Plot Overall score
+#### 1.2.5.11 Plot Overall score
 
 ``` r
-ggplot(goal_spec4)+
-  geom_point(aes(CountryName,overall_score))+
+ggplot(goal_spec_overall)+
+  geom_point(aes(CountryName,overall_score, colour=score_level))+
   facet_wrap(~DirectiveAbbreviation)+
   ylim(0,1)+
    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
@@ -358,7 +420,14 @@ ggplot(goal_spec4)+
   ggtitle("Overall Score per Regulation")
 ```
 
-![](resilience_prep_files/figure-markdown_github/plot%20overall%20score-1.png)<!-- --> \#\# TO DO Need to rethink exclucding compli with NA because then do not have all directives at the end!
+![](resilience_prep_files/figure-markdown_github/plot%20overall%20score-1.png)<!-- -->
+
+TO DO
+-----
+
+1.  Weight each regulation for each goal
+2.  Map each regulation to goals
+3.  Prepare final data layers
 
 2. Social
 ---------
