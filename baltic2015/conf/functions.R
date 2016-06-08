@@ -137,7 +137,7 @@ FIS = function(layers, status_year){
   #####  STEP 5: Join scores and weights to calculate status
   ############################################################
 
-  ## FIX ERROR -  Error: object 'score' not found
+
   status <- weights %>%
     left_join(status.scores, by=c('region_id', 'year', 'stock'))%>%
     filter(!is.na(score)) %>%                    # remove missing data
@@ -1600,14 +1600,81 @@ HAB = function(layers){
 
 
 SPP = function(layers){
+  ## Updated by Jennifer Griffiths 8 June 2016
 
-  # scores
-  scores = cbind(rename(SelectLayersData(layers, layers=c('spp_status'='status','spp_trend'='trend'), narrow=T),
-                      c(id_num='region_id', layer='dimension', val_num='score')),
-               data.frame('goal'='SPP'))
-  scores = mutate(scores, score=ifelse(dimension=='status', score*100, score))
-  return(scores)
+
+  ## Call Layers
+  spp_div = SelectLayersData(layers, layers='spp_div_vuln', narrow=T) %>%
+    select(rgn_id = id_num,
+           species_name = category,
+           weights= val_num)
+
+  ######################################################
+  ## Status calculation
+  ######################################################
+
+  ##sum the weights for each BHI region
+  sum_wi = spp_div %>%
+    group_by(rgn_id)%>%
+    summarise(sum_wi =sum(weights))%>%
+    ungroup()
+
+  ## count the number of species in each BHI region
+  sum_spp = spp_div %>%
+            select(rgn_id,species_name)%>%
+            dplyr::count(rgn_id)
+
+  ## Calculate status
+  ## sum of weights / total number of species
+  spp_status = full_join(sum_wi,sum_spp, by="rgn_id") %>%
+    mutate(wi_spp = sum_wi/n,
+           status = 1 - wi_spp)
+
+
+  #### Scale lower end to zero if 75% extinct
+  ## Currently, no species labeled extinct but will set up code in case used in the future
+
+  ## calculate percent extinct in each region
+  ##spp_ex = data3 %>%
+            ##filter(weights == 1) %>%
+            ##select(rgn_id, species_name)%>%
+            ##count(rgn_id) %>%
+            ##dplyr::rename(n_extinct = n)
+  ## join number extinct to spp_status and calculate %
+  ## spp_status = spp_status %>%
+                  ##left_join(., spp_ex, by="rgn_id") %>%
+                  ##mutate(percent_extinct = n_extinct/n) %>%
+                  ##mutate(status = ifelse(percent_extinct >=0.75, 0, status))
+
+    ## finalize Status
+
+    status = spp_status %>%
+            select(rgn_id, status) %>%
+            dplyr::rename(region_id=rgn_id,
+                          score = status)%>%
+            mutate(score = round(score*100),
+                   dimension = "status")
+
+    ######################################################
+    ## Trend calculation
+    ######################################################
+
+     ## TO DO, decide on trend calculation
+
+     ## place holder for trend
+      trend = data.frame(region_id = seq(1,42,1), score = rep(0,42), dimension =rep("trend",42))
+
+
+    ######################################################
+    ## Scores combined
+    ######################################################
+     # scores
+      scores = bind_rows(status, trend)%>%
+           mutate(goal = 'SPP')
+
+      return(scores)
 }
+
 
 BD = function(scores){
 

@@ -260,8 +260,9 @@ dim(sum_wi)
 ## count the number of species in each BHI region
 sum_spp = data3 %>%
           select(rgn_id, species_name)%>%
-          count(rgn_id)
+          dplyr::count(rgn_id)
 dim(sum_spp)
+
 
 data3%>% filter(rgn_id== 1) %>% nrow() ## check to make sure works
 head(sum_spp)
