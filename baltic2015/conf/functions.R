@@ -31,7 +31,7 @@ FIS = function(layers, status_year){
              select(rgn_id =id_num,
                     stock = category,
                     year,
-                    score= val_num)%>%
+                    landings= val_num)%>%
             dplyr::rename(region_id = rgn_id)
 #
 #   #**********************#
