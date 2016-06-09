@@ -201,16 +201,17 @@ data = read.csv(file.path(dir_spp, 'data/species_IUCN.csv'))
 dim(data)
 ```
 
-    ## [1] 2340    3
+    ## [1] 2340    4
 
 ``` r
 str(data)
 ```
 
-    ## 'data.frame':    2340 obs. of  3 variables:
+    ## 'data.frame':    2340 obs. of  4 variables:
     ##  $ rgn_id      : int  2 1 5 6 32 40 38 36 42 3 ...
     ##  $ species_name: Factor w/ 154 levels "Abra prismatica",..: 1 1 1 1 2 2 2 2 2 4 ...
     ##  $ IUCN        : Factor w/ 6 levels "CR","DD","EN",..: 6 6 6 6 2 2 2 2 2 5 ...
+    ##  $ taxa        : Factor w/ 5 levels "benthos","birds",..: 1 1 1 1 1 1 1 1 1 1 ...
 
 #### 4.1.2 Set up vulnerability code
 
@@ -243,13 +244,13 @@ data2 = data %>%
 head(data2)
 ```
 
-    ##   rgn_id            species_name IUCN IUCN_numeric
-    ## 1      2         Abra prismatica   VU          0.4
-    ## 2      1         Abra prismatica   VU          0.4
-    ## 3      5         Abra prismatica   VU          0.4
-    ## 4      6         Abra prismatica   VU          0.4
-    ## 5     32 Agrypnetes crassicornis   DD           NA
-    ## 6     40 Agrypnetes crassicornis   DD           NA
+    ##   rgn_id            species_name IUCN    taxa IUCN_numeric
+    ## 1      2         Abra prismatica   VU benthos          0.4
+    ## 2      1         Abra prismatica   VU benthos          0.4
+    ## 3      5         Abra prismatica   VU benthos          0.4
+    ## 4      6         Abra prismatica   VU benthos          0.4
+    ## 5     32 Agrypnetes crassicornis   DD benthos           NA
+    ## 6     40 Agrypnetes crassicornis   DD benthos           NA
 
 #### 4.1.4 Plot by region
 
@@ -264,9 +265,95 @@ ggplot(data2)+
 
 ![](spp_prep_files/figure-markdown_github/plot%20raw%20by%20region-1.png)<!-- -->
 
-#### 4.1.5 Remove DD species
+``` r
+ggplot(data2)+
+  geom_point(aes(rgn_id, species_name, colour=taxa),size=1)+
+  facet_wrap(~IUCN)+
+  theme(axis.text.y = element_text(colour="grey20", size=2, angle=0, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle ("Species presence and vulnerability by region")
+```
+
+![](spp_prep_files/figure-markdown_github/plot%20raw%20by%20region-2.png)<!-- -->
+
+#### 4.1.5 Distribution in IUCN categories
+
+Benthos & macrophytes have many more DD
+
+``` r
+## how many in each category from each taxa group?
+percent_vuln = data2 %>% 
+  select(-rgn_id)%>%
+  distinct()%>%
+  select(IUCN,taxa) %>% 
+  count(taxa,IUCN) %>%
+  group_by(taxa)%>%
+  mutate(n_tot = sum(n))%>%
+  ungroup()%>%
+  mutate(percent = round(n/n_tot,2)*100)%>%
+  print(n=24)
+```
+
+    ## Source: local data frame [24 x 5]
+    ## 
+    ##           taxa   IUCN     n n_tot percent
+    ##         (fctr) (fctr) (int) (int)   (dbl)
+    ## 1      benthos     DD    23    54      43
+    ## 2      benthos     EN     1    54       2
+    ## 3      benthos     LC     4    54       7
+    ## 4      benthos     NT     8    54      15
+    ## 5      benthos     VU    18    54      33
+    ## 6        birds     CR     1    22       5
+    ## 7        birds     EN     5    22      23
+    ## 8        birds     LC     1    22       5
+    ## 9        birds     NT     8    22      36
+    ## 10       birds     VU     7    22      32
+    ## 11        fish     CR     4    50       8
+    ## 12        fish     EN     3    50       6
+    ## 13        fish     LC    27    50      54
+    ## 14        fish     NT     9    50      18
+    ## 15        fish     VU     7    50      14
+    ## 16 macrophytes     DD     6    23      26
+    ## 17 macrophytes     EN     3    23      13
+    ## 18 macrophytes     LC     6    23      26
+    ## 19 macrophytes     NT     4    23      17
+    ## 20 macrophytes     VU     4    23      17
+    ## 21     mammals     CR     1     5      20
+    ## 22     mammals     LC     1     5      20
+    ## 23     mammals     NT     1     5      20
+    ## 24     mammals     VU     2     5      40
+
+``` r
+ggplot(percent_vuln, aes(x=taxa, y=percent, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Percent of species in each IUCN category")
+```
+
+![](spp_prep_files/figure-markdown_github/distribution%20in%20IUCN%20categories-1.png)<!-- -->
+
+#### 4.1.6 Total number of species in each taxa group by IUCN categroy
+
+``` r
+ggplot(percent_vuln, aes(x=taxa, y=n, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Number of species in each IUCN category")
+```
+
+![](spp_prep_files/figure-markdown_github/number%20of%20species%20in%20each%20taxa%20group-1.png)<!-- -->
+
+``` r
+ggplot(filter(percent_vuln, IUCN != "DD"), aes(x=taxa, y=n, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Number of species in each IUCN category without DD")
+```
+
+![](spp_prep_files/figure-markdown_github/number%20of%20species%20in%20each%20taxa%20group-2.png)<!-- -->
+
+#### 4.1.7 Remove DD species
 
 Species given DD are not included. See methods above and in Halpern et al. 2012
+
+Benthos has a much larger number of species in DD category
 
 ``` r
 data3 = data2 %>%
@@ -274,11 +361,11 @@ data3 = data2 %>%
 dim(data3);dim(data2)
 ```
 
-    ## [1] 2205    4
+    ## [1] 2205    5
 
-    ## [1] 2340    4
+    ## [1] 2340    5
 
-#### 4.1.6 Check for duplicates
+#### 4.1.8 Check for duplicates
 
 ``` r
 data3 %>% nrow() #2205
@@ -303,7 +390,24 @@ data3 = data3 %>%
 dim(data3) #2096
 ```
 
-    ## [1] 2096    4
+    ## [1] 2096    5
+
+#### 4.1.7 Export Species list
+
+Export species list to be check to see if sufficient coverage
+
+``` r
+species_list = data3 %>%
+              select(species_name,taxa)%>%
+              distinct(.)
+dim(species_list) #125  1
+```
+
+    ## [1] 125   2
+
+``` r
+write.csv(species_list, file.path(dir_spp,'species_list_included.csv'), row.names=FALSE)
+```
 
 ### 4.2 Data layer for functions.r
 
@@ -333,7 +437,7 @@ dim(sum_wi)
 ## count the number of species in each BHI region
 sum_spp = data3 %>%
           select(rgn_id, species_name)%>%
-          count(rgn_id)
+          dplyr::count(rgn_id)
 dim(sum_spp)
 ```
 
@@ -415,5 +519,5 @@ TO DO
 -----
 
 1.  Check species that are included- are these only native species or both native and non-native? - for example have checked and Marenzelleria spp not included.
-
-2.  How to calculate trend?
+2.  Are the species included sufficient? What species are missing?
+3.  How to calculate trend?

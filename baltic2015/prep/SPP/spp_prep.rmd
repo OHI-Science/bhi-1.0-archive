@@ -209,18 +209,67 @@ ggplot(data2)+
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle ("Species presence and vulnerability by region")
 
+
+ggplot(data2)+
+  geom_point(aes(rgn_id, species_name, colour=taxa),size=1)+
+  facet_wrap(~IUCN)+
+  theme(axis.text.y = element_text(colour="grey20", size=2, angle=0, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle ("Species presence and vulnerability by region")
+
 ```
 
-#### 4.1.5 Remove DD species
-Species given DD are not included. See methods above and in Halpern et al. 2012
+#### 4.1.5 Distribution in IUCN categories
+Benthos & macrophytes have many more DD
+```{r distribution in IUCN categories}
+## how many in each category from each taxa group?
+percent_vuln = data2 %>% 
+  select(-rgn_id)%>%
+  distinct()%>%
+  select(IUCN,taxa) %>% 
+  count(taxa,IUCN) %>%
+  group_by(taxa)%>%
+  mutate(n_tot = sum(n))%>%
+  ungroup()%>%
+  mutate(percent = round(n/n_tot,2)*100)%>%
+  print(n=24)
+
+ggplot(percent_vuln, aes(x=taxa, y=percent, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Percent of species in each IUCN category")
+
+```
+
+#### 4.1.6 Total number of species in each taxa group by IUCN categroy
+```{r number of species in each taxa group}
+
+ggplot(percent_vuln, aes(x=taxa, y=n, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Number of species in each IUCN category")
+
+
+
+ggplot(filter(percent_vuln, IUCN != "DD"), aes(x=taxa, y=n, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Number of species in each IUCN category without DD")
+
+
+```
+
+
+#### 4.1.7 Remove DD species
+Species given DD are not included. See methods above and in Halpern et al. 2012  
+
+Benthos has a much larger number of species in DD category
 ```{r remove DD}
+
 data3 = data2 %>%
         filter(IUCN != "DD")
 dim(data3);dim(data2)
 
 ```
 
-#### 4.1.6 Check for duplicates
+#### 4.1.8 Check for duplicates
 ```{r check for duplicates}
 data3 %>% nrow() #2205
 data3 %>% distinct() %>% nrow() #2096
@@ -233,6 +282,19 @@ data3 = data3 %>%
         distinct()
         
 dim(data3) #2096
+
+```
+
+#### 4.1.7 Export Species list 
+Export species list to be check to see if sufficient coverage
+```{r export species list}
+species_list = data3 %>%
+              select(species_name,taxa)%>%
+              distinct(.)
+dim(species_list) #125  1
+
+write.csv(species_list, file.path(dir_spp,'species_list_included.csv'), row.names=FALSE)
+
 
 ```
 
@@ -309,5 +371,5 @@ ggplot(spp_status)+
 
 ## TO DO
 1. Check species that are included- are these only native species or both native and non-native? - for example have checked and Marenzelleria spp not included.  
-
-2. How to calculate trend?
+2. Are the species included sufficient? What species are missing?  
+3. How to calculate trend?
