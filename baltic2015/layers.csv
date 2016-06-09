@@ -111,12 +111,7 @@ Data sources:
 
 - [FAO fisheries statistics](http://www.fao.org/fishery/statistics/global-capture-production/en)
 ","usd_rel","score","np_harvest_usd_relative_gl2014.csv","equal","global scores were applied equally to each region. ","np_harvest_usd_relative","~/github/ohi-global/eez2014/layers/np_harvest_usd_relative.csv","global","rgn_id",,"product","year","usd_rel",,TRUE,1976,2011,0,1,TRUE,,,,42,FALSE
-"SPP","spp_status","Species lists and IUCN threat categories as a proxy for iconic species status","International Union for Conservation of Nature (IUCN) Red List threat categories with aggregated species lists.
-
-Data sources:
-
-- [International Union for Conservation of Nature (IUCN)](http://www.iucnredlist.org/technical-documents/classification-schemes/threats-classification-scheme)
-","score","status score","spp_status_gl2014.csv","equal","global scores were applied equally to each region. ","spp_status","~/github/ohi-global/eez2014/layers/spp_status.csv","global","rgn_id",,,,"score",,TRUE,,,0.840336,0.930309,TRUE,,,,42,FALSE
+"SPP","spp_div_vuln","Species lists and HELCOM threat weights (based IUCN red list criteria)","HELCOM species distributions and threat level based upon IUCN red list criteria.  Data sources:  - [HELCOM](http://www.helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) ","weights","threat weight","spp_div_vuln_bhi2015.csv","equal","global scores were applied equally to each region. ","spp_status","~/github/ohi-global/eez2014/layers/spp_status.csv","global","rgn_id",,"species_name",,"weights",,TRUE,,,0,0.8,TRUE,,,,42,FALSE
 "SPP","spp_trend","Species lists and IUCN threat categories as a proxy for iconic species trend","International Union for Conservation of Nature (IUCN) Red List threat categories with aggregated species lists.
 
 Data sources:
