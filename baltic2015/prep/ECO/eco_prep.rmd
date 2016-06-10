@@ -82,6 +82,7 @@ Russia; Gross domestic product at market prices; CP_MEUR (Current prices, millio
 
 ### 2.4 Population density data
 
+#### 2.4.1 Fine scale
 Population density data obtained from the [HYDE database](http://themasites.pbl.nl/tridion/en/themasites/hyde/download/index-2.html)
 
 Year of data = 2005. Data were a 5' resolution. Erik Smedberg with the Baltic Sea Center re-gridded to a 10 x 10 km grid.
@@ -93,7 +94,25 @@ Klein Goldewijk, K. , A. Beusen, M. de Vos and G. van Drecht (2011). The HYDE 3.
 
 Klein Goldewijk, K. , A. Beusen, and P. Janssen (2010). Long term dynamic modeling of global population and built-up area in a spatially explicit way, HYDE 3 .1. The Holocene20(4):565-573. http://dx.doi.org/10.1177/0959683609356587
 
+#### 2.4.2 National
+**EU countries**  
+Downloaded on March 31 2016 from Eurostat database [demo_gind](http://ec.europa.eu/eurostat/data/database?p_auth=whAQQAX7&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=demo_gind)  
 
+Variables:  
+1990-2015 
+Population on Jan1  
+
+[Metadata Link](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)  
+
+*Population on 1 January:*  
+Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
+
+
+**Russia**  
+Downloaded on 10 June 2016 from Eurostat database:   [naida_10_pe](http://ec.europa.eu/eurostat/web/products-datasets/-/naida_10_pe)  
+population (thousands of people)  
+employment (thousands of people) *need to exclude this*  
+ 
 
 ### 2.5 Aligning BHI regions with NUTS3 regions and population density
 
@@ -319,5 +338,7 @@ ggplot(country_gdp3)+
 ```
 
 ### 6.3 Join BHI region id to countries
+
+### Population data - get per capita GDP
 
 ### 6.4 Create and export country GDP data layer
