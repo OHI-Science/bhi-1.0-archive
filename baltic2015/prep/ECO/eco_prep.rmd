@@ -109,6 +109,9 @@ UPDATE with Marc's methods or link
 'data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out)  
 'each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region
 
+
+
+
 ## 4. Other
 NEED TO UPDATE - this may change
 ### 4.1 Interpreting NA and zero
@@ -186,6 +189,8 @@ unique(regional_gdp2$country)
 #### 5.3.3 GDP allocated to BHI regions
 
 #### 5.3.4 BHI region total GDP
+
+#### 5.3.5 Select years
 
 
 
