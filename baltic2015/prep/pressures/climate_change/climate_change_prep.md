@@ -1,0 +1,111 @@
+climate\_change\_prep
+================
+
+Climate Change Pressure Layers
+==============================
+
+Raw data cleaning
+-----------------
+
+``` r
+## Libraries
+library(readr)
+```
+
+    ## Warning: package 'readr' was built under R version 3.2.4
+
+``` r
+library(dplyr)
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+library(tidyr)
+library(ggplot2)
+```
+
+    ## Warning: package 'ggplot2' was built under R version 3.2.4
+
+``` r
+library(RMySQL)
+```
+
+    ## Loading required package: DBI
+
+``` r
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+```
+
+    ## Warning: package 'rprojroot' was built under R version 3.2.4
+
+``` r
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_cc    = file.path(dir_prep, 'pressures/climate_change')
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_cc, 'climate_change_prep.rmd') 
+```
+
+1. Background
+-------------
+
+The direct effects of climate change in the abiotic environment will be changes to water temperature and salinity. In the BHI framework, we will include sea surface temperature (SST), surface salinity (SS), and bottom water salinity (BWS) as climate change pressures.
+
+2. Data
+-------
+
+### 2.1 Data source
+
+Data are from the [BALTSEM model](http://www.balticnest.org/balticnest/thenestsystem/baltsem.4.3186f824143d05551ad20ea.html), run by Bärbel Müller Karulis from the Baltic Sea Centre at Stockholm University.
+
+### 2.2 Data cleaning and extraction
+
+Data from hindcast and future scenarios by basin need to be organized into separate SST and salinity files. These data will then be prepared in the subfolder 'temperature\_climatechange' and 'salinity\_climatechange'
+
+3. Data organization
+--------------------
+
+### 3. Read in all data
+
+``` r
+## read in data...
+
+## plot data...
+```
