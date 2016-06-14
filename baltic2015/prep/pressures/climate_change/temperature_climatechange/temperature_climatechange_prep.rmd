@@ -40,7 +40,7 @@ dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'l
 #   root_file("DESCRIPTION"))
 
 dir_tempcc    = file.path(dir_prep, 'pressures/climate_change/temperature_climatechange')
-
+dir_cc    = file.path(dir_prep, 'pressures/climate_change')
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
 create_readme(dir_tempcc, 'temperature_climatechange_prep.rmd') 
@@ -60,13 +60,14 @@ Data are from the [BALTSEM model](http://www.balticnest.org/balticnest/thenestsy
 
 
 ### 2.3 Projections
+Projection scenarios use BALTSEM results run with forcing from the [ECHAM5](http://www.mpimet.mpg.de/en/science/models/echam/) global climate model for the scenario A1b
 
 
 ## 3. Pressure model
 
 ### 3.1 Current conditions
 Current conditions = mean summer SST 2010-2014  
-- Use hindcast data??
+Use the hindcast data
 
 ### 3.2 rescaling data
 
@@ -82,9 +83,166 @@ Apply basin values to BHI regions.
 
 ## 4. Prepate Data Layer
 
-```{r TODO, echo=FALSE, message=FALSE}
-## read in data...
+### 4.1 Read in data
 
-## plot data...
+```{r read in data}
+## read in data
+
+hind_sst = read.csv(file.path(dir_tempcc, 'temp_data_database/hind_sst.csv'))
+
+proj_sst = read.csv(file.path(dir_tempcc,'temp_data_database/proj_sst.csv'))
 
 ```
+
+### 4.2 Plot data
+```{r plot data}
+ggplot(hind_sst)+
+  geom_line(aes(year,sst_jul_aug)) + 
+  facet_wrap(~basin_name_holas)+
+  ggtitle("Hindcast SST time series")
+
+ggplot(proj_sst)+
+  geom_line(aes(year,sst_jul_aug)) + 
+  facet_wrap(~basin_name_holas)+
+  ggtitle("Projected A1b SST time series")
+
+```
+
+### 4.3 Clean data
+```{r clean data}
+## remove where year is NA - these are for basins from baltsem not used
+hind_sst %>% filter(is.na(year))
+
+hind_sst = hind_sst %>%
+           filter(!is.na(year))
+
+
+proj_sst %>% filter(is.na(year))
+
+proj_sst = proj_sst %>%
+           filter(!is.na(year))
+
+```
+
+
+### 4.3 Current conditions 2010-2014
+Five most recent years
+
+```{r current sst}
+max_year = hind_sst %>%
+           select(year)%>%
+           max()%>%
+           as.numeric()
+
+sst_current = hind_sst %>%
+              filter(year >= (max_year-4))%>%
+              select(basin_name_holas,sst_jul_aug)%>%
+              group_by(basin_name_holas)%>%
+              summarise(current_sst = mean(sst_jul_aug))%>%
+              ungroup()
+              
+
+sst_current
+
+```
+
+### 4.4.1 Plot Current condition
+```{r plot current condition}
+ggplot(sst_current)+
+  geom_point(aes(basin_name_holas, current_sst), size=2.5)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean SST 2010-2014 from hindcast time series")
+
+```
+
+
+### 4.5 Historic Min
+From Hindcast data, extract the minimum Jul-Aug SST for each basin between 1960-1990
+```{r historic min sst}
+
+hist_min = hind_sst %>%
+           filter(year >= 1960 & year <= 1990)%>%
+           select(basin_name_holas,sst_jul_aug)%>%
+           group_by(basin_name_holas)%>%
+           summarise(hist_min = min(sst_jul_aug))%>%
+           ungroup()
+
+hist_min
+
+```
+
+
+### 4.6 Future max
+From projection data, extract the maximum Jul-Aug SST for each basin between 2020-2050
+```{r future max sst}
+future_max = proj_sst %>%
+             filter(year >= 2020 & year <= 2050)%>%
+             select(basin_name_holas,sst_jul_aug)%>%
+             group_by(basin_name_holas)%>%
+             summarise(future_max = max(sst_jul_aug))%>%
+             ungroup()
+future_max
+```
+
+
+### 4.7 Plot min, max, and current
+```{r plot min, max, current}
+##join data for plot
+sst_data = full_join(sst_current,hist_min, by="basin_name_holas")%>%
+            full_join(.,future_max, by="basin_name_holas")
+
+ggplot(sst_data)+
+  geom_point(aes(basin_name_holas, hist_min),color="blue",size=2.5)+
+   geom_point(aes(basin_name_holas, current_sst),color="black",size=2.5)+
+   geom_point(aes(basin_name_holas, future_max),color="red",size=2.5)+
+    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Basin Jul-Aug SST Historic Min, Current, Future Max")
+
+```
+
+
+### 4.8 Rescale data for pressure layer
+Some current temperatures are warmer than the near future max
+```{r rescale to min and max sst}
+ sst_rescale = sst_data%>%
+               mutate(sst_rescale = pmin(1,(current_sst - hist_min) / (future_max - hist_min)))
+
+ sst_rescale
+```
+
+
+### 4.9 Assign basin values to BHI regions
+
+#### 4.9.1 Read in lookup for BHI regions
+```{r read in bhi lookup}
+bhi_holas_lookup = read.csv(file.path(dir_cc, 'baltic_rgns_to_bhi_rgns_lookup_holas.csv'), sep=";")%>%
+                   select(rgn_id, basin_name)
+
+```
+
+#### 4.9.2 join lookup for BHI regions to sst_rescale
+```{r join bhi regions to sst_rescale}
+sst_rescale = sst_rescale %>%
+              full_join(., bhi_holas_lookup, by=c("basin_name_holas" = "basin_name"))%>%
+              select(rgn_id,sst_rescale)%>%
+              dplyr::rename(pressure_score = sst_rescale)%>%
+              arrange(rgn_id)
+
+```
+
+#### 4.9.3 Plot rescaled SST by BHI ID
+```{r plot sst by bhi id}
+ggplot(sst_rescale)+
+  geom_point(aes(rgn_id,pressure_score), size=2.5)+
+   ggtitle("SST pressure data layer")
+
+```
+
+### 4.10 Write to layers 
+```{r write sst to layers
+write.csv(sst_rescale, file.path(dir_layers, 'cc_sst_bhi2015.csv' ), row.names=FALSE)
+
+```
+
