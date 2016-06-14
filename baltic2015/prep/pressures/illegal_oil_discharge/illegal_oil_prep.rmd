@@ -65,18 +65,23 @@ Data are available from 1998-2014.
 Data are listed with a location (lat, lon) and a Estimated spill volume. Sometimes spill area is also provided.  
 
 ## 3. Pressure model
-Assign all spill locations a BHI ID. Sum the total volume of illegal oil spilled in each BHI region in each year.  
-Note- if there are reported spills without volume - how to include??
+Assign all spill locations a BHI ID. Sum the total volume of illegal oil spilled in each BHI region in each year.
+
+Calculate the volume spilled per region surface area
+
+Note- Exclude reported spills with volume  
+
+Provide summary of total oil spills reported per year per BHI region, number reported with volumes per year per BHI region  
 
 ### 3.1 Current conditions
 
-Mean volume spilled in each BHI region 2000-2014
+Mean volume spilled in each BHI region 2009-2014 / region surface area
 
 ### 3.2 Rescaling 0 to 1
 
 min value =  0
 
-max value =  max annual volume spilled in any BHI region 1998-2014
+max value =  max annual volume spilled / per surface area  *spatial reference*
 
 
 ## 4. Data Layer preparation
