@@ -1549,54 +1549,54 @@ CW = function(layers){
 }
 
 
-# HAB = function(layers){
-#
-#   # get layer data
-#   d =
-#     join_all(
-#       list(
-#
-#         layers$data[['hab_health']] %>%
-#           select(rgn_id, habitat, health),
-#
-#         layers$data[['hab_trend']] %>%
-#           select(rgn_id, habitat, trend),
-#
-#         layers$data[['hab_extent']] %>%
-#           select(rgn_id, habitat, extent=km2)),
-#
-#       by=c('rgn_id','habitat'), type='full') %>%
-#     select(rgn_id, habitat, extent, health, trend)
-#
-#   # limit to habitats used for HAB, create extent presence as weight
-#   d = d %>%
-#     filter(habitat %in% c('coral','mangrove','saltmarsh','seaice_edge','seagrass','soft_bottom')) %>%
-#     mutate(
-#       w  = ifelse(!is.na(extent) & extent > 0, 1, NA)) %>%
-#     filter(!is.na(w)) %>%
-#     group_by(rgn_id)
-#
-#   # calculate scores
-#   scores_HAB = rbind_list(
-#     # status
-#     d %>%
-#       filter(!is.na(health)) %>%
-#       summarize(
-#         score = pmin(1, sum(w * health) / sum(w)) * 100,
-#         dimension = 'status'),
-#     # trend
-#     d %>%
-#       filter(!is.na(trend)) %>%
-#       summarize(
-#         score =  sum(w * trend) / sum(w),
-#         dimension = 'trend')) %>%
-#     mutate(
-#       goal = 'HAB') %>%
-#     select(region_id=rgn_id, goal, dimension, score)
-#
-#   # return scores
-#   return(scores_HAB)
-# }
+HAB = function(layers){
+
+  # get layer data
+  d =
+    join_all(
+      list(
+
+        layers$data[['hab_health']] %>%
+          select(rgn_id, habitat, health),
+
+        layers$data[['hab_trend']] %>%
+          select(rgn_id, habitat, trend),
+
+        layers$data[['hab_extent']] %>%
+          select(rgn_id, habitat, extent=km2)),
+
+      by=c('rgn_id','habitat'), type='full') %>%
+    select(rgn_id, habitat, extent, health, trend)
+
+  # limit to habitats used for HAB, create extent presence as weight
+  d = d %>%
+    filter(habitat %in% c('coral','mangrove','saltmarsh','seaice_edge','seagrass','soft_bottom')) %>%
+    mutate(
+      w  = ifelse(!is.na(extent) & extent > 0, 1, NA)) %>%
+    filter(!is.na(w)) %>%
+    group_by(rgn_id)
+
+  # calculate scores
+  scores_HAB = rbind_list(
+    # status
+    d %>%
+      filter(!is.na(health)) %>%
+      summarize(
+        score = pmin(1, sum(w * health) / sum(w)) * 100,
+        dimension = 'status'),
+    # trend
+    d %>%
+      filter(!is.na(trend)) %>%
+      summarize(
+        score =  sum(w * trend) / sum(w),
+        dimension = 'trend')) %>%
+    mutate(
+      goal = 'HAB') %>%
+    select(region_id=rgn_id, goal, dimension, score)
+
+  # return scores
+  return(scores_HAB)
+}
 
 
 SPP = function(layers){
