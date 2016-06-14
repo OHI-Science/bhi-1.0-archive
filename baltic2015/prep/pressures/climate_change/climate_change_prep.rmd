@@ -295,9 +295,9 @@ proj_sal_deep = projection %>%
 ### 4.5 save projection objects
 ```{r save projection objects}
 
-write.csv(hind_sst, file.path(dir_cc, 'temperature_climatechange/temp_data_database/proj_sst.csv'),row.names=FALSE)
+write.csv(proj_sst, file.path(dir_cc, 'temperature_climatechange/temp_data_database/proj_sst.csv'),row.names=FALSE)
 
-write.csv(hind_sal_surf, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj_sal_surf.csv'),row.names=FALSE)
+write.csv(proj_sal_surf, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj_sal_surf.csv'),row.names=FALSE)
 
-write.csv(hind_sal_deep, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj_sal_deep.csv'),row.names=FALSE)
+write.csv(proj_sal_deep, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj_sal_deep.csv'),row.names=FALSE)
 ```
