@@ -42,6 +42,7 @@ dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'l
 
 
 dir_salincc    = file.path(dir_prep, 'pressures/climate_change/salinity_climatechange')
+dir_cc    = file.path(dir_prep, 'pressures/climate_change')
 
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
@@ -71,22 +72,366 @@ Two data layer, surface water salinity and deep water salinity. Each use the sam
 
 ### 3.1 Current conditions
 Current conditions = mean salinity 2010-2014  
-- Use hindcast data??  
+- Use hindcast data
 
 ### 3.2 rescaling data
+Salinity is projected to decrease with climate change, therefore we take the maximum from the historical period and the minimum from the current period. Will need to confirm this works for the deep salinity measure given the role of periodic inflows.  
 
-min value = mininium annual salinity duing reference period (1960-1990)  
+min value = minimum annual salinity during the future projection period (2020-2050)   
 
-max value = maximum annual salinity during the future projection period (2020-2050)  
+max value = maximum annual salinity duing reference period (1960-1990)  
+
+**Greater pressure with lower salinity, so will need to take the inverse of the rescaling**
 
 ### 3.3 BHI region pressure
 Apply basin values to BHI regions.  
 
-## Layer prep
+## 4 Prepare surface salinity Data layer
 
-```{r TODO, echo=FALSE, message=FALSE}
-## read in data...
+### 4.1 Read in surface salinity data
+```{r read surface sal in data}
+## read in data
 
-## plot data...
+hind_surf_sal = read.csv(file.path(dir_salincc, 'sal_data_database/hind_sal_surf.csv'))
+
+proj_surf_sal = read.csv(file.path(dir_salincc,'sal_data_database/proj_sal_surf.csv'))
+
+```
+
+### 4.2 Clean data
+```{r clean surface sal data}
+## remove where year is NA - these are for basins from baltsem not used
+hind_surf_sal %>% filter(is.na(year))
+
+hind_surf_sal = hind_surf_sal %>%
+           filter(!is.na(year))
+
+
+proj_surf_sal %>% filter(is.na(year))
+
+proj_surf_sal = proj_surf_sal %>%
+           filter(!is.na(year))
+
+```
+
+
+### 4.3 Plot data
+```{r plot surface sal data}
+ggplot(hind_surf_sal)+
+  geom_line(aes(year,sal_surface)) + 
+  facet_wrap(~basin_name_holas, scales="free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Hindcast Annual Surface Salinity time series")
+
+ggplot(proj_surf_sal)+
+  geom_line(aes(year,sal_surface)) + 
+  facet_wrap(~basin_name_holas, scales="free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Projected A1b Annual Surface Salinity time series")
+
+```
+
+
+### 4.4 Current conditions 2010-2014
+Five most recent years
+
+```{r current surface sal }
+max_year = hind_surf_sal %>%
+           select(year)%>%
+           max()%>%
+           as.numeric()
+
+surf_sal_current = hind_surf_sal %>%
+              filter(year >= (max_year-4))%>%
+              select(basin_name_holas,sal_surface)%>%
+              group_by(basin_name_holas)%>%
+              summarise(current_surf_sal = mean(sal_surface))%>%
+              ungroup()
+              
+
+surf_sal_current
+
+```
+
+
+### 4.4.1 Plot Current condition
+```{r plot current surface sal condition}
+ggplot(surf_sal_current)+
+  geom_point(aes(basin_name_holas, current_surf_sal), size=2.5)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean Surface Salinity 2010-2014 from hindcast time series")
+
+```
+
+
+
+### 4.5 Minimum val
+From projection data, extract the minimum annual surface salinity for each basin between 2020-2050
+```{r min surface sal}
+
+min_surf_sal = proj_surf_sal %>%
+           filter(year >= 2020 & year <= 2050)%>%
+           select(basin_name_holas,sal_surface)%>%
+           group_by(basin_name_holas)%>%
+           summarise(min_surf_sal = min(sal_surface))%>%
+           ungroup()
+
+min_surf_sal
+
+```
+
+
+### 4.6 Maximum surface sal
+From hindcast data, extract the maximum annual surface temperature for each basin between 1960-1990
+```{r max surf sal}
+max_surf_sal = hind_surf_sal %>%
+             filter(year >= 1960 & year <= 1990)%>%
+             select(basin_name_holas,sal_surface)%>%
+             group_by(basin_name_holas)%>%
+             summarise(max_surf_sal = max(sal_surface))%>%
+             ungroup()
+max_surf_sal
+```
+
+### 4.7 Plot min, max, and current
+```{r plot surf sal min, max, current}
+##join data for plot
+surf_sal_data = full_join(surf_sal_current,min_surf_sal, by="basin_name_holas")%>%
+            full_join(.,max_surf_sal, by="basin_name_holas")
+
+ggplot(surf_sal_data)+
+  geom_point(aes(basin_name_holas, min_surf_sal),color="blue",size=2.5)+
+   geom_point(aes(basin_name_holas, current_surf_sal),color="black",size=2.5)+
+   geom_point(aes(basin_name_holas,max_surf_sal),color="red",size=2.5)+
+    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Basin Annual Surface Sal Min, Current, Max")
+
+```
+
+
+
+### 4.8 Rescale data for pressure layer
+Some current surface salinities are greater than past max and others are fresher than current min  
+1. Normalize data  
+2. if below zero set to zero (eg if current is fresher than min value) and if above 1 set to 1 (eg if current is more saline than max value)  
+3. Take inverse so greater pressure with fresher conditions  
+```{r rescale to min and max surf sal}
+ surf_sal_rescale = surf_sal_data%>%
+               mutate(surf_sal_normalize = (current_surf_sal - min_surf_sal) / (max_surf_sal - min_surf_sal),
+                      surf_sal_rescale = ifelse(surf_sal_normalize <0, 0,
+                                         ifelse(surf_sal_normalize > 1, 1,surf_sal_normalize)),
+                      surf_sal_rescale_inv = 1- surf_sal_rescale) ## take inverse 
+
+ surf_sal_rescale
+```
+
+### 4.9 Assign basin values to BHI regions
+
+#### 4.9.1 Read in lookup for BHI regions
+```{r read in bhi lookup}
+bhi_holas_lookup = read.csv(file.path(dir_cc, 'baltic_rgns_to_bhi_rgns_lookup_holas.csv'), sep=";")%>%
+                   select(rgn_id, basin_name)
+
+```
+
+#### 4.9.2 join lookup for BHI regions to sst_rescale
+```{r join bhi regions to  surf_sal_rescale}
+ surf_sal_rescale = surf_sal_rescale %>%
+              full_join(., bhi_holas_lookup, by=c("basin_name_holas" = "basin_name"))%>%
+              select(rgn_id,surf_sal_rescale_inv)%>%
+              dplyr::rename(pressure_score = surf_sal_rescale_inv)%>%
+              arrange(rgn_id)
+
+```
+
+#### 4.9.3 Plot rescaled surface salinity by BHI ID
+```{r plot surface salinity pressure by bhi id}
+ggplot(surf_sal_rescale)+
+  geom_point(aes(rgn_id,pressure_score), size=2.5)+
+   ggtitle("Surface Salinity pressure data layer")
+
+```
+
+### 4.10 Write surface salinity to layers 
+```{r write surface sal to layers}
+write.csv(surf_sal_rescale, file.path(dir_layers, 'cc_sal_surf_bhi2015.csv' ), row.names=FALSE)
+
+```
+
+
+
+## 5 Prepare deep salinity Data layer
+
+### 5.1 Read in deep salinity data
+```{r read deep sal in data}
+## read in data
+
+hind_deep_sal = read.csv(file.path(dir_salincc, 'sal_data_database/hind_sal_deep.csv'))
+
+proj_deep_sal = read.csv(file.path(dir_salincc,'sal_data_database/proj_sal_deep.csv'))
+
+```
+
+### 5.2 Clean data
+```{r clean deep sal data}
+## remove where year is NA - these are for basins from baltsem not used
+hind_deep_sal %>% filter(is.na(year))
+
+hind_deep_sal = hind_deep_sal %>%
+           filter(!is.na(year))
+
+
+proj_deep_sal %>% filter(is.na(year))
+
+proj_deep_sal = proj_deep_sal %>%
+           filter(!is.na(year))
+
+```
+
+
+### 5.3 Plot data
+```{r plot deep sal data}
+ggplot(hind_deep_sal)+
+  geom_line(aes(year,sal_deep, colour=factor(salin_bottom_depth))) + 
+  facet_wrap(~basin_name_holas, scales="free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Hindcast Annual Deep Salinity time series")
+
+ggplot(proj_deep_sal)+
+  geom_line(aes(year,sal_deep,colour=factor(salin_bottom_depth))) + 
+  facet_wrap(~basin_name_holas, scales="free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Projected A1b Annual Deep Salinity time series")
+
+```
+
+
+### 5.4 Current conditions 2010-2014
+Five most recent years
+
+```{r current deep sal }
+max_year = hind_deep_sal %>%
+           select(year)%>%
+           max()%>%
+           as.numeric()
+
+deep_sal_current = hind_deep_sal %>%
+              filter(year >= (max_year-4))%>%
+              select(basin_name_holas,sal_deep)%>%
+              group_by(basin_name_holas)%>%
+              summarise(current_deep_sal = mean(sal_deep))%>%
+              ungroup()
+              
+
+deep_sal_current
+
+```
+
+
+### 5.5.1 Plot Current condition
+```{r plot current deep sal condition}
+ggplot(deep_sal_current)+
+  geom_point(aes(basin_name_holas, current_deep_sal), size=2.5)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean Deep Salinity 2010-2014 from hindcast time series")
+
+```
+
+
+
+### 5.5 Minimum val
+From projection data, extract the minimum annual deep salinity for each basin between 2020-2050
+```{r min deep sal}
+
+min_deep_sal = proj_deep_sal %>%
+           filter(year >= 2020 & year <= 2050)%>%
+           select(basin_name_holas,sal_deep)%>%
+           group_by(basin_name_holas)%>%
+           summarise(min_deep_sal = min(sal_deep))%>%
+           ungroup()
+
+min_deep_sal
+
+```
+
+
+### 5.6 Maximum deep sal
+From hindcast data, extract the maximum annual deep temperature for each basin between 1960-1990
+```{r max deep sal}
+max_deep_sal = hind_deep_sal %>%
+             filter(year >= 1960 & year <= 1990)%>%
+             select(basin_name_holas,sal_deep)%>%
+             group_by(basin_name_holas)%>%
+             summarise(max_deep_sal = max(sal_deep))%>%
+             ungroup()
+max_deep_sal
+```
+
+### 5.7 Plot min, max, and current
+```{r plot deep min, max, current}
+##join data for plot
+deep_sal_data = full_join(deep_sal_current,min_deep_sal, by="basin_name_holas")%>%
+            full_join(.,max_deep_sal, by="basin_name_holas")
+
+ggplot(deep_sal_data)+
+  geom_point(aes(basin_name_holas, min_deep_sal),color="blue",size=2.5)+
+   geom_point(aes(basin_name_holas, current_deep_sal),color="black",size=2.5)+
+   geom_point(aes(basin_name_holas,max_deep_sal),color="red",size=2.5)+
+    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Basin Annual Deep Sal Min, Current, Max")
+
+```
+
+
+
+### 5.8 Rescale data for pressure layer
+Some current deep salinities are greater than past max and others are fresher than current min  
+1. Normalize data  
+2. if below zero set to zero (eg if current is fresher than min value) and if above 1 set to 1 (eg if current is more saline than max value)  
+3. Take inverse so greater pressure with fresher conditions  
+```{r rescale to min and max deep sal}
+ deep_sal_rescale = deep_sal_data%>%
+               mutate(deep_sal_normalize = (current_deep_sal - min_deep_sal) / (max_deep_sal - min_deep_sal),
+                      deep_sal_rescale = ifelse(deep_sal_normalize <0, 0,
+                                         ifelse(deep_sal_normalize > 1, 1,deep_sal_normalize)),
+                      deep_sal_rescale_inv = 1- deep_sal_rescale) ## take inverse 
+
+ deep_sal_rescale
+```
+
+### 5.9 Assign basin values to BHI regions
+
+#### 5.9.1 Read in lookup for BHI regions
+Done above in 4.9.1  
+
+#### 5.9.2 join lookup for BHI regions to sst_rescale
+```{r join bhi regions to  deep_sal_rescale}
+ deep_sal_rescale = deep_sal_rescale %>%
+              full_join(., bhi_holas_lookup, by=c("basin_name_holas" = "basin_name"))%>%
+              select(rgn_id,deep_sal_rescale_inv)%>%
+              dplyr::rename(pressure_score = deep_sal_rescale_inv)%>%
+              arrange(rgn_id)
+
+```
+
+#### 5.9.3 Plot rescaled deep salinity by BHI ID
+```{r plot deep salinity pressure by bhi id}
+ggplot(deep_sal_rescale)+
+  geom_point(aes(rgn_id,pressure_score), size=2.5)+
+   ggtitle("Deep Salinity pressure data layer")
+
+```
+
+### 5.10 Write deep salinity to layers 
+```{r write deep sal to layers}
+write.csv(deep_sal_rescale, file.path(dir_layers, 'cc_sal_deep_bhi2015.csv' ), row.names=FALSE)
 
 ```
