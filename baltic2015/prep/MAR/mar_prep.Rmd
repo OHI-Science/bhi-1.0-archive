@@ -1,21 +1,56 @@
 ---
-title: "MAR data layer prep"
+title: "mar_rep"
 output: github_document
 params: 
     datasource: csv
 ---
+# Preparation of Mariculture (MAR) subgoal data layer
+---
+```{r setup}
 
-## Data
+## source common libraries, directories, functions, etc
+# Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
 
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_mar    = file.path(dir_prep, 'MAR')
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_mar, 'mar_prep.rmd')
+
+```
+
+
+## 1. Background
+
+
+## 2. Data
 Rainbow trout production  
-Date were compiled by Ginnette Flores Carmenate
+Date were compiled primarily by Ginnette Flores Carmenate
 
-### Data sources
+### 2.1 Data sources
 Data from country databases or reports  
-Sweden
+**Sweden**
 [Jorbruksverket] (http://www.scb.se/sv_/Hitta-statistik/Statistik-efter-amne/Jord--och-skogsbruk-fiske/Vattenbruk/Vattenbruk/)  
 
-Denmark
+**Denmark**
 [Danish Agrifish Agency (Ministry of Environment and Food of Denmark)]( http://agrifish.dk/fisheries/fishery-statistics/aquaculture-statistics/#c32851)  
 
 __On locations from NaturErhvervstyrelsen__  The North Sea is very rough, hence there is no sea farms located in the North Sea side of Denmark, and the data on our home page only includes farms placed in the waters you are interested in. There is a map in this [report](http://www.akvakultur.dk/akvakultur%20i%20DK.htm) showing sea farms in Denmark. It’s a bit old (2003), but area wise it haven’t changed much.
@@ -25,28 +60,33 @@ Finland
 
 --Data were available as total marine production by region.  Data were also available as total production per fish species.  Rainbow trout dominated the total fish production.  Ginnette converted the total production by region to rainbow trout production by region by using the country wide percent rainbow trout of the marine production in each year.  (The other minor contributions to total production were European whitefish, Trout, other species, Roe of rainbow trout, roe of european whitefish).  
 
+**All other**
+Production data for Germany were obtained from the [FAO FishStatJ](http://www.fao.org/fishery/statistics/software/fishstatj/en#downlApp) Global workspace, Aquaculture Production (Quantities and values) 1950-2014 (Release date: March 2016).  
+Download 15 June 2016
+
+Data were downloaded for all nine Baltic countries. The Baltic sea falls within the [aquaculture area to 'Atlantic, Northeast'](http://www.fao.org/fishery/cwp/handbook/h/en). The environment type was required to be *Brackish* to be considered Baltic Sea production.
+
 Sustainability Coefficient 
 The SMI is the average of the three subindices traditionally used in the OHI framework. Trujillo's study included 13 subindices in total but only 3 of them are relevant for assessing the sustainability of mariculture : waster water treatment, usage of fishmeal and hatchery vs wild origin of seeds. Since Rainbow trout SMI is only included for Sweden. The mean value 5.3 was rescaled between 0-1 to 0.53. This value is then applied to Denmark and Finland.
 
 
-### Production regions and BHI assignments
-BHI regions were assigned to the country production reporting regions by Ginnette visually linking the two
+### 2.2 Production regions and BHI assignments
+BHI regions were assigned to the country production reporting regions by Ginnette visually linking the two for Sweden, Denmark, and Finland. 
 
-### Data setup and load
+Production for Germany was split equally among all German BHI regions.
+
+#### 2.2.1 HELCOM map of coastal aquaculture
+[HELCOM Map Service Baltic Sea Pressures and Human activities](http://maps.helcom.fi/website/Pressures/index.html) has a data layer showing coastal aquaculture sites (under 'Pressures','Land-based pollution', 'Coastal Aquaculture'). This appears to be outdated as Denmark say is has no marine aquaculture, Latvia has no reported brackish aquaculture to the FAO for several decades, and no German sites are shown (although minimal brackish water aquaculture is reported)
+
+
+
+## 3. Data Layer Preparation
 Data are stored in the BHI database  
 `mar_prep_database_call.r` extracts data files from the database and stores data as csv files in folder mar_data_database  
 __Need to make sure csv files are rewritten if database updated!!__
 
-```{r setup and load data, echo =TRUE, message = FALSE, warning = FALSE}
-
-## source common libraries, directories, functions, etc
-source('~/github/bhi/baltic2015/prep/common.r')
-
-## set additional directories
-dir_mar    = file.path(dir_prep, 'MAR')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_mar, 'mar_prep.rmd')
+### 3.1 Read in data
+```{r read in data}
 
 ##-------------------------##
 ## Read in data
@@ -57,11 +97,13 @@ head(lookup)
 production = readr::read_csv(file.path(dir_mar,'mar_data_database/mar_data_production.csv'))
 # head(production)
 
-
+fao = read.csv(file.path(dir_mar, 'mar_data_database/all_baltic_fao_cleaned.csv'), sep=";")
+head(fao)
 
 ```
 
-### Plot the data by country's mar_region
+### 3.1 Plot the data by country's mar_region
+Data from country databases (DK, FI, SE)  
 This is the scale of data reported
 
 ```{r plot raw data, echo=TRUE}
@@ -69,6 +111,66 @@ ggplot(production)+geom_point(aes(year, production)) +
 facet_wrap(~mar_region, scales="free_y")
 
 ```
+
+### 3.2 FAO data
+Evaluate FAO data for countries without data from country specific databases.  
+1. Is there brackish production between 2005 - 2014?  
+2. Is it rainbow trout or similar?  
+
+#### 3.2.1 FAO data organization
+```{r fao data organization}
+
+## filter country and environment
+fao1 = fao %>%
+        filter(country != "Sweden" & country != "Finland" & country != "Denmark")%>% ## filter out countries with national data
+        filter(environment == "Brackishwater") ## select only brackish water production
+
+## restrict columns to years of interest
+fao2 = fao1 %>%
+       select(country:unit,X2005:X2014)
+
+str(fao2) ## mix of integer and factor in columns ## F indicates "estimated"
+
+## make all data columns character; gather
+fao3 = fao2 %>%
+       mutate(X2005 = as.character(X2005),
+              X2006 = as.character(X2006),
+              X2007 = as.character(X2007),
+              X2008 = as.character(X2008),
+              X2009 = as.character(X2009),
+              X2010 = as.character(X2010),
+              X2011 = as.character(X2011),
+              X2012 = as.character(X2012),
+              X2013 = as.character(X2013),
+              X2014 = as.character(X2014)) %>%
+       gather(year,production,-country,-species_ASFIS,-aquaculture_area_FAO_major_fishing_area,-environment,-unit)%>%
+      mutate(data_flag = ifelse(grepl("F",production),"estimated",""))%>% ##note the estimated data
+      mutate(production = str_replace(production,"F","")) %>% ## remove characters from production
+     mutate(production = as.numeric(production))%>% # make into number
+      mutate(year =str_replace(year,"X",""),
+             year= as.numeric(year))%>% ## remove x from year and make numeric
+      arrange(country, year, species_ASFIS)
+       
+
+```
+
+#### 3.2.2 Plot FAO data for countries with data 2005-2014
+```{r plot fao data raw}
+ggplot(fao3)+
+  geom_point(aes(year,production, colour= species_ASFIS))+
+  facet_wrap(~country)+
+  ggtitle("FAO Brackish water production (tons) 2005-2014")
+
+
+```
+
+## FAO TO DO
+Assign german rainbow trout to BHI regions (even split)-- amend mar_lookup
+Check all calculations
+re-register layers
+
+
+
 
 
 ### Use mar_lookup to allocate production among BHI regions
