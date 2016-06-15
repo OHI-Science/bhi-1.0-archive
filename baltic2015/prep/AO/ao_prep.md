@@ -4,22 +4,22 @@ ao\_prep.rmd
 Artisanal Opportunity (AO) Goal Data Prep
 =========================================
 
-Goal Overview
--------------
+1. Goal Overview
+----------------
 
-### Components
+### 1.1 Components
 
 This goal has three sub-components: *stock, access, and need*. For BHI we focus first on the *stock* sub-component and will use this as a proxy for the entire goal initially
 
-### Goal model
+### 1.2 Goal model
 
-#### Status
+#### 1.2.1 Status
 
 Xao = Mean Stock Indicator Value / Reference pt
 Stock indicators = two HELCOM core indicators assessed for good environemental status (each scored between 0 and 1 by BHI)
 Reference pt = maximum possible good environmental status (value=1)
 
-#### Trend
+#### 1.2.2 Trend
 
 **Background**
 CPUE time series are available for all stations used for the HELCOM coastal fish populations core indicators. These data were provided by Jens Olsson (FISH PRO II project). To calculate GES status, full time series were used. Therefore, only one status time point and cannot calculate trend of status over time. Instead, follow approach from Bergström et al 2016, but only focus on the final time period for the slope (2004-2013).
@@ -32,12 +32,13 @@ CPUE time series are available for all stations used for the HELCOM coastal fish
 4. Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin
 5. Within each basin take a mean functional group indicator slope (mean of cyprinid mean and piscivore mean)
 6. For each basin take overall mean slope - mean of key species and functional group
-7. Multiple by five for future year value?
-8. Apply trend value for basin to all BHI regions (except in Gulf of Finland, do not apply Finnish site value to Estonia and Russian regions.)
+7. Apply trend value for basin to all BHI regions (except in Gulf of Finland, do not apply Finnish site value to Estonia and Russian regions.)
 \*Steps 1-3 done in file `AO/ao_slope_calc.r`
 
-Data
-----
+2. Data
+-------
+
+### 2.1 Data Source
 
 [HELCOM Core Indicator Abundance of coastal fish key functional groups](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-coastal-fish-key-functional-groups/)
 
@@ -50,20 +51,17 @@ Environmental status assessments provided by Jens Olsson (SLU). See [HELCOM FISH
 
 CPUE data used in the GES assessment. Data provided by Jens Olsson, used in trend. Slopes from each analsysis available here, but CPUE data held internally in the BHI database.
 
-### Data locations
+### 2.2 Data locations
 
 Data are from monitoring locations (described in the HELCOM core indicators). Finnish data are fisheries data from ICES assessment regions (ICES 29-32).
 
-Data Prep
----------
+### 2.3 GES status scoring
 
-Data prep below.
+Alternative methods are explored in data prep. This method was selected GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*
 
-### Data scoring
+### 2.4 Regions with no data
 
-We will have to determine appropriate 0-1 scale for *GES* and *sub-GES*.
-
-*Note that in the OHI framework 'NA' means that an indicator is not applicable, not that there is no data. If there is no data, should either gap-fill or assign a score of 0 to highlight missing information*
+Assign value of NA to these regions. Stocks were not assessed
 
     ## Warning: package 'readr' was built under R version 3.2.4
 
@@ -84,11 +82,10 @@ We will have to determine appropriate 0-1 scale for *GES* and *sub-GES*.
 
     ## Warning: package 'rprojroot' was built under R version 3.2.4
 
-Layer prep
-----------
+3.Data layer preparation
+------------------------
 
-1. Read in data
----------------
+### 3.1 Read in data
 
 Read in status assessment, monitoring area locations, lookup table for BHI regions to HOLAS basins.
 
@@ -266,19 +263,18 @@ basin_lookup
     ## 10     10 Bay of Mecklenburg
     ## ..    ...                ...
 
-2. Assign scores to GES status
-------------------------------
+### 3.2 Assign scores to GES status
 
 Explore the consequences of different scoring schemes.
 In all cases, a score of 1 achieving highest status.
 
-### 2.1 Alternative scoring methods
+#### 3.2.1 Alternative scoring methods exploration
 
-**score"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"*
+**score"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"* Only areas with an assessment receives a score. Areas (BHI regions) with no assessment have NA scores, these will not be included until the final scores is calculated
 
-**score2**: GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*
+**score2**: GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2.* Only areas with an assessment receives a score. Areas (BHI regions) with no assessment have NA scores, these will not be included until the final scores is calculated
 
-**score3**: GES =1, subGES (low) = 0.2, subGES(high) = 0.5, subGES (no comment) = 0.2. *Distinguish between subGES levels that have been ranked low or high. Has only been done for cyprinids functional group.*
+**score3**: GES =1, subGES (low) = 0.2, subGES(high) = 0.5, subGES (no comment) = 0.2. *Distinguish between subGES levels that have been ranked low or high. Has only been done for cyprinids functional group.* Only areas with an assessment receives a score. Areas (BHI regions) with no assessment have NA scores, these will not be included until the final scores is calculated
 
 ``` r
 ## is status ever NA?
@@ -330,7 +326,7 @@ coastal_fish_scores
     ##   (chr), assessment_method (chr), status (chr), status_comment (chr),
     ##   score1 (dbl), score2 (dbl), score3 (dbl)
 
-### 2.2 Plot alternative scores by location
+#### 3.2.2 Plot alternative scores by location
 
 Three separate plots for alternative scoring methods.
 
@@ -339,14 +335,14 @@ The difference between **score1** and **score2** / **score3** is that **score1**
 ``` r
 # make coastal_fish_scores in long format then plot
 temp_long = coastal_fish_scores %>% 
-            select(monitoring_area,core_indicator, score1,score2,score3) %>%
-            group_by(monitoring_area, core_indicator) %>%
+            select(monitoring_area,core_indicator,taxa, score1,score2,score3) %>%
+            group_by(monitoring_area, core_indicator,taxa) %>%
             gather(score_type,score,score1,score2,score3)%>%
             ungroup()
 
 #Score 1
 ggplot(filter(temp_long, score_type=="score1")) + 
-  geom_point(aes(monitoring_area, score))+
+  geom_point(aes(monitoring_area, score, colour=taxa,shape=taxa))+
   facet_wrap(~core_indicator)+
    theme(axis.text.x = element_text(colour="grey20",size=7,angle=90,hjust=.5,vjust=.5,face="plain"),
         plot.margin = unit(c(1,1,1,1), "cm")) +
@@ -358,7 +354,7 @@ ggplot(filter(temp_long, score_type=="score1")) +
 ``` r
 #Score 2
 ggplot(filter(temp_long, score_type=="score2")) + 
-  geom_point(aes(monitoring_area, score))+
+  geom_point(aes(monitoring_area, score, colour=taxa,shape=taxa))+
   facet_wrap(~core_indicator)+
    theme(axis.text.x = element_text(colour="grey20",size=7,angle=90,hjust=.5,vjust=.5,face="plain"),
         plot.margin = unit(c(1,1,1,1), "cm")) +
@@ -370,7 +366,7 @@ ggplot(filter(temp_long, score_type=="score2")) +
 ``` r
 #Score 3
 ggplot(filter(temp_long, score_type=="score3")) + 
-  geom_point(aes(monitoring_area, score))+
+  geom_point(aes(monitoring_area, score, colour=taxa,shape=taxa))+
   facet_wrap(~core_indicator)+
    theme(axis.text.x = element_text(colour="grey20",size=7,angle=90,hjust=.5,vjust=.5,face="plain"),
         plot.margin = unit(c(1,1,1,1), "cm")) +
@@ -379,14 +375,15 @@ ggplot(filter(temp_long, score_type=="score3")) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-3.png)<!-- -->
 
-3. Unique indicators per monitoring location
---------------------------------------------
+### 3.3 Unique indicators per monitoring location
 
 *Summary information from code below.*
 1. Is more than one key species monitored at a given locations?
 **NO** 2. Is more than one function group monitored?
+
 **Depends on location, 1 or 2 groups monitored**
-3. Are both key species and functional groups monitored at all locations? **No**, 4 monitoring areas without Functional status, 2 without Key\_spp status
+3. Are both key species and functional groups monitored at all locations? **No** 3 monitoring areas without Functional status: *Odense Fiord, Skive Fiord og Lovns Broad, The Great Belt *
+1 monitoring area without Key\_spp status: *Hjarbaek Fjord*
 
 ``` r
 coastal_fish_scores_long = coastal_fish_scores %>% 
@@ -420,6 +417,7 @@ coastal_fish_scores_long
 
 ``` r
 ## Number of indicators by monitoring location
+## how many core indicators, how many taxa
 indicator_count = coastal_fish_scores_long %>%
                   select(monitoring_area, core_indicator,taxa,score_type,score)%>%
                   group_by(monitoring_area)%>%
@@ -430,7 +428,7 @@ indicator_count = coastal_fish_scores_long %>%
 indicator_count %>% print(n=60)
 ```
 
-    ## Source: local data frame [51 x 3]
+    ## Source: local data frame [50 x 3]
     ## 
     ##                              monitoring_area unique_indicator
     ##                                        (chr)            (int)
@@ -440,61 +438,71 @@ indicator_count %>% print(n=60)
     ## 4                                Boergerende                2
     ## 5                            Curonian Lagoon                2
     ## 6                  Darss-Zingst Bodden chain                2
-    ## 7                                 Daugagriva                1
-    ## 8                                Daugavgriva                1
-    ## 9                   East of Usedom Peninsula                2
-    ## 10                                     Finbo                2
-    ## 11                 Fiords of Eastern Jutland                2
-    ## 12                                  Forsmark                2
-    ## 13                            Gaviksfjaerden                2
-    ## 14                       Greifswalder Bodden                2
-    ## 15                                   Hiiumaa                2
-    ## 16                            Hjarbaek Fjord                1
-    ## 17                                   Holmoen                2
-    ## 18                                ICES SD 29                2
-    ## 19                                ICES SD 30                2
-    ## 20                                ICES SD 31                2
-    ## 21                                ICES SD 32                2
-    ## 22               Isefjord and Roskilde Fjord                2
-    ## 23                                  Jurkalne                2
-    ## 24                        Kinnbaecksfjaerden                2
-    ## 25                                  Kumlinge                2
-    ## 26                           Kvaedoefjaerden                2
-    ## 27                                    Lagnoe                2
-    ## 28                         Langvindsfjaerden                2
-    ## 29                         Monciskes/Butinge                2
-    ## 30                                   Norrbyn                2
-    ## 31                North of Kuhlungsborn city                2
-    ## 32                Northeast of Ruegen Island                2
-    ## 33                         Northern Kattegat                2
-    ## 34                         Northern Limfjord                2
-    ## 35                              Odense Fiord                1
-    ## 36                Peene river / Achterwasser                2
-    ## 37                     Pomeranian Bay, Outer                2
-    ## 38                            Praestoe Fiord                2
-    ## 39                                     Ranea                2
-    ## 40                         Rectangle 23 & 28                2
-    ## 41                               Sejeroe Bay                2
-    ## 42                Skive Fiord og Lovns Broad                1
-    ## 43  Southern Little Belt and the archipelago                2
-    ## 44              Stettin Lagoon (German part)                2
-    ## 45                                Strelasund                2
-    ## 46                            The Great Belt                1
-    ## 47                                 The Sound                2
-    ## 48                                   Torhamn                2
-    ## 49                Venoe Bay and Nissum Broad                2
-    ## 50                                     Vinoe                2
-    ## 51                 Wismar Bight and Salzhaff                2
+    ## 7                                 Daugagriva                2
+    ## 8                   East of Usedom Peninsula                2
+    ## 9                                      Finbo                2
+    ## 10                 Fiords of Eastern Jutland                2
+    ## 11                                  Forsmark                2
+    ## 12                            Gaviksfjaerden                2
+    ## 13                       Greifswalder Bodden                2
+    ## 14                                   Hiiumaa                2
+    ## 15                            Hjarbaek Fjord                1
+    ## 16                                   Holmoen                2
+    ## 17                                ICES SD 29                2
+    ## 18                                ICES SD 30                2
+    ## 19                                ICES SD 31                2
+    ## 20                                ICES SD 32                2
+    ## 21               Isefjord and Roskilde Fjord                2
+    ## 22                                  Jurkalne                2
+    ## 23                        Kinnbaecksfjaerden                2
+    ## 24                                  Kumlinge                2
+    ## 25                           Kvaedoefjaerden                2
+    ## 26                                    Lagnoe                2
+    ## 27                         Langvindsfjaerden                2
+    ## 28                         Monciskes/Butinge                2
+    ## 29                                   Norrbyn                2
+    ## 30                North of Kuhlungsborn city                2
+    ## 31                Northeast of Ruegen Island                2
+    ## 32                         Northern Kattegat                2
+    ## 33                         Northern Limfjord                2
+    ## 34                              Odense Fiord                1
+    ## 35                Peene river / Achterwasser                2
+    ## 36                     Pomeranian Bay, Outer                2
+    ## 37                            Praestoe Fiord                2
+    ## 38                                     Ranea                2
+    ## 39                         Rectangle 23 & 28                2
+    ## 40                               Sejeroe Bay                2
+    ## 41                Skive Fiord og Lovns Broad                1
+    ## 42  Southern Little Belt and the archipelago                2
+    ## 43              Stettin Lagoon (German part)                2
+    ## 44                                Strelasund                2
+    ## 45                            The Great Belt                1
+    ## 46                                 The Sound                2
+    ## 47                                   Torhamn                2
+    ## 48                Venoe Bay and Nissum Broad                2
+    ## 49                                     Vinoe                2
+    ## 50                 Wismar Bight and Salzhaff                2
     ## Variables not shown: unique_taxa_func (int)
 
 ``` r
+##which stations have only 1 core indicator type (either have only functional or only key spp)
+one_indicator =indicator_count %>% filter(unique_indicator ==1)
+#              monitoring_area unique_indicator unique_taxa_func
+#                        (chr)            (int)            (int)
+# 1             Hjarbaek Fjord                1                1
+# 2               Odense Fiord                1                1
+# 3 Skive Fiord og Lovns Broad                1                1
+# 4             The Great Belt                1                1
+
+
+## number of taxa organized by location and core indicator type
 indicator_taxa_count= coastal_fish_scores_long %>% filter (score_type=="score1") %>% #remove duplicates based on scoring alternatives
                     select(monitoring_area, core_indicator,taxa)%>%
                   group_by(monitoring_area,core_indicator)%>%
                   summarise(unique_taxa_func =length(unique(taxa)))%>%
                   ungroup()
                   
-indicator_taxa_count %>% print(n=60)
+indicator_taxa_count %>% print(n=96)
 ```
 
     ## Source: local data frame [96 x 3]
@@ -513,8 +521,8 @@ indicator_taxa_count %>% print(n=60)
     ## 10                           Curonian Lagoon    Key species
     ## 11                 Darss-Zingst Bodden chain     Functional
     ## 12                 Darss-Zingst Bodden chain    Key species
-    ## 13                                Daugagriva    Key species
-    ## 14                               Daugavgriva     Functional
+    ## 13                                Daugagriva     Functional
+    ## 14                                Daugagriva    Key species
     ## 15                  East of Usedom Peninsula     Functional
     ## 16                  East of Usedom Peninsula    Key species
     ## 17                                     Finbo     Functional
@@ -561,10 +569,67 @@ indicator_taxa_count %>% print(n=60)
     ## 58                North of Kuhlungsborn city     Functional
     ## 59                North of Kuhlungsborn city    Key species
     ## 60                Northeast of Ruegen Island     Functional
-    ## ..                                       ...            ...
+    ## 61                Northeast of Ruegen Island    Key species
+    ## 62                         Northern Kattegat     Functional
+    ## 63                         Northern Kattegat    Key species
+    ## 64                         Northern Limfjord     Functional
+    ## 65                         Northern Limfjord    Key species
+    ## 66                              Odense Fiord    Key species
+    ## 67                Peene river / Achterwasser     Functional
+    ## 68                Peene river / Achterwasser    Key species
+    ## 69                     Pomeranian Bay, Outer     Functional
+    ## 70                     Pomeranian Bay, Outer    Key species
+    ## 71                            Praestoe Fiord     Functional
+    ## 72                            Praestoe Fiord    Key species
+    ## 73                                     Ranea     Functional
+    ## 74                                     Ranea    Key species
+    ## 75                         Rectangle 23 & 28     Functional
+    ## 76                         Rectangle 23 & 28    Key species
+    ## 77                               Sejeroe Bay     Functional
+    ## 78                               Sejeroe Bay    Key species
+    ## 79                Skive Fiord og Lovns Broad    Key species
+    ## 80  Southern Little Belt and the archipelago     Functional
+    ## 81  Southern Little Belt and the archipelago    Key species
+    ## 82              Stettin Lagoon (German part)     Functional
+    ## 83              Stettin Lagoon (German part)    Key species
+    ## 84                                Strelasund     Functional
+    ## 85                                Strelasund    Key species
+    ## 86                            The Great Belt    Key species
+    ## 87                                 The Sound     Functional
+    ## 88                                 The Sound    Key species
+    ## 89                                   Torhamn     Functional
+    ## 90                                   Torhamn    Key species
+    ## 91                Venoe Bay and Nissum Broad     Functional
+    ## 92                Venoe Bay and Nissum Broad    Key species
+    ## 93                                     Vinoe     Functional
+    ## 94                                     Vinoe    Key species
+    ## 95                 Wismar Bight and Salzhaff     Functional
+    ## 96                 Wismar Bight and Salzhaff    Key species
     ## Variables not shown: unique_taxa_func (int)
 
 ``` r
+## which locations are missing an indicator type
+indicator_taxa_count %>% filter(monitoring_area %in% one_indicator$monitoring_area )
+```
+
+    ## Source: local data frame [4 x 3]
+    ## 
+    ##              monitoring_area core_indicator unique_taxa_func
+    ##                        (chr)          (chr)            (int)
+    ## 1             Hjarbaek Fjord     Functional                1
+    ## 2               Odense Fiord    Key species                1
+    ## 3 Skive Fiord og Lovns Broad    Key species                1
+    ## 4             The Great Belt    Key species                1
+
+``` r
+# 
+#              monitoring_area core_indicator unique_taxa_func
+#                        (chr)          (chr)            (int)
+# 1             Hjarbaek Fjord     Functional                1
+# 2               Odense Fiord    Key species                1
+# 3 Skive Fiord og Lovns Broad    Key species                1
+# 4             The Great Belt    Key species                1
+
 ggplot(indicator_taxa_count) + geom_point(aes(monitoring_area, unique_taxa_func))+
                               facet_wrap(~core_indicator)+
                               theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
@@ -585,10 +650,9 @@ indicator_taxa_count %>%  spread(core_indicator,unique_taxa_func)%>%
     ## 
     ##   Func_na KeySpp_na
     ##     (int)     (int)
-    ## 1       4         2
+    ## 1       3         1
 
-4. BHI score
-------------
+### 3.4 BHI score
 
 1.  Take mean score for each indicator type in each monitoring region.
 2.  Take mean score for each indicator at the HOLAS basin scale.
@@ -779,11 +843,11 @@ basin_mean_score
           bhi_mean_score = bhi_mean_score %>% right_join(., score_list, by=c("Basin_HOLAS","bhi_id","score_type"))
 ```
 
-### 4.1 Plot scores at each level
+#### 3.4.1 Plot scores at each level
 
 *e.g. plot the monitoring stations, basins, BHI regions*
 
-### 4.1.1 Plot monitoring area indicator mean scores
+#### 3.4.1.1 Plot monitoring area indicator mean scores
 
 Scoring alternatives do not seem to lead to strong differences. Clearly changing the subGES from 0 to 0.2 shifts the range of scores.
 
@@ -798,7 +862,8 @@ ggplot(monitoring_indicator_mean) +
   facet_wrap(~score_type)+
   theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"),
-         plot.margin = unit(c(1,1,1,1), "cm")) 
+         plot.margin = unit(c(1,1,1,1), "cm"))  +
+  ggtitle("Monitoring Area Indicator Mean Score")
 ```
 
 ![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-1.png)<!-- -->
@@ -811,12 +876,24 @@ ggplot(monitoring_indicator_mean) +
   guides(colour=FALSE)+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"),
-         plot.margin = unit(c(1,1,1,1), "cm")) 
+         plot.margin = unit(c(1,1,1,1), "cm")) +
+   ggtitle("Monitoring Area Indicator Mean Score by Basin")
 ```
 
 ![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-2.png)<!-- -->
 
-### 4.1.2 Plot the monitoring area mean scores on a map
+``` r
+ggplot(monitoring_indicator_mean)+
+  geom_boxplot(aes(Basin_HOLAS, mean_core_monitoring_score))+
+  facet_wrap(~core_indicator)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+ggtitle("Monitoring Area Indicator Mean Score by Basin")
+```
+
+![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-3.png)<!-- -->
+
+#### 3.4.1.2 Plot the monitoring area mean scores on a map
 
 Each of the alternative score methods plotted on a separate map.
 
@@ -864,7 +941,7 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
       theme(title = element_text(size = 12))
 ```
 
-    ## Warning: Removed 2 rows containing missing values (geom_point).
+    ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-1.png)<!-- -->
 
@@ -883,7 +960,7 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
       theme(title = element_text(size = 12))
 ```
 
-    ## Warning: Removed 2 rows containing missing values (geom_point).
+    ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-2.png)<!-- -->
 
@@ -902,11 +979,11 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
       theme(title = element_text(size = 12))
 ```
 
-    ## Warning: Removed 2 rows containing missing values (geom_point).
+    ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-3.png)<!-- -->
 
-### 4.1.3 Plot Basin Indicator scores
+#### 3.4.1.3 Plot Basin Indicator scores
 
 Plot the mean basin score for each indicator *(e.g. on functional score per basin and one key species score per basin).*
 *Basins are currently alphabetically ordered on x-axis, not ordered geographically.*
@@ -927,7 +1004,7 @@ ggplot(basin_indicator_mean) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20basin%20indicator%20scores-1.png)<!-- -->
 
-### 4.1.4 Plot Basin mean score across indicators
+#### 3.4.1.4 Plot Basin mean score across indicators
 
 The mean of the two indicator scores was taken for each basin.
 
@@ -945,7 +1022,7 @@ ggplot(basin_mean_score) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20basin%20mean%20across%20indicators-1.png)<!-- -->
 
-### 4.1.5 Plot BHI Scores
+#### 3.4.1.5 Plot BHI Scores
 
 There are no scores for Kiel Bay and Gdansk Basin, there for no scores for BHI regions 7,8,18,19. For Kiel Bay, this could be because some monitoring locations should be assigned to Kiel Bay but are not. There is no Polish data which is why there is no scoring for Gdansk Basin.
 **Outcome among score type** does not seem to change at the basin or BHI scale. Should other score methods be considered?
@@ -1068,7 +1145,7 @@ head(shp_score3@data)
 
 ![](ao_prep_files/figure-markdown_github/plot%20BHI%20scores-1.png)<!-- -->
 
-### 4.1.6 Status review and decisions
+#### 3.4.1.6 Status review and decisions
 
 1.  Have Jens assess scoring options for GES status assessment - **Jens says alternative 2**
 
@@ -1077,10 +1154,18 @@ head(shp_score3@data)
 3.  Check assignment of monitoring regions / assessment basins to HOLAS basins.
     **Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data). *Should we gap-fill with adjacent areas?*- **Jens say do not gap fill from adjacent areas, there is not data and populations too local to extrapolate**
 
-### 4.2 Final score objects
+4. AO Status
+------------
+
+**Score is calculated in Section 3.4 **
+
+### 4.1 Final score objects
 
 Prepare object with score by basin.
- - Select score2 - Do not apply score to 33 and 44 for Gulf of Finland (Finnish data only so only use for 32) - Object exported in section 6
+ - **Select score2**
+ - **Do not apply score to 33 and 44 for Gulf of Finland (Finnish data only so only use for 32)**
+ - *Need to NA for additional regions - wait for Jens comments*
+ - **Object exported in section 6**
 
 ``` r
 ##Object with basin scores joinded to BHI id
@@ -1108,7 +1193,7 @@ str(bhi_score)
 ## Export this object in section 6. ~ Line 835
 ```
 
-#### 4.2.1 Plot final score objects
+#### 4.1.1 Plot final score objects
 
 Size the points by number of time series with GES assessment
 
@@ -1512,10 +1597,6 @@ ggplot(plot_slope)+
 
 ![](ao_prep_files/figure-markdown_github/plot%20final%20code%20object-1.png)<!-- -->
 
-#### Trend question??
-
-Multiple by five for future year value? If so, this is part of the calculation in functions.r
-
 6. Export Layers for functions.r
 --------------------------------
 
@@ -1523,15 +1604,15 @@ Status and trend calculations are done in the prep folder because they are done 
 
 Here the status and slope value obejcts will be be saved as csv files in the layers folder and registerd in layers.csv
 
-**Score Object** Created in section 4.2
+**Score Object** Created in section 4.1
 
 ``` r
 ## Data layers for the stock component of AO
 
 ## Status Score
-#write.csv(bhi_score, file.path(dir_layers, 'ao_stock_status_bhi2015.csv'),row.names=FALSE)
+write.csv(bhi_score, file.path(dir_layers, 'ao_stock_status_bhi2015.csv'),row.names=FALSE)
 
 
 ## Slope for Trend
-#write.csv(bhi_slope, file.path(dir_layers, 'ao_stock_slope_bhi2015.csv'),row.names=FALSE)
+write.csv(bhi_slope, file.path(dir_layers, 'ao_stock_slope_bhi2015.csv'),row.names=FALSE)
 ```
