@@ -1410,12 +1410,15 @@ SP = function(scores){
 
 CW = function(layers){
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
-  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep
+  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep, TRA status included
+  ## UPDATE 15June 2016 - Jennifer Griffiths - update CW status and trend calculation for CW
+          ## only have 1 status point for CON, TRA (therefore can not take a CW status as geometric mean with many points over time)
+          ## Calculate geometric mean of 1 status for current status
+          ## calculate arithmetic mean of NUT and CON trend for the CW trend (because have 0, NA, and neg. values in trend, cannot use geometric mean)
+
   ##TODO
       ## add other CON components
-      ## currently use arithmetic mean for status and trend across subcomponents
-          ## global OHI uses geometric mean for status and the calculates the trend on the status
-          ## need to decide and make sure decision is transparent
+
 
   #################################
   #####----------------------######
@@ -1478,6 +1481,8 @@ CW = function(layers){
   #####----------------------######
     ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
 
+    ## 3 indicators will be averaged (arithmetic mean) for status and trend (if trend for more than ICES6)
+
     ## ICES6
     ## read in csv to test
       #cw_con_ices6_status= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
@@ -1522,25 +1527,25 @@ CW = function(layers){
 
 
   #####----------------------######
-  ## CW status
-      ##TODO when have all components
-      ##combine status and/or trend from all components
+  ## CW status & CW Trend
 
-      ## Status is the average of NUT, CON, TRA
-      ## Trend is the average of NUT, CON
+      ## Status is the geometric mean of NUT, CON, TRA status for most recent year
+      ## Trend is the geometric mean of NUT, CON trend - consequences is if one trend value is 0, geometric mean is zero
 
-      ## Average
+      ##
       scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
-               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>% ## include trash when ready
+               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>%
                select(-subcom)%>%
                arrange(dimension,region_id)%>%
                group_by(region_id,dimension) %>%
-               summarise(score = mean(score, na.rm=TRUE))%>% ## If there is an NA, skip over now
+               mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
+                                    mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
                ungroup()%>%
+               distinct()%>%
                mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
 
-      ##here scores based just upon secchi data
+
       # return scores
         scores = scores %>%
                   mutate(goal   = 'CW')
