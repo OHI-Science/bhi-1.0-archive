@@ -104,6 +104,8 @@ Use the hindcast data
 
 ### 3.2 rescaling data
 
+Climate projections are for increased temperature. Greater pressure with higher temperature.
+
 min value = mininium summer SST duing reference period (1960-1990)
 
 max value = maximum SST during the future projection period (2020-2050)
@@ -390,6 +392,6 @@ ggplot(sst_rescale)+
 
 ### 4.10 Write to layers
 
-\`\`\`{r write sst to layers write.csv(sst\_rescale, file.path(dir\_layers, 'cc\_sst\_bhi2015.csv' ), row.names=FALSE)
-
-\`\`\`
+``` r
+write.csv(sst_rescale, file.path(dir_layers, 'cc_sst_bhi2015.csv' ), row.names=FALSE)
+```
