@@ -1,31 +1,36 @@
-"","country","mar_region","BHI"
-"1","Sweden","Norra ostkusten",41
-"2","Sweden","Norra ostkusten",39
-"3","Sweden","Norra ostkusten",37
-"4","Sweden","Sodra ostkusten",35
-"5","Sweden","Sodra ostkusten",29
-"6","Sweden","Sodra ostkusten",26
-"7","Sweden","Syd och vastkusten",14
-"8","Sweden","Syd och vastkusten",11
-"9","Sweden","Syd och vastkusten",5
-"10","Sweden","Syd och vastkusten",1
-"11","Finland","Kaakkois Suomi ",32
-"12","Finland","Uusimaa ",32
-"13","Finland","Aland",36
-"14","Finland","Varsinais Suomi ",36
-"15","Finland","Varsinais Suomi ",38
-"16","Finland","Ostrobothnia",38
-"17","Finland","Ostrobothnia",40
-"18","Finland","Ostrobothnia",42
-"19","Finland","Kainnuu",42
-"20","Denmark","Hovedstaden",2
-"21","Denmark","Hovedstaden",6
-"22","Denmark","Hovedstaden",12
-"23","Denmark","Hovedstaden",15
-"24","Denmark","Sjaelland",3
-"25","Denmark","Sjaelland",7
-"26","Denmark","Sjaelland",9
-"27","Denmark","Sjaelland",12
-"28","Denmark","Midtjylland",2
-"29","Denmark","Midtjylland",3
-"30","Denmark","Syddanmark",3
+country;mar_region;BHI
+Sweden;Norra ostkusten;41
+Sweden;Norra ostkusten;39
+Sweden;Norra ostkusten;37
+Sweden;Sodra ostkusten;35
+Sweden;Sodra ostkusten;29
+Sweden;Sodra ostkusten;26
+Sweden;Syd och vastkusten;14
+Sweden;Syd och vastkusten;11
+Sweden;Syd och vastkusten;5
+Sweden;Syd och vastkusten;1
+Finland;Kaakkois Suomi ;32
+Finland;Uusimaa ;32
+Finland;Aland;36
+Finland;Varsinais Suomi ;36
+Finland;Varsinais Suomi ;38
+Finland;Ostrobothnia;38
+Finland;Ostrobothnia;40
+Finland;Ostrobothnia;42
+Finland;Kainnuu;42
+Denmark;Hovedstaden;2
+Denmark;Hovedstaden;6
+Denmark;Hovedstaden;12
+Denmark;Hovedstaden;15
+Denmark;Sjaelland;3
+Denmark;Sjaelland;7
+Denmark;Sjaelland;9
+Denmark;Sjaelland;12
+Denmark;Midtjylland;2
+Denmark;Midtjylland;3
+Denmark;Syddanmark;3
+Germany;FAO_Germany;4
+Germany;FAO_Germany;8
+Germany;FAO_Germany;10
+Germany;FAO_Germany;13
+Germany;FAO_Germany;16

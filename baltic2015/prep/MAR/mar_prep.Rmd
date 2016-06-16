@@ -91,11 +91,11 @@ __Need to make sure csv files are rewritten if database updated!!__
 ##-------------------------##
 ## Read in data
 
-lookup =  readr::read_csv(file.path(dir_mar, 'mar_data_database/mar_data_lookuptable.csv'))
+lookup =  read.csv(file.path(dir_mar, 'mar_data_database/mar_data_lookuptable.csv'), sep=";")
 head(lookup)
 
-production = readr::read_csv(file.path(dir_mar,'mar_data_database/mar_data_production.csv'))
-# head(production)
+production = read.csv(file.path(dir_mar,'mar_data_database/mar_data_production.csv'))
+ head(production)
 
 fao = read.csv(file.path(dir_mar, 'mar_data_database/all_baltic_fao_cleaned.csv'), sep=";")
 head(fao)
@@ -164,16 +164,66 @@ ggplot(fao3)+
 
 ```
 
-## FAO TO DO
-Assign german rainbow trout to BHI regions (even split)-- amend mar_lookup
-Check all calculations
-re-register layers
+#### 4.2.3 Select Germany rainbow trout timeseries
+```{r fao germany rainbow}
+fao_de = fao3 %>%
+        filter(country=="Germany" & species_ASFIS =="Rainbow trout") %>%
+        mutate(country= as.character(country),
+               species_ASFIS = as.character(species_ASFIS),
+               aquaculture_area_FAO_major_fishing_area = as.character(aquaculture_area_FAO_major_fishing_area),
+               environment = as.character(environment),
+               unit = as.character(unit))
+str(fao_de)
+
+```
 
 
+### 4.3 Combined country production data and FAO data for Germany
+```{r combine production with fao_de }
+## select only production columns (no BHI_ID columns)
+production1 = production %>%
+              select(country:Sust_coeff)
+
+colnames(production1)
+
+## rename fao_de columns
+fao_de = fao_de %>%
+         select(-species_ASFIS,-aquaculture_area_FAO_major_fishing_area,-environment,-data_flag)%>%
+         mutate(mar_region = "FAO_Germany",
+                unit = "ton",
+                latin_name = "Oncorhynchus mykiss",
+                common_name = "Rainbow Trout",
+                ISSCAAP_FAO = 23,
+                TAXOCODE_FAO = 1230100909,
+                X3A_CODE_FAO = "TRR",
+                country_spp_code = NA,
+                Sust_coeff = 0.53)%>%
+        select(country, mar_region,year, production,unit,latin_name,common_name,
+               ISSCAAP_FAO, TAXOCODE_FAO,X3A_CODE_FAO,country_spp_code,Sust_coeff )
+str(fao_de)
 
 
+### bind_rows of production and fao_de
 
-### Use mar_lookup to allocate production among BHI regions
+production2 = bind_rows(production1, fao_de)
+
+
+```
+
+#### 4.3.1 Plot combined data by country
+```{r plot combined data}
+ggplot(production2)+
+  geom_point(aes(year,production, colour=mar_region))+
+  geom_line(aes(year,production, colour=mar_region))+
+  facet_wrap(~country, scales="free_y")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Rainbow Trout Production by Country")
+
+```
+
+
+### 4.4 Use mar_lookup to allocate production among BHI regions
 Allocate data equally from mar_region to all associated BHI region.  
 Do not have any additional information that would allow us to make this allocation based on known production distribution.
 
@@ -184,11 +234,11 @@ lookup = lookup%>%
          group_by(mar_region)%>%
          mutate(rgn_factor = round((1/n_distinct(BHI)),2))%>%
          ungroup()
-
+lookup
 
 ## join lookup to production
 
-prod_allot = full_join(lookup, production, by=c("country","mar_region"))%>%
+prod_allot = full_join(lookup, production2, by=c("country","mar_region"))%>%
             select(mar_region,BHI, year, production, rgn_factor,common_name,ISSCAAP_FAO,Sust_coeff)%>%
             mutate(prod_allot = production*rgn_factor)%>%  #get production fraction for each BHI region
             select(-mar_region)%>%
@@ -198,19 +248,27 @@ prod_allot = full_join(lookup, production, by=c("country","mar_region"))%>%
 
 ```
 
-### Plot production per BHI region
+#### 4.4.1 Plot production per BHI region
 
 ```{r plot production by bhi region, echo=TRUE}
-ggplot(prod_allot)+geom_point(aes(year, prod_tot)) +
-  facet_wrap(~BHI, scales="free_y")
+ggplot(prod_allot)+
+  geom_line(aes(year, prod_tot))+
+  geom_point(aes(year, prod_tot), size=0.75)+
+  facet_wrap(~BHI, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Production (tons) by BHI region")
 
 ```
 
 
-### Create objects to save to put in layers, save a csv
+
+### 4.5 Create objects to save to put in layers, save a csv
 3 layers: mar_harvest_tonnes, mar_harvest_species,mar_sustainability_score  
 
-Regions with no data - BHI regions not associated with Sweden, Finland, and Denmark have no data.  This is because there is no production.  These regions should ultimately get a value of zero for their score to indicate there is no production but that the indicator is applicable.  
+Regions with no data - BHI regions not associated with Sweden, Finland, Denmark, Germany have no data.  This is because there is no production.  
+
+The regions will be assigned an NA. Therefore, MAR will not contribute to the overall FP goal score. A counter argument could be made that some of these regions have the capacity for production, therefore they should receive a score of zero when having no production.
 
 ```{r output files for layers, echo=TRUE}
 ## mar_harvest_tonnes
@@ -219,8 +277,8 @@ mar_harvest_tonnes= prod_allot %>% select(BHI,ISSCAAP_FAO,year,prod_tot)%>%
 head(mar_harvest_tonnes)
 is.na(mar_harvest_tonnes$tonnes)
 
-readr::write_csv(mar_harvest_tonnes, 
-                 file.path(dir_layers, "mar_harvest_tonnes_bhi2015.csv"))
+write.csv(mar_harvest_tonnes, 
+                 file.path(dir_layers, "mar_harvest_tonnes_bhi2015.csv"),row.names=FALSE)
 
 
 
@@ -230,8 +288,8 @@ mar_harvest_species= prod_allot %>%select(ISSCAAP_FAO,common_name)%>%
                     mutate(common_name=as.character(common_name))%>%
                     dplyr::rename(species_code=ISSCAAP_FAO, species=common_name)
 
-readr::write_csv(mar_harvest_species, 
-                 file.path(dir_layers, "mar_harvest_species_bhi2015.csv"))
+write.csv(mar_harvest_species, 
+                 file.path(dir_layers, "mar_harvest_species_bhi2015.csv"),row.names=FALSE)
 
 
 
@@ -241,13 +299,14 @@ mar_sustainability_score = prod_allot %>% select(BHI,common_name,Sust_coeff)%>%
                           distinct(.)%>%
                           dplyr::rename(rgn_id=BHI,species=common_name, sust_coeff=Sust_coeff)
 
-readr::write_csv(mar_sustainability_score,
-                 file.path(dir_layers, "mar_sustainability_score_bhi2015.csv"))
+write.csv(mar_sustainability_score,
+                 file.path(dir_layers, "mar_sustainability_score_bhi2015.csv"),row.names=FALSE)
 
 ```
 
 
 ### Population density data
+
 MAR code from OHI uses production/per capita  
 This code creates a csv of the population density data (2005) from 25km inland buffer.  
 Code in functions.r is where the decision is made whether or not to use it.
@@ -346,8 +405,8 @@ Calculate MAR status and trend to get feedback.  Code here is copied from functi
                 mutate(status = pmin(1,sust_tonnes_sum/ref_val))%>% #calculate status per year
                 select(rgn_id, year, status)%>%
                 full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
-                arrange(rgn_id,year)%>%
-                mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
+                arrange(rgn_id,year) ##%>%  ## comment out replace NA with zero, keep as NA for now
+               ## mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
 
   #Calculate score
   mar_status = mar_status_score%>%
@@ -413,13 +472,11 @@ Each years status is based on a 4 year running mean of production and a referenc
 ```{r plot status time series}
 # Plot MAR status over time
 
-ggplot(mar_status_score) + 
+ggplot(filter(mar_status_score, !is.na(status))) + 
   geom_point(aes(year,status*100))+
   facet_wrap(~rgn_id)+
-  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),
-        strip.background = 
-          element_rect(colour = "black", fill="white", size = 1))+
-  ggtitle("MAR Status 5 Years by BHI region")
+  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("MAR Status 5 Years by BHI region (exclude regions with NA status")
 
 ```
 
@@ -460,7 +517,6 @@ BHIshp2@data = BHIshp2@data %>% full_join(.,mar_status_colors, by=c("BHI_ID"= "r
 head(BHIshp2@data)
 
 ## PLOT
-
 par(mfrow=c(1,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
   
 plot(BHIshp2, col=BHIshp2@data$cols, main = "score 1")
