@@ -192,16 +192,17 @@ FIS = function(layers, status_year){
 
 
 MAR = function(layers){
-  #updated by Jennifer Griffiths 25Feb2016
-  #updated by Julie 26Feb2016
-  #updated by Jennifer Griffiths 29Feb2016 - make sure mar_status_score limited to status_years, change layer names
-  #updated by Jennifer Griffiths 29March2016 - added code for temporal reference point but this is commented out until final decision made
-  #updated by Jennifer Griffiths 05April2016 - made reference point temporal (removed spatial), made data unit tons of production, not per capita
+  ##updated by Jennifer Griffiths 25Feb2016
+  ##updated by Julie 26Feb2016
+  ##updated by Jennifer Griffiths 29Feb2016 - make sure mar_status_score limited to status_years, change layer names
+  ##updated by Jennifer Griffiths 29March2016 - added code for temporal reference point but this is commented out until final decision made
+  ##updated by Jennifer Griffiths 05April2016 - made reference point temporal (removed spatial), made data unit tons of production, not per capita
+  ##updated by Jennifer Griffiths 16June2016 - change code so areas with no data are NA for status (not zero)
 
-  #layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score
+  ##layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score
 
 
-  # select layers for MAR
+  ## select layers for MAR
   harvest_tonnes = SelectLayersData(layers, layers='mar_harvest_tonnes', narrow=T) %>%
     select(rgn_id = id_num,
            species_code = category,
@@ -226,7 +227,7 @@ MAR = function(layers){
   # sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
 
 
-  # SETTING CONSTANTS
+  ## SETTING CONSTANTS
   rm_year = 4              #number of years to use when calculating the running mean smoother
   regr_length =5          # number of years to use for regression for trend.  Use this to replace reading in the csv file "mar_trend_years_gl2014"
   future_year = 5          # the year at which we want the likely future status
@@ -235,16 +236,16 @@ MAR = function(layers){
   lag_win = 5             # if use a 5 year moving window reference point (instead of spatial, use this lag)
 
   #####----------------------######
-  #harvest_tonnes has years without data but those years not present with NAs
-  #spread and gather data again which will result in all years present for all regions
+  ##harvest_tonnes has years without data but those years not present with NAs
+  ##spread and gather data again which will result in all years present for all regions
   harvest_tonnes=harvest_tonnes%>%spread(key=year,value=tonnes)%>%
     gather(year, tonnes, -rgn_id,-species_code)%>%
     mutate(year=as.numeric(year))%>%  #make sure year is not a character
     arrange(rgn_id,year)
 
-  # Merge harvest (production) data with sustainability score
-  #calculate 4 year running mean
-  #this code updated by Lena to use dplyr functions not reshape2
+  ## Merge harvest (production) data with sustainability score
+  ##calculate 4 year running mean
+  ##this code updated by Lena to use dplyr functions not reshape2
   temp = left_join(harvest_tonnes, harvest_species, by = 'species_code') %>%
     left_join(., sustainability_score, by = c('rgn_id', 'species')) %>%
     arrange(rgn_id, species) %>%
@@ -252,7 +253,7 @@ MAR = function(layers){
     mutate(rm = zoo::rollapply(data=tonnes, width=rm_year,FUN= mean, na.rm = TRUE, partial=TRUE),    #rm = running mean  #rm_year defined with constants (4 is value from original code)     # better done with zoo::rollmean? how to treat Na with that?
            sust_tonnes = rm * sust_coeff)
 
-  # now calculate total sust_tonnes per year  #only matters if multiple species
+  ## now calculate total sust_tonnes per year  #only matters if multiple species
   ## remove code that made the data unit per capita
 
   temp2 = temp %>%    # temp2 is ry in the original version
@@ -281,10 +282,13 @@ MAR = function(layers){
                 mutate(status = pmin(1,sust_tonnes_sum/ref_val))%>% #calculate status per year
                 select(rgn_id, year, status)%>%
                 full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
-                arrange(rgn_id,year)%>%
-                mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
+                arrange(rgn_id,year)
 
-  #Calculate score
+                ## use code chunk below if want regions with no data to have a score of 0, now have score of NA
+                #%>%
+                ##mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
+
+  ##Calculate score
   mar_status = mar_status_score%>%
     group_by(rgn_id) %>%
     summarise_each(funs(last), rgn_id,status) %>% #select last year of status for the score
