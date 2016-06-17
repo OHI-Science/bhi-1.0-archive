@@ -206,11 +206,9 @@ mpa_area_per_rgn = mpa_bhi_data %>%
                                  country = Country,
                                  mpa_area = AreaTot_Ha,
                                  date_est = Date_Est) %>%
-                   # group_by(BHI_ID) %>%
-                   # mutate(mpa_area_km2 = mpa_area * 0.01) %>%
-                   # ungroup %>%
-                   # dplyr::select(-mpa_area) %>%
-                   full_join(EEZ, 
+                    mutate(mpa_area_km2 = mpa_area * 0.01) %>%
+                    dplyr::select(-mpa_area) %>%
+                    full_join(EEZ, 
                              by = "BHI_ID")
 
 write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv')) 
@@ -324,11 +322,19 @@ Note: status calc: use all plans, take average. Add a column to track how many p
 
 ``` {r status calculation, ECHO = FALSE}
 
+mgmt_weight = data.frame( status_csv = c(NA, "Designated", "Designated_and_partly_managed", "Designated_and_managed"),
+                          weight = c(0.3, 0.3, 0.6, 1) )
 
+mpa_mgmt_with_wt = full_join(mpa_mgmt_new, mgmt_weight,
+                             by = "status_csv") 
 
-
-
-
+# TO BE CONTINUED... NOT DONE YET
+r.status = mpa_mgmt_with_wt %>%
+         mutate(ref_point = 0.1 * eez_area_km2,
+                wt_mpa_area = weight * mpa_area_km2) %>%
+         group_by(country) %>% 
+         mutate(status = sum(wt_mpa_area) / ref_point *100)
+              
 
 
 ```
