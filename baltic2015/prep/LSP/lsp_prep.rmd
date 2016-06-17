@@ -285,7 +285,7 @@ mgmt_weight = data.frame( mgmt_status = c("Designated", "Designated_and_partly_m
 mpa_mgmt_with_wt = full_join( mgmt_weight, mpa_mgmt, 
                               by = 'mgmt_status') 
 
-status_by_country =       mpa_mgmt_with_wt %>%
+status_by_country = mpa_mgmt_with_wt %>%
                  select(BHI_ID, country, eez_area_km2, mpa_area_km2, weight) %>%
                  filter(!duplicated(BHI_ID)) %>%
                  group_by(country) %>%
@@ -293,7 +293,7 @@ status_by_country =       mpa_mgmt_with_wt %>%
                            sum_wt_mpa_area = sum(mpa_area_km2 * weight)) %>%
                  ungroup %>%
                  mutate(ref = 0.1 * total_eez_km2, 
-                        status = sum_wt_mpa_area / ref *100) %>%
+                        status = round(sum_wt_mpa_area / ref *100, 1)) %>%
                  select(country, 
                         status)
 
