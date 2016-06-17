@@ -225,11 +225,13 @@ unique_mpa_shape = base::unique(mpa_name_shape) ## 163 count
 
 ## Status Calculation
 
-There are four types of management status and their corresponding weight: Desginated (0.3), Managed (0.6), Indevelopment (0.6), and Implemented (1).  
+There are three types of management status and their corresponding weight: No Plan (0.3), Indevelopment (0.6), and Implemented (1).  
 
-For some MPAs, there are multiple plans in different stages of implementation. For those MPAs, the weights have been averaged. 
+For some MPAs, there are multiple plans in different stages of implementation. For those MPAs, the weights have been averaged.
 
-``` {r status calculation, echo = FALSE}
+While combining MPA management data with MPA area data from the shapefile, 16 MPAs from the shapefile did not have a match from the management dataset. For those MPAs, the weight has been assigned the same weight as No Plan (0.3). 
+
+``` {r combine management status with mpa area and establishment info, echo = FALSE}
 
 mgmt_status_old = read_csv(file.path(dir_prep, 'mpa_data_database/MPA_management_plans_20160415.csv')) %>%
               dplyr::select(name_csv = helcom_mpa,
@@ -238,7 +240,7 @@ mgmt_status_old = read_csv(file.path(dir_prep, 'mpa_data_database/MPA_management
                             mgmt_status = management_plan_status, 
                             implem_date = implementation_date_of_current_management_plan)
 
-## to check the number of unique MPAs
+## to check the number of unique MPAs from the 214 total observations
 
 # library(base)
 # mpa_name = dplyr::select(mgmt_status, name) 
@@ -248,14 +250,14 @@ mgmt_status_old = read_csv(file.path(dir_prep, 'mpa_data_database/MPA_management
 
 mpa_mgmt_old = right_join(mgmt_status_old, mpa_area_per_rgn,  # select only MPAs with BHI_ID
                       by = c("BSPA_ID")) %>%
-               arrange(mgmt_status)
-           # mutate(mgmt_status = ifelse(is.na(mgmt_status), as.character(mpa_status), mgmt_status),
-           #        date_est = str_sub(date_est, start = -4)) %>% # only select the year of establishment
-           # dplyr::select(-mpa_status)
+               arrange(mgmt_status) %>%
+               mutate(mgmt_status = ifelse(is.na(mgmt_status), as.character(mpa_status), mgmt_status),
+                      date_est = str_sub(date_est, start = -4)) %>% # only select the year of establishment
+               dplyr::select(-mpa_status)
 
 # count number of MPAs in shape file with no matches in csv file. 
 
-num_mismatch = dplyr::count(mpa_mgmt_old, !mgmt_status== "NA") # 30 no match
+num_mismatch = dplyr::count(mpa_mgmt_old, !mgmt_status== "NA") # 30 no match out of 305 observations total. 
 
 # save as csv
 
@@ -263,12 +265,13 @@ write_csv(mpa_mgmt_old, file.path(dir_lsp, 'mpa_mgmt_status_old_csv.csv'))
 
 # assign weight to management status
 
-mgmt_weight = data.frame( mgmt_status = c("Designated", "In development", "Implemented"),
+mgmt_weight = data.frame( mgmt_status = c("No Plan", "In development", "Implemented"),
                           weight = c(0.3, 0.6, 1) )
-
-mpa_mgmt = full_join(mpa_mgmt, mgmt_weight) %>%
-           group_by(name) %>%
-           mutate(ave_weight = mean(weight))
+  
+mpa_mgmt_with_wt = full_join(mpa_mgmt_old, mgmt_weight) %>%
+           group_by(name) %>% 
+           mutate(ave_weight = mean(weight)) %>%
+  
 
 
 # TODO: save file to layers and register
@@ -293,30 +296,39 @@ mgmt_status_new = read.csv(file.path(dir_prep, "mpa_data_database/MPA_status_dow
               mutate(status = str_replace_all(Status, " ", "_")) %>%
               dplyr::select(name_csv = HELCOM_MPA_name,
                             BSPA_ID = ID,
-                            status_csv = status) 
+                            status_csv = status) %>%
+              dplyr::filter(!name_csv == "TEST SITE")
 
-# count number of unique mpa names in new mpa mgmt status csv 
+# count number of unique mpa names in new mpa mgmt status csv with a total of 175 observations
 
 mpa_name = dplyr::select(mgmt_status_new, name_csv)
-unique_mpa_csv_new = base::unique(mpa_name) ## total of 175 names that are unique, 175 rows. 
+unique_mpa_csv_new = base::unique(mpa_name) ## total of 175 names that are unique. Including one "TEST SITE". 
 
 # combine mpa_status with shape file data
 
-mpa_mgmt_new = right_join(mgmt_status_new, mpa_area_per_rgn,  # select only MPAs with BHI_ID
-                          by = "BSPA_ID")
-
-## got this Error: data frame column with incompatible number of rows (214), expecting : 226
-## could not join the two files. Could be because 
-
+mpa_mgmt_new = right_join(mgmt_status_new, mpa_area_per_rgn,  
+                          by = "BSPA_ID") 
+                           
            # mutate(mgmt_status = ifelse(is.na(mgmt_status), as.character(mpa_status), mgmt_status),
            #        date_est = str_sub(date_est, start = -4)) %>% # only select the year of establishment
            # dplyr::select(-mpa_status)
 
+write_csv(mpa_mgmt_new, file.path(dir_lsp, 'mpa_mgmt_status_new_csv.csv'))
 
 # count number of MPAs in shape file with no matches in csv file. 
-num_mismatch_new = dplyr::count(mpa_mgmt_new, !mgmt_status== "NA") # 30 no match
+num_mismatch_new = dplyr::count(mpa_mgmt_new, !status_csv== "NA") # 13 rows no match
 
 ````
 
-Note: status calc: use all plans, take ave. add a col to track how many plans are used for each MPA. 
+Note: status calc: use all plans, take average. Add a column to track how many plans are used for each MPA. 
 
+``` {r status calculation, ECHO = FALSE}
+
+
+
+
+
+
+
+
+```
