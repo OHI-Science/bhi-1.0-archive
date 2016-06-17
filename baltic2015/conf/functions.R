@@ -192,16 +192,17 @@ FIS = function(layers, status_year){
 
 
 MAR = function(layers){
-  #updated by Jennifer Griffiths 25Feb2016
-  #updated by Julie 26Feb2016
-  #updated by Jennifer Griffiths 29Feb2016 - make sure mar_status_score limited to status_years, change layer names
-  #updated by Jennifer Griffiths 29March2016 - added code for temporal reference point but this is commented out until final decision made
-  #updated by Jennifer Griffiths 05April2016 - made reference point temporal (removed spatial), made data unit tons of production, not per capita
+  ##updated by Jennifer Griffiths 25Feb2016
+  ##updated by Julie 26Feb2016
+  ##updated by Jennifer Griffiths 29Feb2016 - make sure mar_status_score limited to status_years, change layer names
+  ##updated by Jennifer Griffiths 29March2016 - added code for temporal reference point but this is commented out until final decision made
+  ##updated by Jennifer Griffiths 05April2016 - made reference point temporal (removed spatial), made data unit tons of production, not per capita
+  ##updated by Jennifer Griffiths 16June2016 - change code so areas with no data are NA for status (not zero)
 
-  #layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score
+  ##layers used: mar_harvest_tonnes, mar_harvest_species, mar_sustainability_score
 
 
-  # select layers for MAR
+  ## select layers for MAR
   harvest_tonnes = SelectLayersData(layers, layers='mar_harvest_tonnes', narrow=T) %>%
     select(rgn_id = id_num,
            species_code = category,
@@ -226,7 +227,7 @@ MAR = function(layers){
   # sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
 
 
-  # SETTING CONSTANTS
+  ## SETTING CONSTANTS
   rm_year = 4              #number of years to use when calculating the running mean smoother
   regr_length =5          # number of years to use for regression for trend.  Use this to replace reading in the csv file "mar_trend_years_gl2014"
   future_year = 5          # the year at which we want the likely future status
@@ -235,16 +236,16 @@ MAR = function(layers){
   lag_win = 5             # if use a 5 year moving window reference point (instead of spatial, use this lag)
 
   #####----------------------######
-  #harvest_tonnes has years without data but those years not present with NAs
-  #spread and gather data again which will result in all years present for all regions
+  ##harvest_tonnes has years without data but those years not present with NAs
+  ##spread and gather data again which will result in all years present for all regions
   harvest_tonnes=harvest_tonnes%>%spread(key=year,value=tonnes)%>%
     gather(year, tonnes, -rgn_id,-species_code)%>%
     mutate(year=as.numeric(year))%>%  #make sure year is not a character
     arrange(rgn_id,year)
 
-  # Merge harvest (production) data with sustainability score
-  #calculate 4 year running mean
-  #this code updated by Lena to use dplyr functions not reshape2
+  ## Merge harvest (production) data with sustainability score
+  ##calculate 4 year running mean
+  ##this code updated by Lena to use dplyr functions not reshape2
   temp = left_join(harvest_tonnes, harvest_species, by = 'species_code') %>%
     left_join(., sustainability_score, by = c('rgn_id', 'species')) %>%
     arrange(rgn_id, species) %>%
@@ -252,7 +253,7 @@ MAR = function(layers){
     mutate(rm = zoo::rollapply(data=tonnes, width=rm_year,FUN= mean, na.rm = TRUE, partial=TRUE),    #rm = running mean  #rm_year defined with constants (4 is value from original code)     # better done with zoo::rollmean? how to treat Na with that?
            sust_tonnes = rm * sust_coeff)
 
-  # now calculate total sust_tonnes per year  #only matters if multiple species
+  ## now calculate total sust_tonnes per year  #only matters if multiple species
   ## remove code that made the data unit per capita
 
   temp2 = temp %>%    # temp2 is ry in the original version
@@ -281,10 +282,13 @@ MAR = function(layers){
                 mutate(status = pmin(1,sust_tonnes_sum/ref_val))%>% #calculate status per year
                 select(rgn_id, year, status)%>%
                 full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
-                arrange(rgn_id,year)%>%
-                mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
+                arrange(rgn_id,year)
 
-  #Calculate score
+                ## use code chunk below if want regions with no data to have a score of 0, now have score of NA
+                #%>%
+                ##mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
+
+  ##Calculate score
   mar_status = mar_status_score%>%
     group_by(rgn_id) %>%
     summarise_each(funs(last), rgn_id,status) %>% #select last year of status for the score
@@ -368,11 +372,8 @@ AO = function(layers){
 
       ## status value if NA for status
         ## NA is because there has been no data, not because not applicable
+        ## decision is to leave as NA (eg not replace with 0)
 
-        ## status score NA changed to zero
-
-      ao_stock_status = ao_stock_status %>%
-                        mutate(score = replace(score, is.na(score),0))
 
       ## trend calc
         future_year = 5  ## number of years in the future for trend
@@ -1410,12 +1411,15 @@ SP = function(scores){
 
 CW = function(layers){
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
-  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep
+  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep, TRA status included
+  ## UPDATE 15June 2016 - Jennifer Griffiths - update CW status and trend calculation for CW
+          ## only have 1 status point for CON, TRA (therefore can not take a CW status as geometric mean with many points over time)
+          ## Calculate geometric mean of 1 status for current status
+          ## calculate arithmetic mean of NUT and CON trend for the CW trend (because have 0, NA, and neg. values in trend, cannot use geometric mean)
+
   ##TODO
       ## add other CON components
-      ## currently use arithmetic mean for status and trend across subcomponents
-          ## global OHI uses geometric mean for status and the calculates the trend on the status
-          ## need to decide and make sure decision is transparent
+
 
   #################################
   #####----------------------######
@@ -1478,6 +1482,8 @@ CW = function(layers){
   #####----------------------######
     ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
 
+    ## 3 indicators will be averaged (arithmetic mean) for status and trend (if trend for more than ICES6)
+
     ## ICES6
     ## read in csv to test
       #cw_con_ices6_status= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
@@ -1522,25 +1528,25 @@ CW = function(layers){
 
 
   #####----------------------######
-  ## CW status
-      ##TODO when have all components
-      ##combine status and/or trend from all components
+  ## CW status & CW Trend
 
-      ## Status is the average of NUT, CON, TRA
-      ## Trend is the average of NUT, CON
+      ## Status is the geometric mean of NUT, CON, TRA status for most recent year
+      ## Trend is the geometric mean of NUT, CON trend - consequences is if one trend value is 0, geometric mean is zero
 
-      ## Average
+      ##
       scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
-               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>% ## include trash when ready
+               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>%
                select(-subcom)%>%
                arrange(dimension,region_id)%>%
                group_by(region_id,dimension) %>%
-               summarise(score = mean(score, na.rm=TRUE))%>% ## If there is an NA, skip over now
+               mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
+                                    mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
                ungroup()%>%
+               distinct()%>%
                mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
 
-      ##here scores based just upon secchi data
+
       # return scores
         scores = scores %>%
                   mutate(goal   = 'CW')
@@ -1549,54 +1555,54 @@ CW = function(layers){
 }
 
 
-# HAB = function(layers){
-#
-#   # get layer data
-#   d =
-#     join_all(
-#       list(
-#
-#         layers$data[['hab_health']] %>%
-#           select(rgn_id, habitat, health),
-#
-#         layers$data[['hab_trend']] %>%
-#           select(rgn_id, habitat, trend),
-#
-#         layers$data[['hab_extent']] %>%
-#           select(rgn_id, habitat, extent=km2)),
-#
-#       by=c('rgn_id','habitat'), type='full') %>%
-#     select(rgn_id, habitat, extent, health, trend)
-#
-#   # limit to habitats used for HAB, create extent presence as weight
-#   d = d %>%
-#     filter(habitat %in% c('coral','mangrove','saltmarsh','seaice_edge','seagrass','soft_bottom')) %>%
-#     mutate(
-#       w  = ifelse(!is.na(extent) & extent > 0, 1, NA)) %>%
-#     filter(!is.na(w)) %>%
-#     group_by(rgn_id)
-#
-#   # calculate scores
-#   scores_HAB = rbind_list(
-#     # status
-#     d %>%
-#       filter(!is.na(health)) %>%
-#       summarize(
-#         score = pmin(1, sum(w * health) / sum(w)) * 100,
-#         dimension = 'status'),
-#     # trend
-#     d %>%
-#       filter(!is.na(trend)) %>%
-#       summarize(
-#         score =  sum(w * trend) / sum(w),
-#         dimension = 'trend')) %>%
-#     mutate(
-#       goal = 'HAB') %>%
-#     select(region_id=rgn_id, goal, dimension, score)
-#
-#   # return scores
-#   return(scores_HAB)
-# }
+HAB = function(layers){
+
+  # get layer data
+  d =
+    join_all(
+      list(
+
+        layers$data[['hab_health']] %>%
+          select(rgn_id, habitat, health),
+
+        layers$data[['hab_trend']] %>%
+          select(rgn_id, habitat, trend),
+
+        layers$data[['hab_extent']] %>%
+          select(rgn_id, habitat, extent=km2)),
+
+      by=c('rgn_id','habitat'), type='full') %>%
+    select(rgn_id, habitat, extent, health, trend)
+
+  # limit to habitats used for HAB, create extent presence as weight
+  d = d %>%
+    filter(habitat %in% c('coral','mangrove','saltmarsh','seaice_edge','seagrass','soft_bottom')) %>%
+    mutate(
+      w  = ifelse(!is.na(extent) & extent > 0, 1, NA)) %>%
+    filter(!is.na(w)) %>%
+    group_by(rgn_id)
+
+  # calculate scores
+  scores_HAB = rbind_list(
+    # status
+    d %>%
+      filter(!is.na(health)) %>%
+      summarize(
+        score = pmin(1, sum(w * health) / sum(w)) * 100,
+        dimension = 'status'),
+    # trend
+    d %>%
+      filter(!is.na(trend)) %>%
+      summarize(
+        score =  sum(w * trend) / sum(w),
+        dimension = 'trend')) %>%
+    mutate(
+      goal = 'HAB') %>%
+    select(region_id=rgn_id, goal, dimension, score)
+
+  # return scores
+  return(scores_HAB)
+}
 
 
 SPP = function(layers){

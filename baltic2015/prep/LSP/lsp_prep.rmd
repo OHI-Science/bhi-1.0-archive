@@ -252,8 +252,8 @@ mpa_mgmt_old = right_join(mgmt_status_old, mpa_area_per_rgn,  # select only MPAs
            #        date_est = str_sub(date_est, start = -4)) %>% # only select the year of establishment
            # dplyr::select(-mpa_status)
 
-# count the number of "no matchs" from mgmt_status_old to mpa)area_per_rgn
-  
+# count number of MPAs in shape file with no matches in csv file. 
+
 num_mismatch = dplyr::count(mpa_mgmt_old, !mgmt_status== "NA") # 30 no match
   
 # assign weight to management status
@@ -300,7 +300,7 @@ mpa_mgmt_new = right_join(mgmt_status, mpa_area_per_rgn,  # select only MPAs wit
 
 write_csv(mpa_mgmt_new, file.path(dir_lsp, 'mpa_mgmt_status_new_csv.csv'))
 
-
+# count number of MPAs in shape file with no matches in csv file. 
 num_mismatch_new = dplyr::count(mpa_mgmt_new, !mgmt_status== "NA") # 30 no match
 
 ````
