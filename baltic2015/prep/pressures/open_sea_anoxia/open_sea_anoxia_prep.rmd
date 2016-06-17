@@ -113,6 +113,7 @@ anox_file_list = list.files(path= file.path(dir_shp, 'anoxia'),
 
 for (anox_file in anox_file_list) {
    
+  # anox_file = 'CodRVmap_1906.dbf'
   anox = foreign::read.dbf(file.path(dir_shp, 'anoxia', anox_file))  %>%
   dplyr::select(x_utm, y_utm, O2_bottom)
   # head(anox) 
@@ -121,14 +122,14 @@ for (anox_file in anox_file_list) {
   bal_res = res(bathymetry)
 
   t <- raster::rasterFromXYZ( anox, res = bal_res, crs = bal_proj ) 
-  # class(t)
+  # class(t) 
   # plot(t)
   
+  dir_temp = make_path('baltic2015/prep/pressures/open_sea_anoxia')
   O2_bottom = raster(t, layer = 'O2_bottom')
-  writeRaster(O2_bottom, file_path_sans_ext(anox_file))
+  writeRaster(O2_bottom, file.path(dir_temp, file_path_sans_ext(anox_file)))
   # plot(O2_bottom)
   
-
 }
 
 
@@ -183,3 +184,5 @@ new = resample(O2_below_0, halocline_70, "bilinear" )
 ## plot data...
 
 ```
+
+UTM 34 North. 
