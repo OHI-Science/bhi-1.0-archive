@@ -1,0 +1,241 @@
+latin_name;Kattegat;Great Belt;Little Belt;Kiel Bay;Bay of Mecklenburg;The Sound;Arkona Basin;Bornholm Basin;Western Gotland Basin;Eastern Gotland Basin;Gulf of Gdansk;Vistula Lagoon;Curonian Lagoon;Gulf of Riga;Northern Baltic Proper;Gulf of Finland;Aland Sea;Archipelago Sea;Bothnian Sea;The Quark;Bothnian Bay;common_name
+Myxine glutinosa;R;;;;;;;;;;;;;;;;;;;;;Hagfish
+Lampetra fluviatilis;X;T;T;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;River lamprey
+Petromyzon marinus;X;T;T;T;T;X;T;X;T;T;T;T;T;T;;T;T;T;T;T;;Sea lamprey
+Lamna nasus;T;T;T;T;;T;;;;;;;;;;;;T;;;;Porbeagle
+Cetorhinus maximus;T;T;T;T;T;T;T;T;;;;;;;T;;;;;;;Basking shark
+Alopias vulpinus;T;T;;;;T;;;;;;;;;;;;;;;;Thresher shark
+Galeus melastomus;T;;;;;T;;;;;;;;;;;;;;;;Black-mouthed dogfish
+Scyliorhinus canicula;R;T;T;;;T;T;;;;;;;;;;;;;;;Lesser spotted dogfish
+Scyliorhinus stellaris;T;;;;;;;;;;;;;;;;;;;;;Nursehound
+Galeorhinus galeus;X;T;T;;;T;T;;;;;;;;;;;;;;;Tope
+Mustelus asterias;T;;;;;;;;;;;;;;;;;;;;;Starry smooth hound
+Mustelus mustelus;;;T;;;;;;;;;;;;;;;;;;;Smooth hound
+Prionace glauca;T;;T;T;T;T;;;;;;;;;;;;;;;;Blue shark
+Etmopterus spinax;T;;;;;;;;;;;;;;;;;;;;;Velvet belly
+Somniosus microcephalus;T;T;;;;;;;;;;;;;;;;;;;;Greenland shark
+Oxynotus centrina;T;;;;;;;;;;;;;;;;;;;;;Kite-fin shark
+Squalus acanthias;R;T;T;T;T;T;T;T;T;T;;;;;;;;T;T;;;Spurdog
+Pristis pectinata*;;;;;;;;;;;T;;;;;;;;;;;Smalltooth sawfish
+Squatina squatina;T;;;;;;;;;;;;;;;;;;;;;Monkfish
+Torpedo marmorata;T;;;;;;;;;;;;;;;;;;;;;Marbled electric ray
+Torpedo nobiliana;T;;;;;;;;;;;;;;;;;;;;;Electric ray
+Amblyraja radiata;R;T;T;T;T;R;T;T;;;T;;;;;;;;;;;Starry ray
+Dipturus batis;T;T;;;;T;;;;;;;;;;;;;;;;Skate
+Dipturus nidarosiensis;T;;;;;;;;;;;;;;;;;;;;;Norwegian skate
+Leucoraja fullonica;T;;;;;;;;;;;;;;;;;;;;;Shagreen ray
+Leucoraja naevus;T;T;;;;;;;;;;;;;;;;;;;;Cuckoo ray
+Raja clavata;R;T;T;T;;T;T;T;;;;;;;;;;;;;;Thornback ray
+Dasyatis pastinaca;T;T;;T;;T;T;;;;;;;;;;;;;;;Stingray
+Myliobatis aquila;T;;;;;T;;;;;;;;;;;;;;;;Eagle ray
+Chimaera monstrosa;T;;;;;T;;;;;;;;;;;;;;;;Rabbit-fish
+Acipenser baeri*;;;T;;;;;T;T;;T;T;;T;T;T;;T;T;T;T;Siberian sturgeon
+Acipenser gueldenstaedtii*;;;;;;;T;T;T;T;T;;T;T;T;T;;T;T;T;T;Russian sturgeon
+Acipenser oxyrinchus;T;T;;T;T;T;T;X;T;T;X;T;T;T;T;T;;T;T;;T;American atlantic sturgeon
+Acipenser ruthenus*;;;;;;;;;;;T;T;T;T;;T;;;;T;;Sterlet
+Acipenser stellatus*;;;T;;T;;;T;;;T;;;;;T;;T;T;;;Stellate sturgeon
+Huso huso*;;T;;;;;;;;T;;;;T;T;T;;;;;;Beluga sturgeon
+Anguilla anguilla;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;T;T;Eel
+Conger conger;X;T;T;T;T;T;;;;;;;;;;T;;;;;T;Conger eel
+Alosa alosa;T;T;;T;T;T;T;T;T;T;;;;;T;;;T;T;;;Allis shad
+Alosa fallax;T;T;T;T;T;T;X;X;T;X;X;X;R;X;T;T;T;T;T;T;T;Twaite shad
+Clupea harengus;R;R;R;R;R;R;R;R;R;R;R;R;T;R;R;R;R;R;R;R;R;Herring
+Sardina pilchardus;T;T;T;;;;;;;;;;;;;;;;;;;Pilchard
+Sprattus sprattus;R;R;R;R;R;R;R;R;R;R;R;T;T;R;R;R;R;R;R;R;R;Sprat
+Engraulis encrasicolus;T;T;T;T;T;T;T;T;;T;T;;;T;T;T;;T;;;;Anchovy
+Rhodeus sericeus;;;;;;;;T;;;;T;X;;;;;;;;;Bitterling
+Carassius carassius;;;;;T;;X;;;T;;R;R;T;R;R;R;R;R;R;R;Crucian carp
+Carassius gibelio*;;;;;;;;;;T;R;R;R;R;;X;;R;;;;Gibel carp
+Cyprinus carpio*;T;T;;;;;T;T;;;T;X;X;X;;X;;T;T;;;Carp
+Barbus barbus;;;;;;;;T;;T;T;;T;;;;;;;;;Barbel
+Abramis brama;;;;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;Bream
+Aspius aspius;;;;;;;;T;;T;T;X;X;T;;X;;;X;;T;Asp
+Ballerus ballerus;;;;;;;;X;;T;;;;;T;T;;T;;;;Blue bream
+Blicca bjoerkna;;;;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;Silver bream
+Leucaspius delineatus;;;;;;;;T;;;;X;R;;;T;;;;;;Sunbleak
+Leuciscus idus;T;T;T;X;X;X;X;X;X;X;X;R;R;X;R;R;R;R;R;R;R;Ide
+Leuciscus leuciscus;;;;;;;;T;;T;;;R;T;;X;X;X;X;X;X;Dace
+Pelecus cultratus;;;;;T;;T;T;T;T;X;R;R;T;T;R;T;T;T;T;T;Razor-fish
+Phoxinus phoxinus;;;;;;;;;;R;;;;R;R;R;R;R;R;R;R;Minnow
+Rutilus rutilus;T;;;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;Roach
+Scardinius erythrophthalmus;;T;;X;X;;X;R;X;T;X;R;R;R;R;R;R;R;R;R;;Rudd
+Squalius cephalus;;;;X;X;;X;X;X;X;X;T;T;;;X;;T;T;;;Chub
+Vimba vimba;;;;;;;X;X;X;X;X;X;X;X;X;X;X;X;X;T;T;Vimba bream
+Ctenopharyngodon idella*;;;;;T;T;;;;;;T;;;;;;;;;;Grass carp
+Tinca tinca;;T;;;;T;X;X;X;X;;R;R;X;X;R;R;R;R;;;Tench
+Hypophthalmichthys molitrix*;;;;;;;;T;;;;T;T;;;;;;;;;Silver carp
+Hypophthalmichthys nobilis*;;;;;;;T;;;;;;T;T;;;;;;;;Bighead carp
+Gobio gobio;;;;;;;;T;;;;X;R;T;;T;;T;;T;;Gudgeon
+Alburnus alburnus;T;;;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;Bleak
+Cobitis taenia;;T;T;T;T;;T;T;;;T;X;R;T;T;R;;;;;;Spined loach
+Misgurnus fossilis;;;;;T;;;T;;;;T;;;;;;;;;;Weatherfish
+Barbatula barbatula;;;;;;;;;;;;T;T;;;T;;;;;;Stone loach
+Catostomus catostomus*;;;;;;;;;;;;;;;;T;;;;;;Longnose sucker
+Ameiurus nebulosus*;;;;;;;;;;;;;;;;T;;;;;;Brown bullhead
+Silurus glanis;;;;T;T;;;X;T;T;T;T;X;T;;T;;;;;;Wels
+Esox lucius;T;X;X;R;R;X;R;R;R;X;R;R;R;R;R;R;R;R;R;R;R;Pike
+Argentina silus;X;;;;;;;;;;;;;;;;;;;;;Greater argentine
+Argentina sphyraena;X;T;T;;;T;;;;;;;;;;;;;;;;Argentine
+Osmerus eperlanus;T;;T;R;R;;R;R;R;X;X;R;R;R;R;R;R;R;R;R;R;Smelt
+Coregonus albula;;;;;;;;T;;;T;;;;T;R;;;R;R;R;Vendace
+Coregonus maraena s.l.;X;;;X;X;;X;X;X;R;;X;R;X;R;R;R;R;R;R;R;Whitefish
+Coregonus peled*;;;T;;;;;T;;;;;T;;;;;;;;;Peled
+Oncorhynchus gorbuscha*;;;T;;;;;;T;;;;;;;T;;;;;;Humpback salmon
+Oncorhynchus keta*;;;;;;;;;;;;;;;;T;;;;;;Chum salmon
+Oncorhynchus kisutch*;;;;;;;;;;;;;;;;T;;;T;;;Hoopid salmon
+Oncorhynchus mykiss*;X;X;X;X;T;X;X;T;T;T;T;T;;T;T;T;T;T;T;T;T;Rainbow trout
+Oncorhynchus tshawytscha*;;;;;;;;;;;;;;;;T;T;T;T;T;T;Chinook salmon
+Salmo salar;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;Salmon
+Salmo trutta;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;Trout
+Salvelinus fontinalis*;;;;;;;;;;;;;;;;;;;T;;;Brook charr
+Salvelinus namaycush*;;;;;;;;;;;;;;;;;;;;;T;Lake charr
+Thymallus thymallus;;;;;;;;;;;T;;;;;X;;;R;R;R;Grayling
+Maurolicus muelleri;X;;;;;T;;;;;;;;;;;;;;;;Pearlsides
+Arctozenus risso;T;;;;;T;;;;;;;;;;;;;;;;Spotted barracudina
+Magnisudis atlantica;T;;;;;;;;;;;;;;;;;;;;;Duckbill barracudina
+Notoscopelus elongatus;T;;;;;;;;;;;;;;;;;;;;;Lancet fish
+Lampris guttatus;T;T;;;;T;T;;;;;;;;;;;;;;;Opah
+Trachipterus arcticus;T;T;;;;T;;;;;;;;;;;;;;;;Deal-fish
+Coryphaenoides rupestris;T;;;;;T;;;;;;;;;;;;;;;;Blunt-nose rattail
+Gadus morhua;R;X;X;R;R;R;R;R;R;R;R;T;T;X;X;X;X;X;X;X;X;Cod
+Melanogrammus aeglefinus;X;X;T;T;T;R;T;T;;T;T;;;;;;;;;;;Haddock
+Merlangius merlangus;R;R;R;X;X;R;X;X;T;T;T;;;;;;;;;;;Whiting
+Micromesistius poutassou;X;;;;;;;;;;;;;;;;;;;;;Blue whiting
+Pollachius pollachius;X;T;T;T;T;X;T;T;;T;;;;T;;;;;;;;Pollack
+Pollachius virens;X;T;T;T;T;X;T;T;;T;T;;;;;;;;;;;Saithe
+Raniceps raninus;R;R;R;;T;R;T;;;;;;;;;;;;;;;Tadpole-fish
+Trisopterus esmarkii;R;T;;T;T;X;T;T;;;;;;;;;;;;;;Norway pout
+Trisopterus luscus;T;?;;;;?;T;;;;;;;;;;;;;;;Bib
+Trisopterus minutus;R;T;T;T;T;X;T;T;;;;;;;;;;;;;;Poor cod
+Brosme brosme;T;;;;;;;;;;;;;;;;;;;;;Torsk
+Ciliata mustela;R;R;R;;;R;T;;;;;;;;;;;;;;;Five-bearded rockling
+Enchelyopus cimbrius;R;R;R;R;R;R;R;R;R;R;R;;;T;X;T;;;;;;Four-bearded rockling
+Gaidropsarus vulgaris;T;T;;;;;;;;;;;;;;;;;;;;Three-bearded rockling
+Lota lota;;;;T;;T;T;X;R;T;T;X;X;X;R;R;R;R;R;R;R;Burbot
+Molva dypterygia;T;;;;;;;;;;;;;;;;;;;;;Blue ling
+Molva molva;R;T;T;T;;R;T;T;;;T;;;;;;;;;;;Ling
+Merluccius merluccius;R;T;T;T;;X;T;T;;;T;;;;;;;;;;;Hake
+Phycis blennoides;T;;;;;T;;;;;;;;;;;;;;;;Greater fork-beard
+Halobatrachus didactylus;T;;;;;;;;;;;;;;;;;;;;;Lusitanian toadfish
+Lophius piscatorius;X;T;T;T;T;X;T;;;;;;;;;;;;;;;Angler
+Atherina presbyter;T;T;T;;;;;;;;;;;;;;;;;;;Sand-smelt
+Scomberesox saurus;;T;T;;;T;;;;;;;;;;;;;;;;Skipper
+Belone belone;R;R;R;R;R;R;R;R;R;R;R;T;;R;R;R;X;R;R;T;;Garfish
+Cheilopogon heterurus;T;T;;;;T;;;;;;;;;;;;;;;;Atlantic flying-fish
+Beryx decadactylus;T;;;;;;;;;;;;;;;;;;;;;Alfonsino
+Zeus faber;T;T;T;?;;T;;;;;;;;;;;;;;;;John dory
+Gasterosteus aculeatus;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;Three-spined stickleback
+Gasterosteus gymnurus;?;?;?;?;?;?;?;?;?;?;?;?;?;?;?;?;?;?;?;?;?;Western three-spined stickleback
+Pungitius pungitius;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;Nine-spine stickleback
+Spinachia spinachia;R;R;R;R;R;R;R;R;R;R;T;;;R;R;R;R;R;R;;;Fifteen-spined stickleback
+Entelurus aequoraeus;R;R;T;;;R;T;;;;T;;;;;;;;;;;Snake pipefish
+Nerophis lumbriciformis;R;;;;;R;;;;;;;;;;;;;;;;Worm pipefish
+Nerophis ophidion;R;R;R;R;R;R;R;R;R;R;R;;;R;R;R;R;R;R;R;R;Straight-nosed pipefish
+Syngnathus acus;R;R;T;T;T;R;T;;;;;;;;;;;;;;;Greater pipefish
+Syngnathus rostellatus;R;R;T;;T;R;T;;;;;;;;;;;;;;;Nilsson's pipefish
+Syngnathus typhle;R;R;R;R;R;R;R;R;R;R;R;;T;R;R;R;R;R;R;T;;Deep-snouted pipefish
+Hippocampus hippocampus;;T;;;;;;;;;;;;;;;;;;;;Short-snouted seahorse
+Sebastes norvegicus;T;;;;;T;;;;;;;;;;;;;;;;Red-fish
+Sebastes viviparus;X;;;;;;;;;;;;;;;;;;;;;Norway haddock
+Chelidonichthys cuculus;T;;;;;;;;;;;;;;;;;;;;;Red gurnard
+Chelidonichthys lucerna;X;T;T;T;T;X;T;T;;T;T;;;;;;;;;;;Tub gurnard
+Eutrigla gurnardus;R;R;R;R;R;R;R;T;;T;T;;;;;;;;;;;Grey gurnard
+Trigloporus lastoviza;T;;;;;;;;;;;;;;;;;;;;;Streaked gurnard
+Cottus gobio;;;;;;;;T;;;;;;R;R;R;R;R;R;R;R;Bullhead
+Cottus poecilopus;;;;;;;;;;;;;;;T;;;;T;;T;Alpine bullhead
+Myoxocephalus scorpius;R;R;R;R;R;R;R;R;R;R;R;;T;R;R;R;R;R;R;R;T;Bull-rout
+Taurulus bubalis;R;R;R;R;R;R;R;R;R;R;T;;;R;R;R;R;R;R;;;Sea scorpion
+Triglops murrayi;T;;;;;;;;;;;;;;;;;;;;;Moustache sculpin
+Triglopsis quadricornis;;;;;;;T;T;R;R;T;;;R;R;R;R;R;R;R;R;Four-horned sculpin
+Agonus cataphractus;R;R;R;R;R;R;X;X;;T;R;;;;;T;;;;;;Hook-nose
+Cyclopterus lumpus;R;R;R;R;R;R;R;R;R;R;R;T;T;R;R;R;R;R;R;R;R;Lumpsucker
+Liparis liparis;R;T;T;;T;R;T;T;R;R;R;;;R;R;R;R;R;R;T;;Sea-snail
+Liparis montagui;R;R;R;;;R;;;;;;;;;;;;;;;;Montagu's sea-snail
+Dicentrarchus labrax;T;T;T;;T;T;T;T;T;T;T;;;T;;T;;T;T;;;Bass
+Polyprion americanus;T;;;;;T;;;;;;;;;;;;;;;;Wreck-fish
+Gymnocephalus cernua;;T;;R;R;;R;R;R;T;X;R;R;R;R;R;R;R;R;R;R;Ruffe
+Perca fluviatilis;T;T;T;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;Perch
+Sander lucioperca;T;T;T;R;R;T;R;R;R;X;R;R;R;R;R;R;R;R;R;R;T;Zander
+Remora remora;;;;;;T;;;;;;;;;;;;;;;;Remora
+Trachinotus ovatus;T;T;;;;T;;;;;;;;;;;;;;;;Derbio
+Trachurus trachurus;X;X;X;X;X;X;T;X;T;T;T;;;;;;;;;;;Scad
+Brama brama;T;T;T;;;T;;;;;;;;;;;;;;;;Ray's bream
+Boops boops;T;T;T;;;T;;;;;;;;;;;;;;;;Bogue
+Dentex maroccanus;;;;;;T;;;;;;;;;;;;;;;;Morocco dentex
+Diplodus sargus;;;;;;;;T;;;;;;;;;;;;;;White seabream
+Pagellus bogaraveo;T;T;;;;T;;;;;;;;;;;;;;;;Red sea-bream
+Pagellus erythrinus;T;T;;;;T;;;;;;;;;;;;;;;;Pandora
+Sarpa salpa;T;T;;;;T;;;;;;;;;;;;;;;;Saupe
+Sparus aurata;T;;;;;;T;;;;;;;;;;;;;;;Gilthead
+Spondyliosoma cantharus;T;;T;;;T;;;;;;;;;;;;;;;;Black sea-bream
+Argyrosomus regius;T;;;;;T;;;;;;;;;;;;;;;;Meagre
+Mullus surmuletus;T;T;T;;;T;T;T;;;T;;;;;;;;;;;Striped red mullet
+Chelon labrosus;R;X;X;T;T;R;X;T;T;;T;;;T;;;;;T;T;;Thick-lipped grey mullet
+Liza aurata;T;T;T;;;T;;;;;;;;;;;;;;;;Golden grey mullet
+Liza ramada;T;;T;;;T;;;;;;;;T;;T;;;T;;T;Thin-lipped grey mullet
+Astronotus ocellatus*;;;;;;;;;;;T;;;;;;;;;;;Oscar
+Centrolabrus exoletus;R;T;T;;;R;;;;;;;;;;;;;;;;Rock cook
+Ctenolabrus rupestris;R;R;R;R;R;R;R;R;;;;;;;;;;;;;;Goldsinny
+Coris julis;;;T;;;;;;;;;;;;;;;;;;;Rainbow wrasse
+Labrus bergylta;R;T;T;T;T;R;T;T;;;T;;;;;;;;;;;Ballan wrasse
+Labrus mixtus;R;T;T;;;R;T;;;;;;;;;;;;;;;Cuckoo wrasse
+Symphodus melops;R;R;T;?;?;R;T;;;;;;;;;;;;;;;Corkwing wrasse
+Lycodes gracilis;R;;;;;;;;;;;;;;;;;;;;;Checker eelpout
+Zoarces viviparus;R;R;R;R;R;R;R;R;R;R;R;T;;R;R;R;R;R;R;R;R;Eelpout
+Chirolophis ascanii;R;;R;;;R;;;;;;;;;;;;;;;;Yarrell's blenny
+Lumpenus lampretaeformis;R;R;R;R;R;R;R;R;R;T;T;;;T;R;R;R;R;R;R;T;Snake blenny
+Pholis gunnellus;R;R;R;R;R;R;R;R;R;R;T;;;R;R;R;R;R;R;T;;Butterfish
+Anarhichas lupus;R;X;X;T;T;R;T;T;;T;T;;;;;;;;;;;Wolf-fish
+Anarhichas minor;T;;;;;;;;;;;;;;;;;;;;;Spotted wolf-fish
+Ammodytes marinus;R;?;?;?;?;R;?;;;;;;;;;;;;;;;Raitt,s sandeel
+Ammodytes tobianus;R;R;R;R;R;R;R;R;R;R;R;;T;R;R;R;R;R;R;R;R;Sandeel
+Hyperoplus lanceolatus;R;R;R;R;R;R;R;R;R;R;R;;;R;R;R;;;T;;;Greater sandeel
+Echiichthys vipera;T;;;;;;;;;;;;;;;;;;;;;Weever
+Trachinus draco;R;R;T;T;;R;T;T;;;;;;;;;;;;;;Greater weever
+Callionymus lyra;R;R;R;T;T;R;;;;;;;;;;;;;;;;Dragonet
+Callionymus maculatus;R;T;;T;T;T;T;;;;;;;;;;;;;;;Spotted dragonet
+Aphia minuta;R;R;R;R;R;R;X;;;;;;;;;;;;;;;Transparent Goby
+Babka gymnotrachelus*;;;;;;;;;;;T;R;;;;;;;;;;Racer goby
+Crystallogobius linearis;R;R;;;;;;;;;;;;;;;;;;;;Crystal goby
+Gobius niger;R;R;R;R;R;R;R;R;R;R;R;;;R;R;R;R;R;R;R;;Black goby
+Gobiusculus flavescens;R;R;R;R;R;R;R;R;R;R;R;;;R;R;R;R;R;R;;;Two-spotted goby
+Lebetus guilleti;R;;;;;;;;;;;;;;;;;;;;;Guillet's goby
+Lebetus scorpioides;R;;;;;;;;;;;;;;;;;;;;;Diminutive goby
+Lesueurigobius friesii;R;;;;;;;;;;;;;;;;;;;;;Fries's goby
+Neogobius fluviatilis*;;;;;;;;;;;T;;;;;;;;;;;Monkey goby
+Neogobius melanostomus*;R;R;;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;R;;T;Round goby
+Pomatoschistus microps;R;R;R;R;R;R;R;R;R;R;R;;T;R;R;R;R;R;R;R;;Common goby
+Pomatoschistus minutus;R;R;R;R;R;R;R;R;R;R;R;;T;R;R;R;R;R;R;R;R;Sand goby
+Pomatoschistus norvegicus;R;;;;;;;;;;;;;;;;;;;;;Norway goby
+Pomatoschistus pictus;R;R;T;;;R;;;;;;;;;;;;;;;;Painted goby
+Proterorhinus marmoratus*;;;;;;;;;;;;;;;;T;;;;;;Tubenose goby
+Thorogobius ephippiatus;R;;;;;;;;;;;;;;;;;;;;;Leopard-spotted goby
+Nesiarchus nasutus;T;;T;;;;;;;;;;;;;;;;;;;Black gemfish
+Xiphias gladius;T;T;T;T;T;T;T;T;;T;T;;;;T;;;;;;;Swordfish
+Auxis rochei;T;T;;;;T;;;;;;;;;;;;;;;;Frigate mackerel
+Euthynnus alletteratus;;T;T;;;T;;;;;;;;;;;;;;;;Little tunny
+Katsuwonus pelamis;T;T;;;;;;;;;;;;;;;;;;;;Oceanic bonito
+Sarda sarda;T;T;T;;;T;;;;;;;;;;T;;T;;;;Bonito
+Scomber scombrus;X;X;X;X;X;X;X;X;T;T;T;;;T;T;T;T;T;T;T;T;Mackerel
+Thunnus thynnus;T;T;;T;;T;;;;;T;;;;;;;;;;;Blue-fin tuna
+Centrolophus niger;T;T;T;;;T;;;;;;;;;;;;;;;;Blackfish
+Schedophilus medusophagus;T;T;;T;;T;;;;;;;;;;;;;;;;Cornish blackfish
+Capros aper;;;;;;;;;;T;;;;;;;;;;;;Boar-fish
+Lepidorhombus whiffiagonis;T;T;;T;;T;;;;;;;;;;;;;;;;Megrim
+Phrynorhombus norvegicus;R;T;;;;R;;;;;;;;;;;;;;;;Norwegian topknot
+Scophthalmus maximus;R;R;R;R;R;R;R;R;R;R;R;T;;R;R;R;R;R;R;T;;Turbot
+Scophthalmus rhombus;R;R;R;R;R;R;R;R;T;T;T;;;;;;;;;;;Brill
+Zeugopterus punctatus;R;T;T;;;R;;;;;;;;;;;;;;;;Topknot
+Arnoglossus laterna;R;R;;T;T;R;T;;;;;;;;;;;;;;;Scaldfish
+Glyptocephalus cynoglossus;R;X;T;T;T;;;;;;;;;;;;;;;;;Witch
+Hippoglossoides platessoides;R;R;R;R;R;R;T;T;;;;;;;;;;;;;;Long rough dab
+Hippoglossus hippoglossus;T;T;T;T;T;T;;;;;;;;;;;;;;;;Halibut
+Limanda limanda;R;R;R;R;R;R;R;R;R;T;T;;;;T;T;T;T;;;;Dab
+Liopsetta glacialis*;;;;;;;;;T;;;;;;;;;;;;;Arctic flounder
+Microstomus kitt;R;R;T;T;T;R;T;;;;;;;;;;;;;;;Lemon sole
+Platichthys flesus;R;R;R;R;R;R;R;R;R;R;R;X;X;R;R;R;R;R;R;X;X;Flounder
+Pleuronectes platessa;R;R;R;R;R;R;R;R;T;R;R;T;;T;T;T;T;T;T;;;Plaice
+Buglossidium luteum;R;T;;;;R;;;;;;;;;;;;;;;;Solenette
+Solea solea;R;R;R;X;X;R;X;T;;;T;;;;;;;;;;;Sole
+Balistes capriscus;;;;;;T;;;;;;;;;;;;;;;;Triggerfish
+Mola mola;T;T;T;T;T;T;T;T;;T;;;;;;;;;;;;Sunfish
