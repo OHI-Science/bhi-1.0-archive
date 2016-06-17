@@ -1,0 +1,59 @@
+---
+title: "data_prep_template"
+output: github_document
+params: 
+    datasource: csv
+---
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_cw    = make_path(), 'TODO')
+
+dir_secchi    = file.path(dir_prep, 'TODO')
+
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_secchi, 'TODO_from_title_line2.rmd') 
+```
+
+## Layer prep
+
+```{r TODO, echo=FALSE, message=FALSE}
+## read in data...
+
+## plot data...
+
+```

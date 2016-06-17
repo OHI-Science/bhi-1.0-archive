@@ -148,13 +148,9 @@ Data sources:
 
 - Nicholls R.J. and Cazenave A. (2010). **Sea-level rise and its impact on coastal zones**. _Science_ 328: 1517-1520. [doi:10.1126/science.1185782](http://dx.doi.org/10.1126/science.1185782).
 - [AVISO Satellite Altimetry Data](http://www.aviso.oceanobs.com/en/news/ocean-indicators/mean-sea-level/processing-corrections.html)","pressure_score","pressure score","cc_slr_gl2014.csv","raster | equal","","cc_slr","~/github/ohi-global/eez2014/layers/cc_slr.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.130349,0.452863,TRUE,,,,42,FALSE
-"pressures","cc_sst","Sea surface temperature (SST) anomalies","Modeled sea surface temperature (Halpern et al. 2008) based on temperature anomolies provided by GHRSST and the US National Oceanographic Data Center.
-
-Data sources:
-
-- Halpern, B.S., Walbridge S., Selkoe, K.A., Kappel, C.V., Micheli, F., D'Agrosa, C., Bruno, J.F., Casey, K.S., Ebert, C., Fox, H.E., Fujita, R., Heinemann, D., Lenihan, H.S., Madin, E.M.P., Perry, M.T., Selig, E.R., Spalding, M., Steneck, R., Watson, R. (2008) **A global map of human impact on marine ecosystems**. _Science_, 3199(5865): 948-952. [doi:10.1126/science.1149345](http://dx.doi.org/10.1126/science.1149345)
-- [AVHRR Pathfinder Version 5.0 SST data](http://pathfinder.nodc.noaa.gov)
-- Casey, K.S., Brandon, T.B., Cornillon, P., and Evans, R. (2010). **The Past, Present and Future of the AVHRR Pathfinder SST Program**, _Oceanography from Space: Revisited_, eds. V. Barale, J.F.R. Gower, and L. Alberotanza, Springer. [doi:10.1007/978-90-481-8681-5_16](http://dx.doi.org/10.1007/978-90-481-8681-5_16) ","pressure_score","pressure score","cc_sst_gl2014.csv","raster | equal","","cc_sst","~/github/ohi-global/eez2014/layers/cc_sst.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.0873233,0.230379,TRUE,,,,42,FALSE
+"pressures","cc_sal_surf","Current surface salinity water rescaled between historic max and future min","Modelled annual surface water (0-5 m) salinity using the BALTSEM model, Future projections force by the ECHAM5 global climate model A1b scenario.","pressure_score","pressure score","cc_sal_surf_bhi2015.csv","","","cc_sal_surf","","","rgn_id",,,,"pressure_score",,TRUE,,,0,1,TRUE,,,,42,FALSE
+"pressures","cc_sal_deep","Current deep water salinity (depth varies by basin) rescaled between historic max and future min","Modelled annual deep water (depth differs by basin) salinity using the BALTSEM model, Future projections force by the ECHAM5 global climate model A1b scenario.","pressure_score","pressure score","cc_sal_deep_bhi2015.csv","","","cc_sal_deep","","","rgn_id",,,,"pressure_score",,TRUE,,,0,1,TRUE,,,,42,FALSE
+"pressures","cc_sst","Current sea surface temperature (SST) rescaled to between historic min and future max","Modelled Jul-Aug SST using the BALTSEM model, Future projections force by the ECHAM5 global climate model A1b scenario.","pressure_score","pressure score","cc_sst_bhi2015.csv","raster | equal","","cc_sst","~/github/ohi-global/eez2014/layers/cc_sst.csv","global","rgn_id",,,,"pressure_score",,TRUE,,,0.728689008400609,1,TRUE,,,,42,FALSE
 "pressures","cc_uv","UV radiation","Modeled UV radiation (Halpern et al. 2008) based on Erythemal UV Irradiance data provided by GES DISC.
 
 Data sources:
