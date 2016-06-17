@@ -204,6 +204,7 @@ mpa_area_per_rgn = mpa_bhi_data %>%
                                  BSPA_ID,
                                  BHI_ID, 
                                  country = Country,
+                                 status_shape = MPA_Status,
                                  mpa_area = AreaTot_Ha,
                                  date_est = Date_Est) %>%
                     mutate(mpa_area_km2 = mpa_area * 0.01) %>%
@@ -214,7 +215,7 @@ mpa_area_per_rgn = mpa_bhi_data %>%
 write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv')) 
 
 ## count unique names in shape file 
-mpa_name_shape = select(mpa_area_per_rgn, name)
+mpa_name_shape = select(mpa_area_per_rgn, name) 
 unique_mpa_shape = base::unique(mpa_name_shape) ## 163 count
 
 
@@ -286,9 +287,7 @@ r.status = mpa_mgmt %>%
 # write_csv(mpa_mgmt, file.path(dir_prep, ""))
 
 
-##########  2nd try, with updated csv file - NOT working ##########
-
-# read in new mpa mgmt status csv file, NO Plans information included in this file. 
+##########  2nd try, with updated csv file  ##########
 
 mgmt_status_new = read.csv(file.path(dir_prep, "mpa_data_database/MPA_status_download06June2016.csv"), sep = ";") %>%
               mutate(status = str_replace_all(Status, " ", "_")) %>%
@@ -305,16 +304,22 @@ unique_mpa_csv_new = base::unique(mpa_name) ## total of 175 names that are uniqu
 # combine mpa_status with shape file data
 
 mpa_mgmt_new = right_join(mgmt_status_new, mpa_area_per_rgn,  
-                          by = "BSPA_ID") 
-                           
-           # mutate(mgmt_status = ifelse(is.na(mgmt_status), as.character(mpa_status), mgmt_status),
-           #        date_est = str_sub(date_est, start = -4)) %>% # only select the year of establishment
-           # dplyr::select(-mpa_status)
-
+                          by = "BSPA_ID") %>%
+               mutate(mgmt_status = ifelse(is.na(status_csv), as.character(status_shape), status_csv),
+                      # Mgmt_status = str_replace_all(mgmt_status, Managed, Designated_and_partially_managed),
+                      date_est    = str_sub(date_est, start = -4)) # only select the year of establishment
+             
 write_csv(mpa_mgmt_new, file.path(dir_lsp, 'mpa_mgmt_status_new_csv.csv'))
 
 # count number of MPAs in shape file with no matches in csv file. 
-num_mismatch_new = dplyr::count(mpa_mgmt_new, !status_csv== "NA") # 13 rows no match
+ num_mismatch_new = dplyr::count(mpa_mgmt_new, !status_csv== "NA") 
+# 13 rows (7 MPAs) have no match from the status csv file. For those, MPA status
+# from the shape file were used (Designated or Managed). As a result, two MPAs
+# have the status of "Managed": Jasmund National Park and Vorpommersche
+# Boddenlandshaft National Park (West-Pommeranian Lagoon National Park) from
+# Germany They are assigned "Designated and Partially Managed" status for
+# calculations.
+
 
 ````
 
@@ -322,18 +327,33 @@ Note: status calc: use all plans, take average. Add a column to track how many p
 
 ``` {r status calculation, ECHO = FALSE}
 
-mgmt_weight = data.frame( status_csv = c(NA, "Designated", "Designated_and_partly_managed", "Designated_and_managed"),
-                          weight = c(0.3, 0.3, 0.6, 1) )
+mgmt_weight = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
+                          weight = c(0.3, 0.6, 1, 0.6) )
 
-mpa_mgmt_with_wt = full_join(mpa_mgmt_new, mgmt_weight,
-                             by = "status_csv") 
+mpa_mgmt_with_wt = full_join( mgmt_weight, mpa_mgmt_new, 
+                              by = 'mgmt_status') 
 
-# TO BE CONTINUED... NOT DONE YET
-r.status = mpa_mgmt_with_wt %>%
-         mutate(ref_point = 0.1 * eez_area_km2,
-                wt_mpa_area = weight * mpa_area_km2) %>%
-         group_by(country) %>% 
-         mutate(status = sum(wt_mpa_area) / ref_point *100)
+r.status =       mpa_mgmt_with_wt %>%
+                 select(BHI_ID, country, eez_area_km2, mpa_area_km2, weight) %>%
+                 filter(!duplicated(BHI_ID)) %>%
+                 group_by(country) %>%
+                 summarize(total_eez_km2 = sum(eez_area_km2), 
+                           sum_wt_mpa_area = sum(mpa_area_km2 * weight)) %>%
+                 ungroup %>%
+                 mutate(ref = 0.1 * total_eez_km2, 
+                        status = sum_wt_mpa_area / ref *100)
+  
+
+# weight_average = mpa_mgmt_with_wt %>%
+#                  group_by(country) %>%
+#                  filter(!duplicated(BSPA_ID)) %>%
+#                  summarize(weight_ave = mean(weight)) %>%
+#                  ungroup
+
+r.status =full_join(ref_by_country, weight_mpa_area_by_country, by = 'country') %>% 
+          full_join(weight_average, by = 'country') %>% 
+          mutate(wt_mpa_area = weight * mpa_area_km2) %>%
+
               
 
 
