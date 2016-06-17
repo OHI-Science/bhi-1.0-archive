@@ -255,7 +255,7 @@ mpa_mgmt_old = right_join(mgmt_status_old, mpa_area_per_rgn,  # select only MPAs
 # count number of MPAs in shape file with no matches in csv file. 
 
 num_mismatch = dplyr::count(mpa_mgmt_old, !mgmt_status== "NA") # 30 no match
-  
+
 # assign weight to management status
 
 mgmt_weight = data.frame( mgmt_status = c("Designated", "In development", "Implemented"),
