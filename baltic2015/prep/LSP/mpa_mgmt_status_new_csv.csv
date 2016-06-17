@@ -1,0 +1,306 @@
+name.x,plan,BSPA_ID,mgmt_status,implem_date,name.y,BHI_ID,country,mpa_area,date_est,eez_area_km2
+Curonian Spit State National Park (southern part),Management plan of Curonian Spit State National Park,163,Implemented,NA,Curonian Spit State National Park (southern part),22,Russia,6621,6.11.1987,9466.30104
+Vistula Spit,-0,164,In development,NA,Vistula Spit Landscape Park (northern part),19,Russia,4000,NA,2138.41462
+	Kurgalsky Peninsula,"Management plan of nature reserve ""Kurgalsky""",166,Implemented,NA,Kurgalsky Peninsula,34,Russia,59950,20.7.2000,8426.04463
+	Kurgalsky Peninsula,"Management plan of nature reserve ""Kurgalsky""",166,Implemented,NA,Kurgalsky Peninsula,33,Russia,59950,20.7.2000,11571.59858
+Vyborgskii,"Management plan of nature reserve ""Vyborgskii""",294,Implemented,NA,Vyborgskii,33,Russia,11304.09960937,29.3.1976,11571.59858
+Lebyazhy Nature Reserve,"Management plan of nature reserve ""Lebyazhy""",197,Implemented,NA,Lebyazhy Nature Reserve,33,Russia,6344.64990234,3.4.2007,11571.59858
+Berezovye Islands,"Management plan of nature reserve ""Berezovye Islands""",196,Implemented,NA,Berezovye Islands,33,Russia,55295,26.12.1996,11571.59858
+Ostoja Slowinska,Pobrzeze Slowinskie PLB220003 protection plan,85,In development,NA,Ostoja Slowinska,17,Poland,32955.30078125,13.7.2005,17334.97259
+Ostoja Slowinska,Przybrzezne Wody Baltyku PLB990002 protection plan,85,In development,NA,Ostoja Slowinska,17,Poland,32955.30078125,13.7.2005,17334.97259
+Ostoja Slowinska,Ostoja Slowinska PLH220023 protection plan,85,In development,NA,Ostoja Slowinska,17,Poland,32955.30078125,13.7.2005,17334.97259
+Ostoja Slowinska,Protection tasks of Slowinski National Park 2013-2016,85,Implemented,18.06.2013,Ostoja Slowinska,17,Poland,32955.30078125,13.7.2005,17334.97259
+Ostoja Slowinska,Pobrzeze Slowinskie PLB220003 protection plan,85,In development,NA,Ostoja Slowinska,21,Poland,32955.30078125,13.7.2005,11013.8982
+Ostoja Slowinska,Przybrzezne Wody Baltyku PLB990002 protection plan,85,In development,NA,Ostoja Slowinska,21,Poland,32955.30078125,13.7.2005,11013.8982
+Ostoja Slowinska,Ostoja Slowinska PLH220023 protection plan,85,In development,NA,Ostoja Slowinska,21,Poland,32955.30078125,13.7.2005,11013.8982
+Ostoja Slowinska,Protection tasks of Slowinski National Park 2013-2016,85,Implemented,18.06.2013,Ostoja Slowinska,21,Poland,32955.30078125,13.7.2005,11013.8982
+Zalew Wislany i Mierzeja Wislana,Zalew Wislany i Mierzeja Wislana PLH280007 protection plan,83,In development,NA,Zalew Wislany i Mierzeja Wislana,18,Poland,40862.6015625,13.7.2005,3682.83573
+Zalew Wislany i Mierzeja Wislana,Zalew Wislany PLB280010 protection plan,83,In development,NA,Zalew Wislany i Mierzeja Wislana,18,Poland,40862.6015625,13.7.2005,3682.83573
+Zalew Wislany i Mierzeja Wislana,Zalew Wislany i Mierzeja Wislana PLH280007 protection plan,83,In development,NA,Zalew Wislany i Mierzeja Wislana,19,Poland,40862.6015625,13.7.2005,2138.41462
+Zalew Wislany i Mierzeja Wislana,Zalew Wislany PLB280010 protection plan,83,In development,NA,Zalew Wislany i Mierzeja Wislana,19,Poland,40862.6015625,13.7.2005,2138.41462
+Ujscie Odry i Zalew Szczecinski,Zalew Szczecinski PLB320009 protection plan,301,In development,NA,Ujscie Odry i Zalew Szczecinski,16,Poland,52612,31.12.2009,2566.81091
+Ujscie Odry i Zalew Szczecinski,Zalew Kamienski i Dziwna PLB320011 protection plan,301,In development,NA,Ujscie Odry i Zalew Szczecinski,16,Poland,52612,31.12.2009,2566.81091
+Ujscie Odry i Zalew Szczecinski,Laki Skoszewskie PLB320007 protection plan,301,Implemented,NA,Ujscie Odry i Zalew Szczecinski,16,Poland,52612,31.12.2009,2566.81091
+Ujscie Odry i Zalew Szczecinski,Ujscie Odry i Zalew Szczecinski PLH320018 protection plan,301,In development,NA,Ujscie Odry i Zalew Szczecinski,16,Poland,52612,31.12.2009,2566.81091
+Ujscie Odry i Zalew Szczecinski,Zalew Szczecinski PLB320009 protection plan,301,In development,NA,Ujscie Odry i Zalew Szczecinski,17,Poland,52612,31.12.2009,17334.97259
+Ujscie Odry i Zalew Szczecinski,Zalew Kamienski i Dziwna PLB320011 protection plan,301,In development,NA,Ujscie Odry i Zalew Szczecinski,17,Poland,52612,31.12.2009,17334.97259
+Ujscie Odry i Zalew Szczecinski,Laki Skoszewskie PLB320007 protection plan,301,Implemented,NA,Ujscie Odry i Zalew Szczecinski,17,Poland,52612,31.12.2009,17334.97259
+Ujscie Odry i Zalew Szczecinski,Ujscie Odry i Zalew Szczecinski PLH320018 protection plan,301,In development,NA,Ujscie Odry i Zalew Szczecinski,17,Poland,52612,31.12.2009,17334.97259
+Wolin i Uznam,Wolin i Uznam PLH320019 protection plan,86,In development,NA,Wolin i Uznam,16,Poland,30792,14.7.2005,2566.81091
+Wolin i Uznam,Delta Swiny PLB320002 protection plan,86,In development,NA,Wolin i Uznam,16,Poland,30792,14.7.2005,2566.81091
+Wolin i Uznam,Zalew Kamienski i Dziwna PLB320011 protection plan,86,In development,NA,Wolin i Uznam,16,Poland,30792,14.7.2005,2566.81091
+Wolin i Uznam,Protection tasks of Wolinski National Park 2014-2015,86,Implemented,09.12.2013,Wolin i Uznam,16,Poland,30792,14.7.2005,2566.81091
+Wolin i Uznam,Wolin i Uznam PLH320019 protection plan,86,In development,NA,Wolin i Uznam,17,Poland,30792,14.7.2005,17334.97259
+Wolin i Uznam,Delta Swiny PLB320002 protection plan,86,In development,NA,Wolin i Uznam,17,Poland,30792,14.7.2005,17334.97259
+Wolin i Uznam,Zalew Kamienski i Dziwna PLB320011 protection plan,86,In development,NA,Wolin i Uznam,17,Poland,30792,14.7.2005,17334.97259
+Wolin i Uznam,Protection tasks of Wolinski National Park 2014-2015,86,Implemented,09.12.2013,Wolin i Uznam,17,Poland,30792,14.7.2005,17334.97259
+Zatoka Pomorska,Ostoja na Zatoce Pomorskiej PLH990002 protection plan,170,In development,NA,Zatoka Pomorska,16,Poland,309155,31.12.2009,2566.81091
+Zatoka Pomorska,Zatoka Pomorska PLB990003 protection plan,170,In development,NA,Zatoka Pomorska,16,Poland,309155,31.12.2009,2566.81091
+Zatoka Pomorska,Ostoja na Zatoce Pomorskiej PLH990002 protection plan,170,In development,NA,Zatoka Pomorska,17,Poland,309155,31.12.2009,17334.97259
+Zatoka Pomorska,Zatoka Pomorska PLB990003 protection plan,170,In development,NA,Zatoka Pomorska,17,Poland,309155,31.12.2009,17334.97259
+Przybrzezne Wody Baltyku,Przybrzezne Wody Baltyku PLB990002 protection plan,179,In development,NA,Przybrzezne Wody Baltyku,17,Poland,194627,31.12.2009,17334.97259
+Przybrzezne Wody Baltyku,Przybrzezne Wody Baltyku PLB990002 protection plan,179,In development,NA,Przybrzezne Wody Baltyku,21,Poland,194627,31.12.2009,11013.8982
+Przybrzezne Wody Baltyku,Przybrzezne Wody Baltyku PLB990002 protection plan,179,In development,NA,Przybrzezne Wody Baltyku,18,Poland,194627,31.12.2009,3682.83573
+Zatoka Pucka,Zatoka Pucka PLB220005 protection plan,84,In development,NA,Zatoka Pucka,18,Poland,62430.3984375,13.7.2005,3682.83573
+Zatoka Pucka,Zatoka Pucka PLH220032 protection plan,84,In development,NA,Zatoka Pucka,18,Poland,62430.3984375,13.7.2005,3682.83573
+Ujscie Wisly,Ostoja w Ujsciu Wisly PLH220044 protection plan,302,In development,NA,Ujscie Wisly,18,Poland,1748.09997558,31.12.2009,3682.83573
+Ujscie Wisly,Ujscie Wisly PLB220004 protection plan,302,In development,NA,Ujscie Wisly,18,Poland,1748.09997558,31.12.2009,3682.83573
+Begstrup Vig og kystomrader ved Helgenaes,Natura 2000-plan 2010-2015. Begtrup Vig og kystomrader ved Helgenaes - Natura 2000-omrade nr. 51 - Habitatomr. H47,246,Implemented,08.12.2011,Begstrup Vig og kystområder ved Helgenæs,3,Denmark,1771,22.9.2009,10369.11323
+"Fyns Hoved, Lillegrund og Lillestrand","Natura 2000-plan 2010-2015. Fyns Hoved, Lillegrund og Lillestrand - Natura 2000-omrade nr. 107 - Habitatomrade H91",251,Implemented,08.12.2011,"Fyns Hoved, Lillegrund og Lillestrand",3,Denmark,2182,31.8.2009,10369.11323
+�beloe og havet syd for og Naera,"Natura 2000 omrade nr. 108 �beloe, havet syd for og Naera Strand",241,Implemented,08.12.0011,Æbelø og havet syd for og Nærå,3,Denmark,13161,1.9.2009,10369.11323
+Havet mellem Romsoe og Hindsholm samt Romsoe,Natura 2000-plan 2010-2015. Havet mellem Romsoe og Hindsholm samt Romsoe - Natura 2000-omrade nr. 109 - Habitatomrade H93 - Fuglebeskyttelsesomrade F77,265,Implemented,08.12.2011,Havet mellem Romsø og Hindsholm samt Romsø,3,Denmark,4328,1.9.2009,10369.11323
+Odense Fjord,Natura 2000 omrade nr. 110 Odense Fjord,287,Implemented,08.12.0011,Odense Fjord,3,Denmark,5048,16.12.2009,10369.11323
+Lillebaelt,Natura 2000 omrade nr. 112 Lillebaelt,259,Implemented,08.12.0011,Lillebælt,3,Denmark,35043,10.9.2009,10369.11323
+Boejden Nor,Natura 2000-plan 2010-2015. Boejden Nor - Natura 2000-omrade nr. 123,276,Implemented,08.12.0011,Bøjden Nor,3,Denmark,114,16.12.2009,10369.11323
+Maden pa Helnaes og havet vest for,Natura 2000-omrade nr. 124 Maden pa Helnaes og havet vest for,254,Implemented,08.12.0011,Maden på Helnæs og havet vest for,3,Denmark,2045,10.9.2009,10369.11323
+Vestlige del af Avernakoe,Natura 2000-omrade nr. 125 Vestlige del af Avernakoe,293,Implemented,08.12.0011,Vestlige del af Avernakø,3,Denmark,124,16.12.2009,10369.11323
+Stenrev sydoest for Langeland,Natura 2000 omrade nr. 126 Stenrev sydoest for Langeland,269,Implemented,08.12.0011,Stenrev sydøst for Langeland,3,Denmark,1484,10.9.2009,10369.11323
+Stenrev sydoest for Langeland,Natura 2000 omrade nr. 126 Stenrev sydoest for Langeland,269,Implemented,08.12.0011,Stenrev sydøst for Langeland,7,Denmark,1484,10.9.2009,1208.87616
+Sydfynske Oehav,Natura 2000 omrade nr. 127 Sydfynske Oehav.,271,Implemented,08.12.0011,Sydfynske Øhav,3,Denmark,45199,10.9.2009,10369.11323
+Sydfynske Oehav,Natura 2000 omrade nr. 127 Sydfynske Oehav.,271,Implemented,08.12.0011,Sydfynske Øhav,7,Denmark,45199,10.9.2009,1208.87616
+Roskilde Fjord og Jaegerspris Nordskov,"Natura 2000 omrade nr. 136 Roskilde Fjord, Kattinge Vig, Kattinge Soe, Jaegerspris Nordskov og Kongens Lyng",289,Implemented,08.12.0011,Roskilde Fjord og Jægerspris Nordskov,2,Denmark,14810,16.12.2009,15300.69996
+Vestamager og havet syd for,Natura 2000 omrade nr. 143 Vestamager og havet syd for,273,Implemented,08.12.0011,Vestamager og havet syd for,12,Denmark,6179,17.9.2009,6272.53375
+Oelsemagle Strand og Staunings Oe,Natura 2000 omrade nr. 147 Oelsemagle Strand og Staunings Oe,281,Implemented,08.12.0011,Ølsemagle Strand og Staunings Ø,12,Denmark,538,16.12.2009,6272.53375
+Havet og kysten mellem Hundested og Roervig,Natura 2000 omrade nr. 153 Havet og kysten mellem Hundested og Roervig,253,Implemented,08.12.0011,Havet og kysten mellem Hundested og Rørvig,2,Denmark,4023,28.8.2009,15300.69996
+Sejeroe Bugt og Saltbaek Vig,"Natura 2000 omrade nr. 154 Sejeroe Bugt, Saltbaek Vig, Bjergene og Bollinge Bakke",268,Implemented,08.11.0011,Sejerø Bugt og Saltbæk Vig,3,Denmark,44500,6.4.2009,10369.11323
+Udby Vig,Natura 2000 omrade nr. 155 Udby Vig,292,Implemented,08.12.0011,Udby Vig,2,Denmark,384,16.12.2009,15300.69996
+Hov Vig,Natura 2000 omrade nr. 164 Hov Vig,280,Implemented,08.12.0011,Hov Vig,2,Denmark,240,16.12.2009,15300.69996
+Havet og kysten mellem Praestoe Fjord og Groensund,Natura 2000 omrade nr. 168 Havet og kysten mellem Praestoe Fjord og Groensund,264,Implemented,08.12.0011,Havet og kysten mellem Præstø Fjord og Grønsund,12,Denmark,32815,6.4.2009,6272.53375
+Klinteskov Kalkgrund,Natura 2000 omrade nr. 171 Klinteskov Kalkgrund,258,Implemented,NA,Klinteskov Kalkgrund,12,Denmark,1994,10.9.2009,6272.53375
+Nakskov Fjord og Inderfjord,Natura 2000 omrade nr. 179 Nakskov Fjord og Indrefjord,263,Implemented,08.12.0011,Nakskov Fjord og Inderfjord,3,Denmark,8526,10.9.2009,10369.11323
+Stege Nor,Natura 2000 omrade nr. 180 Stege Nor,291,Implemented,08.12.0011,Stege Nor,12,Denmark,572,16.12.2009,6272.53375
+Ryggen,Natura 2000 omrade nr. 196 Ryggen,266,Implemented,08.11.0012,Ryggen,3,Denmark,437,10.9.2009,10369.11323
+Hatter Barn,Natura 2000-plan 2010-2015. Hatter Barn - Natura 2000-omrade nr. 198 - Habitatomrade H174,252,Implemented,08.12.2011,Hatter Barn,3,Denmark,633,10.9.2009,10369.11323
+Broen,Natura 2000-plan 2010-2015. Broen - Natura 2000-omrade nr. 199 - Habitatomrade H175,248,Implemented,08.12.2011,Broen,3,Denmark,588,10.9.2009,10369.11323
+Munkegrund,Natura 2000 omrade nr. 205 Munkegrunde,262,Implemented,08.12.0011,Munkegrunde,3,Denmark,1329,10.9.2009,10369.11323
+Stevns Rev,Natura 2000 omrade nr. 206 Stevns Rev,270,Implemented,08.12.0011,Stevns Rev,12,Denmark,4640,10.9.2009,6272.53375
+Boechers Grund,Natura 2000-plan 2010-2015: Boechers Grund - Natura 2000-omrade nr. 208,247,Implemented,08.12.0011,Bøchers Grund,12,Denmark,1098,10.9.2009,6272.53375
+Hvideodde Rev,Natura 2000 omrade nr. 211 Hvideodde,256,Implemented,08.12.0011,Hvideodde Rev,12,Denmark,789,17.9.2009,6272.53375
+Hvideodde Rev,Natura 2000 omrade nr. 211 Hvideodde,256,Implemented,08.12.0011,Hvideodde Rev,15,Denmark,789,17.9.2009,7152.79836
+Bakkebraedt og Bakkegrund,Natura 2000-plan 2010-2015. Bakkebraedt og Bakkegrund. Natura 2000-omrade nr. 212. Habitatomrade H212,245,Implemented,08.12.2011,Bakkebrædt og Bakkeground,12,Denmark,299,10.9.2009,6272.53375
+Mols Bjerge med kystvande,Natura 2000 omrade nr. 227 Mols Bjerge med kystvande,261,Implemented,08.12.0011,Mols Bjerge med kystvande,3,Denmark,2915,23.9.2009,10369.11323
+Kaloeskovene og Kaloevig,Natura 2000 omrade nr. 230 Kaloeskovene og Kaloevig,283,Implemented,08.12.0011,Kaløskovene og Kaløvig,3,Denmark,746,16.12.2009,10369.11323
+Kobberhage kystarealer,Natura 2000 omrade nr. 231 Kobberhage kystarealer,284,Implemented,08.12.0011,Kobberhage kystarealer,3,Denmark,792,16.12.2009,10369.11323
+Kobberhage kystarealer,Natura 2000 omrade nr. 231 Kobberhage kystarealer,284,Implemented,08.12.0011,Kobberhage kystarealer,2,Denmark,792,16.12.2009,15300.69996
+Jaegerspris Skydeterraen,Natura 2000 omrade nr. 235 Jaegerspris Skydeterraen,282,Implemented,08.12.0011,Jægerspris Skydeterræn,2,Denmark,569,16.12.2009,15300.69996
+Thuroe Rev,Natura 2000-omrade nr. 242 Thuroe Rev,272,Implemented,08.12.0011,Thurø Rev,3,Denmark,163,10.9.2009,10369.11323
+"Alborg Bugt, oestlige del","Natura 2000 omrade nr. 245 Alborg Bugt, oestlige del",274,Implemented,08.12.0011,"Ålborg Bugt, østlige del",2,Denmark,177360,16.12.2009,15300.69996
+Mejl Flak,Forslag til Natura 2000-plan 2015-2021 for Mejl Flak Natura 2000-omrade nr. 194 Habitatomrade H170,286,In development,NA,Mejl Flak,3,Denmark,3907,16.12.2009,10369.11323
+Adler Grund og Roenne Banke,Udkast til Natura 2000 plan 2016-21 for Adler Grund og Roenne Banke,275,In development,NA,Adler Grund og Rønne Banke,12,Denmark,31910,16.12.2009,6272.53375
+Adler Grund og Roenne Banke,Udkast til Natura 2000 plan 2016-21 for Adler Grund og Roenne Banke,275,In development,NA,Adler Grund og Rønne Banke,13,Denmark,31910,16.12.2009,7071.49776
+Kims Top og den Kinesiske Mur,Natura 2000 omrade nr. 190 Kims Top og den Kinesiske Mur,257,Implemented,08.12.0011,Kims Top og den Kinesiske Mur,2,Denmark,26100,10.9.2009,15300.69996
+"Horsens Fjord, havet oest for og Endelave","Natura 2000 omrade nr. 56 Horsens Fjord, havet oest for og Endelave",255,Implemented,08.12.0011,"Horsens Fjord, havet øst for og Endelave",3,Denmark,45823,10.9.2009,10369.11323
+Lysegrund,Natura 2000 omrade nr. 207 Lysegrund,260,Implemented,08.12.0011,Lysegrund,2,Denmark,3158,10.9.2009,15300.69996
+"Roesnaes, Roesnaes Rev og Kalundborg Fjord","Natura 2000 omrade nr. 166 Roesnaes, Roesnaes Rev og Kalundborg Fjord",288,Implemented,08.12.0011,"Røsnæs, Røsnæs Rev og Kalundborg Fjord",3,Denmark,5664,16.12.2009,10369.11323
+Femern Baelt,Udkast til Natura 2000-plan 2016-2021 for Femern Baelt - Natura 2000-omrade nr. 251 - Habitatomrade H260,278,In development,NA,Femern Bælt,3,Denmark,11456,16.12.2009,10369.11323
+Femern Baelt,Udkast til Natura 2000-plan 2016-2021 for Femern Baelt - Natura 2000-omrade nr. 251 - Habitatomrade H260,278,In development,NA,Femern Bælt,7,Denmark,11456,16.12.2009,1208.87616
+Femern Baelt,Udkast til Natura 2000-plan 2016-2021 for Femern Baelt - Natura 2000-omrade nr. 251 - Habitatomrade H260,278,In development,NA,Femern Bælt,8,Denmark,11456,16.12.2009,2079.47971
+Gilleleje Flak og Tragten,Forslag til Natura 2000-plan 2016-2021 for Gilleleje Flak og Tragten Natura 2000-omrade nr. 195 Habitatomrade H171,279,In development,NA,Gilleleje Flak og Tragten,2,Denmark,15034,16.12.2009,15300.69996
+Gilleleje Flak og Tragten,Forslag til Natura 2000-plan 2016-2021 for Gilleleje Flak og Tragten Natura 2000-omrade nr. 195 Habitatomrade H171,279,In development,NA,Gilleleje Flak og Tragten,6,Denmark,15034,16.12.2009,588.38712
+Gilleleje Flak og Tragten,Forslag til Natura 2000-plan 2016-2021 for Gilleleje Flak og Tragten Natura 2000-omrade nr. 195 Habitatomrade H171,279,In development,NA,Gilleleje Flak og Tragten,5,Denmark,15034,16.12.2009,612.66514
+Schultz og Hastens Grund samt Briseis Flak,Natura 2000 omrade nr. 204 Schultz og Hastens Grund samt Briseis Flak,267,Implemented,08.12.0011,Schultz og Hastens Grund samt Briseis Flak,2,Denmark,20710,10.9.2009,15300.69996
+"Flensborg Fjord, Bredgrund og farvandet omkring Als","Natura 2000-plan 2010-2015 - Natura 2000-omrade nr. N197, Flensborg Fjord, Bredgrund og farvandet omkring Als Delplan for: Fuglebeskyttelsesomrade F64 Flensborg Fjord og Nyboel Nor",250,Implemented,08.12.2011,"Flensborg Fjord, Bredgrund og farvandet omkring Als",3,Denmark,64922,10.9.2009,10369.11323
+"Flensborg Fjord, Bredgrund og farvandet omkring Als","Natura 2000-plan 2010-2015 - Natura 2000-omrade nr. N197, Flensborg Fjord, Bredgrund og farvandet omkring Als Delplan for: Fuglebeskyttelsesomrade F64 Flensborg Fjord og Nyboel Nor",250,Implemented,08.12.2011,"Flensborg Fjord, Bredgrund og farvandet omkring Als",7,Denmark,64922,10.9.2009,1208.87616
+"Flensborg Fjord, Bredgrund og farvandet omkring Als","Natura 2000-plan 2010-2015 - Natura 2000-omrade nr. N197, Flensborg Fjord, Bredgrund og farvandet omkring Als Delplan for: Fuglebeskyttelsesomrade F64 Flensborg Fjord og Nyboel Nor",250,Implemented,08.12.2011,"Flensborg Fjord, Bredgrund og farvandet omkring Als",4,Denmark,64922,10.9.2009,140.98877
+"Flensborg Fjord, Bredgrund og farvandet omkring Als","Natura 2000-plan 2010-2015 - Natura 2000-omrade nr. N197, Flensborg Fjord, Bredgrund og farvandet omkring Als Delplan for: Fuglebeskyttelsesomrade F64 Flensborg Fjord og Nyboel Nor",250,Implemented,08.12.2011,"Flensborg Fjord, Bredgrund og farvandet omkring Als",8,Denmark,64922,10.9.2009,2079.47971
+Ebbeloekke Rev,"Natura 2000-plan 2010-2015, Ebbeloekke Rev, Natura 2000-omrade - nr. 243, Habitatomrade H243",277,Implemented,08.12.2011,Ebbeløkke Rev,2,Denmark,140,16.12.2009,15300.69996
+Kyndby Kyst,Natura 2000 omrade nr. 244 Kyndby Kyst,285,Implemented,08.12.0011,Kyndby Kyst,2,Denmark,360,16.12.2009,15300.69996
+Northern Midsjoebanken,-0,116,In development,NA,Northern Midsjöbanken,14,Sweden,98400,9.11.2009,15096.6004
+Northern Midsjoebanken,-0,116,In development,NA,Northern Midsjöbanken,20,Sweden,98400,9.11.2009,21941.00756
+Northern Midsjoebanken,-0,116,In development,NA,Northern Midsjöbanken,26,Sweden,98400,9.11.2009,27456.05692
+Morups Bank,-0,295,In development,NA,Morups Bank,1,Sweden,567,9.11.2009,6739.5362
+Stora Middelgrund och Roede Bank,-0,296,In development,NA,Stora Middelgrund och Röde Bank,2,Sweden,11425,9.11.2009,15300.69996
+Stora Middelgrund och Roede Bank,-0,296,In development,NA,Stora Middelgrund och Röde Bank,1,Sweden,11425,9.11.2009,6739.5362
+Finngrundet-Oestra Banken,Bevarandeplan foer Finngrundet-Oestra Banken,297,Implemented,15.12.2014,Finngrundet-Östra Banken,37,Sweden,23162,16.5.2011,31735.90809
+Vaenta Litets Grund,-0,298,Implemented,NA,Vänta Litets Grund,37,Sweden,15139,16.5.2011,31735.90809
+Marakallen,Bevarandeplan Natura 2000 Marakallen SE0820751,299,Implemented,23.11.2010,Marakallen,41,Sweden,5985,16.5.2011,17335.82956
+Kvaedoefjaerden med Torroe,Torroe naturreservat,300,Implemented,16.12.2008,Kvädöfjärden med Torrö,26,Sweden,5663,16.5.2011,27456.05692
+Kvaedoefjaerden med Torroe,Kvaedoefjaerdens naturreservat,300,Implemented,28.12.2007,Kvädöfjärden med Torrö,26,Sweden,5663,16.5.2011,27456.05692
+NA,NA,95,NA,NA,Kura Kurk,25,Estonia,197300,1.4.2009,5414.05646
+NA,NA,95,NA,NA,Kura Kurk,28,Estonia,197300,1.4.2009,10774.55332
+NA,NA,95,NA,NA,Kura Kurk,24,Estonia,197300,1.4.2009,20977.58487
+NA,NA,95,NA,NA,Kura Kurk,27,Estonia,197300,1.4.2009,7993.91788
+NA,NA,94,NA,NA,Pärnu lahe,28,Estonia,114400,1.4.2009,10774.55332
+Pakri,-0,206,Implemented,NA,Pakri,34,Estonia,20470,1.4.2009,8426.04463
+NA,NA,2,NA,NA,Jasmund National Park,13,Germany,3003,13.7.2005,7071.49776
+NA,NA,3,NA,NA,Vorpommersche Boddenlandshaft National Park (West-Pommeranian Lagoon National Park),13,Germany,80500,13.7.2005,7071.49776
+NA,NA,3,NA,NA,Vorpommersche Boddenlandshaft National Park (West-Pommeranian Lagoon National Park),10,Germany,80500,13.7.2005,3438.82204
+Lahemaa,-0,88,Implemented,NA,Lahemaa,34,Estonia,74421,1.4.2009,8426.04463
+Hiiu Madala,-0,90,Implemented,NA,Hiiu Madala,31,Estonia,9600,1.4.2009,11841.39906
+Vilsandi,test management,91,Implemented,NA,Vilsandi,25,Estonia,31720,1.4.2009,5414.05646
+Vilsandi,test management,91,Implemented,NA,Vilsandi,31,Estonia,31720,1.4.2009,11841.39906
+Haparanda Archipelago,Bevarandeplan Natura 2000 Haparanda Sandskaer SE0820320,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Tervaletto SE0820748,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Maloeren SE0820724,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Tantamanni SE0820747,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Stora Hepokari SE0820735,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Toeyrae SE0820749,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Sarvenkataja SE0820734,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Huitori SE0820743,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Enskaer SE0820742,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Haparanda skaergard (SE0820108),101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Austi SE0820741,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Stora Hamnskaer SE0820746,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Haparanda-skaergard Nature reserve,101,In development,NA,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Aeimae SE0820750,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Kataja SE0820744,101,Implemented,11.12.2007,Haparanda Archipelago,42,Sweden,46296,24.9.2008,14930.90472
+Haparanda Archipelago,Bevarandeplan Natura 2000 Haparanda Sandskaer SE0820320,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Tervaletto SE0820748,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Maloeren SE0820724,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Tantamanni SE0820747,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Stora Hepokari SE0820735,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Toeyrae SE0820749,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Sarvenkataja SE0820734,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Huitori SE0820743,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Enskaer SE0820742,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Haparanda skaergard (SE0820108),101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Austi SE0820741,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Stora Hamnskaer SE0820746,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Haparanda-skaergard Nature reserve,101,In development,NA,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Aeimae SE0820750,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Haparanda Archipelago,Bevarandeplan Natura 2000 Kataja SE0820744,101,Implemented,11.12.2007,Haparanda Archipelago,41,Sweden,46296,24.9.2008,17335.82956
+Holmoe Islands,Bevarandeplan Holmoearna,103,Implemented,NA,Holmö Islands,39,Sweden,24216,25.9.2008,3215.71496
+High Coast,-0,104,Implemented,NA,High Coast,37,Sweden,152034,30.9.2008,31735.90809
+Graesoe/Singoe Archipelago,Skoetselplan foer naturreservatet Graesoe oestra skaergard,105,Implemented,21.02.2012,Gräsö/Singö Archipelago,35,Sweden,66247,16.9.2008,2703.05659
+Graesoe/Singoe Archipelago,Skoetselplan foer naturreservatet Graesoe oestra skaergard,105,Implemented,21.02.2012,Gräsö/Singö Archipelago,35,Sweden,66247,16.9.2008,2703.05659
+Stora Nassa-Sv. Hoegarna,Svenska Hoegarna naturreservat,106,Implemented,16.12.1988,Stora Nassa-Sv. Högarna,29,Sweden,29852,16.9.2008,17728.40167
+Stora Nassa-Sv. Hoegarna,Stora Nassa naturreservat,106,Implemented,07.05.2013,Stora Nassa-Sv. Högarna,29,Sweden,29852,16.9.2008,17728.40167
+Stora Nassa-Sv. Hoegarna,Svenska Hoegarnas marina naturreservat,106,In development,NA,Stora Nassa-Sv. Högarna,29,Sweden,29852,16.9.2008,17728.40167
+Stora Nassa-Sv. Hoegarna,Marin samverkansplan foer Stora Nassa-Svenska Hoegarna,106,Implemented,01.12.2010,Stora Nassa-Sv. Högarna,29,Sweden,29852,16.9.2008,17728.40167
+Fifang-Askoe-Hartsoe,-0,107,Implemented,NA,Fifång-Askö-Hartsö,29,Sweden,29550,16.9.2008,17728.40167
+S:t Anna/Missjoe Archipelago,Missjoe naturreservat,108,Implemented,10.12.2014,St. Anna/Missjö Archipelago,26,Sweden,16614,16.9.2008,27456.05692
+Kopparstenarna/Gotska Sandoen/Salvorev Area,Bevarandeplan foer Natura 2000-omrade (Gotska Sandoen-)Salvorev SE0340097 Del 2,109,Implemented,30.08.2005,Kopparstenarna/Gotska Sandön/Salvorev Area,20,Sweden,60510,16.9.2008,21941.00756
+Kopparstenarna/Gotska Sandoen/Salvorev Area,Bevarandeplan foer Natura 2000-omrade (Gotska Sandoen-)Salvorev SE0340097 Del 2,109,Implemented,30.08.2005,Kopparstenarna/Gotska Sandön/Salvorev Area,29,Sweden,60510,16.9.2008,17728.40167
+Kopparstenarna/Gotska Sandoen/Salvorev Area,Bevarandeplan foer Natura 2000-omrade (Gotska Sandoen-)Salvorev SE0340097 Del 2,109,Implemented,30.08.2005,Kopparstenarna/Gotska Sandön/Salvorev Area,26,Sweden,60510,16.9.2008,27456.05692
+NA,NA,110,NA,NA,Torhamns Archipelago,14,Sweden,10557,25.9.2008,15096.6004
+Falsterbo Peninsula with Maklaeppen,Falsterbo skjutfaelt,111,Implemented,16.12.2005,Falsterbo Peninsula with Måkläppen,11,Sweden,46330,30.9.2008,4226.44762
+Falsterbo Peninsula with Maklaeppen,Falsterbo-Foteviken,111,Implemented,16.12.2005,Falsterbo Peninsula with Måkläppen,11,Sweden,46330,30.9.2008,4226.44762
+Falsterbo Peninsula with Maklaeppen,Tygelsjoe-Gessie,111,Implemented,16.12.2005,Falsterbo Peninsula with Måkläppen,11,Sweden,46330,30.9.2008,4226.44762
+Falsterbo Peninsula with Maklaeppen,Vellinge aengar,111,Implemented,16.12.2005,Falsterbo Peninsula with Måkläppen,11,Sweden,46330,30.9.2008,4226.44762
+Falsterbo Peninsula with Maklaeppen,Falsterbohalvoens havsomrade,111,Implemented,10.03.2011,Falsterbo Peninsula with Måkläppen,11,Sweden,46330,30.9.2008,4226.44762
+Falsterbo Peninsula with Maklaeppen,Foteviksomradet,111,Implemented,19.05.2011,Falsterbo Peninsula with Måkläppen,11,Sweden,46330,30.9.2008,4226.44762
+Falsterbo Peninsula with Maklaeppen,Falsterbohalvoen,111,Implemented,16.12.2005,Falsterbo Peninsula with Måkläppen,11,Sweden,46330,30.9.2008,4226.44762
+Kullaberg-Skaelderviken,Vaestra Kullaberg,112,Implemented,26.09.2012,Kullaberg-Skälderviken,1,Sweden,4519,30.9.2008,6739.5362
+Kullaberg-Skaelderviken,Oestra Kullaberg,112,Implemented,26.09.2012,Kullaberg-Skälderviken,1,Sweden,4519,30.9.2008,6739.5362
+Kullaberg-Skaelderviken,Jonstorp-Vegeans mynning,112,Implemented,NA,Kullaberg-Skälderviken,1,Sweden,4519,30.9.2008,6739.5362
+Kullaberg-Skaelderviken,Nabben,112,Implemented,13.12.1994,Kullaberg-Skälderviken,1,Sweden,4519,30.9.2008,6739.5362
+Kullaberg-Skaelderviken,Skaeret,112,Implemented,15.01.2009,Kullaberg-Skälderviken,1,Sweden,4519,30.9.2008,6739.5362
+Kullaberg-Skaelderviken,Vaestra Kullaberg,112,Implemented,26.09.2012,Kullaberg-Skälderviken,5,Sweden,4519,30.9.2008,612.66514
+Kullaberg-Skaelderviken,Oestra Kullaberg,112,Implemented,26.09.2012,Kullaberg-Skälderviken,5,Sweden,4519,30.9.2008,612.66514
+Kullaberg-Skaelderviken,Jonstorp-Vegeans mynning,112,Implemented,NA,Kullaberg-Skälderviken,5,Sweden,4519,30.9.2008,612.66514
+Kullaberg-Skaelderviken,Nabben,112,Implemented,13.12.1994,Kullaberg-Skälderviken,5,Sweden,4519,30.9.2008,612.66514
+Kullaberg-Skaelderviken,Skaeret,112,Implemented,15.01.2009,Kullaberg-Skälderviken,5,Sweden,4519,30.9.2008,612.66514
+Kungsbackafjorden,Skoetselplan foer naturreservatet Kungsbackafjorden i Kungsbacka,113,Implemented,15.12.2003,Kungsbackafjorden,1,Sweden,7877,30.9.2008,6739.5362
+Hoburgs Bank,Bevarandeplan foer Natura 2000-omrade Hoburgs bank SE0340144,115,Implemented,30.08.2005,Hoburgs Bank,20,Sweden,122671,16.9.2008,21941.00756
+Hoburgs Bank,Bevarandeplan foer Natura 2000-omrade Hoburgs bank SE0340144,115,Implemented,30.08.2005,Hoburgs Bank,26,Sweden,122671,16.9.2008,27456.05692
+Fladen,Bevarandeplan foer Fladen,118,Implemented,10.11.2006,Fladen,1,Sweden,10395,30.9.2008,6739.5362
+Lilla Middelgrund,Bevarandeplan foer Lilla Middelgrund,119,Implemented,10.11.2006,Lilla Middelgrund,1,Sweden,17864,30.9.2008,6739.5362
+Curonian Spit National Park,-0,122,Implemented,NA,Curonian Spit National Park,23,Lithuania,27339,23.4.1991,6139.73941
+Curonian Spit National Park,-0,122,Implemented,NA,Curonian Spit National Park,22,Lithuania,27339,23.4.1991,9466.30104
+Pajuris Regional Park,-0,123,Implemented,NA,Pajuris Regional Park,23,Lithuania,5870,24.9.1992,6139.73941
+Nemunas Delta Regional Park,-0,124,Implemented,NA,Nemunas Delta Regional Park,23,Lithuania,28953,24.9.1992,6139.73941
+Nemunas Delta Regional Park,-0,124,Implemented,NA,Nemunas Delta Regional Park,22,Lithuania,28953,24.9.1992,9466.30104
+The state Baltic sea marine reserve,-0,125,In development,NA,The state Baltic sea marine reserve,23,Lithuania,14027,25.5.2005,6139.73941
+Davids Banke,Natura 2000-plan 2009-2015. Davids Banke - Natura 2000-omrade nr. 209 - Habitatomrade H209,126,Implemented,08.12.0011,Bornholm: Davids Banke,15,Denmark,838,14.7.2005,7152.79836
+Skaelskoer Fjord og havet og kysten mellem Agersoe og Glaenoe,Natura 2000 omrade nr. 162 Skaelskoer Fjord og havet og kysten mellem Agersoe og Glaenoe,128,Implemented,08.12.0011,Skælskør Fjord og havet og kysten mellem Agersø og Glænø,3,Denmark,18500,22.8.2005,10369.11323
+Saltholm og omliggende hav,Natura 2000 omrade nr. 142 Saltholm og omliggende hav,129,Implemented,08.12.0011,Saltholm og omliggende hav,12,Denmark,7218,14.7.2005,6272.53375
+Saltholm og omliggende hav,Natura 2000 omrade nr. 142 Saltholm og omliggende hav,129,Implemented,08.12.0011,Saltholm og omliggende hav,6,Denmark,7218,14.7.2005,588.38712
+"Stavns Fjord, Samsoe Oesterflak og Nordby Hede","Natura 2000 omrade nr. 55 Stavns Fjord, Samsoe Oesterflak og Nordby Hede",130,Implemented,08.12.0011,"Stavns Fjord, Samsø Østerflak og Nordby Hede",3,Denmark,15663,14.7.2005,10369.11323
+Hesseloe med omliggende stenrev,Natura 2000 omrade nr. 128 Hesseloe med omliggende stenrev,131,Implemented,08.12.0011,Hesselø med omliggende stenrev,2,Denmark,4200,14.7.2005,15300.69996
+"Alborg Bugt, Randers Fjord and Mariager Fjord, Birdprotection sites","Natura 2000-omrade nr. 14 Alborg Bugt, Randers Fjord og Mariager Fjord",133,Implemented,08.12.0011,"Ålborg Bugt, Randers Fjord and Mariager Fjord, Birdprotection sites",2,Denmark,72197,14.7.2005,15300.69996
+Herthas Flak,Natura 2000 omrade nr. 191 Herthas Flak,137,Implemented,08.11.0011,Herthas Flak,2,Denmark,1380,14.7.2005,15300.69996
+	Bothnian Bay National Park,"Peraemeren kansallispuiston, Peraemeren saarten ja Roeytaen Natura 2000-alueiden hoito- ja kaeyttoesuunnitelma",139,Implemented,NA,Perämeren kansallispuisto /Bothnian Bay National Park,42,Finland,15890,19.9.2005,14930.90472
+	Outer Bothnian Threshold Archipelago (The Quark),No Plan,140,In development,NA,Merenkurkun saaristo /Outer Bothnian Threshold Archipelago (The Quark),38,Finland,128162,19.9.2005,28136.78846
+	Outer Bothnian Threshold Archipelago (The Quark),No Plan,140,In development,NA,Merenkurkun saaristo /Outer Bothnian Threshold Archipelago (The Quark),40,Finland,128162,19.9.2005,4932.99666
+	Oura Archipelago,No plan,141,No plan,NA,Ouran saaristo /Oura Archipelago,38,Finland,3073,19.9.2005,28136.78846
+	Uusikaupunki Archipelago,No Plan,142,No plan,NA,Uudenkaupungin saaristo/ Uusikaupunki Archipelago,36,Finland,55992,19.9.2005,12405.68538
+	Uusikaupunki Archipelago,No Plan,142,No plan,NA,Uudenkaupungin saaristo/ Uusikaupunki Archipelago,38,Finland,55992,19.9.2005,28136.78846
+	Archipelago Sea,No Plan,143,No plan,NA,Saaristomeri /Archipelago Sea,36,Finland,59842,19.9.2005,12405.68538
+	Archipelago Sea,No Plan,143,No plan,NA,Saaristomeri /Archipelago Sea,30,Finland,59842,19.9.2005,9800.24404
+	Tammisaari and Hanko Archipelago-and Pojo Bay marine proteciton area,Tammisaaren ja Hangon itaeisen saariston hoito- ja kaeyttoesuunnitelma,144,Implemented,NA,Tammisaaren ja Hangon saariston ja Pohjanpitäjänlahden merensuojelualue /Tammisaari and Hanko Archipelago-and Pojo Bay marine proteciton area,32,Finland,52630,19.9.2005,9549.67733
+	Eastern Gulf of Finland Archipelago and waters,Itaeisen Suomenlahden kansallispuiston ja Natura 2000 -alueen hoito- ja kaeyttoesuunnitelma,145,Implemented,NA,Itäisen Suomenlahden saaristo ja vedet/ Eastern Gulf of Finland Archipelago and waters,32,Finland,95628,19.9.2005,9549.67733
+	Eastern Gulf of Finland Archipelago and waters,Itaeisen Suomenlahden kansallispuiston ja Natura 2000 -alueen hoito- ja kaeyttoesuunnitelma,145,Implemented,NA,Itäisen Suomenlahden saaristo ja vedet/ Eastern Gulf of Finland Archipelago and waters,33,Finland,95628,19.9.2005,11571.59858
+	Hailuoto northshore,Hailuodon Natura 2000 -alueiden hoito- ja kaeyttoesuunnitelma 2013�2027,147,In development,NA,"Hailuoto, pohjoisranta/ Hailuoto northshore",42,Finland,3671,19.9.2005,14930.90472
+Kirkkosalmi,Hailuodon Natura 2000 -alueiden hoito- ja kaeyttoesuunnitelma 2013�2027,148,In development,NA,Kirkkosalmi,42,Finland,1019,19.9.2005,14930.90472
+Isomatala-Maasyvaenlahti,Hailuodon Natura 2000 -alueiden hoito- ja kaeyttoesuunnitelma 2013�2027,149,In development,NA,Isomatala-Maasyvänlahti,42,Finland,1531,19.9.2005,14930.90472
+	Liminganlahti,No Plan,150,No plan,NA,Liminka Bay /Liminganlahti,42,Finland,11823,19.9.2005,14930.90472
+	Rahja Archipelago,Kalajoen rannikon Natura 2000 -alueiden hoito- ja kaeyttoesuunnitelma 2012�2022,151,Implemented,NA,Rahjan saaristo/Rahja Archipelago,42,Finland,8381,19.9.2005,14930.90472
+	Kokkola Archipelago,Kokkolan saariston hoito -  ja kaeyttoesuunnitelma,152,Implemented,NA,Kokkolan saaristo/Kokkola Archipelago,42,Finland,14955,22.11.2006,14930.90472
+	Luoto Archipelago,Skoetsel- och anvaendningsplan foer Larsmo skaergard,153,Implemented,NA,Luodon saaristo/Luoto Archipelago,42,Finland,14457,19.9.2005,14930.90472
+	Uusikaarlepyy Archipelago,No Plan,154,No plan,NA,Uudenkaarlepyyn saaristo /Uusikaarlepyy Archipelago,42,Finland,3210,19.9.2005,14930.90472
+	Uusikaarlepyy Archipelago,No Plan,154,No plan,NA,Uudenkaarlepyyn saaristo /Uusikaarlepyy Archipelago,40,Finland,3210,19.9.2005,4932.99666
+	Naerpioe Archipelago,No Plan,155,No plan,NA,Närpiön saaristo /Närpiö Archipelago,38,Finland,11828,19.9.2005,28136.78846
+	Kristiinankaupunki Archipelago,No Plan,156,No plan,NA,Kristiinankaupungin saaristo /Kristiinankaupunki Archipelago,38,Finland,8059,19.9.2005,28136.78846
+	Tulliniemi bird protection area,Tulliniemen linnustonsuojelualueen ja Bengtsarin lehdon hoito- ja kaeyttoesuunnitelma,157,Implemented,NA,Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,36,Finland,2566,19.9.2005,12405.68538
+	Tulliniemi bird protection area,Tulliniemen linnustonsuojelualueen ja Bengtsarin lehdon hoito- ja kaeyttoesuunnitelma,157,Implemented,NA,Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,32,Finland,2566,19.9.2005,9549.67733
+	Tulliniemi bird protection area,Tulliniemen linnustonsuojelualueen ja Bengtsarin lehdon hoito- ja kaeyttoesuunnitelma,157,Implemented,NA,Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,30,Finland,2566,19.9.2005,9800.24404
+	Kirkkonummi Archipelago,No plan,158,No plan,NA,Kirkkonummen saaristo/ Kirkkonummi Archipelago,32,Finland,1750,19.9.2005,9549.67733
+	Soederskaer and Langoeren Archipelago,Soederskaerin ja Langoerenin saaristojen hoito ja kaeyttoesuunnitelma,159,In development,NA,Söderskärin ja Långörenin saaristo /Söderskär and Långören Archipelago,32,Finland,18219,19.9.2005,9549.67733
+	Porvoonjoki estuary-Stensboele,No Plan,160,In development,NA,Porvoonjoen suisto - Stensböle /Porvoonjoki estuary-Stensböle,32,Finland,1331,19.9.2005,9549.67733
+	Pernajabay and Pernaja Archipelago marine protection areas,No Plan,161,No plan,NA,Pernajanlahtien ja Pernajan saariston merensuojelualue /Pernajabay and Pernaja Archipelago marine protection areas,32,Finland,65755,22.11.2006,9549.67733
+NA,NA,171,NA,NA,Walkyriengrund,10,Germany,2224,1.3.2009,3438.82204
+Pommersche Bucht-Roennebank,-0,172,In development,NA,Pommersche Bucht-Rönnebank,13,Germany,209018,1.4.2004,7071.49776
+Pommersche Bucht-Roennebank,-0,172,In development,NA,Pommersche Bucht-Rönnebank,16,Germany,209018,1.4.2004,2566.81091
+Pommersche Bucht-Roennebank,-0,172,In development,NA,Pommersche Bucht-Rönnebank,17,Germany,209018,1.4.2004,17334.97259
+"Kuestenbereiche Flensburger Foerde von Flensburg bis Geltinger Birk, Flengurger Foerde",-0,173,In development,NA,"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",3,Germany,23362,1.4.2009,10369.11323
+"Kuestenbereiche Flensburger Foerde von Flensburg bis Geltinger Birk, Flengurger Foerde",-0,173,In development,NA,"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",4,Germany,23362,1.4.2009,140.98877
+"Kuestenbereiche Flensburger Foerde von Flensburg bis Geltinger Birk, Flengurger Foerde",-0,173,In development,NA,"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",8,Germany,23362,1.4.2009,2079.47971
+Schlei incl. Schleimuende und vorgelagerter Flachgruende,-0,174,In development,NA,Schlei incl. Schleimünde und vorgelagerter Flachgründe,8,Germany,17434,1.2.2006,2079.47971
+"Eckernfoerder Bucht mit Flachgruenden, Suedkueste der Eckernfoerder Bucht und vorgelagerte Flachgruende",-0,175,In development,NA,"Eckernförder Bucht mit Flachgründen, Südküste der Eckernförder Bucht und vorgelagerte Flachgründe",8,Germany,20302,1.3.2009,2079.47971
+"Kuestenlandschaft Bottsand - Marzkamp u. vorgelagerte Flachgruende, Oestlichen Kieler Bucht",-0,176,In development,NA,"Küstenlandschaft Bottsand - Marzkamp u. vorgelagerte Flachgründe, Östlichen Kieler Bucht",8,Germany,142003,1.3.2009,2079.47971
+"Staberhuk, Grossenbrode Meeresbereiche, Wagrien, Sagas-Bank",-0,177,In development,NA,"Staberhuk, Großenbrode Meeresbereiche, Wagrien, Sagas-Bank",10,Germany,46055,1.3.2009,3438.82204
+"Staberhuk, Grossenbrode Meeresbereiche, Wagrien, Sagas-Bank",-0,177,In development,NA,"Staberhuk, Großenbrode Meeresbereiche, Wagrien, Sagas-Bank",8,Germany,46055,1.3.2009,2079.47971
+NA,NA,178,NA,NA,Ostseeküste am Brodtener Ufer,10,Germany,2084,1.3.2009,3438.82204
+NA,NA,180,NA,NA,Fehmarnbelt,7,Germany,27992,21.5.2008,1208.87616
+NA,NA,180,NA,NA,Fehmarnbelt,10,Germany,27992,21.5.2008,3438.82204
+NA,NA,180,NA,NA,Fehmarnbelt,8,Germany,27992,21.5.2008,2079.47971
+NA,NA,181,NA,NA,Kadetrinne,12,Germany,10007,1.4.2004,6272.53375
+NA,NA,181,NA,NA,Kadetrinne,9,Germany,10007,1.4.2004,1144.29301
+NA,NA,181,NA,NA,Kadetrinne,13,Germany,10007,1.4.2004,7071.49776
+NA,NA,181,NA,NA,Kadetrinne,10,Germany,10007,1.4.2004,3438.82204
+Ertholmene,Natura 2000-plan 2010-2015. Ertholmene - Natura 2000-omrade nr. 189 - Habitatomrade H210 - Fuglebeskyttelsesomrade F79,184,Implemented,08.12.2011,Bornholm: Ertholmene,15,Denmark,1256,14.7.2005,7152.79836
+Kirkegrund,Natura 2000 omrade nr. 170 Kirkegrund,185,Implemented,08.12.0011,Kirkegrund,3,Denmark,1761,22.8.2005,10369.11323
+Havet og kysten mellem Karrebaek Fjord og Knudshoved Odde,Natura 2000 omrade nr. 169 Havet og kysten mellem Karrebaek Fjord og Knudshoved Odde,186,Implemented,08.12.0011,Havet og kysten mellem Karrebæk Fjord og Knudshoved Odde,3,Denmark,18871,22.8.2005,10369.11323
+"Smalandsfarvandet nord for Lolland, Guldborg Sund, Boetoe Nor og Hyllekrog-Roedsand","Natura 2000 omrade nr. 173 Smalandsfarvandet nord for Lolland, Guldborgsund, Boetoe Nor og Hyllekrog-Roedsand",187,Implemented,08.12.0011,"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",9,Denmark,77848,22.8.2005,1144.29301
+"Smalandsfarvandet nord for Lolland, Guldborg Sund, Boetoe Nor og Hyllekrog-Roedsand","Natura 2000 omrade nr. 173 Smalandsfarvandet nord for Lolland, Guldborgsund, Boetoe Nor og Hyllekrog-Roedsand",187,Implemented,08.12.0011,"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",3,Denmark,77848,22.8.2005,10369.11323
+"Smalandsfarvandet nord for Lolland, Guldborg Sund, Boetoe Nor og Hyllekrog-Roedsand","Natura 2000 omrade nr. 173 Smalandsfarvandet nord for Lolland, Guldborgsund, Boetoe Nor og Hyllekrog-Roedsand",187,Implemented,08.12.0011,"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",7,Denmark,77848,22.8.2005,1208.87616
+Kronoeren,Foerordnande om naturreservat foer Kronoeren,189,Implemented,02.10.2002,Kronören,37,Sweden,5834,16.9.2008,31735.90809
+Axmar,Bevarandeplan Natura 2000 Axmar-Gasholma,190,Implemented,15.12.2006,Axmar,37,Sweden,7225,16.9.2008,31735.90809
+Bulleroe-Bytta,Langviksskaer naturreservat,191,Implemented,03.07.2007,Bullerö-Bytta,29,Sweden,14385,16.9.2008,17728.40167
+Bulleroe-Bytta,Langskaer naturreservat,191,Implemented,10.08.2010,Bullerö-Bytta,29,Sweden,14385,16.9.2008,17728.40167
+Bulleroe-Bytta,Biskopsoe naturreservat,191,Implemented,07.03.1986,Bullerö-Bytta,29,Sweden,14385,16.9.2008,17728.40167
+Bulleroe-Bytta,Bulleroe naturreservat,191,Implemented,13.02.2008,Bullerö-Bytta,29,Sweden,14385,16.9.2008,17728.40167
+Vaernanaes Archipelago,Bevarandeplan foer Natura 2000-omradet Vaernanaes skaergard,192,Implemented,22.02.2006,Värnanäs Archipelago,26,Sweden,1552,6.10.2008,27456.05692
+Lundakrabukten,Lundakrabukten,193,Implemented,16.12.2005,Lundåkrabukten,5,Sweden,1963,30.9.2008,612.66514
+Lundakrabukten,Saxans mynning-Jaeravallen,193,Implemented,16.12.2005,Lundåkrabukten,5,Sweden,1963,30.9.2008,612.66514
+Lundakrabukten,Osen vid Saxans mynning,193,Implemented,NA,Lundåkrabukten,5,Sweden,1963,30.9.2008,612.66514
+Lundakrabukten,Jaeravallen,193,Implemented,15.02.1991,Lundåkrabukten,5,Sweden,1963,30.9.2008,612.66514
+Lundakrabukten,Lundakrabukten,193,In development,NA,Lundåkrabukten,5,Sweden,1963,30.9.2008,612.66514
+Hallands Vaederoe,Hallands Vaederoe,194,Implemented,16.12.2005,Hallands Väderö,1,Sweden,1836,30.9.2008,6739.5362
+Hallands Vaederoe,Hallands Vaederoe,194,Implemented,11.11.1999,Hallands Väderö,1,Sweden,1836,30.9.2008,6739.5362
+Vaeinameri,-0,207,In development,NA,Väinameri,28,Estonia,271297,1.4.2009,10774.55332
+Vaeinameri,-0,207,In development,NA,Väinameri,31,Estonia,271297,1.4.2009,11841.39906
+Havet omkring Nordre Roenner,Natura 2000 omrade nr. 20 Havet omkring Nordre Roenner,188,Implemented,08.12.0011,Havet omkring Nordre Rønner,2,Denmark,18535,14.7.2005,15300.69996
+Laesoe Trindel og Toenneberg Banke,Natura 2000-plan 2009-2015,136,Implemented,NA,Læsø Trindel og Tønneberg Banke,2,Denmark,8659.70019531,14.7.2005,15300.69996
+Store Middelgrund,Natura 2000 omrade nr. 193 Store Middelgrund,132,Implemented,08.12.0011,Store Middelgrund,2,Denmark,2137,14.7.2005,15300.69996
+Store Middelgrund,Natura 2000 omrade nr. 193 Store Middelgrund,132,Implemented,08.12.0011,Store Middelgrund,1,Denmark,2137,14.7.2005,6739.5362
+"Hirsholmene, havet vest herfor og Ellinge A's udloeb","Natura 2000-omrade nr. 4 Hirsholmene, havet vest herfor og Ellinge A�s udloeb",135,Implemented,08.11.0011,"Hirsholmene, havet vest herfor og Ellinge Å's udløb",2,Denmark,9500,14.7.2005,15300.69996
+Strandenge pa Laesoe og havet syd herfor,Natura 2000-omrade nr. 9 Strandenge pa Laesoe og havet syd herfor,134,Implemented,08.12.0011,Strandenge på Læsø og havet syd herfor,2,Denmark,102714,14.7.2005,15300.69996
+NA,NA,303,NA,NA,Ainazi-Salacgriva,28,Latvia,7113,16.1.2013,10774.55332
+NA,NA,303,NA,NA,Ainazi-Salacgriva,27,Latvia,7113,16.1.2013,7993.91788
+NA,NA,308,NA,NA,Akmensrags,24,Latvia,25829,16.1.2013,20977.58487
+NA,NA,307,NA,NA,Irbes saurums,25,Latvia,172412,16.1.2013,5414.05646
+NA,NA,307,NA,NA,Irbes saurums,28,Latvia,172412,16.1.2013,10774.55332
+NA,NA,307,NA,NA,Irbes saurums,24,Latvia,172412,16.1.2013,20977.58487
+NA,NA,307,NA,NA,Irbes saurums,27,Latvia,172412,16.1.2013,7993.91788
+Nida-Perkone,"Aizsargajamas juras teritorijas Nida-Perkone"" dabas aizsardzibas plans""",309,In development,NA,Nida-Perkone,24,Latvia,36703,16.1.2013,20977.58487
+NA,NA,305,NA,NA,Selga uz rietumiem no Tujas,27,Latvia,58600,16.1.2013,7993.91788
+NA,NA,304,NA,NA,Vitrupe-Tuja,27,Latvia,3577,16.1.2013,7993.91788
+Rigas lica rietumu piekraste,AIZSARGAJAMAS JURAS TERITORIJAS �RIGAS LICA RIETUMU PIEKRASTE� DABAS AIZSARDZBAS PLANS,306,In development,NA,Rigas lica rietumu piekraste,27,Latvia,132172,16.1.2013,7993.91788
+NA,NA,87,NA,NA,Lawica Slupska,17,Poland,80050.296875,31.12.2009,17334.97259
+Anholt og havet nord for,Natura 2000-plan 2010-2015. Anholt og havet nord for,244,Implemented,08.12.2011,Anholt og havet nord for,2,Denmark,47878,6.4.2009,15300.69996
+Centrale Storebaelt og Vresen,"Natura 2000-plan 2010-2015. Centrale Storebaelt og Vresen. Natura2000-omrade nr. 116 -Habitatomrade H100, Fuglebeskyttelsesomrader F98 og F73",249,Implemented,08.12.0011,Centrale Storebælt og Vresen,3,Denmark,62311,10.9.2009,10369.11323
+Kursiu Marios Biosphere Polygon,-0,310,Implemented,NA,Kursiu Marios Biosphere Polygon,23,Lithuania,31138,17.9.2009,6139.73941
+Kursiu Marios Biosphere Polygon,-0,310,Implemented,NA,Kursiu Marios Biosphere Polygon,22,Lithuania,31138,17.9.2009,9466.30104
+NA,NA,311,NA,NA,Baltic Sea Biosphere Polygon,23,Lithuania,31959,23.5.2013,6139.73941
+NA,NA,311,NA,NA,Baltic Sea Biosphere Polygon,22,Lithuania,31959,23.5.2013,9466.30104

@@ -1,227 +1,227 @@
-BSPA_ID,BHI_ID,name,date_est,mpa_status,mpa_area_km2,eez_area_km2
-295,1,Morups Bank,9.11.2009,Designated,5.67,6739.5362
-296,1,Stora Middelgrund och Röde Bank,9.11.2009,Designated,114.25,6739.5362
-112,1,Kullaberg-Skälderviken,30.9.2008,Managed,45.19,6739.5362
-113,1,Kungsbackafjorden,30.9.2008,Managed,78.77,6739.5362
-118,1,Fladen,30.9.2008,Managed,103.95,6739.5362
-119,1,Lilla Middelgrund,30.9.2008,Managed,178.64,6739.5362
-194,1,Hallands Väderö,30.9.2008,Managed,18.36,6739.5362
-132,1,Store Middelgrund,14.7.2005,Managed,21.37,6739.5362
-289,2,Roskilde Fjord og Jægerspris Nordskov,16.12.2009,Managed,148.1,15300.69996
-253,2,Havet og kysten mellem Hundested og Rørvig,28.8.2009,Managed,40.23,15300.69996
-292,2,Udby Vig,16.12.2009,Managed,3.84,15300.69996
-280,2,Hov Vig,16.12.2009,Managed,2.4,15300.69996
-284,2,Kobberhage kystarealer,16.12.2009,Managed,7.92,15300.69996
-282,2,Jægerspris Skydeterræn,16.12.2009,Managed,5.69,15300.69996
-274,2,"Ålborg Bugt, østlige del",16.12.2009,Managed,1773.6,15300.69996
-257,2,Kims Top og den Kinesiske Mur,10.9.2009,Managed,261,15300.69996
-260,2,Lysegrund,10.9.2009,Managed,31.58,15300.69996
-279,2,Gilleleje Flak og Tragten,16.12.2009,Designated,150.34,15300.69996
-267,2,Schultz og Hastens Grund samt Briseis Flak,10.9.2009,Managed,207.1,15300.69996
-277,2,Ebbeløkke Rev,16.12.2009,Managed,1.4,15300.69996
-285,2,Kyndby Kyst,16.12.2009,Managed,3.6,15300.69996
-296,2,Stora Middelgrund och Röde Bank,9.11.2009,Designated,114.25,15300.69996
-131,2,Hesselø med omliggende stenrev,14.7.2005,Managed,42,15300.69996
-133,2,"Ålborg Bugt, Randers Fjord and Mariager Fjord, Birdprotection sites",14.7.2005,Managed,721.97,15300.69996
-137,2,Herthas Flak,14.7.2005,Managed,13.8,15300.69996
-188,2,Havet omkring Nordre Rønner,14.7.2005,Managed,185.35,15300.69996
-136,2,Læsø Trindel og Tønneberg Banke,14.7.2005,Managed,86.5970019531,15300.69996
-132,2,Store Middelgrund,14.7.2005,Managed,21.37,15300.69996
-135,2,"Hirsholmene, havet vest herfor og Ellinge Å's udløb",14.7.2005,Managed,95,15300.69996
-134,2,Strandenge på Læsø og havet syd herfor,14.7.2005,Managed,1027.14,15300.69996
-244,2,Anholt og havet nord for,6.4.2009,Managed,478.78,15300.69996
-246,3,Begstrup Vig og kystområder ved Helgenæs,22.9.2009,Managed,17.71,10369.11323
-251,3,"Fyns Hoved, Lillegrund og Lillestrand",31.8.2009,Managed,21.82,10369.11323
-241,3,Æbelø og havet syd for og Nærå,1.9.2009,Managed,131.61,10369.11323
-265,3,Havet mellem Romsø og Hindsholm samt Romsø,1.9.2009,Managed,43.28,10369.11323
-287,3,Odense Fjord,16.12.2009,Managed,50.48,10369.11323
-259,3,Lillebælt,10.9.2009,Managed,350.43,10369.11323
-276,3,Bøjden Nor,16.12.2009,Managed,1.14,10369.11323
-254,3,Maden på Helnæs og havet vest for,10.9.2009,Managed,20.45,10369.11323
-293,3,Vestlige del af Avernakø,16.12.2009,Managed,1.24,10369.11323
-269,3,Stenrev sydøst for Langeland,10.9.2009,Managed,14.84,10369.11323
-271,3,Sydfynske Øhav,10.9.2009,Managed,451.99,10369.11323
-268,3,Sejerø Bugt og Saltbæk Vig,6.4.2009,Managed,445,10369.11323
-263,3,Nakskov Fjord og Inderfjord,10.9.2009,Managed,85.26,10369.11323
-266,3,Ryggen,10.9.2009,Managed,4.37,10369.11323
-252,3,Hatter Barn,10.9.2009,Managed,6.33,10369.11323
-248,3,Broen,10.9.2009,Managed,5.88,10369.11323
-262,3,Munkegrunde,10.9.2009,Managed,13.29,10369.11323
-261,3,Mols Bjerge med kystvande,23.9.2009,Managed,29.15,10369.11323
-283,3,Kaløskovene og Kaløvig,16.12.2009,Managed,7.46,10369.11323
-284,3,Kobberhage kystarealer,16.12.2009,Managed,7.92,10369.11323
-272,3,Thurø Rev,10.9.2009,Managed,1.63,10369.11323
-286,3,Mejl Flak,16.12.2009,Designated,39.07,10369.11323
-255,3,"Horsens Fjord, havet øst for og Endelave",10.9.2009,Managed,458.23,10369.11323
-288,3,"Røsnæs, Røsnæs Rev og Kalundborg Fjord",16.12.2009,Managed,56.64,10369.11323
-278,3,Femern Bælt,16.12.2009,Designated,114.56,10369.11323
-250,3,"Flensborg Fjord, Bredgrund og farvandet omkring Als",10.9.2009,Managed,649.22,10369.11323
-128,3,Skælskør Fjord og havet og kysten mellem Agersø og Glænø,22.8.2005,Managed,185,10369.11323
-130,3,"Stavns Fjord, Samsø Østerflak og Nordby Hede",14.7.2005,Managed,156.63,10369.11323
-173,3,"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",1.4.2009,Designated,233.62,10369.11323
-185,3,Kirkegrund,22.8.2005,Managed,17.61,10369.11323
-186,3,Havet og kysten mellem Karrebæk Fjord og Knudshoved Odde,22.8.2005,Managed,188.71,10369.11323
-187,3,"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",22.8.2005,Managed,778.48,10369.11323
-249,3,Centrale Storebælt og Vresen,10.9.2009,Managed,623.11,10369.11323
-250,4,"Flensborg Fjord, Bredgrund og farvandet omkring Als",10.9.2009,Managed,649.22,140.98877
-173,4,"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",1.4.2009,Designated,233.62,140.98877
-279,5,Gilleleje Flak og Tragten,16.12.2009,Designated,150.34,612.66514
-112,5,Kullaberg-Skälderviken,30.9.2008,Managed,45.19,612.66514
-193,5,Lundåkrabukten,30.9.2008,Designated,19.63,612.66514
-279,6,Gilleleje Flak og Tragten,16.12.2009,Designated,150.34,588.38712
-129,6,Saltholm og omliggende hav,14.7.2005,Managed,72.18,588.38712
-269,7,Stenrev sydøst for Langeland,10.9.2009,Managed,14.84,1208.87616
-271,7,Sydfynske Øhav,10.9.2009,Managed,451.99,1208.87616
-278,7,Femern Bælt,16.12.2009,Designated,114.56,1208.87616
-250,7,"Flensborg Fjord, Bredgrund og farvandet omkring Als",10.9.2009,Managed,649.22,1208.87616
-180,7,Fehmarnbelt,21.5.2008,Designated,279.92,1208.87616
-187,7,"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",22.8.2005,Managed,778.48,1208.87616
-278,8,Femern Bælt,16.12.2009,Designated,114.56,2079.47971
-250,8,"Flensborg Fjord, Bredgrund og farvandet omkring Als",10.9.2009,Managed,649.22,2079.47971
-173,8,"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",1.4.2009,Designated,233.62,2079.47971
-174,8,Schlei incl. Schleimünde und vorgelagerter Flachgründe,1.2.2006,Designated,174.34,2079.47971
-175,8,"Eckernförder Bucht mit Flachgründen, Südküste der Eckernförder Bucht und vorgelagerte Flachgründe",1.3.2009,Designated,203.02,2079.47971
-176,8,"Küstenlandschaft Bottsand - Marzkamp u. vorgelagerte Flachgründe, Östlichen Kieler Bucht",1.3.2009,Designated,1420.03,2079.47971
-177,8,"Staberhuk, Großenbrode Meeresbereiche, Wagrien, Sagas-Bank",1.3.2009,Designated,460.55,2079.47971
-180,8,Fehmarnbelt,21.5.2008,Designated,279.92,2079.47971
-181,9,Kadetrinne,1.4.2004,Designated,100.07,1144.29301
-187,9,"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",22.8.2005,Managed,778.48,1144.29301
-3,10,Vorpommersche Boddenlandshaft National Park (West-Pommeranian Lagoon National Park),13.7.2005,Managed,805,3438.82204
-171,10,Walkyriengrund,1.3.2009,Designated,22.24,3438.82204
-177,10,"Staberhuk, Großenbrode Meeresbereiche, Wagrien, Sagas-Bank",1.3.2009,Designated,460.55,3438.82204
-178,10,Ostseeküste am Brodtener Ufer,1.3.2009,Designated,20.84,3438.82204
-180,10,Fehmarnbelt,21.5.2008,Designated,279.92,3438.82204
-181,10,Kadetrinne,1.4.2004,Designated,100.07,3438.82204
-111,11,Falsterbo Peninsula with Måkläppen,30.9.2008,Managed,463.3,4226.44762
-273,12,Vestamager og havet syd for,17.9.2009,Managed,61.79,6272.53375
-281,12,Ølsemagle Strand og Staunings Ø,16.12.2009,Managed,5.38,6272.53375
-264,12,Havet og kysten mellem Præstø Fjord og Grønsund,6.4.2009,Managed,328.15,6272.53375
-258,12,Klinteskov Kalkgrund,10.9.2009,Managed,19.94,6272.53375
-291,12,Stege Nor,16.12.2009,Managed,5.72,6272.53375
-270,12,Stevns Rev,10.9.2009,Managed,46.4,6272.53375
-247,12,Bøchers Grund,10.9.2009,Managed,10.98,6272.53375
-256,12,Hvideodde Rev,17.9.2009,Managed,7.89,6272.53375
-245,12,Bakkebrædt og Bakkeground,10.9.2009,Managed,2.99,6272.53375
-275,12,Adler Grund og Rønne Banke,16.12.2009,Designated,319.1,6272.53375
-129,12,Saltholm og omliggende hav,14.7.2005,Managed,72.18,6272.53375
-181,12,Kadetrinne,1.4.2004,Designated,100.07,6272.53375
-275,13,Adler Grund og Rønne Banke,16.12.2009,Designated,319.1,7071.49776
-2,13,Jasmund National Park,13.7.2005,Managed,30.03,7071.49776
-3,13,Vorpommersche Boddenlandshaft National Park (West-Pommeranian Lagoon National Park),13.7.2005,Managed,805,7071.49776
-172,13,Pommersche Bucht-Rönnebank,1.4.2004,Designated,2090.18,7071.49776
-181,13,Kadetrinne,1.4.2004,Designated,100.07,7071.49776
-116,14,Northern Midsjöbanken,9.11.2009,Designated,984,15096.6004
-110,14,Torhamns Archipelago,25.9.2008,Designated,105.57,15096.6004
-256,15,Hvideodde Rev,17.9.2009,Managed,7.89,7152.79836
-126,15,Bornholm: Davids Banke,14.7.2005,Managed,8.38,7152.79836
-184,15,Bornholm: Ertholmene,14.7.2005,Managed,12.56,7152.79836
-301,16,Ujscie Odry i Zalew Szczecinski,31.12.2009,Designated,526.12,2566.81091
-86,16,Wolin i Uznam,14.7.2005,Designated,307.92,2566.81091
-170,16,Zatoka Pomorska,31.12.2009,Designated,3091.55,2566.81091
-172,16,Pommersche Bucht-Rönnebank,1.4.2004,Designated,2090.18,2566.81091
-85,17,Ostoja Slowinska,13.7.2005,Designated,329.5530078125,17334.97259
-301,17,Ujscie Odry i Zalew Szczecinski,31.12.2009,Designated,526.12,17334.97259
-86,17,Wolin i Uznam,14.7.2005,Designated,307.92,17334.97259
-170,17,Zatoka Pomorska,31.12.2009,Designated,3091.55,17334.97259
-179,17,Przybrzezne Wody Baltyku,31.12.2009,Designated,1946.27,17334.97259
-172,17,Pommersche Bucht-Rönnebank,1.4.2004,Designated,2090.18,17334.97259
-87,17,Lawica Slupska,31.12.2009,Designated,800.50296875,17334.97259
-83,18,Zalew Wislany i Mierzeja Wislana,13.7.2005,Designated,408.626015625,3682.83573
-179,18,Przybrzezne Wody Baltyku,31.12.2009,Designated,1946.27,3682.83573
-84,18,Zatoka Pucka,13.7.2005,Designated,624.303984375,3682.83573
-302,18,Ujscie Wisly,31.12.2009,Designated,17.4809997558,3682.83573
-164,19,Vistula Spit Landscape Park (northern part),NA,Designated,40,2138.41462
-83,19,Zalew Wislany i Mierzeja Wislana,13.7.2005,Designated,408.626015625,2138.41462
-116,20,Northern Midsjöbanken,9.11.2009,Designated,984,21941.00756
-109,20,Kopparstenarna/Gotska Sandön/Salvorev Area,16.9.2008,Managed,605.1,21941.00756
-115,20,Hoburgs Bank,16.9.2008,Managed,1226.71,21941.00756
-85,21,Ostoja Slowinska,13.7.2005,Designated,329.5530078125,11013.8982
-179,21,Przybrzezne Wody Baltyku,31.12.2009,Designated,1946.27,11013.8982
-163,22,Curonian Spit State National Park (southern part),6.11.1987,Designated,66.21,9466.30104
-122,22,Curonian Spit National Park,23.4.1991,Managed,273.39,9466.30104
-124,22,Nemunas Delta Regional Park,24.9.1992,Managed,289.53,9466.30104
-310,22,Kursiu Marios Biosphere Polygon,17.9.2009,Managed,311.38,9466.30104
-311,22,Baltic Sea Biosphere Polygon,23.5.2013,Designated,319.59,9466.30104
-122,23,Curonian Spit National Park,23.4.1991,Managed,273.39,6139.73941
-123,23,Pajuris Regional Park,24.9.1992,Managed,58.7,6139.73941
-124,23,Nemunas Delta Regional Park,24.9.1992,Managed,289.53,6139.73941
-125,23,The state Baltic sea marine reserve,25.5.2005,Designated,140.27,6139.73941
-310,23,Kursiu Marios Biosphere Polygon,17.9.2009,Managed,311.38,6139.73941
-311,23,Baltic Sea Biosphere Polygon,23.5.2013,Designated,319.59,6139.73941
-95,24,Kura Kurk,1.4.2009,Designated,1973,20977.58487
-308,24,Akmensrags,16.1.2013,Designated,258.29,20977.58487
-307,24,Irbes saurums,16.1.2013,Designated,1724.12,20977.58487
-309,24,Nida-Perkone,16.1.2013,Managed,367.03,20977.58487
-95,25,Kura Kurk,1.4.2009,Designated,1973,5414.05646
-91,25,Vilsandi,1.4.2009,Managed,317.2,5414.05646
-307,25,Irbes saurums,16.1.2013,Designated,1724.12,5414.05646
-116,26,Northern Midsjöbanken,9.11.2009,Designated,984,27456.05692
-300,26,Kvädöfjärden med Torrö,16.5.2011,Managed,56.63,27456.05692
-108,26,St. Anna/Missjö Archipelago,16.9.2008,Managed,166.14,27456.05692
-109,26,Kopparstenarna/Gotska Sandön/Salvorev Area,16.9.2008,Managed,605.1,27456.05692
-115,26,Hoburgs Bank,16.9.2008,Managed,1226.71,27456.05692
-192,26,Värnanäs Archipelago,6.10.2008,Managed,15.52,27456.05692
-95,27,Kura Kurk,1.4.2009,Designated,1973,7993.91788
-303,27,Ainazi-Salacgriva,16.1.2013,Designated,71.13,7993.91788
-307,27,Irbes saurums,16.1.2013,Designated,1724.12,7993.91788
-305,27,Selga uz rietumiem no Tujas,16.1.2013,Designated,586,7993.91788
-304,27,Vitrupe-Tuja,16.1.2013,Designated,35.77,7993.91788
-306,27,Rigas lica rietumu piekraste,16.1.2013,Managed,1321.72,7993.91788
-95,28,Kura Kurk,1.4.2009,Designated,1973,10774.55332
-94,28,Pärnu lahe,1.4.2009,Designated,1144,10774.55332
-207,28,Väinameri,1.4.2009,Designated,2712.97,10774.55332
-303,28,Ainazi-Salacgriva,16.1.2013,Designated,71.13,10774.55332
-307,28,Irbes saurums,16.1.2013,Designated,1724.12,10774.55332
-106,29,Stora Nassa-Sv. Högarna,16.9.2008,Managed,298.52,17728.40167
-107,29,Fifång-Askö-Hartsö,16.9.2008,Managed,295.5,17728.40167
-109,29,Kopparstenarna/Gotska Sandön/Salvorev Area,16.9.2008,Managed,605.1,17728.40167
-191,29,Bullerö-Bytta,16.9.2008,Managed,143.85,17728.40167
-143,30,Saaristomeri /Archipelago Sea,19.9.2005,Managed,598.42,9800.24404
-157,30,Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,19.9.2005,Managed,25.66,9800.24404
-90,31,Hiiu Madala,1.4.2009,Managed,96,11841.39906
-91,31,Vilsandi,1.4.2009,Managed,317.2,11841.39906
-207,31,Väinameri,1.4.2009,Designated,2712.97,11841.39906
-144,32,Tammisaaren ja Hangon saariston ja Pohjanpitäjänlahden merensuojelualue /Tammisaari and Hanko Archipelago-and Pojo Bay marine proteciton area,19.9.2005,Managed,526.3,9549.67733
-145,32,Itäisen Suomenlahden saaristo ja vedet/ Eastern Gulf of Finland Archipelago and waters,19.9.2005,Managed,956.28,9549.67733
-157,32,Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,19.9.2005,Managed,25.66,9549.67733
-158,32,Kirkkonummen saaristo/ Kirkkonummi Archipelago,19.9.2005,Designated,17.5,9549.67733
-159,32,Söderskärin ja Långörenin saaristo /Söderskär and Långören Archipelago,19.9.2005,Designated,182.19,9549.67733
-160,32,Porvoonjoen suisto - Stensböle /Porvoonjoki estuary-Stensböle,19.9.2005,Managed,13.31,9549.67733
-161,32,Pernajanlahtien ja Pernajan saariston merensuojelualue /Pernajabay and Pernaja Archipelago marine protection areas,22.11.2006,Managed,657.55,9549.67733
-166,33,Kurgalsky Peninsula,20.7.2000,Designated,599.5,11571.59858
-294,33,Vyborgskii,29.3.1976,Designated,113.0409960937,11571.59858
-197,33,Lebyazhy Nature Reserve,3.4.2007,Designated,63.4464990234,11571.59858
-196,33,Berezovye Islands,26.12.1996,Designated,552.95,11571.59858
-145,33,Itäisen Suomenlahden saaristo ja vedet/ Eastern Gulf of Finland Archipelago and waters,19.9.2005,Managed,956.28,11571.59858
-166,34,Kurgalsky Peninsula,20.7.2000,Designated,599.5,8426.04463
-206,34,Pakri,1.4.2009,Managed,204.7,8426.04463
-88,34,Lahemaa,1.4.2009,Managed,744.21,8426.04463
-105,35,Gräsö/Singö Archipelago,16.9.2008,Managed,662.47,2703.05659
-142,36,Uudenkaupungin saaristo/ Uusikaupunki Archipelago,19.9.2005,Designated,559.92,12405.68538
-143,36,Saaristomeri /Archipelago Sea,19.9.2005,Managed,598.42,12405.68538
-157,36,Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,19.9.2005,Managed,25.66,12405.68538
-297,37,Finngrundet-Östra Banken,16.5.2011,Designated,231.62,31735.90809
-298,37,Vänta Litets Grund,16.5.2011,Managed,151.39,31735.90809
-104,37,High Coast,30.9.2008,Managed,1520.34,31735.90809
-189,37,Kronören,16.9.2008,Managed,58.34,31735.90809
-190,37,Axmar,16.9.2008,Managed,72.25,31735.90809
-140,38,Merenkurkun saaristo /Outer Bothnian Threshold Archipelago (The Quark),19.9.2005,Designated,1281.62,28136.78846
-141,38,Ouran saaristo /Oura Archipelago,19.9.2005,Designated,30.73,28136.78846
-142,38,Uudenkaupungin saaristo/ Uusikaupunki Archipelago,19.9.2005,Designated,559.92,28136.78846
-155,38,Närpiön saaristo /Närpiö Archipelago,19.9.2005,Designated,118.28,28136.78846
-156,38,Kristiinankaupungin saaristo /Kristiinankaupunki Archipelago,19.9.2005,Designated,80.59,28136.78846
-103,39,Holmö Islands,25.9.2008,Managed,242.16,3215.71496
-140,40,Merenkurkun saaristo /Outer Bothnian Threshold Archipelago (The Quark),19.9.2005,Designated,1281.62,4932.99666
-154,40,Uudenkaarlepyyn saaristo /Uusikaarlepyy Archipelago,19.9.2005,Designated,32.1,4932.99666
-299,41,Marakallen,16.5.2011,Managed,59.85,17335.82956
-101,41,Haparanda Archipelago,24.9.2008,Designated,462.96,17335.82956
-101,42,Haparanda Archipelago,24.9.2008,Designated,462.96,14930.90472
-139,42,Perämeren kansallispuisto /Bothnian Bay National Park,19.9.2005,Managed,158.9,14930.90472
-147,42,"Hailuoto, pohjoisranta/ Hailuoto northshore",19.9.2005,Designated,36.71,14930.90472
-148,42,Kirkkosalmi,19.9.2005,Designated,10.19,14930.90472
-149,42,Isomatala-Maasyvänlahti,19.9.2005,Designated,15.31,14930.90472
-150,42,Liminka Bay /Liminganlahti,19.9.2005,Managed,118.23,14930.90472
-151,42,Rahjan saaristo/Rahja Archipelago,19.9.2005,Managed,83.81,14930.90472
-152,42,Kokkolan saaristo/Kokkola Archipelago,22.11.2006,Managed,149.55,14930.90472
-153,42,Luodon saaristo/Luoto Archipelago,19.9.2005,Managed,144.57,14930.90472
-154,42,Uudenkaarlepyyn saaristo /Uusikaarlepyy Archipelago,19.9.2005,Designated,32.1,14930.90472
+name,BSPA_ID,BHI_ID,country,mpa_area_km2,eez_area_km2
+Curonian Spit State National Park (southern part),163,22,Russia,66.21,9466.30104
+Vistula Spit Landscape Park (northern part),164,19,Russia,40,2138.41462
+Kurgalsky Peninsula,166,34,Russia,599.5,8426.04463
+Kurgalsky Peninsula,166,33,Russia,599.5,11571.59858
+Vyborgskii,294,33,Russia,113.0409960937,11571.59858
+Lebyazhy Nature Reserve,197,33,Russia,63.4464990234,11571.59858
+Berezovye Islands,196,33,Russia,552.95,11571.59858
+Ostoja Slowinska,85,17,Poland,329.5530078125,17334.97259
+Ostoja Slowinska,85,21,Poland,329.5530078125,11013.8982
+Zalew Wislany i Mierzeja Wislana,83,18,Poland,408.626015625,3682.83573
+Zalew Wislany i Mierzeja Wislana,83,19,Poland,408.626015625,2138.41462
+Ujscie Odry i Zalew Szczecinski,301,16,Poland,526.12,2566.81091
+Ujscie Odry i Zalew Szczecinski,301,17,Poland,526.12,17334.97259
+Wolin i Uznam,86,16,Poland,307.92,2566.81091
+Wolin i Uznam,86,17,Poland,307.92,17334.97259
+Zatoka Pomorska,170,16,Poland,3091.55,2566.81091
+Zatoka Pomorska,170,17,Poland,3091.55,17334.97259
+Przybrzezne Wody Baltyku,179,17,Poland,1946.27,17334.97259
+Przybrzezne Wody Baltyku,179,21,Poland,1946.27,11013.8982
+Przybrzezne Wody Baltyku,179,18,Poland,1946.27,3682.83573
+Zatoka Pucka,84,18,Poland,624.303984375,3682.83573
+Ujscie Wisly,302,18,Poland,17.4809997558,3682.83573
+Begstrup Vig og kystområder ved Helgenæs,246,3,Denmark,17.71,10369.11323
+"Fyns Hoved, Lillegrund og Lillestrand",251,3,Denmark,21.82,10369.11323
+Æbelø og havet syd for og Nærå,241,3,Denmark,131.61,10369.11323
+Havet mellem Romsø og Hindsholm samt Romsø,265,3,Denmark,43.28,10369.11323
+Odense Fjord,287,3,Denmark,50.48,10369.11323
+Lillebælt,259,3,Denmark,350.43,10369.11323
+Bøjden Nor,276,3,Denmark,1.14,10369.11323
+Maden på Helnæs og havet vest for,254,3,Denmark,20.45,10369.11323
+Vestlige del af Avernakø,293,3,Denmark,1.24,10369.11323
+Stenrev sydøst for Langeland,269,3,Denmark,14.84,10369.11323
+Stenrev sydøst for Langeland,269,7,Denmark,14.84,1208.87616
+Sydfynske Øhav,271,3,Denmark,451.99,10369.11323
+Sydfynske Øhav,271,7,Denmark,451.99,1208.87616
+Roskilde Fjord og Jægerspris Nordskov,289,2,Denmark,148.1,15300.69996
+Vestamager og havet syd for,273,12,Denmark,61.79,6272.53375
+Ølsemagle Strand og Staunings Ø,281,12,Denmark,5.38,6272.53375
+Havet og kysten mellem Hundested og Rørvig,253,2,Denmark,40.23,15300.69996
+Sejerø Bugt og Saltbæk Vig,268,3,Denmark,445,10369.11323
+Udby Vig,292,2,Denmark,3.84,15300.69996
+Hov Vig,280,2,Denmark,2.4,15300.69996
+Havet og kysten mellem Præstø Fjord og Grønsund,264,12,Denmark,328.15,6272.53375
+Klinteskov Kalkgrund,258,12,Denmark,19.94,6272.53375
+Nakskov Fjord og Inderfjord,263,3,Denmark,85.26,10369.11323
+Stege Nor,291,12,Denmark,5.72,6272.53375
+Ryggen,266,3,Denmark,4.37,10369.11323
+Hatter Barn,252,3,Denmark,6.33,10369.11323
+Broen,248,3,Denmark,5.88,10369.11323
+Munkegrunde,262,3,Denmark,13.29,10369.11323
+Stevns Rev,270,12,Denmark,46.4,6272.53375
+Bøchers Grund,247,12,Denmark,10.98,6272.53375
+Hvideodde Rev,256,12,Denmark,7.89,6272.53375
+Hvideodde Rev,256,15,Denmark,7.89,7152.79836
+Bakkebrædt og Bakkeground,245,12,Denmark,2.99,6272.53375
+Mols Bjerge med kystvande,261,3,Denmark,29.15,10369.11323
+Kaløskovene og Kaløvig,283,3,Denmark,7.46,10369.11323
+Kobberhage kystarealer,284,3,Denmark,7.92,10369.11323
+Kobberhage kystarealer,284,2,Denmark,7.92,15300.69996
+Jægerspris Skydeterræn,282,2,Denmark,5.69,15300.69996
+Thurø Rev,272,3,Denmark,1.63,10369.11323
+"Ålborg Bugt, østlige del",274,2,Denmark,1773.6,15300.69996
+Mejl Flak,286,3,Denmark,39.07,10369.11323
+Adler Grund og Rønne Banke,275,12,Denmark,319.1,6272.53375
+Adler Grund og Rønne Banke,275,13,Denmark,319.1,7071.49776
+Kims Top og den Kinesiske Mur,257,2,Denmark,261,15300.69996
+"Horsens Fjord, havet øst for og Endelave",255,3,Denmark,458.23,10369.11323
+Lysegrund,260,2,Denmark,31.58,15300.69996
+"Røsnæs, Røsnæs Rev og Kalundborg Fjord",288,3,Denmark,56.64,10369.11323
+Femern Bælt,278,3,Denmark,114.56,10369.11323
+Femern Bælt,278,7,Denmark,114.56,1208.87616
+Femern Bælt,278,8,Denmark,114.56,2079.47971
+Gilleleje Flak og Tragten,279,2,Denmark,150.34,15300.69996
+Gilleleje Flak og Tragten,279,6,Denmark,150.34,588.38712
+Gilleleje Flak og Tragten,279,5,Denmark,150.34,612.66514
+Schultz og Hastens Grund samt Briseis Flak,267,2,Denmark,207.1,15300.69996
+"Flensborg Fjord, Bredgrund og farvandet omkring Als",250,3,Denmark,649.22,10369.11323
+"Flensborg Fjord, Bredgrund og farvandet omkring Als",250,7,Denmark,649.22,1208.87616
+"Flensborg Fjord, Bredgrund og farvandet omkring Als",250,4,Denmark,649.22,140.98877
+"Flensborg Fjord, Bredgrund og farvandet omkring Als",250,8,Denmark,649.22,2079.47971
+Ebbeløkke Rev,277,2,Denmark,1.4,15300.69996
+Kyndby Kyst,285,2,Denmark,3.6,15300.69996
+Northern Midsjöbanken,116,14,Sweden,984,15096.6004
+Northern Midsjöbanken,116,20,Sweden,984,21941.00756
+Northern Midsjöbanken,116,26,Sweden,984,27456.05692
+Morups Bank,295,1,Sweden,5.67,6739.5362
+Stora Middelgrund och Röde Bank,296,2,Sweden,114.25,15300.69996
+Stora Middelgrund och Röde Bank,296,1,Sweden,114.25,6739.5362
+Finngrundet-Östra Banken,297,37,Sweden,231.62,31735.90809
+Vänta Litets Grund,298,37,Sweden,151.39,31735.90809
+Marakallen,299,41,Sweden,59.85,17335.82956
+Kvädöfjärden med Torrö,300,26,Sweden,56.63,27456.05692
+Kura Kurk,95,25,Estonia,1973,5414.05646
+Kura Kurk,95,28,Estonia,1973,10774.55332
+Kura Kurk,95,24,Estonia,1973,20977.58487
+Kura Kurk,95,27,Estonia,1973,7993.91788
+Pärnu lahe,94,28,Estonia,1144,10774.55332
+Pakri,206,34,Estonia,204.7,8426.04463
+Jasmund National Park,2,13,Germany,30.03,7071.49776
+Vorpommersche Boddenlandshaft National Park (West-Pommeranian Lagoon National Park),3,13,Germany,805,7071.49776
+Vorpommersche Boddenlandshaft National Park (West-Pommeranian Lagoon National Park),3,10,Germany,805,3438.82204
+Lahemaa,88,34,Estonia,744.21,8426.04463
+Hiiu Madala,90,31,Estonia,96,11841.39906
+Vilsandi,91,25,Estonia,317.2,5414.05646
+Vilsandi,91,31,Estonia,317.2,11841.39906
+Haparanda Archipelago,101,42,Sweden,462.96,14930.90472
+Haparanda Archipelago,101,41,Sweden,462.96,17335.82956
+Holmö Islands,103,39,Sweden,242.16,3215.71496
+High Coast,104,37,Sweden,1520.34,31735.90809
+Gräsö/Singö Archipelago,105,35,Sweden,662.47,2703.05659
+Stora Nassa-Sv. Högarna,106,29,Sweden,298.52,17728.40167
+Fifång-Askö-Hartsö,107,29,Sweden,295.5,17728.40167
+St. Anna/Missjö Archipelago,108,26,Sweden,166.14,27456.05692
+Kopparstenarna/Gotska Sandön/Salvorev Area,109,20,Sweden,605.1,21941.00756
+Kopparstenarna/Gotska Sandön/Salvorev Area,109,29,Sweden,605.1,17728.40167
+Kopparstenarna/Gotska Sandön/Salvorev Area,109,26,Sweden,605.1,27456.05692
+Torhamns Archipelago,110,14,Sweden,105.57,15096.6004
+Falsterbo Peninsula with Måkläppen,111,11,Sweden,463.3,4226.44762
+Kullaberg-Skälderviken,112,1,Sweden,45.19,6739.5362
+Kullaberg-Skälderviken,112,5,Sweden,45.19,612.66514
+Kungsbackafjorden,113,1,Sweden,78.77,6739.5362
+Hoburgs Bank,115,20,Sweden,1226.71,21941.00756
+Hoburgs Bank,115,26,Sweden,1226.71,27456.05692
+Fladen,118,1,Sweden,103.95,6739.5362
+Lilla Middelgrund,119,1,Sweden,178.64,6739.5362
+Curonian Spit National Park,122,23,Lithuania,273.39,6139.73941
+Curonian Spit National Park,122,22,Lithuania,273.39,9466.30104
+Pajuris Regional Park,123,23,Lithuania,58.7,6139.73941
+Nemunas Delta Regional Park,124,23,Lithuania,289.53,6139.73941
+Nemunas Delta Regional Park,124,22,Lithuania,289.53,9466.30104
+The state Baltic sea marine reserve,125,23,Lithuania,140.27,6139.73941
+Bornholm: Davids Banke,126,15,Denmark,8.38,7152.79836
+Skælskør Fjord og havet og kysten mellem Agersø og Glænø,128,3,Denmark,185,10369.11323
+Saltholm og omliggende hav,129,12,Denmark,72.18,6272.53375
+Saltholm og omliggende hav,129,6,Denmark,72.18,588.38712
+"Stavns Fjord, Samsø Østerflak og Nordby Hede",130,3,Denmark,156.63,10369.11323
+Hesselø med omliggende stenrev,131,2,Denmark,42,15300.69996
+"Ålborg Bugt, Randers Fjord and Mariager Fjord, Birdprotection sites",133,2,Denmark,721.97,15300.69996
+Herthas Flak,137,2,Denmark,13.8,15300.69996
+Perämeren kansallispuisto /Bothnian Bay National Park,139,42,Finland,158.9,14930.90472
+Merenkurkun saaristo /Outer Bothnian Threshold Archipelago (The Quark),140,38,Finland,1281.62,28136.78846
+Merenkurkun saaristo /Outer Bothnian Threshold Archipelago (The Quark),140,40,Finland,1281.62,4932.99666
+Ouran saaristo /Oura Archipelago,141,38,Finland,30.73,28136.78846
+Uudenkaupungin saaristo/ Uusikaupunki Archipelago,142,36,Finland,559.92,12405.68538
+Uudenkaupungin saaristo/ Uusikaupunki Archipelago,142,38,Finland,559.92,28136.78846
+Saaristomeri /Archipelago Sea,143,36,Finland,598.42,12405.68538
+Saaristomeri /Archipelago Sea,143,30,Finland,598.42,9800.24404
+Tammisaaren ja Hangon saariston ja Pohjanpitäjänlahden merensuojelualue /Tammisaari and Hanko Archipelago-and Pojo Bay marine proteciton area,144,32,Finland,526.3,9549.67733
+Itäisen Suomenlahden saaristo ja vedet/ Eastern Gulf of Finland Archipelago and waters,145,32,Finland,956.28,9549.67733
+Itäisen Suomenlahden saaristo ja vedet/ Eastern Gulf of Finland Archipelago and waters,145,33,Finland,956.28,11571.59858
+"Hailuoto, pohjoisranta/ Hailuoto northshore",147,42,Finland,36.71,14930.90472
+Kirkkosalmi,148,42,Finland,10.19,14930.90472
+Isomatala-Maasyvänlahti,149,42,Finland,15.31,14930.90472
+Liminka Bay /Liminganlahti,150,42,Finland,118.23,14930.90472
+Rahjan saaristo/Rahja Archipelago,151,42,Finland,83.81,14930.90472
+Kokkolan saaristo/Kokkola Archipelago,152,42,Finland,149.55,14930.90472
+Luodon saaristo/Luoto Archipelago,153,42,Finland,144.57,14930.90472
+Uudenkaarlepyyn saaristo /Uusikaarlepyy Archipelago,154,42,Finland,32.1,14930.90472
+Uudenkaarlepyyn saaristo /Uusikaarlepyy Archipelago,154,40,Finland,32.1,4932.99666
+Närpiön saaristo /Närpiö Archipelago,155,38,Finland,118.28,28136.78846
+Kristiinankaupungin saaristo /Kristiinankaupunki Archipelago,156,38,Finland,80.59,28136.78846
+Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,157,36,Finland,25.66,12405.68538
+Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,157,32,Finland,25.66,9549.67733
+Tulliniemen linnustonsuojelualue/ Tulliniemi bird protection area,157,30,Finland,25.66,9800.24404
+Kirkkonummen saaristo/ Kirkkonummi Archipelago,158,32,Finland,17.5,9549.67733
+Söderskärin ja Långörenin saaristo /Söderskär and Långören Archipelago,159,32,Finland,182.19,9549.67733
+Porvoonjoen suisto - Stensböle /Porvoonjoki estuary-Stensböle,160,32,Finland,13.31,9549.67733
+Pernajanlahtien ja Pernajan saariston merensuojelualue /Pernajabay and Pernaja Archipelago marine protection areas,161,32,Finland,657.55,9549.67733
+Walkyriengrund,171,10,Germany,22.24,3438.82204
+Pommersche Bucht-Rönnebank,172,13,Germany,2090.18,7071.49776
+Pommersche Bucht-Rönnebank,172,16,Germany,2090.18,2566.81091
+Pommersche Bucht-Rönnebank,172,17,Germany,2090.18,17334.97259
+"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",173,3,Germany,233.62,10369.11323
+"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",173,4,Germany,233.62,140.98877
+"Küstenbereiche Flensburger Förde von Flensburg bis Geltinger Birk, Flengurger Förde",173,8,Germany,233.62,2079.47971
+Schlei incl. Schleimünde und vorgelagerter Flachgründe,174,8,Germany,174.34,2079.47971
+"Eckernförder Bucht mit Flachgründen, Südküste der Eckernförder Bucht und vorgelagerte Flachgründe",175,8,Germany,203.02,2079.47971
+"Küstenlandschaft Bottsand - Marzkamp u. vorgelagerte Flachgründe, Östlichen Kieler Bucht",176,8,Germany,1420.03,2079.47971
+"Staberhuk, Großenbrode Meeresbereiche, Wagrien, Sagas-Bank",177,10,Germany,460.55,3438.82204
+"Staberhuk, Großenbrode Meeresbereiche, Wagrien, Sagas-Bank",177,8,Germany,460.55,2079.47971
+Ostseeküste am Brodtener Ufer,178,10,Germany,20.84,3438.82204
+Fehmarnbelt,180,7,Germany,279.92,1208.87616
+Fehmarnbelt,180,10,Germany,279.92,3438.82204
+Fehmarnbelt,180,8,Germany,279.92,2079.47971
+Kadetrinne,181,12,Germany,100.07,6272.53375
+Kadetrinne,181,9,Germany,100.07,1144.29301
+Kadetrinne,181,13,Germany,100.07,7071.49776
+Kadetrinne,181,10,Germany,100.07,3438.82204
+Bornholm: Ertholmene,184,15,Denmark,12.56,7152.79836
+Kirkegrund,185,3,Denmark,17.61,10369.11323
+Havet og kysten mellem Karrebæk Fjord og Knudshoved Odde,186,3,Denmark,188.71,10369.11323
+"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",187,9,Denmark,778.48,1144.29301
+"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",187,3,Denmark,778.48,10369.11323
+"Smålandsfarvandet nord for Lolland, Guldborg Sund, Bøtø Nor og Hyllekrog-Rødsand",187,7,Denmark,778.48,1208.87616
+Kronören,189,37,Sweden,58.34,31735.90809
+Axmar,190,37,Sweden,72.25,31735.90809
+Bullerö-Bytta,191,29,Sweden,143.85,17728.40167
+Värnanäs Archipelago,192,26,Sweden,15.52,27456.05692
+Lundåkrabukten,193,5,Sweden,19.63,612.66514
+Hallands Väderö,194,1,Sweden,18.36,6739.5362
+Väinameri,207,28,Estonia,2712.97,10774.55332
+Väinameri,207,31,Estonia,2712.97,11841.39906
+Havet omkring Nordre Rønner,188,2,Denmark,185.35,15300.69996
+Læsø Trindel og Tønneberg Banke,136,2,Denmark,86.5970019531,15300.69996
+Store Middelgrund,132,2,Denmark,21.37,15300.69996
+Store Middelgrund,132,1,Denmark,21.37,6739.5362
+"Hirsholmene, havet vest herfor og Ellinge Å's udløb",135,2,Denmark,95,15300.69996
+Strandenge på Læsø og havet syd herfor,134,2,Denmark,1027.14,15300.69996
+Ainazi-Salacgriva,303,28,Latvia,71.13,10774.55332
+Ainazi-Salacgriva,303,27,Latvia,71.13,7993.91788
+Akmensrags,308,24,Latvia,258.29,20977.58487
+Irbes saurums,307,25,Latvia,1724.12,5414.05646
+Irbes saurums,307,28,Latvia,1724.12,10774.55332
+Irbes saurums,307,24,Latvia,1724.12,20977.58487
+Irbes saurums,307,27,Latvia,1724.12,7993.91788
+Nida-Perkone,309,24,Latvia,367.03,20977.58487
+Selga uz rietumiem no Tujas,305,27,Latvia,586,7993.91788
+Vitrupe-Tuja,304,27,Latvia,35.77,7993.91788
+Rigas lica rietumu piekraste,306,27,Latvia,1321.72,7993.91788
+Lawica Slupska,87,17,Poland,800.50296875,17334.97259
+Anholt og havet nord for,244,2,Denmark,478.78,15300.69996
+Centrale Storebælt og Vresen,249,3,Denmark,623.11,10369.11323
+Kursiu Marios Biosphere Polygon,310,23,Lithuania,311.38,6139.73941
+Kursiu Marios Biosphere Polygon,310,22,Lithuania,311.38,9466.30104
+Baltic Sea Biosphere Polygon,311,23,Lithuania,319.59,6139.73941
+Baltic Sea Biosphere Polygon,311,22,Lithuania,319.59,9466.30104
