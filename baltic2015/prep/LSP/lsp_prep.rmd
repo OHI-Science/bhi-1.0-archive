@@ -200,7 +200,7 @@ EEZ = bhi@data %>%
                     eez_area_km2 = Area_km2) 
 
 mpa_area_per_rgn = mpa_bhi_data %>%
-                   dplyr::select(name = Name, 
+                   dplyr::select(name_shape = Name, 
                                  BSPA_ID,
                                  BHI_ID, 
                                  country = Country,
@@ -232,7 +232,7 @@ For some MPAs, there are multiple plans in different stages of implementation. F
 ``` {r status calculation, echo = FALSE}
 
 mgmt_status_old = read_csv(file.path(dir_prep, 'mpa_data_database/MPA_management_plans_20160415.csv')) %>%
-              dplyr::select(name = helcom_mpa,
+              dplyr::select(name_csv = helcom_mpa,
                             plan = management_plan_name, 
                             BSPA_ID = id, 
                             mgmt_status = management_plan_status, 
@@ -247,7 +247,8 @@ mgmt_status_old = read_csv(file.path(dir_prep, 'mpa_data_database/MPA_management
 #  Combine managment status data with MPA area data
 
 mpa_mgmt_old = right_join(mgmt_status_old, mpa_area_per_rgn,  # select only MPAs with BHI_ID
-                      by = c("BSPA_ID"))
+                      by = c("BSPA_ID")) %>%
+               arrange(mgmt_status)
            # mutate(mgmt_status = ifelse(is.na(mgmt_status), as.character(mpa_status), mgmt_status),
            #        date_est = str_sub(date_est, start = -4)) %>% # only select the year of establishment
            # dplyr::select(-mpa_status)
@@ -255,6 +256,10 @@ mpa_mgmt_old = right_join(mgmt_status_old, mpa_area_per_rgn,  # select only MPAs
 # count number of MPAs in shape file with no matches in csv file. 
 
 num_mismatch = dplyr::count(mpa_mgmt_old, !mgmt_status== "NA") # 30 no match
+
+# save as csv
+
+write_csv(mpa_mgmt_old, file.path(dir_lsp, 'mpa_mgmt_status_old_csv.csv'))
 
 # assign weight to management status
 
@@ -280,25 +285,33 @@ r.status = mpa_mgmt %>%
 # write_csv(mpa_mgmt, file.path(dir_prep, ""))
 
 
-##########  2nd try ##########
+##########  2nd try, with updated csv file - NOT working ##########
 
 # read in new mpa mgmt status csv file, NO Plans information included in this file. 
-mpa_status_new = read.csv(file.path(dir_prep, "mpa_data_database/MPA_status_download06June2016.csv"), sep = ";") %>%
+
+mgmt_status_new = read.csv(file.path(dir_prep, "mpa_data_database/MPA_status_download06June2016.csv"), sep = ";") %>%
               mutate(status = str_replace_all(Status, " ", "_")) %>%
-              dplyr::select(name = HELCOM_MPA_name,
-                        
+              dplyr::select(name_csv = HELCOM_MPA_name,
+                            BSPA_ID = ID,
                             status_csv = status) 
+
+# count number of unique mpa names in new mpa mgmt status csv 
+
+mpa_name = dplyr::select(mgmt_status_new, name_csv)
+unique_mpa_csv_new = base::unique(mpa_name) ## total of 175 names that are unique, 175 rows. 
 
 # combine mpa_status with shape file data
 
-mpa_mgmt_new = right_join(mgmt_status, mpa_area_per_rgn,  # select only MPAs with BHI_ID
-                      by = c("BSPA_ID"))
+mpa_mgmt_new = right_join(mgmt_status_new, mpa_area_per_rgn,  # select only MPAs with BHI_ID
+                          by = "BSPA_ID")
+
+## got this Error: data frame column with incompatible number of rows (214), expecting : 226
+## could not join the two files. Could be because 
+
            # mutate(mgmt_status = ifelse(is.na(mgmt_status), as.character(mpa_status), mgmt_status),
            #        date_est = str_sub(date_est, start = -4)) %>% # only select the year of establishment
            # dplyr::select(-mpa_status)
 
-
-write_csv(mpa_mgmt_new, file.path(dir_lsp, 'mpa_mgmt_status_new_csv.csv'))
 
 # count number of MPAs in shape file with no matches in csv file. 
 num_mismatch_new = dplyr::count(mpa_mgmt_new, !mgmt_status== "NA") # 30 no match

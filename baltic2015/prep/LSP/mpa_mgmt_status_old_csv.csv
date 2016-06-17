@@ -1,4 +1,4 @@
-name.x,plan,BSPA_ID,mgmt_status,implem_date,name.y,BHI_ID,country,mpa_area,date_est,eez_area_km2
+name_csv,plan,BSPA_ID,mgmt_status,implem_date,name_shape,BHI_ID,country,mpa_area,date_est,eez_area_km2
 Curonian Spit State National Park (southern part),Management plan of Curonian Spit State National Park,163,Implemented,NA,Curonian Spit State National Park (southern part),22,Russia,6621,6.11.1987,9466.30104
 	Kurgalsky Peninsula,"Management plan of nature reserve ""Kurgalsky""",166,Implemented,NA,Kurgalsky Peninsula,34,Russia,59950,20.7.2000,8426.04463
 	Kurgalsky Peninsula,"Management plan of nature reserve ""Kurgalsky""",166,Implemented,NA,Kurgalsky Peninsula,33,Russia,59950,20.7.2000,11571.59858
