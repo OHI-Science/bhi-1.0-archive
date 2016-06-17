@@ -309,16 +309,17 @@ r.status = mpa_mgmt_with_wt %>%
                   
 write_csv(r.status, file.path(dir_prep, 'lsp_status_by_rgn.csv'))
 
-mpa_mgmt_with_wt_cleaned = mpa_mgmt_with_wt %>%
-                           select(name = name_shape, 
-                                  BHI_ID, 
-                                  BSPA_ID, 
-                                  country, 
-                                  mpa_area_km2, 
-                                  eez_area_km2, 
-                                  mgmt_status, 
-                                  weight, 
-                                  date_est)
+# # to save a cleaned version of mpa_mgmt_with_wt as a separate csv file? 
+# mpa_mgmt_with_wt_cleaned = mpa_mgmt_with_wt %>%
+#                            select(name = name_shape, 
+#                                   BHI_ID, 
+#                                   BSPA_ID, 
+#                                   country, 
+#                                   mpa_area_km2, 
+#                                   eez_area_km2, 
+#                                   mgmt_status, 
+#                                   weight, 
+#                                   date_est)
 
 ```
 
