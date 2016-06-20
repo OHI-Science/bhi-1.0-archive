@@ -80,6 +80,8 @@ create_readme(dir_res, 'resilience_prep.rmd')
 1.1 Biological Integrity
 ------------------------
 
+The biodiversity data layer will be used to represent biological integrity.
+
 1.2 Goal-specific Regulations
 -----------------------------
 
@@ -89,7 +91,7 @@ This component of resilience captures the capacity of pressures to be offset by 
 
 There are three components to goal-specific regulation resilience: *(1) existence, (2) compliance, (3) enforcement*
 
-Three international treaties are assessed for all BHI countries for *existence* only.These agreements are´:
+Three international treaties are assessed for all BHI countries for *existence* only.These agreements are:
 [Convention on Biodiversity (CBD)](https://www.cbd.int)
 [Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES)](https://www.cites.org)
 [Paris Climate Agreement (COP21)](https://treaties.un.org/pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVII-7-d&chapter=27&lang=en)
@@ -126,11 +128,9 @@ Each regulation will be weighted (1 or 2) for each goal to which is it applied. 
 
 ### 1.2.4 Resilience Data Layer
 
-Country-specific resilience score for each goal is assigned to each BHI region associated with that country.
+Country-specific resilience score (G) for each goal is assigned to each BHI region associated with that country.
 
-Country\_resilience\_goal\_x = Sum overall all regulations for a goal\[country\_regulation\_score \* goal\_weight\]
-
-Country\_resilience\_goal\_x - rescale between 0-1?
+G = sum(w\_i \* G\_i) / sum(wi\_i) ; G\_i = specific regulatory dataset total regulation score, w\_i = weight for each i dataset used to assess G
 
 ### 1.2.5 Goal-specific data layer preparation
 
@@ -396,9 +396,7 @@ head(goal_spec_exist)
 
 Max score is 4 (1 for existence, 3 for compliance).
 
-Directives that can only be scored on existence are evaluated on only existence a max score of 1. These directives are: IED, MSPD, CBD, CITES, COP21.
-
-Directives that are scored on both existence and compliance are evaluated on the combined score with a mx of 4 possible. These directives are: BIRDS, BSAP, BWD, CFP, HD, HELCOM, MSFD, ND, NEC, POP, REACH, UWWTD, WFD.
+All directives are evaluated based on a maximum score of 4. Therefore, for directives where only existence can be measured (no compliance metrics), the maximum score possible is 1/4. These directives are: *IED, MSPD, CBD, CITES, COP21*. Directives that are scored on both existence and compliance are: *BIRDS, BSAP, BWD, CFP, HD, HELCOM, MSFD, ND, NEC, POP, REACH, UWWTD, WFD*.
 
 In two directives scored for compliance, there was a country where compliance could not be scored. For UWWTD, no compliance report was available for Poland. For WFD, no compliance report was available for Denmark. However, these two countries are still evaluated on both existence and compliance so that their score is comparable to other countries for these directives.
 
@@ -408,18 +406,27 @@ goal_spec_overall = full_join(goal_spec_exist, goal_spec_compli_mean,
                               by=c("DirectiveAbbreviation","CountryName")) %>%
                     mutate(compli_mean2 = ifelse(is.na(compli_mean),0,compli_mean)) %>% ## make a column where NA are zero so that it does not screw up the total score
                     mutate(total = exist_numeric + compli_mean2, 
-                           max_score = ifelse(!is.na(compli_mean),4,1))
+                           max_score =4)
 
-## for UWWTD, Poland and WFD, Denmark, change max score to 4 so that are comparable
-goal_spec_overall = goal_spec_overall %>%
-                    mutate(max_score = ifelse(CountryName=="Poland" & DirectiveAbbreviation =="UWWTD",4,max_score),
-                           max_score = ifelse(CountryName=="Denmark" & DirectiveAbbreviation =="WFD",4,max_score))
+## This code not necessary if all directives get a max score of 4. 
+# ## for UWWTD, Poland and WFD, Denmark, change max score to 4 so that are comparable
+# goal_spec_overall = goal_spec_overall %>%
+#                     mutate(max_score = ifelse(CountryName=="Poland" & DirectiveAbbreviation =="UWWTD",4,max_score),
+#                            max_score = ifelse(CountryName=="Denmark" & DirectiveAbbreviation =="WFD",4,max_score))
+# 
+
 
 ## calculate overall score
 goal_spec_overall = goal_spec_overall %>%
                     mutate(overall_score = total/max_score) %>% ## if compli_mean is not NA, the max total score is 4; if it is NA, then only existence assessend and max is 1
                     mutate(score_level = ifelse(max_score == 1, "existence", "existence and compliance")) %>%
   select(DirectiveAbbreviation, CountryName,overall_score, score_level)
+
+## change Helcom to HELCOM
+
+goal_spec_overall = goal_spec_overall %>%
+                    mutate(DirectiveAbbreviation = as.character(DirectiveAbbreviation))%>%
+                    mutate(DirectiveAbbreviation = ifelse(DirectiveAbbreviation == "Helcom", "HELCOM", DirectiveAbbreviation))
 ```
 
 #### 1.2.5.11 Plot Overall score
@@ -450,12 +457,252 @@ ggplot(goal_spec_overall)+
 
 ![](resilience_prep_files/figure-markdown_github/plot%20overall%20score%20by%20country-1.png)<!-- -->
 
+### 1.2.6 Exploring alternative mapping and weighting outcomes
+
+**Mapping**
+Mapping the directives to goals can be done with different criteria. We explore 2 alternative mapping critera.
+(1) Direct effect of directive on goal status - expert opinion
+(2) Direct or indirect effect directive on goal status - expert opinion and key word search of the directives
+
+*Note* for this exploration this is done at the subgoal level. NUT, CON, TRA are treated as subgoals (not subcomponents) here.
+
+**Weights**
+Weights among different directives can be set using different criteria. We calculate *G* in the resilience equation for two different mapping criteria.
+
+G = sum(w\_i \* G\_i) / sum(wi\_i) ; G\_i = specific regulatory dataset, w\_i = weight for each i dataset used to assess G
+
+In OHI, weights are based on "quality of information contained in the dataset with regard to estimates of regulation effectiveness." In BHI, we are modifying this approach. Instead w\_i are based on the overall importance and policy focus among the different directives.
+
+#### 1.2.6.1 Load mapping and weighting layers
+
+``` r
+map_direct = read.csv(file.path(dir_res, 'resilience_matrix_direct.csv'), stringsAsFactors = FALSE)
+
+map_indirect_direct = read.csv(file.path(dir_res, 'resilience_matrix_indirect_direct.csv'), stringsAsFactors = FALSE)
+
+
+weights_importance = read.csv(file.path(dir_res, 'resilience_weights_directive_importance.csv'))
+```
+
+#### 1.2.6.2 Calculate *G* for each country for direct mapping
+
+``` r
+## vector of unique regulations
+unique_regs = map_direct %>%
+              select(WFD:IED)%>%
+              colnames()
+unique_regs
+```
+
+    ##  [1] "WFD"    "HD"     "MSFD"   "HELCOM" "BSAP"   "REACH"  "POP"   
+    ##  [8] "CBD"    "CITES"  "CFP"    "COP21"  "MSPD"   "BWD"    "BIRDS" 
+    ## [15] "ND"     "UWWTD"  "NEC"    "IED"
+
+``` r
+## long data format for mapping with columns goal, regulation, map
+map_direct_long = map_direct %>%
+                  select(-component,-spp_status,-wgi_all)%>% ## remove component column, remove environment and social resilience
+                  gather(regulation,map, -goal) %>%
+                  filter(map %in% unique_regs) %>%
+                  arrange(goal)
+  
+                  
+head(map_direct_long)
+```
+
+    ##   goal regulation    map
+    ## 1   AO       MSFD   MSFD
+    ## 2   AO        CFP    CFP
+    ## 3  CON       MSFD   MSFD
+    ## 4  CON     HELCOM HELCOM
+    ## 5  CON       BSAP   BSAP
+    ## 6  CON      REACH  REACH
+
+``` r
+## clean weights_importance object
+weights_importance = weights_importance %>%
+                      filter(layer != 'spp_status')%>%
+                      filter(layer != 'wgi_all' )
+
+
+## join mapping to weights
+map_direct_weights = left_join(map_direct_long, weights_importance,
+                        by=c("regulation"="layer"))
+```
+
+    ## Warning in left_join_impl(x, y, by$x, by$y): joining factor and character
+    ## vector, coercing into character vector
+
+``` r
+## join country scoring to mapping and weights
+map_direct_weights_score = inner_join(goal_spec_overall, map_direct_weights,
+                                     by=c("DirectiveAbbreviation"="regulation"))%>%
+                           dplyr::rename(regulation = DirectiveAbbreviation,
+                                         country= CountryName)%>%
+                           select(-score_level) %>%
+                           arrange(country,goal)
+## calculate country G
+
+country_G_direct = map_direct_weights_score %>%
+                   select(-map,-type)%>%
+                   mutate(wi_Gi = weight*overall_score)%>%
+                   group_by(country,goal)%>%
+                   summarise(G = sum(wi_Gi)/sum(weight))%>%
+                   ungroup()
+              
+## plot country G direct 
+ggplot(country_G_direct)+
+  geom_point(aes(goal,G))+
+  facet_wrap(~country)+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Country G value (overall resilience) per Goal with direct mapping")
+```
+
+![](resilience_prep_files/figure-markdown_github/direct%20mapping%20G-1.png)<!-- -->
+
+``` r
+ggplot(country_G_direct)+
+  geom_point(aes(country,G))+
+  facet_wrap(~goal)+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Country G value (overall resilience) per Goal with direct mapping")
+```
+
+![](resilience_prep_files/figure-markdown_github/direct%20mapping%20G-2.png)<!-- -->
+
+#### 1.2.6.3 Calculate *G* for each country for direct and indirect mapping
+
+``` r
+## vector of unique regulations
+unique_regs = map_indirect_direct %>%
+              select(WFD:IED)%>%
+              colnames()
+unique_regs
+```
+
+    ##  [1] "WFD"    "HD"     "MSFD"   "HELCOM" "BSAP"   "REACH"  "POP"   
+    ##  [8] "CBD"    "CITES"  "CFP"    "COP21"  "MSPD"   "BWD"    "BIRDS" 
+    ## [15] "ND"     "UWWTD"  "NEC"    "IED"
+
+``` r
+## long data format for mapping with columns goal, regulation, map
+map_indirect_direct_long = map_indirect_direct %>%
+                  select(-component,-spp_status,-wgi_all)%>% ## remove component column, remove environment and social resilience
+                  gather(regulation,map, -goal) %>%
+                  filter(map %in% unique_regs) %>%
+                  arrange(goal)
+  
+                  
+head(map_indirect_direct_long)
+```
+
+    ##   goal regulation  map
+    ## 1   AO        WFD  WFD
+    ## 2   AO       MSFD MSFD
+    ## 3   AO       BSAP BSAP
+    ## 4   AO        CFP  CFP
+    ## 5  CON        WFD  WFD
+    ## 6  CON       MSFD MSFD
+
+``` r
+## clean weights_importance object
+weights_importance = weights_importance %>%
+                      filter(layer != 'spp_status')%>%
+                      filter(layer != 'wgi_all' )
+
+
+## join mapping to weights
+map_indirect_direct_weights = left_join(map_indirect_direct_long, weights_importance,
+                        by=c("regulation"="layer"))
+```
+
+    ## Warning in left_join_impl(x, y, by$x, by$y): joining factor and character
+    ## vector, coercing into character vector
+
+``` r
+## join country scoring to mapping and weights
+map_indirect_direct_weights_score = inner_join(goal_spec_overall, map_indirect_direct_weights,
+                                     by=c("DirectiveAbbreviation"="regulation"))%>%
+                           dplyr::rename(regulation = DirectiveAbbreviation,
+                                         country= CountryName)%>%
+                           select(-score_level) %>%
+                           arrange(country,goal)
+## calculate country G
+
+country_G_indirect_direct = map_indirect_direct_weights_score %>%
+                   select(-map,-type)%>%
+                   mutate(wi_Gi = weight*overall_score)%>%
+                   group_by(country,goal)%>%
+                   summarise(G = sum(wi_Gi)/sum(weight))%>%
+                   ungroup()
+              
+## plot country G direct 
+ggplot(country_G_indirect_direct)+
+  geom_point(aes(goal,G))+
+  facet_wrap(~country)+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Country G value (overall resilience) per Goal w/ indirect + direct mapping")
+```
+
+![](resilience_prep_files/figure-markdown_github/calcuate%20G%20indirect%20and%20direct-1.png)<!-- -->
+
+``` r
+ggplot(country_G_direct)+
+  geom_point(aes(country,G))+
+  facet_wrap(~goal)+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Country G value (overall resilience) per Goal w/ indirect +direct mapping")
+```
+
+![](resilience_prep_files/figure-markdown_github/calcuate%20G%20indirect%20and%20direct-2.png)<!-- -->
+
+#### 1.2.6.4 Plot comparison of *G* by mapping approach
+
+``` r
+country_G_compare = bind_rows(
+                          mutate(country_G_direct,mapping="direct"),
+                          mutate(country_G_indirect_direct,mapping= "indirect and direct"))
+
+## plot country G comparison 
+ggplot(country_G_compare)+
+  geom_point(aes(goal,G, color=mapping, shape=mapping))+
+  facet_wrap(~country)+
+  ylim(0,1)+
+  scale_shape_manual(values=c(16,6))+
+  theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Country G Mapping Comparison")
+```
+
+![](resilience_prep_files/figure-markdown_github/G%20comparison-1.png)<!-- -->
+
+``` r
+## plot country G direct 
+ggplot(country_G_compare)+
+  geom_point(aes(country,G, colour=mapping,shape=mapping))+
+  facet_wrap(~goal)+
+  ylim(0,1)+
+   scale_shape_manual(values=c(16,6))+
+  theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Country G Mapping Comparison")
+```
+
+![](resilience_prep_files/figure-markdown_github/G%20comparison-2.png)<!-- -->
+
 TO DO
 -----
 
-1.  Weight each regulation for each goal
-2.  Map each regulation to goals
-3.  Prepare final data layers (scores for country applied to BHI regions)
+1.  Decide on weight and mapping
+2.  Prepare final data layers (scores for country applied to BHI regions)
 
 2. Social
 ---------
