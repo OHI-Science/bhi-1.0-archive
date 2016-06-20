@@ -65,7 +65,9 @@ Three international treaties are assessed for all BHI countries for *existence* 
 
 Two Baltic Region agreements will be assessed for *existence* and *compliance* for all countries. These are: Baltic Sea Action Plan (BSAP); Helsinki Convention (HELCOM).
 
-13 EU directives will be assessed for *existence* and *compliance* for BHI countries that are EU member states. These are: Water Framework Directive (WFD), Marine Spatial Planning Directive (MSPD), Marine Strategy Framework Directive (MSFD), Habitat Directive (HD), Common Fisheries Policy (CFP), National Emmissions Ceilings (NEC), Industrial Emissions Directive (IED), Urban Waste Water Treatment Directive (UWWTD), Bathing Water Directive (BWD), Conservation of Wild Birds (BIRDS), Registration, Evaluation, Authorisation and Restriction of Chemicals (REACH), Peristent Organic Pollutants (POP), Nitrates Directive (ND).
+13 EU directives will be assessed for *existence* and *compliance* for BHI countries that are EU member states. These are: Water Framework Directive (WFD), Marine Spatial Planning Directive (MSPD), Marine Strategy Framework Directive (MSFD), Habitat Directive (HD), Common Fisheries Policy (CFP), National Emmissions Ceilings (NEC), Industrial Emissions Directive (IED), Urban Waste Water Treatment Directive (UWWTD), Bathing Water Directive (BWD), Conservation of Wild Birds (BIRDS), Registration, Evaluation, Authorisation and Restriction of Chemicals (REACH), Peristent Organic Pollutants (POP), Nitrates Directive (ND). 
+
+*Note* IED and MSPD, while having compliance components can not currently have compliances assessed as the deadlines for compliance and reporting have only just recently occurred or have not occurred yet (are 2016 dates).
 
 ### 1.2.2 Scoring
 By country for each level assessed for each regulation  
@@ -298,8 +300,8 @@ goal_spec_overall = full_join(goal_spec_exist, goal_spec_compli_mean,
 
 ## calculate overall score
 goal_spec_overall = goal_spec_overall %>%
-                    mutate(overall_score = total/max_score) %>% ## if compli_mean is not NA, the max total score is 4; if it is NA, then only existence assessend and max is 1
-                    mutate(score_level = ifelse(max_score == 1, "existence", "existence and compliance")) %>%
+                    mutate(overall_score = total/max_score) %>% 
+                    mutate(score_level = ifelse(DirectiveAbbreviation %in% c("IED","MSPD","CBD","CITES","COP21"), "existence", "existence and compliance")) %>% ## score level defined by directives scored only for existence or for both
   select(DirectiveAbbreviation, CountryName,overall_score, score_level)
 
 ## change Helcom to HELCOM
