@@ -239,8 +239,11 @@ BD goal will only be based on the SPP sub-component
 
 ### 3.1 Goal status
 
-Xspp\_r = 1- sum\[wi\]/R; wi = threat weights for each species i, R = total number of species in BHI region r
-Ref pt = R (eg. score equals 1 when all species i have wi of LC)
+Xspp\_r = 1- sum\[wi\]/R
+
+wi = threat weights for each species i, R = total number of species in BHI region r
+R = Ref point = Total number of species in region r (eg. score equals 1 when all species i have wi of LC)
+
 Scale min value = score is 0 when 75% of species are extinct.\*
 \*From Halpern et al 2012, SI. "We scaled the lower end of the biodiversity goal to be 0 when 75% species are extinct, a level comparable to the five documented mass extinctions"
 
@@ -1656,7 +1659,7 @@ Data are on the HOLAS basin scale. Calculate biodiversity status by basin and th
 ### 5.7.1 Calulate SPP status using checklist and redlist data with all species weighted equally
 
 **Exclude birds for now**
-Do a single calculation including all species. Will compare this result to doing this calculation first for each taxa group and then taking the geometric mean (See Section 6.7.2)
+Do a single calculation including all species. Will compare this result to doing this calculation first for each taxa group and then taking the geometric mean (See Section 5.7.2)
 
 ##### 5.7.1.1 Calculate status
 
