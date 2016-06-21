@@ -25,6 +25,7 @@ dbClearResult(t) # clears selection (IMPORTANT!)
 t<-dbSendQuery(con, "select `value`, `BHI_ID`, `Month`, `Year`, `unit`, `HELCOM_COASTAL_CODE`, `HELCOM_ID`, `Latitude`, `Date`, `Longitude`, `Provtagningstillfaelle.id`, `Stationsnamn` from Sharkweb_data_secchi_ID_assigned;")
 data2<-fetch(t,n=-1) # SMHI data #loads selection and assigns it to variable 'data'
 
+dbClearResult(t) # clears selection (IMPORTANT!)
 dbDisconnect(con) # closes connection (IMPORTANT!)
 
 
