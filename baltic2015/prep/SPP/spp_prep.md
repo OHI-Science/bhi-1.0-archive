@@ -563,8 +563,6 @@ spp_ex
 
 #### 4.3.3 Plot status
 
-**BHI region map for reference**: ![alt text](~github/bhi/baltic2015/prep/LSP.BHI_ID_HOLAS_EEZ.png)
-
 ``` r
 ## Plot status
 ggplot(spp_status)+
