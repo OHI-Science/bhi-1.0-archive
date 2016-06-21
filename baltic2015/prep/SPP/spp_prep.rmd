@@ -975,7 +975,7 @@ Data are on the HOLAS basin scale. Calculate biodiversity status by basin and th
 
 ### 5.7.1 Calulate SPP status using checklist and redlist data with all species weighted equally
 **Exclude birds for now**  
-Do a single calculation including all species. Will compare this result to doing this calculation first for each taxa group and then taking the geometric mean (See Section 6.7.2)
+Do a single calculation including all species. Will compare this result to doing this calculation first for each taxa group and then taking the geometric mean (See Section 5.7.2)
 
 ##### 5.7.1.1 Calculate status
 ```{r status calculation for checklist and redlist data}
