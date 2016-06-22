@@ -107,19 +107,21 @@ Data in the folder 'ICO/data\_database' were exported from the [spp\_prep.rmd](h
 
 ### 2.4 Selecting ICO species
 
-Iconic fish and mammals species have been selected to represent ICO. When bird species have distributions by basin (rather than country), ICO can be updated to include those. Included species are: - Cod
-- Flounder
-- Herring
-- Perch
-- Pike
-- Salmon
-- Trout
-- Sprat
-- grey seal / gray seal
-- European otter / Euraisan otter
-- harbour seal / common seal
-- harbour porpoise
-- ringed seal
+Iconic fish and mammals species have been selected to represent ICO. When bird species have distributions by basin (rather than country), ICO can be updated to include those. Included species are:
+
+-   Cod
+-   Flounder
+-   Herring
+-   Perch
+-   Pike
+-   Salmon
+-   Trout
+-   Sprat
+-   grey seal / gray seal
+-   European otter / Euraisan otter
+-   harbour seal / common seal
+-   harbour porpoise
+-   ringed seal
 
 ### References for Redlist criteria / threat levels
 
