@@ -754,7 +754,7 @@ str(mammals)
     ##  $ The.Bothnian.Sea          : chr  "x" "" "x" "x" ...
     ##  $ The.Quark                 : chr  "x" "" "x" "" ...
     ##  $ Bothnian.Bay              : chr  "x" "" "x" "" ...
-    ##  $ common_name               : chr  "grey seal / gray seal" "harbour seal / common seal" "ringed seal " "harbour porpoise" ...
+    ##  $ common_name               : chr  "grey seal / gray seal" "harbour seal / common seal" "ringed seal" "harbour porpoise" ...
 
 ``` r
 str(redlist)
@@ -1024,7 +1024,7 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
     ##                latin_name                     common_name
     ## 1      Halichoerus grypus           grey seal / gray seal
     ## 2 Phoca vitulina vitulina      harbour seal / common seal
-    ## 3            Pusa hispida                    ringed seal 
+    ## 3            Pusa hispida                     ringed seal
     ## 4       Phocoena phocoena                harbour porpoise
     ## 5             Lutra lutra European otter / Euraisan otter
 
