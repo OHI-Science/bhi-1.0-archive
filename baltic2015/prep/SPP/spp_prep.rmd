@@ -127,6 +127,8 @@ baltic regions. The key was created using this script: prep/spatial/HELCOM_2_bal
 
 For groups associated to HELCOM subbasin: this key was used to translate subbasins into baltic regions: prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv
 
+**If these data are used, need to translate to subbasins with the new shapefile matches, should be very similar**
+
 Helcom species data downloaded from here: http://maps.helcom.fi/website/Biodiversity/index.html
 I added some subbasins to these data based on emails from Mar 21 email from Marc and Lena 
 The data I added is incomplete.
@@ -972,6 +974,17 @@ ggplot(shared_species_dist_n, aes(x=taxa_group, y=n, fill=helcom_category))+
 
 ```
 
+### 5.6.2 Export shared_species_dist object
+For use in ICO status calculation
+```{r export for use in ICO calculation}
+## write to two location - SPP folder and ICO folder
+write.csv(shared_species_dist, file.path(dir_spp,'checklist_redlist_data_for_status.csv'),row.names=FALSE)  
+
+
+write.csv(shared_species_dist, file.path(dir_prep,'ICO/data_database/checklist_redlist_data_for_status.csv'),row.names=FALSE)
+```
+
+
 ### 5.7 Status calculation by basin
 Data are on the HOLAS basin scale. Calculate biodiversity status by basin and then apply to BHI regions.  
 *Note, this will mean that the data layer sent to layers and what is registered in layers.csv is very different than what is done if use the spatial data layers from HELCOM where status is directly calculated for BHI regions and this is done formally in functions.r*  
@@ -1213,7 +1226,7 @@ ggplot(basin_status_compare)+
 ```
 
 ## TO DO
-1. Apply basin scores to BHI regions  
+1. Apply basin scores to BHI regions   (use file 'bhi_basin_country_lookup.csv')
 2. Send data layer to layers  
 3. Update functions.r if using the checklist and redlist data  
 4. Decide how to deal with birds that have spatial dist by country (not basin)  
