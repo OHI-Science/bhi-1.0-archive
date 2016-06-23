@@ -154,6 +154,8 @@ Melanie's notes on the data extraction process are below.
 
 For groups associated to HELCOM subbasin: this key was used to translate subbasins into baltic regions: prep/baltic\_rgns\_to\_bhi\_rgns\_lookup\_holas.csv
 
+**If these data are used, need to translate to subbasins with the new shapefile matches, should be very similar**
+
 Helcom species data downloaded from here: <http://maps.helcom.fi/website/Biodiversity/index.html> I added some subbasins to these data based on emails from Mar 21 email from Marc and Lena The data I added is incomplete.
 
 The taxa\_combine.R combines the 5 taxonomic groups: benthos, birds, fish, mammals, macrophytes into a single data frame.
@@ -239,8 +241,11 @@ BD goal will only be based on the SPP sub-component
 
 ### 3.1 Goal status
 
-Xspp\_r = 1- sum\[wi\]/R; wi = threat weights for each species i, R = total number of species in BHI region r
-Ref pt = R (eg. score equals 1 when all species i have wi of LC)
+Xspp\_r = 1- sum\[wi\]/R
+
+wi = threat weights for each species i, R = total number of species in BHI region r
+R = Ref point = Total number of species in region r (eg. score equals 1 when all species i have wi of LC)
+
 Scale min value = score is 0 when 75% of species are extinct.\*
 \*From Halpern et al 2012, SI. "We scaled the lower end of the biodiversity goal to be 0 when 75% species are extinct, a level comparable to the five documented mass extinctions"
 
@@ -749,7 +754,7 @@ str(mammals)
     ##  $ The.Bothnian.Sea          : chr  "x" "" "x" "x" ...
     ##  $ The.Quark                 : chr  "x" "" "x" "" ...
     ##  $ Bothnian.Bay              : chr  "x" "" "x" "" ...
-    ##  $ common_name               : chr  "grey seal / gray seal" "harbour seal / common seal" "ringed seal " "harbour porpoise" ...
+    ##  $ common_name               : chr  "grey seal / gray seal" "harbour seal / common seal" "ringed seal" "harbour porpoise" ...
 
 ``` r
 str(redlist)
@@ -846,7 +851,7 @@ X = ocurrance
 ##gather mammals to long format
 mammals_long = mammals %>%
                gather(location,presence,-latin_name,-common_name)%>%
-               mutate(presence = ifelse(presence == "X", 1, 0))%>% 
+               mutate(presence = ifelse(presence == "x", 1, 0))%>% 
                mutate(taxa_group = "mammals")
 ```
 
@@ -1019,7 +1024,7 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
     ##                latin_name                     common_name
     ## 1      Halichoerus grypus           grey seal / gray seal
     ## 2 Phoca vitulina vitulina      harbour seal / common seal
-    ## 3            Pusa hispida                    ringed seal 
+    ## 3            Pusa hispida                     ringed seal
     ## 4       Phocoena phocoena                harbour porpoise
     ## 5             Lutra lutra European otter / Euraisan otter
 
@@ -1648,14 +1653,29 @@ ggplot(shared_species_dist_n, aes(x=taxa_group, y=n, fill=helcom_category))+
 
 ![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)<!-- -->
 
+### 5.6.2 Export shared\_species\_dist object
+
+For use in ICO status calculation
+
+``` r
+## write to two location - SPP folder and ICO folder
+write.csv(shared_species_dist, file.path(dir_spp,'checklist_redlist_data_for_status.csv'),row.names=FALSE)  
+
+
+write.csv(shared_species_dist, file.path(dir_prep,'ICO/data_database/checklist_redlist_data_for_status.csv'),row.names=FALSE)
+```
+
 ### 5.7 Status calculation by basin
 
 Data are on the HOLAS basin scale. Calculate biodiversity status by basin and then apply to BHI regions.
 *Note, this will mean that the data layer sent to layers and what is registered in layers.csv is very different than what is done if use the spatial data layers from HELCOM where status is directly calculated for BHI regions and this is done formally in functions.r*
 
-### 5.7.1 Calulate SPP status using checklist and redlist data
+### 5.7.1 Calulate SPP status using checklist and redlist data with all species weighted equally
 
 **Exclude birds for now**
+Do a single calculation including all species. Will compare this result to doing this calculation first for each taxa group and then taking the geometric mean (See Section 5.7.2)
+
+##### 5.7.1.1 Calculate status
 
 ``` r
 ##sum the threat weights for each basin
@@ -1675,6 +1695,7 @@ dim(sum_wi_basin) #17 2
 ## count the number of species in each BHI region
 sum_spp_basin = shared_species_dist %>%
                 filter(taxa_group != "breeding birds")%>% ## remove birds
+                filter(presence != 0) %>% # select only present taxa
                 select(basin, latin_name)%>%
                 dplyr::count(basin)
 dim(sum_spp_basin) #17 2
@@ -1696,12 +1717,12 @@ head(sum_spp_basin)
     ## 
     ##                basin     n
     ##               (fctr) (int)
-    ## 1          Aland Sea  1486
-    ## 2       Arkona Basin  1620
-    ## 3 Bay of Mecklenburg  1769
-    ## 4     Bornholm Basin  1607
-    ## 5       Bothnian Bay  1417
-    ## 6       Bothnian Sea  1417
+    ## 1          Aland Sea   203
+    ## 2       Arkona Basin   386
+    ## 3 Bay of Mecklenburg   502
+    ## 4     Bornholm Basin   345
+    ## 5       Bothnian Bay   191
+    ## 6       Bothnian Sea   236
 
 ``` r
 spp_status_basin = full_join(sum_wi_basin,sum_spp_basin, by="basin") %>%
@@ -1709,7 +1730,7 @@ spp_status_basin = full_join(sum_wi_basin,sum_spp_basin, by="basin") %>%
                     status = 1 - wi_spp)
 ```
 
-#### 5.7.2 Scale lower end to zero if 75% extinct
+##### 5.7.1.2 Scale lower end to zero if 75% extinct
 
 Currently, species are labled regionally extinct
 
@@ -1717,26 +1738,18 @@ Currently, species are labled regionally extinct
 ## calculate percent extinct in each region
 spp_ex_basin = shared_species_dist %>%
               filter(taxa_group != "breeding birds")%>% 
+              filter(presence != 0) %>% # select only present taxa
               dplyr::rename(weights=helcom_category_numeric)%>%## remove birds
               filter(weights == 1)
 spp_ex_basin
 ```
 
-    ## Source: local data frame [35 x 7]
+    ## Source: local data frame [2 x 7]
     ## 
-    ##    taxa_group           latin_name                common_name
-    ##         (chr)                (chr)                      (chr)
-    ## 1        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 2        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 3        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 4        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 5        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 6        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 7        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 8        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 9        fish Acipenser oxyrinchus American atlantic sturgeon
-    ## 10       fish Acipenser oxyrinchus American atlantic sturgeon
-    ## ..        ...                  ...                        ...
+    ##   taxa_group           latin_name                common_name
+    ##        (chr)                (chr)                      (chr)
+    ## 1       fish Acipenser oxyrinchus American atlantic sturgeon
+    ## 2       fish Acipenser oxyrinchus American atlantic sturgeon
     ## Variables not shown: helcom_category (chr), weights (dbl), basin (fctr),
     ##   presence (dbl)
 
@@ -1745,12 +1758,11 @@ spp_ex_basin
 spp_ex_basin %>% select(latin_name,common_name)%>%distinct() ##2 
 ```
 
-    ## Source: local data frame [2 x 2]
+    ## Source: local data frame [1 x 2]
     ## 
     ##             latin_name                common_name
     ##                  (chr)                      (chr)
     ## 1 Acipenser oxyrinchus American atlantic sturgeon
-    ## 2       Dipturus batis                      Skate
 
 ``` r
 ##total extinct per basin
@@ -1763,7 +1775,8 @@ spp_ex_basin_n = spp_ex_basin %>%
 
 ## join to basin status
 spp_status_basin = spp_status_basin %>%
-                   full_join(.,spp_ex_basin_n, by="basin")
+                   full_join(.,spp_ex_basin_n, by="basin") %>%
+                   mutate(n_extinct = ifelse(is.na(n_extinct),0,n_extinct))
 
 ## calculated the % extinct in each basin. if >75% then status score is 0
 spp_status_basin = spp_status_basin %>%
@@ -1771,7 +1784,7 @@ spp_status_basin = spp_status_basin %>%
                          status = ifelse(prop_extinct>=0.75, 0, status))
 ```
 
-#### 5.7.3 Plot status by basin
+##### 5.7.1.3 Plot status by basin
 
 ``` r
 ## Plot status
@@ -1800,10 +1813,176 @@ ggplot(spp_status_basin)+
 
 ![](spp_prep_files/figure-markdown_github/plot%20basin%20status-2.png)<!-- -->
 
+### 5.7.2 Calulate SPP status using checklist and redlist data by taxa group and geometric mean
+
+**Exclude birds for now**
+Calculation status by taxa group by basin and then taking the geometric mean for each basin.
+
+##### 5.7.2.1 Calculate status by taxa group
+
+``` r
+##sum the threat weights for each basin by taxa group
+sum_wi_basin_taxa_group =shared_species_dist %>%
+              filter(taxa_group != "breeding birds")%>% ## remove birds
+              select(basin,taxa_group,helcom_category_numeric)%>%
+              dplyr::rename(weights=helcom_category_numeric)%>%
+              group_by(basin, taxa_group)%>%
+              summarise(sum_wi =sum(weights))%>%
+              ungroup()
+dim(sum_wi_basin_taxa_group) #68  3
+```
+
+    ## [1] 68  3
+
+``` r
+## count the number of species in each BHI region by taxa group
+sum_spp_basin_taxa_group = shared_species_dist %>%
+                filter(taxa_group != "breeding birds")%>% ## remove birds
+                filter(presence !=0) %>% ## filter out species not present
+                select(basin, taxa_group,latin_name)%>%
+                dplyr::count(basin, taxa_group)
+dim(sum_spp_basin_taxa_group) #68 3
+```
+
+    ## [1] 68  3
+
+``` r
+spp_status_basin_taxa_group = full_join(sum_wi_basin_taxa_group,
+                                        sum_spp_basin_taxa_group, by=c("basin","taxa_group")) %>%
+             mutate(wi_spp_taxa = sum_wi/n,
+                    status_taxa = 1 - wi_spp_taxa)
+```
+
+##### 5.7.2.2 Plot status by taxa group
+
+``` r
+ggplot(spp_status_basin_taxa_group)+
+  geom_point(aes(taxa_group,status_taxa,size=n))+
+  facet_wrap(~basin) +
+  ylim(0,1.5)+
+  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y =  element_text(colour="grey20",size=6))+
+  ggtitle("Taxa group Status by Basin, n= species richness")
+```
+
+![](spp_prep_files/figure-markdown_github/plot%20taxa_group%20Status-1.png)<!-- -->
+
+##### 5.7.2.3 For each taxa group - Scale lower end to zero if 75% extinct
+
+Currently, species are labled regionally extinct
+
+``` r
+## calculate percent extinct in each region
+spp_ex_basin_taxa_group = shared_species_dist %>%
+              filter(taxa_group != "breeding birds")%>% 
+              filter(presence != 0) %>% # select only present taxa
+              dplyr::rename(weights=helcom_category_numeric)%>%## remove birds
+              group_by(taxa_group)%>%
+              filter(weights == 1)%>%
+              ungroup()
+spp_ex_basin_taxa_group
+```
+
+    ## Source: local data frame [2 x 7]
+    ## 
+    ##   taxa_group           latin_name                common_name
+    ##        (chr)                (chr)                      (chr)
+    ## 1       fish Acipenser oxyrinchus American atlantic sturgeon
+    ## 2       fish Acipenser oxyrinchus American atlantic sturgeon
+    ## Variables not shown: helcom_category (chr), weights (dbl), basin (fctr),
+    ##   presence (dbl)
+
+``` r
+## which are RE (regionally extinct)
+spp_ex_basin_taxa_group %>% select(latin_name,common_name)%>%distinct() ##2 
+```
+
+    ## Source: local data frame [1 x 2]
+    ## 
+    ##             latin_name                common_name
+    ##                  (chr)                      (chr)
+    ## 1 Acipenser oxyrinchus American atlantic sturgeon
+
+``` r
+##total extinct per basin
+
+spp_ex_basin_n_taxa_group = spp_ex_basin_taxa_group %>%
+                  select(basin, taxa_group,latin_name)%>%
+                  dplyr::count(basin,taxa_group)%>%
+                  dplyr::rename(n_extinct = n)
+
+
+## join to basin status
+spp_status_basin_taxa_group = spp_status_basin_taxa_group %>%
+                   full_join(.,spp_ex_basin_n_taxa_group, by=c("basin", "taxa_group")) %>%
+                   mutate(n_extinct = ifelse(is.na(n_extinct),0,n_extinct))
+
+## calculated the % extinct in each basin. if >75% then status score is 0
+spp_status_basin_taxa_group  = spp_status_basin_taxa_group  %>%
+                  mutate(prop_extinct = n_extinct / n,
+                         status_taxa = ifelse(prop_extinct>=0.75, 0, status_taxa))
+```
+
+##### 5.7.2.4 Plot again status by taxa group
+
+``` r
+ggplot(spp_status_basin_taxa_group)+
+  geom_point(aes(taxa_group,status_taxa,size=n))+
+  facet_wrap(~basin) +
+  ylim(0,1.5)+
+  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y =  element_text(colour="grey20",size=6))+
+  ggtitle("Taxa group Status by Basin, n= species richness")
+```
+
+![](spp_prep_files/figure-markdown_github/plot%20taxa_group%20Status%20again-1.png)<!-- -->
+
+##### 5.7.2.5 Calculate Geometric Mean for Basin status
+
+``` r
+spp_status_basin_geo = spp_status_basin_taxa_group %>%
+                        select(basin, status_taxa) %>%
+                       group_by(basin)%>%
+                       summarise(status_basin =exp(mean(log(status_taxa))))%>%
+                        ungroup()
+```
+
+##### 5.7.2.4 Plot Geometric Mean for Basin status
+
+``` r
+ggplot(spp_status_basin_geo)+
+  geom_point(aes(basin, status_basin),size=2)+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y =  element_text(colour="grey20",size=6))+
+  ggtitle("SPP Basin status from geometric mean of taxa group status")
+```
+
+![](spp_prep_files/figure-markdown_github/plot%20basin%20Status%20from%20geometric%20mean-1.png)<!-- -->
+
+#### 5.7.3 Compare alternative approaches to Basin level SPP status calculation
+
+``` r
+spp_status_basin = spp_status_basin %>%
+                    select(basin,status)%>%
+                    mutate(status_type = "all species")
+spp_status_basin_geo = spp_status_basin_geo %>%
+                        dplyr::rename(status=status_basin)%>%
+                        mutate(status_type = "taxa group geometric mean")
+
+basin_status_compare = bind_rows(spp_status_basin,spp_status_basin_geo)
+
+
+ggplot(basin_status_compare)+
+  geom_point(aes(basin, status, colour=status_type,shape=status_type),size=2)+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y =  element_text(colour="grey20",size=6))+
+  ggtitle("SPP Basin status method comparision")
+```
+
+![](spp_prep_files/figure-markdown_github/comparsion%20of%20basin%20level%20spp%20status-1.png)<!-- -->
+
 TO DO
 -----
 
-1.  Apply basin scores to BHI regions
+1.  Apply basin scores to BHI regions (use file 'bhi\_basin\_country\_lookup.csv')
 2.  Send data layer to layers
 3.  Update functions.r if using the checklist and redlist data
 4.  Decide how to deal with birds that have spatial dist by country (not basin)

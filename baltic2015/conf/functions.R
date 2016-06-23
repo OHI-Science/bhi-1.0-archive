@@ -1287,44 +1287,78 @@ LE = function(scores, layers){
 
 
 ICO = function(layers){
+    ## UPDATED 22 June 2016 Jennifer Griffiths
 
-  # layers
-  lyrs = c('ico_spp_extinction_status' = 'risk_category',
-           'ico_spp_popn_trend'        = 'popn_trend')
+  ## Select layers
 
-  # cast data ----
-  layers_data = SelectLayersData(layers, layers=names(lyrs))
-  rk = rename(dcast(layers_data, id_num + category ~ layer, value.var='val_chr'),
-              c('id_num'='region_id', 'category'='sciname', lyrs))
+  ##
+  ico_status   = SelectLayersData(layers, layers='ico_status') %>%
+    dplyr::select(rgn_id = id_num, score = val_num)
 
-  # lookup for weights status
-  w.risk_category = c('LC' = 0,
-                      'NT' = 0.2,
-                      'VU' = 0.4,
-                      'EN' = 0.6,
-                      'CR' = 0.8,
-                      'EX' = 1)
 
-  # lookup for population trend
-  w.popn_trend = c('Decreasing' = -0.5,
-                   'Stable'     =  0,
-                   'Increasing' =  0.5)
+  ## ICO STATUS
+    ## Status is calculated in ico_prep.rmd because calculated by basin and then applied to BHI regions
 
-  # status
-  r.status = rename(ddply(rk, .(region_id), function(x){
-    mean(1 - w.risk_category[x$risk_category], na.rm=T) * 100 }),
-                    c('V1'='score'))
+  ## add dimension to object
+  ico_status = ico_status %>%
+               dplyr::rename(region_id =rgn_id) %>%
+               mutate(dimension = 'status')
 
-  # trend
-  r.trend = rename(ddply(rk, .(region_id), function(x){
-    mean(w.popn_trend[x$popn_trend], na.rm=T) }),
-                   c('V1'='score'))
+  ## ICO TREND
+   ## No data to calculate as trend, set as NA
 
-  # return scores
-  s.status = cbind(r.status, data.frame('dimension'='status'))
-  s.trend  = cbind(r.trend , data.frame('dimension'='trend' ))
-  scores = cbind(rbind(s.status, s.trend), data.frame('goal'='ICO'))
+  ico_trend = data.frame(region_id = seq(1,42,1),
+                     score = rep(NA,42),
+                     dimension = rep('trend',42))
+
+  ## Return scores
+  scores = bind_rows(ico_status,
+                     ico_trend)%>%
+            mutate(goal   = 'ICO')
+
   return(scores)
+
+
+
+  ## OLD ICO code
+
+  #
+  # lyrs = c('ico_spp_extinction_status' = 'risk_category',
+  #          'ico_spp_popn_trend'        = 'popn_trend')
+  #
+  # # cast data ----
+  # layers_data = SelectLayersData(layers, layers=names(lyrs))
+  # rk = rename(dcast(layers_data, id_num + category ~ layer, value.var='val_chr'),
+  #             c('id_num'='region_id', 'category'='sciname', lyrs))
+  #
+  # # lookup for weights status
+  # w.risk_category = c('LC' = 0,
+  #                     'NT' = 0.2,
+  #                     'VU' = 0.4,
+  #                     'EN' = 0.6,
+  #                     'CR' = 0.8,
+  #                     'EX' = 1)
+  #
+  # # lookup for population trend
+  # w.popn_trend = c('Decreasing' = -0.5,
+  #                  'Stable'     =  0,
+  #                  'Increasing' =  0.5)
+  #
+  # # status
+  # r.status = rename(ddply(rk, .(region_id), function(x){
+  #   mean(1 - w.risk_category[x$risk_category], na.rm=T) * 100 }),
+  #                   c('V1'='score'))
+  #
+  # # trend
+  # r.trend = rename(ddply(rk, .(region_id), function(x){
+  #   mean(w.popn_trend[x$popn_trend], na.rm=T) }),
+  #                  c('V1'='score'))
+  #
+  # # return scores
+  # s.status = cbind(r.status, data.frame('dimension'='status'))
+  # s.trend  = cbind(r.trend , data.frame('dimension'='trend' ))
+  # scores = cbind(rbind(s.status, s.trend), data.frame('goal'='ICO'))
+  # return(scores)
 
 }
 

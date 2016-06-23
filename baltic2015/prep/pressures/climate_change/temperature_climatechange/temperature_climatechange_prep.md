@@ -92,7 +92,11 @@ Data are from the [BALTSEM model](http://www.balticnest.org/balticnest/thenestsy
 
 ### 2.3 Projections
 
-Projection scenarios use BALTSEM results run with forcing from the [ECHAM5](http://www.mpimet.mpg.de/en/science/models/echam/) global climate model for the scenario A1b
+There are two different projection scenarios.
+
+One set of projection scenarios use BALTSEM results run with forcing from the [ECHAM5](http://www.mpimet.mpg.de/en/science/models/echam/) global climate model for the scenario A1b. Project goes to year 2100.
+
+The second set of projection scenarios use BALTSEM results run with forcing from the [HADCM3](http://www.metoffice.gov.uk/research/modelling-systems/unified-model/climate-models/hadcm3) global climate model for the scenario A1b. Projection goes to year 2099.
 
 3. Pressure model
 -----------------
@@ -124,7 +128,9 @@ Apply basin values to BHI regions.
 
 hind_sst = read.csv(file.path(dir_tempcc, 'temp_data_database/hind_sst.csv'))
 
-proj_sst = read.csv(file.path(dir_tempcc,'temp_data_database/proj_sst.csv'))
+proj_sst = read.csv(file.path(dir_tempcc,'temp_data_database/proj_sst.csv')) ## projection from echam5
+
+proj2_sst = read.csv(file.path(dir_tempcc,'temp_data_database/proj2_sst.csv')) ##projection from hadcm3
 ```
 
 ### 4.2 Plot data
@@ -144,12 +150,23 @@ ggplot(hind_sst)+
 ggplot(proj_sst)+
   geom_line(aes(year,sst_jul_aug)) + 
   facet_wrap(~basin_name_holas)+
-  ggtitle("Projected A1b SST time series")
+  ggtitle("Projected A1b SST time series ECHAM5")
 ```
 
     ## Warning: Removed 2 rows containing missing values (geom_path).
 
 ![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-2.png)<!-- -->
+
+``` r
+ggplot(proj2_sst)+
+  geom_line(aes(year,sst_jul_aug)) + 
+  facet_wrap(~basin_name_holas)+
+  ggtitle("Projected A1b SST time series HADCM3")
+```
+
+    ## Warning: Removed 2 rows containing missing values (geom_path).
+
+![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-3.png)<!-- -->
 
 ### 4.3 Clean data
 
@@ -176,6 +193,18 @@ proj_sst %>% filter(is.na(year))
 
 ``` r
 proj_sst = proj_sst %>%
+           filter(!is.na(year))
+
+
+proj2_sst %>% filter(is.na(year))
+```
+
+    ##   basin_name_holas basin_name_baltsem basin_abb_baltsem year sst_jul_aug
+    ## 1                   Northern Kattegat                NK   NA          NA
+    ## 2                   Southern Kattegat                SK   NA          NA
+
+``` r
+proj2_sst = proj2_sst %>%
            filter(!is.na(year))
 ```
 
@@ -273,16 +302,18 @@ hist_min
 
 ### 4.6 Future max
 
-From projection data, extract the maximum Jul-Aug SST for each basin between 2020-2050
+From projection data, extract the maximum Jul-Aug SST for each basin between 2020-2050.
+
+Do for each of the projection datasets
 
 ``` r
-future_max = proj_sst %>%
+future_max1 = proj_sst %>%
              filter(year >= 2020 & year <= 2050)%>%
              select(basin_name_holas,sst_jul_aug)%>%
              group_by(basin_name_holas)%>%
              summarise(future_max = max(sst_jul_aug))%>%
              ungroup()
-future_max
+future_max1
 ```
 
     ## Source: local data frame [17 x 2]
@@ -307,17 +338,53 @@ future_max
     ## 16              The Sound   18.77648
     ## 17  Western Gotland Basin   18.85925
 
+``` r
+future_max2 = proj2_sst %>%
+             filter(year >= 2020 & year <= 2050)%>%
+             select(basin_name_holas,sst_jul_aug)%>%
+             group_by(basin_name_holas)%>%
+             summarise(future_max = max(sst_jul_aug))%>%
+             ungroup()
+future_max2
+```
+
+    ## Source: local data frame [17 x 2]
+    ## 
+    ##          basin_name_holas future_max
+    ##                    (fctr)      (dbl)
+    ## 1               Aland Sea   19.46610
+    ## 2            Arkona Basin   20.87886
+    ## 3      Bay of Mecklenburg   20.87886
+    ## 4          Bornholm Basin   20.98053
+    ## 5            Bothnian Bay   18.10057
+    ## 6            Bothnian Sea   19.46610
+    ## 7   Eastern Gotland Basin   21.96635
+    ## 8            Gdansk Basin   20.98053
+    ## 9              Great Belt   20.64271
+    ## 10        Gulf of Finland   20.97725
+    ## 11           Gulf of Riga   22.86933
+    ## 12               Kattegat   20.47663
+    ## 13               Kiel Bay   21.51768
+    ## 14 Northern Baltic Proper   21.96635
+    ## 15              The Quark   19.46610
+    ## 16              The Sound   20.67413
+    ## 17  Western Gotland Basin   21.96635
+
 ### 4.7 Plot min, max, and current
 
 ``` r
 ##join data for plot
 sst_data = full_join(sst_current,hist_min, by="basin_name_holas")%>%
-            full_join(.,future_max, by="basin_name_holas")
+            full_join(.,future_max1, by="basin_name_holas")%>%
+            full_join(.,future_max2, by="basin_name_holas") %>%
+            dplyr::rename(future_echam5=future_max.x,
+                          future_hadcm3 = future_max.y) %>%
+            gather(temp_type, temperature, -basin_name_holas)
 
 ggplot(sst_data)+
-  geom_point(aes(basin_name_holas, hist_min),color="blue",size=2.5)+
-   geom_point(aes(basin_name_holas, current_sst),color="black",size=2.5)+
-   geom_point(aes(basin_name_holas, future_max),color="red",size=2.5)+
+  geom_point(aes(basin_name_holas,temperature, colour = temp_type, shape=temp_type), size=2)+
+  scale_shape_manual(values=c(19,19,17,19))+
+  scale_colour_manual(values = c("black","red","orange","blue"))+
     theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle("Basin Jul-Aug SST Historic Min, Current, Future Max")
@@ -327,36 +394,40 @@ ggplot(sst_data)+
 
 ### 4.8 Rescale data for pressure layer
 
-Some current temperatures are warmer than the near future max
+Some current temperatures are warmer than the near future max if use the ECHAM5 projection. HADCM3 places current temperatures more in the middle of the range.
+
+**Use HADCM3 projection**
 
 ``` r
  sst_rescale = sst_data%>%
-               mutate(sst_rescale = pmin(1,(current_sst - hist_min) / (future_max - hist_min)))
+               spread(.,temp_type,temperature)%>%
+               mutate(sst_rescale = pmin(1,(current_sst - hist_min) / (future_hadcm3 - hist_min)))
 
  sst_rescale
 ```
 
-    ## Source: local data frame [17 x 5]
+    ## Source: local data frame [17 x 6]
     ## 
-    ##          basin_name_holas current_sst hist_min future_max sst_rescale
-    ##                    (fctr)       (dbl)    (dbl)      (dbl)       (dbl)
-    ## 1               Aland Sea    16.01649 12.20052   16.80924   0.8279878
-    ## 2            Arkona Basin    18.30592 14.39512   18.98328   0.8523686
-    ## 3      Bay of Mecklenburg    18.30592 14.39512   18.98328   0.8523686
-    ## 4          Bornholm Basin    17.76797 14.09698   18.24436   0.8851348
-    ## 5            Bothnian Bay    15.31162 11.53649   16.63948   0.7397881
-    ## 6            Bothnian Sea    16.01649 12.20052   16.80924   0.8279878
-    ## 7   Eastern Gotland Basin    18.95239 14.57497   18.85925   1.0000000
-    ## 8            Gdansk Basin    17.76797 14.09698   18.24436   0.8851348
-    ## 9              Great Belt    18.25153 15.24938   18.77748   0.8509265
-    ## 10        Gulf of Finland    18.80333 13.60346   18.30973   1.0000000
-    ## 11           Gulf of Riga    19.07293 15.14278   19.70075   0.8622598
-    ## 12               Kattegat    18.44557 14.89529   18.59230   0.9603133
-    ## 13               Kiel Bay    18.38652 15.68411   19.39270   0.7286890
-    ## 14 Northern Baltic Proper    18.95239 14.57497   18.85925   1.0000000
-    ## 15              The Quark    16.01649 12.20052   16.80924   0.8279878
-    ## 16              The Sound    18.20104 14.99148   18.77648   0.8479676
-    ## 17  Western Gotland Basin    18.95239 14.57497   18.85925   1.0000000
+    ##          basin_name_holas current_sst future_echam5 future_hadcm3 hist_min
+    ##                    (fctr)       (dbl)         (dbl)         (dbl)    (dbl)
+    ## 1               Aland Sea    16.01649      16.80924      19.46610 12.20052
+    ## 2            Arkona Basin    18.30592      18.98328      20.87886 14.39512
+    ## 3      Bay of Mecklenburg    18.30592      18.98328      20.87886 14.39512
+    ## 4          Bornholm Basin    17.76797      18.24436      20.98053 14.09698
+    ## 5            Bothnian Bay    15.31162      16.63948      18.10057 11.53649
+    ## 6            Bothnian Sea    16.01649      16.80924      19.46610 12.20052
+    ## 7   Eastern Gotland Basin    18.95239      18.85925      21.96635 14.57497
+    ## 8            Gdansk Basin    17.76797      18.24436      20.98053 14.09698
+    ## 9              Great Belt    18.25153      18.77748      20.64271 15.24938
+    ## 10        Gulf of Finland    18.80333      18.30973      20.97725 13.60346
+    ## 11           Gulf of Riga    19.07293      19.70075      22.86933 15.14278
+    ## 12               Kattegat    18.44557      18.59230      20.47663 14.89529
+    ## 13               Kiel Bay    18.38652      19.39270      21.51768 15.68411
+    ## 14 Northern Baltic Proper    18.95239      18.85925      21.96635 14.57497
+    ## 15              The Quark    16.01649      16.80924      19.46610 12.20052
+    ## 16              The Sound    18.20104      18.77648      20.67413 14.99148
+    ## 17  Western Gotland Basin    18.95239      18.85925      21.96635 14.57497
+    ## Variables not shown: sst_rescale (dbl)
 
 ### 4.9 Assign basin values to BHI regions
 
@@ -385,6 +456,7 @@ sst_rescale = sst_rescale %>%
 ``` r
 ggplot(sst_rescale)+
   geom_point(aes(rgn_id,pressure_score), size=2.5)+
+  ylim(0,1)+
    ggtitle("SST pressure data layer")
 ```
 

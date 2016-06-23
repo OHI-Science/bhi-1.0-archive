@@ -5,6 +5,9 @@ output: github_document
 params: 
     datasource: csv
 ---
+
+# Nutrient subgoal data layer prep - Secchi data
+
 ```{r setup}
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
@@ -62,7 +65,9 @@ Fleming-Lehtinen and Laamanen (2012) do the following:
 
 ### 3.1 Read in data
 Prelimary filtering to remove duplicate values within datasets (eg profiles) and between datasets.  
-    - Check of initial smhi and ices datasets for observations from BHI regions 5 & 6 (The Sound) - region 5 all have a coastal designation. ICES data for region 6 includes both coastal and offshore but only 3 data points offshore from 2000- present. SMHI data contains no observations from region 6.  
+    - Check of initial smhi and ices datasets for observations from BHI regions 5 & 6 (The Sound) - region 5 all have a coastal designation. ICES data for region 6 includes both coastal and offshore but only 3 data points offshore from 2000- present. SMHI data contains no observations from region 6.
+
+Some data points do not have a BHI ID assigned. Appears that almost all have a coastal code that != 0. If they are very close to the coast - they may fall outside the BHI shapefile. Because we exclude all sites that are coastal - only one site will have to have BHI added manually.
 ```{r data load}
 ## read in secchi data
 data1 = readr::read_csv(file.path(dir_secchi, 'secchi_data_database/ices_secchi.csv'))
@@ -78,7 +83,7 @@ colnames(data2)
 str(data2)
 
 ## Initial filtering
-ices <- data1 %>% data.frame()%>% filter(!is.na(BHI_ID)) %>%
+ices <- data1 %>% data.frame()%>%
   select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
          lat= Latitude, lon = Longitude, 
          cruise= Cruise, station = Station, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
@@ -87,8 +92,21 @@ ices <- data1 %>% data.frame()%>% filter(!is.na(BHI_ID)) %>%
 head(ices)
 
 
+##which ices data have BHI_ID of NA
+ices.na <- ices %>%
+           filter(is.na(bhi_id))
+  
+    dim(ices.na) # 1684   11
+    ices.na.loc = ices.na %>% select(lat,lon) %>% distinct() ## unique locations
+    dim(ices.na.loc) # 86  2
+    ices.na %>% select(coast_code)%>% distinct()  ## at least one location is off shore
+    ices.na %>% filter(coast_code==0)
+
+    ## will need to manally add BHI id for site with NA and coastal code of 0
+
+
+
 smhi <- data2 %>% data.frame()%>%
-  filter(!is.na(BHI_ID)) %>%
   rename(secchi = value) %>%
   select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
         lat= Latitude, lon= Longitude, 
@@ -97,54 +115,96 @@ smhi <- data2 %>% data.frame()%>%
   mutate(supplier = 'smhi', cruise = as.character(cruise))
 head(smhi)
 
+## is na smhi
+smhi.na <- smhi %>%
+           filter(is.na(bhi_id))
+  
+    dim(smhi.na) # 35034    11
+    smhi.na.loc = smhi.na %>% select(lat,lon) %>% distinct() ## unique locations
+    dim(smhi.na.loc) #615   2
+    smhi.na %>% select(coast_code)%>% distinct()  ## none are offshore
+    smhi.na %>% filter(coast_code==0)
+    ## no coastal code of zero
+
+
+
+
 ## Look for duplicate data
 
 ## is any data duplicated in ices itself
 ices.duplicated = duplicated(ices)
-sum(ices.duplicated==TRUE) #180841  ## MANY duplicates 
+sum(ices.duplicated==TRUE) #181855  ## MANY duplicates 
 
 ices.duplicated = duplicated(select(ices,-station))
-sum(ices.duplicated==TRUE) #180963  ## more duplicated when remove station columns
+sum(ices.duplicated==TRUE) #181977 ## more duplicated when remove station columns
     ## it is not because of multiple cruises on same day and location
     ## tried by removing lat and lon and keeping station, fewer duplicates detected
 
 ## duplicates because ICES table includes deptp
-new_ices = unique(select(ices,-station)); nrow(new_ices)  #take only unique records # 32896
+new_ices = unique(select(ices,-station)); nrow(new_ices)  #take only unique records # 33566
 
 
 ## is any data duplicated in smhi itself
 smhi.duplicated = duplicated(select(smhi, -station))
-sum(smhi.duplicated==TRUE) #56938 ## MANY duplicates  ## removing station does not affect it
-new_smhi = unique(select(smhi, -station)); nrow(new_smhi) #take only unique records # 10818
+sum(smhi.duplicated==TRUE) #85691 ## MANY duplicates  ## removing station does not affect it
+new_smhi = unique(select(smhi, -station)); nrow(new_smhi) #take only unique records # 17099
 
 ## use setdiff() to indentify data smhi not in ices
 new_smhi = setdiff(select(new_smhi,-supplier,-cruise),select(new_ices,-supplier,-cruise)) %>%
             mutate(supplier = "smhi")
-nrow(new_smhi) # 10357
+nrow(new_smhi) #  16627
 ## it appears 461 records are duplicates (if remove cruise and station)
 ## if date, lat, lon, secchi all match, I think they are duplicates
 
 ## Now create a new allData, bind only the new_smhi object to ices
 allData = bind_rows(new_ices,new_smhi)
-nrow(allData) # 43253
-allData %>% select(year, month, date, cruise, lat, lon,secchi) %>% distinct() %>%nrow(.)  #43253
+nrow(allData) # 50193
+allData %>% select(year, month, date, cruise, lat, lon,secchi) %>% distinct() %>%nrow(.)  #50193
 
 ## what if remove cruise
 allData %>% select(year, month, date, lat, lon,secchi) %>% distinct() %>%nrow(.)
-# 43253 
+# 50193
 
 ```
 
 ### 3.2 Remove coastal observations
 Select only data with coastal code "0"  
 ```{r  remove coastal data points}
-dim(allData) #[1] 43253    10
+dim(allData) #[1]  50193    10
 
 ## Do any observations have NA for coast_code
-allData %>% filter(is.na(coast_code))
-  ## three observations with NA for the coast_code
-  ## manually checked with google earth, these are all clearly coastal stations. but would be better to fix this assignment in the database
+allData %>% filter(is.na(coast_code) & is.na(bhi_id)) %>% dim() # 3567   10
+allData %>% filter(is.na(coast_code) & !is.na(bhi_id)) %>% dim() #  3 10
+  
+  ## 3567 observations with no coast_code or BHI_ID, all from SMHI, are 292 distinct locations
+      loc_no_coastcode_nobhi =allData %>% 
+                                filter(is.na(coast_code) & is.na(bhi_id))%>%
+                                select(lat,lon)%>%
+                                  distinct()
+     
+        ## check locations
+         library('ggmap')
+        map = get_map(location = c(8.5, 53, 32, 67.5))
 
+         plot_map1 = ggmap(map) +
+          geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_nobhi,size = 2.5)
+      
+          plot_map1
+      ## these locations are very coastal or outside of the Baltic Sea
+    
+  ##3 observations with NA for the coast_code but have BHI_ID
+     loc_no_coastcode_bhi =  allData %>% 
+                              filter(is.na(coast_code) & !is.na(bhi_id)) %>% 
+                              select(lat,lon)%>%
+                              distinct()
+      
+     plot_map2 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_bhi,size = 2.5)
+      
+      plot_map2
+      ## these are clearly coastal stations
+  
+      
 ## What are coastal codes for The Sound (BHI regions 5,6)
 ##Region 6
 allData %>% filter(bhi_id %in% 6) %>% select(bhi_id,year,date,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
@@ -158,12 +218,21 @@ allData %>% filter(bhi_id %in% 5) %>% select(bhi_id,year,lat, lon,coast_code, su
 allData %>% filter(bhi_id %in% 5) %>% select(coast_code, supplier)%>%distinct(.)
     ## All region 5 codes are coastal
 
+
+
 ## Filter data that are only offshore, coast_code == 0
 allData = allData %>% filter(coast_code==0)
 
-dim(allData)#14018    10 
+dim(allData)#14019    10 
 
 ## This is a substantial reduction in the number of observations
+
+## find data points without BHI ID
+allData %>% filter(is.na(bhi_id))  ##manual check is just barely within Latvian EEZ so is region 27
+
+allData = allData %>%
+          mutate(bhi_id = ifelse(is.na(bhi_id),27, bhi_id))
+allData %>% filter(is.na(bhi_id))  
 
 ```
 
@@ -185,10 +254,8 @@ These basins are the relevant physical units.
 Secchi data will be first assessed at this level and then assigned to BHI region. EEZ divisions may result in some BHI regions that have no data but they are physically the same basin as a BHI region with data.
 
 ```{r basin lookup}
-basin_lookup = readr::read_csv(file.path(
-  dir_secchi,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
-basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
-  mutate(basin_name = str_replace_all(basin_name,"_"," "))
+basin_lookup = read.csv(file.path(dir_secchi,'bhi_basin_country_lookup.csv'), sep=";")
+basin_lookup=basin_lookup %>% select(bhi_id = BHI_ID, basin_name=Subbasin)
 
 ```
 

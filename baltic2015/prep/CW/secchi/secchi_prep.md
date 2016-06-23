@@ -1,6 +1,9 @@
 secchi\_prep
 ================
 
+Nutrient subgoal data layer prep - Secchi data
+==============================================
+
 ``` r
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
@@ -83,6 +86,8 @@ Fleming-Lehtinen and Laamanen (2012) do the following:
 Prelimary filtering to remove duplicate values within datasets (eg profiles) and between datasets.
  - Check of initial smhi and ices datasets for observations from BHI regions 5 & 6 (The Sound) - region 5 all have a coastal designation. ICES data for region 6 includes both coastal and offshore but only 3 data points offshore from 2000- present. SMHI data contains no observations from region 6.
 
+Some data points do not have a BHI ID assigned. Appears that almost all have a coastal code that != 0. If they are very close to the coast - they may fall outside the BHI shapefile. Because we exclude all sites that are coastal - only one site will have to have BHI added manually.
+
 ``` r
 ## read in secchi data
 data1 = readr::read_csv(file.path(dir_secchi, 'secchi_data_database/ices_secchi.csv'))
@@ -162,7 +167,7 @@ str(data2)
 
 ``` r
 ## Initial filtering
-ices <- data1 %>% data.frame()%>% filter(!is.na(BHI_ID)) %>%
+ices <- data1 %>% data.frame()%>%
   select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
          lat= Latitude, lon = Longitude, 
          cruise= Cruise, station = Station, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
@@ -187,8 +192,57 @@ head(ices)
     ## 6         38     ices
 
 ``` r
+##which ices data have BHI_ID of NA
+ices.na <- ices %>%
+           filter(is.na(bhi_id))
+  
+    dim(ices.na) # 1684   11
+```
+
+    ## [1] 1684   11
+
+``` r
+    ices.na.loc = ices.na %>% select(lat,lon) %>% distinct() ## unique locations
+    dim(ices.na.loc) # 86  2
+```
+
+    ## [1] 86  2
+
+``` r
+    ices.na %>% select(coast_code)%>% distinct()  ## at least one location is off shore
+```
+
+    ##    coast_code
+    ## 1          42
+    ## 2          38
+    ## 3          14
+    ## 4           9
+    ## 5          13
+    ## 6           5
+    ## 7          37
+    ## 8          34
+    ## 9          17
+    ## 10          0
+    ## 11         20
+    ## 12          6
+
+``` r
+    ices.na %>% filter(coast_code==0)
+```
+
+    ##   bhi_id secchi year month     lat     lon cruise station       date
+    ## 1     NA    2.5 2002     8 57.8562 24.3058   LAAN    0183 2002-08-07
+    ## 2     NA    2.5 2002     8 57.8562 24.3058   LAAN    0183 2002-08-07
+    ##   coast_code supplier
+    ## 1          0     ices
+    ## 2          0     ices
+
+``` r
+    ## will need to manally add BHI id for site with NA and coastal code of 0
+
+
+
 smhi <- data2 %>% data.frame()%>%
-  filter(!is.na(BHI_ID)) %>%
   rename(secchi = value) %>%
   select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
         lat= Latitude, lon= Longitude, 
@@ -198,70 +252,116 @@ smhi <- data2 %>% data.frame()%>%
 head(smhi)
 ```
 
-    ##   bhi_id secchi year month     lat     lon cruise            station
-    ## 1      1      8 2015    11 56.5650 12.7200    311 Laholmsbukten (L9)
-    ## 2      1      8 2015    11 56.5650 12.7200    311 Laholmsbukten (L9)
-    ## 3      1      8 2015    11 56.5650 12.7200    311 Laholmsbukten (L9)
-    ## 4      1      8 2015    11 56.5650 12.7200    311 Laholmsbukten (L9)
-    ## 5      1      8 2015    11 56.5650 12.7200    311 Laholmsbukten (L9)
-    ## 6      1      7 2015    11 57.6675 11.6867    105          DANAFJORD
+    ##   bhi_id secchi year month     lat     lon cruise              station
+    ## 1     NA      7 2015    12 58.8683 11.1033      6 KOSTERFJORDEN (NR16)
+    ## 2     NA      7 2015    12 58.8683 11.1033      6 KOSTERFJORDEN (NR16)
+    ## 3     NA      7 2015    12 58.8683 11.1033      6 KOSTERFJORDEN (NR16)
+    ## 4     NA      7 2015    12 58.8683 11.1033      6 KOSTERFJORDEN (NR16)
+    ## 5     NA      7 2015    12 58.8683 11.1033      6 KOSTERFJORDEN (NR16)
+    ## 6     NA      7 2015    12 58.8683 11.1033      6 KOSTERFJORDEN (NR16)
     ##         date coast_code supplier
-    ## 1 2015-11-26         41     smhi
-    ## 2 2015-11-26         41     smhi
-    ## 3 2015-11-26         41     smhi
-    ## 4 2015-11-26         41     smhi
-    ## 5 2015-11-26         41     smhi
-    ## 6 2015-11-03         41     smhi
+    ## 1 2015-12-03         NA     smhi
+    ## 2 2015-12-03         NA     smhi
+    ## 3 2015-12-03         NA     smhi
+    ## 4 2015-12-03         NA     smhi
+    ## 5 2015-12-03         NA     smhi
+    ## 6 2015-12-03         NA     smhi
 
 ``` r
+## is na smhi
+smhi.na <- smhi %>%
+           filter(is.na(bhi_id))
+  
+    dim(smhi.na) # 35034    11
+```
+
+    ## [1] 35034    11
+
+``` r
+    smhi.na.loc = smhi.na %>% select(lat,lon) %>% distinct() ## unique locations
+    dim(smhi.na.loc) #615   2
+```
+
+    ## [1] 615   2
+
+``` r
+    smhi.na %>% select(coast_code)%>% distinct()  ## none are offshore
+```
+
+    ##    coast_code
+    ## 1          NA
+    ## 2          18
+    ## 3          27
+    ## 4          41
+    ## 5           8
+    ## 6           6
+    ## 7          11
+    ## 8           4
+    ## 9           2
+    ## 10         22
+
+``` r
+    smhi.na %>% filter(coast_code==0)
+```
+
+    ##  [1] bhi_id     secchi     year       month      lat        lon       
+    ##  [7] cruise     station    date       coast_code supplier  
+    ## <0 rows> (or 0-length row.names)
+
+``` r
+    ## no coastal code of zero
+
+
+
+
 ## Look for duplicate data
 
 ## is any data duplicated in ices itself
 ices.duplicated = duplicated(ices)
-sum(ices.duplicated==TRUE) #180841  ## MANY duplicates 
+sum(ices.duplicated==TRUE) #181855  ## MANY duplicates 
 ```
 
-    ## [1] 180841
+    ## [1] 181855
 
 ``` r
 ices.duplicated = duplicated(select(ices,-station))
-sum(ices.duplicated==TRUE) #180963  ## more duplicated when remove station columns
+sum(ices.duplicated==TRUE) #181977 ## more duplicated when remove station columns
 ```
 
-    ## [1] 180963
+    ## [1] 181977
 
 ``` r
     ## it is not because of multiple cruises on same day and location
     ## tried by removing lat and lon and keeping station, fewer duplicates detected
 
 ## duplicates because ICES table includes deptp
-new_ices = unique(select(ices,-station)); nrow(new_ices)  #take only unique records # 32896
+new_ices = unique(select(ices,-station)); nrow(new_ices)  #take only unique records # 33566
 ```
 
-    ## [1] 32896
+    ## [1] 33566
 
 ``` r
 ## is any data duplicated in smhi itself
 smhi.duplicated = duplicated(select(smhi, -station))
-sum(smhi.duplicated==TRUE) #56938 ## MANY duplicates  ## removing station does not affect it
+sum(smhi.duplicated==TRUE) #85691 ## MANY duplicates  ## removing station does not affect it
 ```
 
-    ## [1] 56938
+    ## [1] 85691
 
 ``` r
-new_smhi = unique(select(smhi, -station)); nrow(new_smhi) #take only unique records # 10818
+new_smhi = unique(select(smhi, -station)); nrow(new_smhi) #take only unique records # 17099
 ```
 
-    ## [1] 10818
+    ## [1] 17099
 
 ``` r
 ## use setdiff() to indentify data smhi not in ices
 new_smhi = setdiff(select(new_smhi,-supplier,-cruise),select(new_ices,-supplier,-cruise)) %>%
             mutate(supplier = "smhi")
-nrow(new_smhi) # 10357
+nrow(new_smhi) #  16627
 ```
 
-    ## [1] 10357
+    ## [1] 16627
 
 ``` r
 ## it appears 461 records are duplicates (if remove cruise and station)
@@ -269,26 +369,26 @@ nrow(new_smhi) # 10357
 
 ## Now create a new allData, bind only the new_smhi object to ices
 allData = bind_rows(new_ices,new_smhi)
-nrow(allData) # 43253
+nrow(allData) # 50193
 ```
 
-    ## [1] 43253
+    ## [1] 50193
 
 ``` r
-allData %>% select(year, month, date, cruise, lat, lon,secchi) %>% distinct() %>%nrow(.)  #43253
+allData %>% select(year, month, date, cruise, lat, lon,secchi) %>% distinct() %>%nrow(.)  #50193
 ```
 
-    ## [1] 43253
+    ## [1] 50193
 
 ``` r
 ## what if remove cruise
 allData %>% select(year, month, date, lat, lon,secchi) %>% distinct() %>%nrow(.)
 ```
 
-    ## [1] 43253
+    ## [1] 50193
 
 ``` r
-# 43253 
+# 50193
 ```
 
 ### 3.2 Remove coastal observations
@@ -296,29 +396,72 @@ allData %>% select(year, month, date, lat, lon,secchi) %>% distinct() %>%nrow(.)
 Select only data with coastal code "0"
 
 ``` r
-dim(allData) #[1] 43253    10
+dim(allData) #[1]  50193    10
 ```
 
-    ## [1] 43253    10
+    ## [1] 50193    10
 
 ``` r
 ## Do any observations have NA for coast_code
-allData %>% filter(is.na(coast_code))
+allData %>% filter(is.na(coast_code) & is.na(bhi_id)) %>% dim() # 3567   10
 ```
 
-    ## Source: local data frame [3 x 10]
-    ## 
-    ##   bhi_id secchi  year month     lat     lon cruise       date coast_code
-    ##    (int)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
-    ## 1     37    3.5  2011     8 63.2823 19.1348     NA 2011-08-01         NA
-    ## 2     41    1.4  2011     7 65.6695 22.3087     NA 2011-07-26         NA
-    ## 3     37    1.5  2001     9 62.1893 17.5318     NA 2001-09-04         NA
-    ## Variables not shown: supplier (chr)
+    ## [1] 3567   10
 
 ``` r
-  ## three observations with NA for the coast_code
-  ## manually checked with google earth, these are all clearly coastal stations. but would be better to fix this assignment in the database
+allData %>% filter(is.na(coast_code) & !is.na(bhi_id)) %>% dim() #  3 10
+```
 
+    ## [1]  3 10
+
+``` r
+  ## 3567 observations with no coast_code or BHI_ID, all from SMHI, are 292 distinct locations
+      loc_no_coastcode_nobhi =allData %>% 
+                                filter(is.na(coast_code) & is.na(bhi_id))%>%
+                                select(lat,lon)%>%
+                                  distinct()
+     
+        ## check locations
+         library('ggmap')
+        map = get_map(location = c(8.5, 53, 32, 67.5))
+```
+
+    ## Warning: bounding box given to google - spatial extent only approximate.
+
+    ## converting bounding box to center/zoom specification. (experimental)
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=60.25,20.25&zoom=5&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+
+``` r
+         plot_map1 = ggmap(map) +
+          geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_nobhi,size = 2.5)
+      
+          plot_map1
+```
+
+![](secchi_prep_files/figure-markdown_github/remove%20coastal%20data%20points-1.png)<!-- -->
+
+``` r
+      ## these locations are very coastal or outside of the Baltic Sea
+    
+  ##3 observations with NA for the coast_code but have BHI_ID
+     loc_no_coastcode_bhi =  allData %>% 
+                              filter(is.na(coast_code) & !is.na(bhi_id)) %>% 
+                              select(lat,lon)%>%
+                              distinct()
+      
+     plot_map2 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_bhi,size = 2.5)
+      
+      plot_map2
+```
+
+![](secchi_prep_files/figure-markdown_github/remove%20coastal%20data%20points-2.png)<!-- -->
+
+``` r
+      ## these are clearly coastal stations
+  
+      
 ## What are coastal codes for The Sound (BHI regions 5,6)
 ##Region 6
 allData %>% filter(bhi_id %in% 6) %>% select(bhi_id,year,date,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
@@ -389,17 +532,41 @@ allData %>% filter(bhi_id %in% 5) %>% select(coast_code, supplier)%>%distinct(.)
 ``` r
     ## All region 5 codes are coastal
 
+
+
 ## Filter data that are only offshore, coast_code == 0
 allData = allData %>% filter(coast_code==0)
 
-dim(allData)#14018    10 
+dim(allData)#14019    10 
 ```
 
-    ## [1] 14018    10
+    ## [1] 14019    10
 
 ``` r
 ## This is a substantial reduction in the number of observations
+
+## find data points without BHI ID
+allData %>% filter(is.na(bhi_id))  ##manual check is just barely within Latvian EEZ so is region 27
 ```
+
+    ## Source: local data frame [1 x 10]
+    ## 
+    ##   bhi_id secchi  year month     lat     lon cruise       date coast_code
+    ##    (int)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
+    ## 1     NA    2.5  2002     8 57.8562 24.3058   LAAN 2002-08-07          0
+    ## Variables not shown: supplier (chr)
+
+``` r
+allData = allData %>%
+          mutate(bhi_id = ifelse(is.na(bhi_id),27, bhi_id))
+allData %>% filter(is.na(bhi_id))  
+```
+
+    ## Source: local data frame [0 x 10]
+    ## 
+    ## Variables not shown: bhi_id (dbl), secchi (dbl), year (int), month (int),
+    ##   lat (dbl), lon (dbl), cruise (chr), date (date), coast_code (int),
+    ##   supplier (chr)
 
 ### 3.3 Target values
 
@@ -434,10 +601,8 @@ These basins are the relevant physical units.
 Secchi data will be first assessed at this level and then assigned to BHI region. EEZ divisions may result in some BHI regions that have no data but they are physically the same basin as a BHI region with data.
 
 ``` r
-basin_lookup = readr::read_csv(file.path(
-  dir_secchi,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
-basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
-  mutate(basin_name = str_replace_all(basin_name,"_"," "))
+basin_lookup = read.csv(file.path(dir_secchi,'bhi_basin_country_lookup.csv'), sep=";")
+basin_lookup=basin_lookup %>% select(bhi_id = BHI_ID, basin_name=Subbasin)
 ```
 
 ### 3.5 Select summer data and plot
@@ -456,7 +621,7 @@ head(summer)
     ## Source: local data frame [6 x 10]
     ## 
     ##   bhi_id secchi  year month     lat     lon cruise       date coast_code
-    ##    (int)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
+    ##    (dbl)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
     ## 1      1    8.0  2000     8 56.2300 12.3700   26GT 2000-08-07          0
     ## 2      2    7.0  2000     8 56.5583 11.0300   26GT 2000-08-08          0
     ## 3      2    6.3  2000     8 56.8567 10.7917   26GT 2000-08-08          0
@@ -534,11 +699,11 @@ basin_summary = summer %>% group_by(basin_name,year,month)%>%
 basin_summary
 ```
 
-    ## Source: local data frame [631 x 4]
+    ## Source: local data frame [645 x 4]
     ## Groups: basin_name, year [?]
     ## 
     ##    basin_name  year month loc_count
-    ##         (chr) (int) (int)     (int)
+    ##        (fctr) (int) (int)     (int)
     ## 1   Aland Sea  2000     6         1
     ## 2   Aland Sea  2001     6         1
     ## 3   Aland Sea  2002     6         1
@@ -576,14 +741,14 @@ head(mean_months)
 
     ## Source: local data frame [6 x 4]
     ## 
-    ##    year month            basin_name mean_secchi
-    ##   (int) (int)                 (chr)       (dbl)
-    ## 1  2000     6             Aland Sea         5.5
-    ## 2  2000     6          Arkona Basin         7.8
-    ## 3  2000     6        Bornholm Basin         6.8
-    ## 4  2000     6          Bothnian Bay         5.4
-    ## 5  2000     6          Bothnian Sea         5.3
-    ## 6  2000     6 Eastern Gotland Basin         7.9
+    ##    year month     basin_name mean_secchi
+    ##   (int) (int)         (fctr)       (dbl)
+    ## 1  2000     6      Aland Sea         5.5
+    ## 2  2000     6   Arkona Basin         7.8
+    ## 3  2000     6 Bornholm Basin         6.8
+    ## 4  2000     6    Bothian Sea         2.2
+    ## 5  2000     6   Bothnian Bay         5.4
+    ## 6  2000     6   Bothnian Sea         6.8
 
 ### 3.9.2 Plot mean monthly value by basin
 
@@ -633,6 +798,12 @@ Horizontal lines are HELCOM target values.
 ``` r
 secchi_target = left_join(mean_months_summer,target, by=c("basin_name" = "basin"))%>%
                 dplyr::rename(target_secchi = summer_secchi)
+```
+
+    ## Warning in left_join_impl(x, y, by$x, by$y): joining character vector and
+    ## factor, coercing into character vector
+
+``` r
 head(secchi_target)
 ```
 
@@ -644,8 +815,8 @@ head(secchi_target)
     ## 2  2000       Arkona Basin         8.0           7.2
     ## 3  2000 Bay of Mecklenburg         6.7           7.1
     ## 4  2000     Bornholm Basin         7.0           7.1
-    ## 5  2000       Bothnian Bay         2.5           5.8
-    ## 6  2000       Bothnian Sea         2.8           6.8
+    ## 5  2000        Bothian Sea         1.3            NA
+    ## 6  2000       Bothnian Bay         2.5           5.8
 
 ``` r
 ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
@@ -692,7 +863,7 @@ last_year = secchi_target%>%
             print(n=15)
 ```
 
-    ## Source: local data frame [16 x 2]
+    ## Source: local data frame [17 x 2]
     ## 
     ##                basin_name last_year
     ##                     (chr)     (int)
@@ -700,17 +871,17 @@ last_year = secchi_target%>%
     ## 2            Arkona Basin      2013
     ## 3      Bay of Mecklenburg      2013
     ## 4          Bornholm Basin      2013
-    ## 5            Bothnian Bay      2013
-    ## 6            Bothnian Sea      2013
-    ## 7   Eastern Gotland Basin      2013
-    ## 8            Gdansk Basin      2013
-    ## 9              Great Belt      2009
-    ## 10        Gulf of Finland      2012
-    ## 11           Gulf of Riga      2012
-    ## 12               Kattegat      2013
-    ## 13               Kiel Bay      2013
-    ## 14 Northern Baltic Proper      2013
-    ## 15              The Quark      2012
+    ## 5             Bothian Sea      2011
+    ## 6            Bothnian Bay      2013
+    ## 7            Bothnian Sea      2013
+    ## 8   Eastern Gotland Basin      2013
+    ## 9            Gdansk Basin      2013
+    ## 10             Great Belt      2009
+    ## 11        Gulf of Finland      2012
+    ## 12           Gulf of Riga      2012
+    ## 13               Kattegat      2013
+    ## 14               Kiel Bay      2013
+    ## 15 Northern Baltic Proper      2013
     ## ..                    ...       ...
 
 ``` r
@@ -718,15 +889,16 @@ last_year = secchi_target%>%
 last_year %>% filter(last_year < 2013)
 ```
 
-    ## Source: local data frame [5 x 2]
+    ## Source: local data frame [6 x 2]
     ## 
     ##        basin_name last_year
     ##             (chr)     (int)
     ## 1       Aland Sea      2012
-    ## 2      Great Belt      2009
-    ## 3 Gulf of Finland      2012
-    ## 4    Gulf of Riga      2012
-    ## 5       The Quark      2012
+    ## 2     Bothian Sea      2011
+    ## 3      Great Belt      2009
+    ## 4 Gulf of Finland      2012
+    ## 5    Gulf of Riga      2012
+    ## 6       The Quark      2012
 
 ### 4.3 Calculate status
 
@@ -748,7 +920,7 @@ Status must be calculated in data prep because calculation for a basin and then 
   secchi_target
 ```
 
-    ## Source: local data frame [214 x 4]
+    ## Source: local data frame [226 x 4]
     ## 
     ##     year            basin_name mean_secchi target_secchi
     ##    (int)                 (chr)       (dbl)         (dbl)
@@ -756,12 +928,12 @@ Status must be calculated in data prep because calculation for a basin and then 
     ## 2   2000          Arkona Basin         8.0           7.2
     ## 3   2000    Bay of Mecklenburg         6.7           7.1
     ## 4   2000        Bornholm Basin         7.0           7.1
-    ## 5   2000          Bothnian Bay         2.5           5.8
-    ## 6   2000          Bothnian Sea         2.8           6.8
-    ## 7   2000 Eastern Gotland Basin         6.6           7.6
-    ## 8   2000          Gdansk Basin         6.7           6.5
-    ## 9   2000            Great Belt         6.9           8.5
-    ## 10  2000       Gulf of Finland         4.8           5.5
+    ## 5   2000           Bothian Sea         1.3            NA
+    ## 6   2000          Bothnian Bay         2.5           5.8
+    ## 7   2000          Bothnian Sea         6.8           6.8
+    ## 8   2000 Eastern Gotland Basin         6.6           7.6
+    ## 9   2000          Gdansk Basin         6.7           6.5
+    ## 10  2000            Great Belt         6.9           8.5
     ## ..   ...                   ...         ...           ...
 
 ``` r
@@ -794,13 +966,20 @@ Status must be calculated in data prep because calculation for a basin and then 
                 left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
                 mutate(dimension = 'status') %>%
                 select (rgn_id = bhi_id, dimension, score=status)
-                
-  
+```
+
+    ## Warning in left_join_impl(x, y, by$x, by$y): joining character vector and
+    ## factor, coercing into character vector
+
+``` r
     bhi_trend = left_join(basin_lookup,basin_trend, by="basin_name") %>%
                  mutate(score = round(trend_score,2),
                         dimension = "trend")%>%
                 select(rgn_id = bhi_id, dimension, score )
 ```
+
+    ## Warning in left_join_impl(x, y, by$x, by$y): joining character vector and
+    ## factor, coercing into character vector
 
 ### 4.4 Plot Basin status over time
 
@@ -812,6 +991,8 @@ ggplot(basin_status) + geom_point((aes(year,status)))+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))
 ```
+
+    ## Warning: Removed 12 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)<!-- -->
 
@@ -827,7 +1008,7 @@ ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + ge
   xlab("BHI region")
 ```
 
-    ## Warning: Removed 4 rows containing missing values (geom_point).
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)<!-- -->
 

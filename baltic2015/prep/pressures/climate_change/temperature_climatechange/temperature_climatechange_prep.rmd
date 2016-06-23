@@ -60,8 +60,11 @@ Data are from the [BALTSEM model](http://www.balticnest.org/balticnest/thenestsy
 
 
 ### 2.3 Projections
-Projection scenarios use BALTSEM results run with forcing from the [ECHAM5](http://www.mpimet.mpg.de/en/science/models/echam/) global climate model for the scenario A1b
+There are two different projection scenarios.  
 
+One set of projection scenarios use BALTSEM results run with forcing from the [ECHAM5](http://www.mpimet.mpg.de/en/science/models/echam/) global climate model for the scenario A1b. Project goes to year 2100.  
+
+The second set of  projection scenarios use BALTSEM results run with forcing from the [HADCM3](http://www.metoffice.gov.uk/research/modelling-systems/unified-model/climate-models/hadcm3) global climate model for the scenario A1b. Projection goes to year 2099.  
 
 ## 3. Pressure model
 
@@ -91,7 +94,9 @@ Apply basin values to BHI regions.
 
 hind_sst = read.csv(file.path(dir_tempcc, 'temp_data_database/hind_sst.csv'))
 
-proj_sst = read.csv(file.path(dir_tempcc,'temp_data_database/proj_sst.csv'))
+proj_sst = read.csv(file.path(dir_tempcc,'temp_data_database/proj_sst.csv')) ## projection from echam5
+
+proj2_sst = read.csv(file.path(dir_tempcc,'temp_data_database/proj2_sst.csv')) ##projection from hadcm3
 
 ```
 
@@ -105,7 +110,13 @@ ggplot(hind_sst)+
 ggplot(proj_sst)+
   geom_line(aes(year,sst_jul_aug)) + 
   facet_wrap(~basin_name_holas)+
-  ggtitle("Projected A1b SST time series")
+  ggtitle("Projected A1b SST time series ECHAM5")
+
+ggplot(proj2_sst)+
+  geom_line(aes(year,sst_jul_aug)) + 
+  facet_wrap(~basin_name_holas)+
+  ggtitle("Projected A1b SST time series HADCM3")
+
 
 ```
 
@@ -123,6 +134,11 @@ proj_sst %>% filter(is.na(year))
 proj_sst = proj_sst %>%
            filter(!is.na(year))
 
+
+proj2_sst %>% filter(is.na(year))
+
+proj2_sst = proj2_sst %>%
+           filter(!is.na(year))
 ```
 
 
@@ -175,15 +191,25 @@ hist_min
 
 
 ### 4.6 Future max
-From projection data, extract the maximum Jul-Aug SST for each basin between 2020-2050
+From projection data, extract the maximum Jul-Aug SST for each basin between 2020-2050.
+
+Do for each of the projection datasets
 ```{r future max sst}
-future_max = proj_sst %>%
+future_max1 = proj_sst %>%
              filter(year >= 2020 & year <= 2050)%>%
              select(basin_name_holas,sst_jul_aug)%>%
              group_by(basin_name_holas)%>%
              summarise(future_max = max(sst_jul_aug))%>%
              ungroup()
-future_max
+future_max1
+
+future_max2 = proj2_sst %>%
+             filter(year >= 2020 & year <= 2050)%>%
+             select(basin_name_holas,sst_jul_aug)%>%
+             group_by(basin_name_holas)%>%
+             summarise(future_max = max(sst_jul_aug))%>%
+             ungroup()
+future_max2
 ```
 
 
@@ -191,12 +217,16 @@ future_max
 ```{r plot min, max, current}
 ##join data for plot
 sst_data = full_join(sst_current,hist_min, by="basin_name_holas")%>%
-            full_join(.,future_max, by="basin_name_holas")
+            full_join(.,future_max1, by="basin_name_holas")%>%
+            full_join(.,future_max2, by="basin_name_holas") %>%
+            dplyr::rename(future_echam5=future_max.x,
+                          future_hadcm3 = future_max.y) %>%
+            gather(temp_type, temperature, -basin_name_holas)
 
 ggplot(sst_data)+
-  geom_point(aes(basin_name_holas, hist_min),color="blue",size=2.5)+
-   geom_point(aes(basin_name_holas, current_sst),color="black",size=2.5)+
-   geom_point(aes(basin_name_holas, future_max),color="red",size=2.5)+
+  geom_point(aes(basin_name_holas,temperature, colour = temp_type, shape=temp_type), size=2)+
+  scale_shape_manual(values=c(19,19,17,19))+
+  scale_colour_manual(values = c("black","red","orange","blue"))+
     theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle("Basin Jul-Aug SST Historic Min, Current, Future Max")
@@ -205,10 +235,13 @@ ggplot(sst_data)+
 
 
 ### 4.8 Rescale data for pressure layer
-Some current temperatures are warmer than the near future max
+Some current temperatures are warmer than the near future max if use the ECHAM5 projection. HADCM3 places current temperatures more in the middle of the range.  
+
+**Use HADCM3 projection**
 ```{r rescale to min and max sst}
  sst_rescale = sst_data%>%
-               mutate(sst_rescale = pmin(1,(current_sst - hist_min) / (future_max - hist_min)))
+               spread(.,temp_type,temperature)%>%
+               mutate(sst_rescale = pmin(1,(current_sst - hist_min) / (future_hadcm3 - hist_min)))
 
  sst_rescale
 ```
@@ -237,6 +270,7 @@ sst_rescale = sst_rescale %>%
 ```{r plot sst by bhi id}
 ggplot(sst_rescale)+
   geom_point(aes(rgn_id,pressure_score), size=2.5)+
+  ylim(0,1)+
    ggtitle("SST pressure data layer")
 
 ```
