@@ -491,36 +491,36 @@ r.trend.2 = trend_data_1 %>%
 
 ## TRY 3:calculate the status of the past five years and draw a trend for those years. 
 
-status_per_year_by_country = mpa_mgmt_with_wt %>%
-                 dplyr::select(BSPA_ID, country, eez_area_km2, mpa_area_km2, weight, year = date_est) %>%
-                 filter(!duplicated(BSPA_ID)) %>% #remove duplicated rows of the same MPA 
-                 group_by(country) %>%
-                 mutate(total_eez_km2 = sum(eez_area_km2), 
-                        cum_wt_mpa_are = cumsum(mpa_area_km2)) %>%
-                 ungroup %>%
-                 group_by(country, year) %>%
-                 mutate(sum_wt_mpa_area = sum(mpa_area_km2 * weight),
-                        ref = 0.1 * total_eez_km2, 
-                        status = round(sum_wt_mpa_area / ref *100, 1)) %>%
-                 filter(!duplicated(year)) %>%
-                 dplyr::select(country, 
-                               year,
-                               status) %>%
-                 ungroup 
-
-trend_data_3 = status_per_year_by_country %>%
-  filter(!is.na(year)) %>% # one russian MPA didn't have info on established year
-  mutate(year = as.integer(year)) %>%
-  tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
-  group_by(country) %>%
-  fill(status) %>%
-  mutate(status = ifelse(is.na(status), 0, status)) 
-
-r.trend.3 = trend_data_3 %>%
-  filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
-  group_by(country) %>%
-  do(dlm = lm(status ~ year, data = .)) %>%
-  # mutate(score = coef(dlm[['year']]))
-  mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) 
+# status_per_year_by_country = mpa_mgmt_with_wt %>%
+#                  dplyr::select(BSPA_ID, country, eez_area_km2, mpa_area_km2, weight, year = date_est) %>%
+#                  filter(!duplicated(BSPA_ID)) %>% #remove duplicated rows of the same MPA 
+#                  group_by(country) %>%
+#                  mutate(total_eez_km2 = sum(eez_area_km2), 
+#                         cum_wt_mpa_are = cumsum(mpa_area_km2)) %>%
+#                  ungroup %>%
+#                  group_by(country, year) %>%
+#                  mutate(sum_wt_mpa_area = sum(mpa_area_km2 * weight),
+#                         ref = 0.1 * total_eez_km2, 
+#                         status = round(sum_wt_mpa_area / ref *100, 1)) %>%
+#                  filter(!duplicated(year)) %>%
+#                  dplyr::select(country, 
+#                                year,
+#                                status) %>%
+#                  ungroup 
+# 
+# trend_data_3 = status_per_year_by_country %>%
+#   filter(!is.na(year)) %>% # one russian MPA didn't have info on established year
+#   mutate(year = as.integer(year)) %>%
+#   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
+#   group_by(country) %>%
+#   fill(status) %>%
+#   mutate(status = ifelse(is.na(status), 0, status)) 
+# 
+# r.trend.3 = trend_data_3 %>%
+#   filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
+#   group_by(country) %>%
+#   do(dlm = lm(status ~ year, data = .)) %>%
+#   # mutate(score = coef(dlm[['year']]))
+#   mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) 
 
 ``` 

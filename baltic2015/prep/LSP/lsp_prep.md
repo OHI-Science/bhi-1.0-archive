@@ -182,11 +182,7 @@ MPS management status data comes from ( ...?...). While combining MPA management
 </tbody>
 </table>
 
-The last two MPAs were assigned the weight of 0.6, the same as "Designated and Partially Managed".
-
-    ## /home/mendes/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_status_download06June2016.csv
-
-The following graphs show LSP status by country and by BHI ID, as well as the distribution of MPAs by country and by country and management levels.
+*The last two MPAs in Germany were assigned the weight of 0.6, the same as "Designated and Partially Managed".*
 
 ``` r
 mgmt_weight = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
@@ -201,8 +197,8 @@ mpa_mgmt_with_wt = full_join( mgmt_weight, mpa_mgmt,
 
 ``` r
 status_by_country = mpa_mgmt_with_wt %>%
-                 dplyr::select(BHI_ID, country, eez_area_km2, mpa_area_km2, weight) %>%
-                 filter(!duplicated(BHI_ID)) %>%
+                 dplyr::select(BSPA_ID, country, eez_area_km2, mpa_area_km2, weight) %>%
+                 filter(!duplicated(BSPA_ID)) %>% #remove duplicated rows of the same MPA 
                  group_by(country) %>%
                  summarize(total_eez_km2 = sum(eez_area_km2), 
                            sum_wt_mpa_area = sum(mpa_area_km2 * weight)) %>%
@@ -211,6 +207,8 @@ status_by_country = mpa_mgmt_with_wt %>%
                         status = round(sum_wt_mpa_area / ref *100, 1)) %>%
                  dplyr::select(country, 
                         status)
+
+# status by BHI_ID to be uploaded to layers folder
 
 r.status = mpa_mgmt_with_wt %>%
            filter(!duplicated(BHI_ID)) %>%
@@ -235,8 +233,11 @@ write_csv(r.status, file.path(dir_prep, 'lsp_status_by_rgn.csv'))
 #                                   mgmt_status, 
 #                                   weight, 
 #                                   date_est)
+```
 
+The following graphs show LSP status by country and by BHI ID, as well as the distribution of MPAs by country and by country and management levels.
 
+``` r
 ## plot status by country
 
 status_by_country_plot <- ggplot(status_by_country, aes(x = country, y = status)) +
@@ -249,7 +250,7 @@ status_by_country_plot <- ggplot(status_by_country, aes(x = country, y = status)
 print(status_by_country_plot)
 ```
 
-![](lsp_prep_files/figure-markdown_github/status%20calculation-1.png)
+![](lsp_prep_files/figure-markdown_github/plots-1.png)
 
 ``` r
 ## plot status by BHI_ID
@@ -264,7 +265,9 @@ status_by_BHI_ID_plot <- ggplot(r.status, aes(x = rgn_id, y = score)) +
 print(status_by_BHI_ID_plot)
 ```
 
-![](lsp_prep_files/figure-markdown_github/status%20calculation-2.png)
+    ## Warning: Removed 1 rows containing missing values (position_stack).
+
+![](lsp_prep_files/figure-markdown_github/plots-2.png)
 
 ``` r
 ## plot the number of MPAs per country
@@ -287,7 +290,7 @@ mpa_per_country_plot <- ggplot(num_mpa_per_country, aes(x = country, y = count))
 print(mpa_per_country_plot)
 ```
 
-![](lsp_prep_files/figure-markdown_github/status%20calculation-3.png)
+![](lsp_prep_files/figure-markdown_github/plots-3.png)
 
 ``` r
 ## plot number of MPAs per country by mgmt levels 
@@ -315,4 +318,131 @@ num_country_mgmt_plot <- ggplot(num_mpa_per_country_mgmt, aes(x = country, y = c
 print(num_country_mgmt_plot)
 ```
 
-![](lsp_prep_files/figure-markdown_github/status%20calculation-4.png)
+![](lsp_prep_files/figure-markdown_github/plots-4.png)
+
+Trend calculation
+-----------------
+
+Cum\_area\_y = sum of all MPA areas established from year 1 to year y
+
+Cum\_area\_y = m\*year\_y + b; m = slope
+
+Trend = Future\_year \* m ; future\_year = 5
+
+TODO: see the three trials of trend calculation...
+
+``` r
+# load trend data: For most countries, there were 1-3 years of data in random years. linear model doesn't work on the original data.  Use complete and fill to fill in the blank years. 
+
+trend_data = mpa_mgmt %>%
+  dplyr::select(name = name_shape, BSPA_ID, BHI_ID, country, date_est, mpa_area_km2) %>%
+  filter(!date_est == 'NA') %>% # remove one Russian MPA that has no date of establishment
+  filter(!duplicated(BSPA_ID)) %>% # remove duplicated rows of the same MPA area data
+  mutate(year = ifelse(date_est <2004, 2004, date_est)) %>% # select the most recent 10 years of data (2004 - 2013). any year prior to 2004 is treated as 2004. 
+  group_by(country, year) %>%
+  summarize(area_total = sum(mpa_area_km2)) %>%
+  mutate(area_cumulative = cumsum(area_total)) %>%
+  ungroup 
+
+write_csv(trend_data, file.path(dir_lsp, 'cumulative_mpa_area_trend_data.csv'))
+          
+## plot: didn't work. 
+# mpa_area_by_year <- ggplot(trend_data, aes(x = country, y = area_cumulative, fill = year)) +
+#  geom_bar(stat = 'identity') +
+#  geom_text(aes(label = sprintf('n = %s', area), y = area_cumulative), 
+#            size = 2, 
+#            angle = 90, hjust = 0, color = 'grey30') +
+#  theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+#  labs(title = '',
+#       x = 'Country', 
+#       y = 'Number of MPAs',
+#       fill = 'Management Level')
+# 
+# print(mpa_area_by_year)
+
+## TRY 1: fill in missing data from 2004-2013. Many countries started with 0 km2 MPA or very low in 2004, and all trends are therefore 1. I don't think this is a good approach for trend... 
+
+trend_data_1 = trend_data %>%
+  mutate(year = as.integer(year)) %>%
+  tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
+  group_by(country) %>%
+  fill(area_cumulative) %>%
+  mutate(area_cumulative = ifelse(is.na(area_cumulative), 0, area_cumulative))
+
+  
+r.trend.1 = trend_data_1 %>%
+  group_by(country) %>%
+  filter(!length(year) == 1) %>%
+  do(dlm = lm(area_cumulative ~ year, data = .)) %>%
+  mutate(score = pmax(-1, pmin(1, coef(dlm)[['year']]*5))) %>% 
+  ungroup %>%
+  dplyr::select(country, score); #head(r.trend.1)
+
+#     country score
+
+# 1   Denmark     1
+# 2   Estonia     1
+# 3   Finland     1
+# 4   Germany     1
+# 5    Latvia     1
+# 6 Lithuania     1
+# 7    Poland     1
+# 8    Russia     1
+# 9    Sweden     1
+
+
+## TRY 2: use the most recent 5 years of cumulative area data to draw a trend. Trend is either 1 or 0. 
+
+r.trend.2 = trend_data_1 %>%
+  filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
+  group_by(country) %>%
+  do(dlm = lm(area_cumulative ~ year, data = .)) %>%
+  mutate(score = round(pmax(-1, pmin(1, coef(dlm)[['year']]*5))), 1) %>% 
+  ungroup %>%
+  dplyr::select(country, score); #head(r.trend.2)
+
+#     country score
+# 1   Denmark     0
+# 2   Estonia     0
+# 3   Finland     0
+# 4   Germany     0
+# 5    Latvia     1
+# 6 Lithuania     1
+# 7    Poland     0
+# 8    Russia     0
+# 9    Sweden     1
+
+## TRY 3:calculate the status of the past five years and draw a trend for those years. 
+
+# status_per_year_by_country = mpa_mgmt_with_wt %>%
+#                  dplyr::select(BSPA_ID, country, eez_area_km2, mpa_area_km2, weight, year = date_est) %>%
+#                  filter(!duplicated(BSPA_ID)) %>% #remove duplicated rows of the same MPA 
+#                  group_by(country) %>%
+#                  mutate(total_eez_km2 = sum(eez_area_km2), 
+#                         cum_wt_mpa_are = cumsum(mpa_area_km2)) %>%
+#                  ungroup %>%
+#                  group_by(country, year) %>%
+#                  mutate(sum_wt_mpa_area = sum(mpa_area_km2 * weight),
+#                         ref = 0.1 * total_eez_km2, 
+#                         status = round(sum_wt_mpa_area / ref *100, 1)) %>%
+#                  filter(!duplicated(year)) %>%
+#                  dplyr::select(country, 
+#                                year,
+#                                status) %>%
+#                  ungroup 
+# 
+# trend_data_3 = status_per_year_by_country %>%
+#   filter(!is.na(year)) %>% # one russian MPA didn't have info on established year
+#   mutate(year = as.integer(year)) %>%
+#   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
+#   group_by(country) %>%
+#   fill(status) %>%
+#   mutate(status = ifelse(is.na(status), 0, status)) 
+# 
+# r.trend.3 = trend_data_3 %>%
+#   filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
+#   group_by(country) %>%
+#   do(dlm = lm(status ~ year, data = .)) %>%
+#   # mutate(score = coef(dlm[['year']]))
+#   mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) 
+```
