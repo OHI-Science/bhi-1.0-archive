@@ -91,14 +91,10 @@ The MPA file is in the [LAEA coordinate reference system](http://spatialreferenc
     ## with 42 features
     ## It has 6 fields
 
-![](lsp_prep_files/figure-markdown_github/read%20in%20shapefiles-1.png)
-
     ## OGR data source with driver: ESRI Shapefile 
     ## Source: "/home/shares/ohi/git-annex/Baltic/bhi_MPA", layer: "HELCOM_MPAs"
     ## with 163 features
     ## It has 14 fields
-
-![](lsp_prep_files/figure-markdown_github/read%20in%20shapefiles-2.png)
 
 Intersect BHI and HELCOM\_MPA polygons
 --------------------------------------
@@ -107,14 +103,216 @@ MPA regions were divided by with BHI region shape file, and thus we were able to
 
 The csv. file includes information: Area per MPA, Date established, MPA status, total MPA area per region.
 
-![](lsp_prep_files/figure-markdown_github/intersect%20BHI%20adn%20MPA-1.png)
+![](lsp_prep_files/figure-markdown_github/intersect%20BHI%20and%20MPA-1.png)
 
-    ## Warning in RGEOSUnaryPredFunc(spgeom, byid, "rgeos_isvalid"): Ring Self-
-    ## intersection at or near point 4785962.2438000003 4180281.4374000002
+Status Calculation
+------------------
 
-    ##     user   system  elapsed 
-    ## 2215.780    0.972 2217.037
+There are three types of management status (and their corresponding weight): Designated (0.3), Designated and Partially Managed (0.6), and Designated and Managed (1).
 
-![](lsp_prep_files/figure-markdown_github/intersect%20BHI%20adn%20MPA-2.png)
+MPS management status data comes from ( ...?...). While combining MPA management data with MPA area data from the shapefile, 7 MPAs from the shapefile did not have a match from the management dataset. For those MPAs, status from the shapefile, which were not as detailed and updated as the status data, were used:
 
-I did not read the read in MPA management plan status file from "~/github/bhi/baltic2015/prep/LSP/mpa\_data\_database/MPA\_management\_plans\_20160415.csv"
+<table style="width:40%;">
+<colgroup>
+<col width="6%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">MPA</th>
+<th align="left">BSPA_ID</th>
+<th align="left">BHI_ID</th>
+<th align="left">Country</th>
+<th align="left">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Torhamns Archipelago</td>
+<td align="left">110</td>
+<td align="left">14</td>
+<td align="left">Sweden</td>
+<td align="left">Designated</td>
+</tr>
+<tr class="even">
+<td align="left">Walkyriengrund</td>
+<td align="left">171</td>
+<td align="left">10</td>
+<td align="left">Germany</td>
+<td align="left">Designated</td>
+</tr>
+<tr class="odd">
+<td align="left">Ostseeküste am Brodtener Ufer</td>
+<td align="left">178</td>
+<td align="left">10</td>
+<td align="left">Germany</td>
+<td align="left">Designated</td>
+</tr>
+<tr class="even">
+<td align="left">Fehmarnbelt</td>
+<td align="left">180</td>
+<td align="left">7</td>
+<td align="left">Germany</td>
+<td align="left">Designated</td>
+</tr>
+<tr class="odd">
+<td align="left">Kadetrinne</td>
+<td align="left">181</td>
+<td align="left">12</td>
+<td align="left">Germany</td>
+<td align="left">Designated</td>
+</tr>
+<tr class="even">
+<td align="left">Jasmund National Park</td>
+<td align="left">2</td>
+<td align="left">13</td>
+<td align="left">Germany</td>
+<td align="left">Managed</td>
+</tr>
+<tr class="odd">
+<td align="left">Vorpommersche Boddenlandshaft National Park (West-Pommeranian Lagoon National Park)</td>
+<td align="left">3</td>
+<td align="left">13</td>
+<td align="left">Germany</td>
+<td align="left">Managed</td>
+</tr>
+</tbody>
+</table>
+
+The last two MPAs were assigned the weight of 0.6, the same as "Designated and Partially Managed".
+
+    ## /home/mendes/github/bhi/baltic2015/prep/LSP/mpa_data_database/MPA_status_download06June2016.csv
+
+The following graphs show LSP status by country and by BHI ID, as well as the distribution of MPAs by country and by country and management levels.
+
+``` r
+mgmt_weight = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
+                          weight = c(0.3, 0.6, 1, 0.6) )
+
+mpa_mgmt_with_wt = full_join( mgmt_weight, mpa_mgmt, 
+                              by = 'mgmt_status') 
+```
+
+    ## Warning in outer_join_impl(x, y, by$x, by$y): joining character vector and
+    ## factor, coercing into character vector
+
+``` r
+status_by_country = mpa_mgmt_with_wt %>%
+                 dplyr::select(BHI_ID, country, eez_area_km2, mpa_area_km2, weight) %>%
+                 filter(!duplicated(BHI_ID)) %>%
+                 group_by(country) %>%
+                 summarize(total_eez_km2 = sum(eez_area_km2), 
+                           sum_wt_mpa_area = sum(mpa_area_km2 * weight)) %>%
+                 ungroup %>%
+                 mutate(ref = 0.1 * total_eez_km2, 
+                        status = round(sum_wt_mpa_area / ref *100, 1)) %>%
+                 dplyr::select(country, 
+                        status)
+
+r.status = mpa_mgmt_with_wt %>%
+           filter(!duplicated(BHI_ID)) %>%
+           dplyr::select(rgn_id = BHI_ID, 
+                  country) %>%
+           full_join(status_by_country, 
+                     by = 'country') %>% 
+           dplyr::select(rgn_id, 
+                         score = status) %>%
+           mutate(dimension = 'status') 
+                  
+write_csv(r.status, file.path(dir_prep, 'lsp_status_by_rgn.csv'))
+
+# # to save a cleaned version of mpa_mgmt_with_wt as a separate csv file? 
+# mpa_mgmt_with_wt_cleaned = mpa_mgmt_with_wt %>%
+#                            select(name = name_shape, 
+#                                   BHI_ID, 
+#                                   BSPA_ID, 
+#                                   country, 
+#                                   mpa_area_km2, 
+#                                   eez_area_km2, 
+#                                   mgmt_status, 
+#                                   weight, 
+#                                   date_est)
+
+
+## plot status by country
+
+status_by_country_plot <- ggplot(status_by_country, aes(x = country, y = status)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'LSP status by country',
+      x = 'Country', 
+      y = 'LSP status')
+
+print(status_by_country_plot)
+```
+
+![](lsp_prep_files/figure-markdown_github/status%20calculation-1.png)
+
+``` r
+## plot status by BHI_ID
+
+status_by_BHI_ID_plot <- ggplot(r.status, aes(x = rgn_id, y = score)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'LSP status by BHI ID',
+      x = 'BHI ID', 
+      y = 'LSP status')
+
+print(status_by_BHI_ID_plot)
+```
+
+![](lsp_prep_files/figure-markdown_github/status%20calculation-2.png)
+
+``` r
+## plot the number of MPAs per country
+
+num_mpa_per_country = mpa_mgmt %>%
+                      group_by(country) %>%
+                      summarize(count = length(!duplicated(name_shape))) %>%
+                      ungroup 
+
+mpa_per_country_plot <- ggplot(num_mpa_per_country, aes(x = country, y = count)) +
+ geom_bar(stat = 'identity') +
+ geom_text(aes(label = sprintf('n = %s', count), y = count), 
+           size = 2, 
+           angle = 90, hjust = 0, color = 'grey30') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Number of MPAs per country',
+      x = 'Country', 
+      y = 'Number of MPAs')
+
+print(mpa_per_country_plot)
+```
+
+![](lsp_prep_files/figure-markdown_github/status%20calculation-3.png)
+
+``` r
+## plot number of MPAs per country by mgmt levels 
+
+mgmt_weight_alt = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed",           "Designated_and_managed"),
+                          weight = c(0.3, 0.6, 1) ) # ignore "managed" category 
+
+num_mpa_per_country_mgmt = mpa_mgmt_with_wt %>%
+                           group_by(country, weight) %>%
+                           summarize(count = length(!duplicated(name_shape))) %>%
+                           ungroup %>%
+                           full_join(mgmt_weight_alt, by = "weight")
+
+num_country_mgmt_plot <- ggplot(num_mpa_per_country_mgmt, aes(x = country, y = count, fill = mgmt_status)) +
+ geom_bar(stat = 'identity') +
+ geom_text(aes(label = sprintf('n = %s', count), y = count), 
+           size = 2, 
+           angle = 90, hjust = 0, color = 'grey30') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Number of MPAs by country and management level',
+      x = 'Country', 
+      y = 'Number of MPAs',
+      fill = 'Management Level')
+
+print(num_country_mgmt_plot)
+```
+
+![](lsp_prep_files/figure-markdown_github/status%20calculation-4.png)
