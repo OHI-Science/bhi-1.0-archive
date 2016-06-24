@@ -521,6 +521,36 @@ r.trend.2 = trend_data_1 %>%
 #   group_by(country) %>%
 #   do(dlm = lm(status ~ year, data = .)) %>%
 #   # mutate(score = coef(dlm[['year']]))
-#   mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) 
+#   mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) ### this last line did not work... not sure why... 
+
+## Trial #4: compare the management status from the shape file (older) and the status csv file (newer), and using the relative status of the two to represent change: If mgmt_wt_csv > mgmt_wt_shape, trend = 0.2; if equal, trend = 0; if mgmt_wt_csv < mgmt_wt_shape, trend = -0.2. 
+
+
+mgmt_wt_csv = data.frame( status_csv = c("Designated", "Designated_and_partly_managed", "Designated_and_managed"),
+                          weight_csv = c(0.3, 0.6, 1) )
+
+mgmt_wt_shape = data.frame( status_shape = c("Designated", "Managed"), 
+                            weight_shape = c(0.3, 1))
+                              
+trend_data_4 = mpa_mgmt %>%
+  dplyr::select(BSPA_ID, status_csv, status_shape, BHI_ID, country) %>%
+  full_join(mgmt_wt_csv) %>%
+  full_join(mgmt_wt_shape) %>% 
+  mutate(weight_csv = ifelse(is.na(weight_csv), weight_shape, weight_csv), 
+         score = 0, 
+         score = ifelse(weight_csv > weight_shape, 0.2, score),
+         score = ifelse(weight_csv < weight_shape, -0.2, score))
+
+         # OR:
+         # score = ifelse(weight_csv > weight_shape, 0.2, -0.2), 
+         # score = ifelse(weight_csv = weight_shape, 0, score))
+
+write_csv(trend_data_4, file.path(dir_lsp, "trend_lsp_4.csv"))
+
+      
+
+
+                       
+  
 
 ``` 
