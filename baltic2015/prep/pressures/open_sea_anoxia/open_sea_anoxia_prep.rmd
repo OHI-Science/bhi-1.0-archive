@@ -100,16 +100,15 @@ In "baltic_rgns_to_bhi_rgns_lookup_holas_basins.csv" in "~\github\bhi\baltic2015
 ``` {r read in anoxia data, echo = FALSE}
 
 
-  install.packages('foreign')
-  library(foreign)
-
-anox_file_list = c('CodRVmap_1906.dbf', 'CodRVmap_1931.dbf', 'CodRVmap_1955.dbf', 'CodRVmap_1974.dbf',
-                   'CodRVmap_1993.dbf', 'CodRVmap_2005.dbf', 'CodRVmap_2006.dbf', 'CodRVmap_2007.dbf', 
-                   'CodRVmap_2008.dbf', 'CodRVmap_2009.dbf', 'CodRVmap_2010.dbf', 'CodRVmap_2011.dbf', 
-                   'CodRVmap_2012.dbf', 'CodRVmap_2013.dbf', 'CodRVmap_2014.dbf')
+  # install.packages('foreign')
+  # library(foreign)
 
 anox_file_list = list.files(path= file.path(dir_shp, 'anoxia'),
                             pattern="CodRVmap_")
+
+  bal_proj = CRS("+init=epsg:32634")
+  bal_res = 1000
+  dir_temp = make_path('baltic2015/prep/pressures/open_sea_anoxia/O2_bottom_files')
 
 for (anox_file in anox_file_list) {
    
@@ -117,18 +116,16 @@ for (anox_file in anox_file_list) {
   anox = foreign::read.dbf(file.path(dir_shp, 'anoxia', anox_file))  %>%
   dplyr::select(x_utm, y_utm, O2_bottom)
   # head(anox) 
-  
-  bal_proj = bathymetry@crs
-  bal_res = res(bathymetry)
 
-  t <- raster::rasterFromXYZ( anox, res = bal_res, crs = bal_proj ) 
+  t <- raster::rasterFromXYZ( anox, res = bal_res, crs = bal_proj) 
   # class(t) 
   # plot(t)
   
-  dir_temp = make_path('baltic2015/prep/pressures/open_sea_anoxia')
-  O2_bottom = raster(t, layer = 'O2_bottom')
-  writeRaster(O2_bottom, file.path(dir_temp, file_path_sans_ext(anox_file)))
-  # plot(O2_bottom)
+  # O2_bottom = raster(t, layer = 'O2_bottom')
+  
+  rast_file = file.path(dir_temp, paste0(file_path_sans_ext(anox_file), ".tif"))
+  writeRaster(t, rast_file,  overwrite=TRUE)
+  # plot(O2_bottom) 
   
 }
 
@@ -144,7 +141,20 @@ Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.
 
 halocline_70 = bathymetry # to not overwrite the original data
 halocline_70[halocline_70 > -70] = NA
+halocline_70 = projectRaster(halocline_70, t) # transform to the same projection as O2 data
 plot(halocline_70)
+
+
+# Loop for each O2_bottom tif file
+
+O2_file_list = list.files(path= file.path(dir_anox),
+                            pattern="CodRVmap_")
+
+for (i in O2_file_list){
+
+# read in file 
+i = 'CodRVmap_1906.tif'
+O2_bottom = raster::raster(file.path(dir_anox, O2_bottom_files, 'i'))
 
 # area with O2<0 
 
@@ -158,6 +168,8 @@ O2_below_70 = mask(O2_below_0, halocline_70)
 
 # resample to set the same extent
 new = resample(O2_below_0, halocline_70, "bilinear" )
+
+}
 
 ```
 
