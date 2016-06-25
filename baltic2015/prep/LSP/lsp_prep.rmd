@@ -537,9 +537,18 @@ trend_data_4 = mpa_mgmt %>%
   full_join(mgmt_wt_csv) %>%
   full_join(mgmt_wt_shape) %>% 
   mutate(weight_csv = ifelse(is.na(weight_csv), weight_shape, weight_csv), 
-         score = 0, 
-         score = ifelse(weight_csv > weight_shape, 0.2, score),
-         score = ifelse(weight_csv < weight_shape, -0.2, score))
+         wt_combined = 0, 
+         wt_combined = ifelse(weight_csv > weight_shape, 0.2, wt_combined),
+         wt_combined = ifelse(weight_csv < weight_shape, -0.2, wt_combined)) %>%
+  group_by(country) %>%
+  filter(!duplicated(BSPA_ID)) %>%
+  summarize(score = round(mean(wt_combined), 1)) %>%
+  ungroup
+
+
+trend_4 = mpa_mgmt %>%
+  dplyr::select(rgn_id = BHI_ID, country) %>%
+  
 
          # OR:
          # score = ifelse(weight_csv > weight_shape, 0.2, -0.2), 
