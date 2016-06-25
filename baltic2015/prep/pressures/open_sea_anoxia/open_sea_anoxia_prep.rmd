@@ -141,20 +141,22 @@ Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.
 
 halocline_70 = bathymetry # to not overwrite the original data
 halocline_70[halocline_70 > -70] = NA
+t1 = projectRaster( t, halocline_70) # change t projection to laea
+
 halocline_70 = projectRaster(halocline_70, t) # transform to the same projection as O2 data
 plot(halocline_70)
 
 
 # Loop for each O2_bottom tif file
 
-O2_file_list = list.files(path= file.path(dir_anox),
-                            pattern="CodRVmap_")
+O2_file_list = list.files(path= file.path(dir_anox, 'O2_bottom_files'),
+                          pattern="CodRVmap_")
 
 for (i in O2_file_list){
 
 # read in file 
-i = 'CodRVmap_1906.tif'
-O2_bottom = raster::raster(file.path(dir_anox, O2_bottom_files, 'i'))
+i = 'CodRVmap_2014.tif'
+O2_bottom = raster::raster(file.path(dir_anox, 'O2_bottom_files', i))
 
 # area with O2<0 
 
@@ -163,11 +165,21 @@ O2_below_0[O2_below_0 >= 0] = NA
 plot(O2_below_0)
 
 O2_below_70 = mask(O2_below_0, halocline_70) 
+plot(O2_below_70)
+
+# raster::area? 
+#### raster of regions, crosstab 
+
+# if polygon, use raster::extract -> 
+## 1. raster extract O2 against polygon using the same projection (laea), count number of cells of hypoxia (casey's tutorial on vector, take the list and turn it into data frame)
+
+## 2. create area raster in the same projection as O2 raster, if not equal area
+## 3. raster extract of area raster 
+## --> list from first step and third step, which should have same num of list elements, one for each region. 
+
 # O2_below_70 = crop(O2_below_0, halocline_70) 
 
 
-# resample to set the same extent
-new = resample(O2_below_0, halocline_70, "bilinear" )
 
 }
 
