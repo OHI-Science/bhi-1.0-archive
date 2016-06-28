@@ -18,6 +18,7 @@ library(RMySQL)
 library(stringr)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
+library(stringr) # install.packages("stringr")
 
 # source
 source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
@@ -93,8 +94,46 @@ Consider using the trend of NUT subcomponent for CW goal (e.g. secchi status tre
 ## Layer prep
 
 ```{r TODO, echo=FALSE, message=FALSE}
-## read in data...
+
+## directory setup
+
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+  warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
+}
+
+dir_shp <- file.path(dir_M, 'git-annex/Baltic')
+
+cs_data <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bostera_meadows')),
+                          layer = 'Zostera meadows')  
+
+# explore data
+plot(cs_data, col = cs_data@data$coverage )
+
+head(cs_data@data) # color code
+
+list(cs_data@data$name)
+cs_data@proj4string
+#  +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
 
 ## plot data...
+bhi_transform = spTransform(bhi, cs_data@proj4string) # transform bhi to the same coordinate system; bhi from lsp_prep. need to expand here. 
+
+plot(bhi_transform, col = 'light blue', border = "grey", main = "BHI regions and Meadows intersect"); plot(cs_data, col = 'blue', add = TRUE) 
+
+# system.time({cs_bhi_intersect <- raster::intersect(cs_data, bhi_transform)})
+
+cs_bhi_intersect = sp::over(cs_data, bhi_transform)
+head(cs_bhi_intersect)
+plot(cs_bhi_intersect)
+
+cs_bhi_data = cbind(cs_bhi_intersect, cs_data@data) %>%
+  dplyr::select(country = rgn_nam, BHI_ID, Area_km2, coverage, name)
+  
+
 
 ```
