@@ -326,21 +326,55 @@ MAR = function(layers){
 } #end mar function
 
 FP = function(layers, scores){
-  # weights
-  w = rename(SelectLayersData(layers, layers='fp_wildcaught_weight', narrow=T),
-             c('id_num'='region_id', 'val_num'='w_FIS')); head(w)
 
-  # scores
-  s = dcast(scores, region_id + dimension ~ goal, value.var='score', subset=.(goal %in% c('FIS','MAR') & !dimension %in% c('pressures','resilience'))); head(s)
+  # weights of FIS, MAR by rgn_id
+  w <- SelectLayersData(layers, layers='fp_wildcaught_weight', narrow = TRUE) %>%
+    select(region_id = id_num,
+           w_FIS = val_num); head(w)
 
-  # combine
-  d = merge(s, w)
-  d$w_MAR = 1 - d$w_FIS
-  d$score = apply(d[,c('FIS','MAR','w_FIS', 'w_MAR')], 1, function(x){ weighted.mean(x[1:2], x[3:4], na.rm=TRUE) })
-  d$goal = 'FP'
+  # scores of FIS, MAR with appropriate weight
+  s <- scores %>%
+    filter(goal %in% c('FIS', 'MAR')) %>%
+    filter(!(dimension %in% c('pressures', 'resilience'))) %>%
+    left_join(w, by="region_id")  %>%
+    mutate(w_MAR = 1 - w_FIS) %>%
+    mutate(weight = ifelse(goal == "FIS", w_FIS, w_MAR))
 
-  # return all scores
-  return(rbind(scores, d[,c('region_id','goal','dimension','score')]))
+
+  ## Some warning messages for potential mismatches in data:
+  # NA score but there is a weight
+  tmp <- filter(s, goal=='FIS' & is.na(score) & (!is.na(w_FIS) & w_FIS!=0) & dimension == "score")
+  if(dim(tmp)[1]>0){
+    warning(paste0("Check: these regions have a FIS weight but no score: ",
+                   paste(as.character(tmp$region_id), collapse = ", ")))}
+
+  tmp <- filter(s, goal=='MAR' & is.na(score) & (!is.na(w_MAR) & w_MAR!=0) & dimension == "score")
+  if(dim(tmp)[1]>0){
+    warning(paste0("Check: these regions have a MAR weight but no score: ",
+                   paste(as.character(tmp$region_id), collapse = ", ")))}
+
+  # score, but the weight is NA or 0
+  tmp <- filter(s, goal=='FIS' & (!is.na(score) & score > 0) & (is.na(w_FIS) | w_FIS==0) & dimension == "score" & region_id !=0)
+  if(dim(tmp)[1]>0){
+    warning(paste0("Check: these regions have a FIS score but no weight: ",
+                   paste(as.character(tmp$region_id), collapse = ", ")))}
+
+  tmp <- filter(s, goal=='MAR' & (!is.na(score) & score > 0) & (is.na(w_MAR) | w_MAR==0) & dimension == "score" & region_id !=0)
+  if(dim(tmp)[1]>0){
+    warning(paste0("Check: these regions have a MAR score but no weight: ",
+                   paste(as.character(tmp$region_id), collapse = ", ")))}
+
+  ## summarize scores as FP based on MAR, FIS weight
+  s <- s  %>%
+    group_by(region_id, dimension) %>%
+    summarize(score = weighted.mean(score, weight, na.rm=TRUE)) %>%
+    mutate(goal = "FP") %>%
+    ungroup() %>%
+    select(region_id, goal, dimension, score) %>%
+    data.frame()
+
+  ## return all scores
+  return(rbind(scores, s))
 }
 
 
@@ -1729,21 +1763,6 @@ BD = function(scores){
 
   # return all scores
   return(rbind(scores, d[,c('region_id','goal','dimension','score')]))
-}
-
-PreGlobalScores = function(layers, conf, scores){
-
-  # get regions
-  rgns = SelectLayersData(layers, layers=conf$config$layer_region_labels, narrow=T)
-
-  # limit to just desired regions and global (region_id==0)
-  scores = subset(scores, region_id %in% c(rgns[,'id_num'], 0))
-
-  # apply NA to Antarctica
-  id_ant = subset(rgns, val_chr=='Antarctica', id_num, drop=T)
-  scores[scores$region_id==id_ant, 'score'] = NA
-
-  return(scores)
 }
 
 FinalizeScores = function(layers, conf, scores){

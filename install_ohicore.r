@@ -6,7 +6,7 @@
   # 3. Run the following as a one-time install:
 
 # remove old packages
-for (p in c('ohicore','ohigui','rCharts')){
+for (p in c('ohicore','rCharts')){
   if (p %in% rownames(installed.packages())){
     lib = subset(as.data.frame(installed.packages()), Package==p, LibPath, drop=T)
     remove.packages(p, lib)

@@ -26,6 +26,7 @@ library(rgdal)
 library(raster)
 library(rgeos)
 library(gdalUtils)
+library(maptools)
 
 ```
 
@@ -38,17 +39,38 @@ dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
 
 ## read in cleaned BHI shapefiles  
 ## BHI shape files cleaned here: github.com/OHI-Science/ohi-webapps/blob/master/custom/bhi/prep_bhi.Rmd
-rgns <- readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/bhi/spatial/custom'), 
-                layer = 'baltic_shp') 
+# rgns <- rgdal:: readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/bhi/spatial/custom'), 
+#                         layer = 'baltic_shp') 
+rgns <- rgdal:: readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/bhi/spatial'), 
+                        layer = 'rgn_offshore_gcs') 
 
-nuts2 <- readOGR(dsn = file.path(dir_M, 'git-annex/Baltic/regions_coastal'), 
-         layer = 'COAST_NUTS2') 
+
+rgns = readOGR(dsn = 'baltic2015/spatial','rgn_offshore_gcs')
+  
+x = readOGR(dsn = 'baltic2015/spatial/regions_gcs.geojson', 'OGRGeoJSON')
+
+#SET DESTINATION PATH FOR SHAPEFILE AND LAYER NAME
+      ESRIpath<-paste("C:\\Users\\grw\\GULLS\\OHI_EEZ_GADM\\regions_gcs_",codes[ii],sep="")  
+      layerName<-paste(codes[ii],"_EEZGADM1",sep="")
+
+#WRITE COUNTRY ii FILE AS ESRI SHAPEFILE  
+      writeOGR(x, dsn = 'baltic2015',
+             layer = 'test', driver = 'ESRI Shapefile', overwrite=T)
+
+
+nuts2 <- maptools::readShapePoly(file.path(dir_M, 'git-annex/Baltic/regions_coastal/COAST_NUTS2.shp'),
+                                 proj4string=CRS(rgns@proj4string@projargs))
 
 nuts3 <- readOGR(dsn = file.path(dir_M, 'git-annex/Baltic/regions_coastal'), 
          layer = 'COAST_NUTS3') 
 
-plot(nuts2)
-plot(nuts3)
+plot(rgns)
+# plot(nuts2)
+# plot(nuts3)
+
+
+## Intersect BHI and NUTS2 regions
+rgns_nuts2 <- raster::intersect(rgns, nuts2)
 
 ```
 
@@ -76,6 +98,15 @@ plot(nuts2)
 ## merge buffers/extend rgns to land
 
 ```
+
+## Intersect BHI and NUTS2 regions
+
+```{r}
+
+rgns_nuts2 <- raster::intersect(rgns, nuts2)
+
+```
+
 
 
 ## Make buffers on land
