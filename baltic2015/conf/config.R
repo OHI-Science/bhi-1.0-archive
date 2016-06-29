@@ -12,8 +12,8 @@ layer_region_areas      = 'rgn_area'
 
 # For goals with elements (e.g., for coastal protection: mangrove, saltmarsh, seagrass), these data layers describe how to
 # weight the contribution of each goal element to calculate the final goal pressure and resilience dimensions.
-resilience_element = NULL # no goals have elements
-pressures_element  = NULL # no goals have elements
+resilience_element = NULL ## no goals have elements
+pressures_element  = NULL ## no goals have elements
 
 
 # constants
