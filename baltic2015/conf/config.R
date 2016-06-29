@@ -12,9 +12,8 @@ layer_region_areas      = 'rgn_area'
 
 # For goals with elements (e.g., for coastal protection: mangrove, saltmarsh, seagrass), these data layers describe how to
 # weight the contribution of each goal element to calculate the final goal pressure and resilience dimensions.
-resilience_element = list('HAB' = 'element_wts_hab_pres_abs')
-
-pressures_element  = list('HAB' = 'element_wts_hab_pres_abs')
+resilience_element = NULL # no goals have elements
+pressures_element  = NULL # no goals have elements
 
 
 # constants
