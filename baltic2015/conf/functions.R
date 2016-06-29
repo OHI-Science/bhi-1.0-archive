@@ -1281,57 +1281,8 @@ CW = function(layers){
 }
 
 
-HAB = function(layers){
-
-  # get layer data
-  d =
-    join_all(
-      list(
-
-        layers$data[['hab_health']] %>%
-          select(rgn_id, habitat, health),
-
-        layers$data[['hab_trend']] %>%
-          select(rgn_id, habitat, trend),
-
-        layers$data[['hab_extent']] %>%
-          select(rgn_id, habitat, extent=km2)),
-
-      by=c('rgn_id','habitat'), type='full') %>%
-    select(rgn_id, habitat, extent, health, trend)
-
-  # limit to habitats used for HAB, create extent presence as weight
-  d = d %>%
-    filter(habitat %in% c('coral','mangrove','saltmarsh','seaice_edge','seagrass','soft_bottom')) %>%
-    mutate(
-      w  = ifelse(!is.na(extent) & extent > 0, 1, NA)) %>%
-    filter(!is.na(w)) %>%
-    group_by(rgn_id)
-
-  # calculate scores
-  scores_HAB = rbind_list(
-    # status
-    d %>%
-      filter(!is.na(health)) %>%
-      summarize(
-        score = pmin(1, sum(w * health) / sum(w)) * 100,
-        dimension = 'status'),
-    # trend
-    d %>%
-      filter(!is.na(trend)) %>%
-      summarize(
-        score =  sum(w * trend) / sum(w),
-        dimension = 'trend')) %>%
-    mutate(
-      goal = 'HAB') %>%
-    select(region_id=rgn_id, goal, dimension, score)
-
-  # return scores
-  return(scores_HAB)
-}
-
-
-SPP = function(layers){
+BD = function(layers){
+  ## BD goal now has no subgoals; it is only species.
   ## Updated by Jennifer Griffiths 8 June 2016
 
 
@@ -1402,25 +1353,9 @@ SPP = function(layers){
     ######################################################
      # scores
       scores = bind_rows(status, trend)%>%
-           mutate(goal = 'SPP')
+           mutate(goal = 'BD')
 
       return(scores)
-}
-
-
-BD = function(scores){
-
-  d = within(
-    dcast(
-      scores,
-      region_id + dimension ~ goal, value.var='score',
-      subset=.(goal %in% c('HAB','SPP') & !dimension %in% c('pressures','resilience'))),
-    {
-      goal = 'BD'
-      score = rowMeans(cbind(HAB, SPP), na.rm=T)})
-
-  # return all scores
-  return(rbind(scores, d[,c('region_id','goal','dimension','score')]))
 }
 
 FinalizeScores = function(layers, conf, scores){
