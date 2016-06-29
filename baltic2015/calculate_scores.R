@@ -13,7 +13,7 @@
 source('~/github/bhi/baltic2015/pre_scores.R')
 
 ## calculate scenario scores
-scores = CalculateAll(conf, layers, debug=T)
+scores = CalculateAll(conf, layers)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
