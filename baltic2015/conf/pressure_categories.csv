@@ -2,8 +2,8 @@ layer,category,subcategory
 po_chemicals,ecological,pollution
 po_chemicals_3nm,ecological,pollution
 po_pathogens,ecological,pollution
-po_nutrients,ecological,pollution
-po_nutrients_3nm,ecological,pollution
+po_nload,ecological,pollution
+po_pload,ecological,pollution
 po_trash,ecological,pollution
 sp_alien,ecological,alien_species
 sp_genetic,ecological,alien_species
