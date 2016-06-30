@@ -5,26 +5,21 @@
   # 2. Update RStudio. RStudio is optional, but highly recommended. Download the latest version at http://www.rstudio.com/products/rstudio/download
   # 3. Run the following as a one-time install:
 
-# remove old packages
-for (p in c('ohicore','rCharts')){
+## delete any existing version of `ohicore`
+for (p in c('ohicore')){
   if (p %in% rownames(installed.packages())){
     lib = subset(as.data.frame(installed.packages()), Package==p, LibPath, drop=T)
     remove.packages(p, lib)
   }
 }
 
-# install dependencies
-for (p in c('devtools')){
+## install dependencies
+for (p in c('devtools', 'git2r')){
   if (!require(p, character.only=T)){
     install.packages(p)
     require(p, character.only=T)
   }
 }
 
-# install packages
-install.packages(c('zoo', 'psych', 'tidyr'))
-install_github('ohi-science/rCharts')
-install_github('ohi-science/ohicore')
-
-# Note: you will get warning messages like the following; this is nothing to worry about.
-# Warning: replacing previous import by ‘plyr::mutate’ when loading ‘ohicore’
+## install most current version of ohicore -- don't worry about the warnings. But make sure there are no errors.
+devtools::install_github('ohi-science/ohicore@dev')
