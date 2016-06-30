@@ -586,7 +586,7 @@ TR = function(layers, year_max, debug=FALSE, pct_ref=90){
 
   # feed NA for subcountry regions without sufficient data (vs global analysis)
   if (conf$config$layer_region_labels!='rgn_global' & sum(!is.na(d$Xtr))==0) {
-    scores_TR = rbind_list(
+    scores_TR = bind_rows(
       rgns %>%
         select(region_id = rgn_id) %>%
         mutate(
@@ -674,7 +674,7 @@ TR = function(layers, year_max, debug=FALSE, pct_ref=90){
     # regions with Travel Warnings at http://travel.state.gov/content/passports/english/alertswarnings.html
     rgn_travel_warnings = c('Djibouti'=46, 'Eritrea'=45, 'Somalia'=44, 'Mauritania'=64)
     # TODO: check if regions with travel warnings are gapfilled (manually checked for 2013)
-    d_g = rbind_list(
+    d_g = bind_rows(
       d_g %>%
         filter(!rgn_id %in% rgn_travel_warnings),
       d_g %>%
