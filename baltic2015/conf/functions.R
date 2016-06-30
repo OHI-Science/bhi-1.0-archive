@@ -1135,7 +1135,10 @@ SP = function(scores){
 }
 
 
-CW = function(layers){
+NUT = function(layers){
+  #####----------------------######
+  ## NUT Status - Secchi data
+  #####----------------------######
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
   ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep, TRA status included
   ## UPDATE 15June 2016 - Jennifer Griffiths - update CW status and trend calculation for CW
@@ -1147,10 +1150,6 @@ CW = function(layers){
       ## add other CON components
 
 
-  #################################
-  #####----------------------######
-  ## NUT Status - Secchi data
-  #####----------------------######
 
   ## NUT status and trend calculated in prep file because calculated for HOLAS basins
   ## Basin status and trend are then assigned to BHI regions
@@ -1171,14 +1170,22 @@ CW = function(layers){
     dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
 
-    # join NUT status and trend to one dataframe
-    cw_nu = full_join(cw_nu_status, cw_nu_trend, by = c('rgn_id','dimension','score')) %>%
-            dplyr::rename(region_id = rgn_id) %>%
-            mutate(subcom = 'NUT') %>%  ##Label subcompoent with nut so can average later
-            arrange(dimension,region_id)
+    # rbind NUT status and trend to one dataframe
+    scores = cw_nu_status %>%
+      rbind(cw_nu_trend) %>%
+      mutate(goal = 'NUT') %>%
+      dplyr::select(goal,
+                    dimension,
+                    region_id = rgn_id,
+                    score) %>%
+      arrange(dimension,region_id)
+
+    return(scores)
     #####----------------------######
 
-  #################################
+}
+
+TRA = function(layers){
   #####----------------------######
   ## Trash
   #####----------------------######
@@ -1196,15 +1203,34 @@ CW = function(layers){
 
     ## no TRA trend
 
-    cw_tra = cw_tra_status %>%
-            dplyr::rename(region_id = rgn_id) %>%
-            mutate(dimension= "status",
-                   subcom = 'TRA') %>%  ##Label subcompoent with TRA so can average later
-            arrange(dimension,region_id)
 
-  #################################
+    ## create scores variable
+    scores = cw_tra_status %>%
+      mutate(dimension= "status",
+             goal = 'TRA') %>%
+      dplyr::select(goal,
+                    dimension,
+                    region_id = rgn_id,
+                    score) %>%
+      arrange(dimension,region_id)
+
+    #debug JSL, temporary
+    # scores = scores %>%
+    #   rbind(cw_tra_status %>%
+    #   mutate(dimension= "status",
+    #          goal = 'TRA') %>%
+    #   dplyr::select(goal,
+    #                 dimension,
+    #                 region_id = rgn_id,
+    #                 score) %>%
+    #   arrange(dimension,region_id))
+
+    return(scores)
+}
+
+CON = function(layers){
   #####----------------------######
-  ## Contaminents
+  ## Contaminants
   #####----------------------######
     ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
 
@@ -1221,10 +1247,10 @@ CW = function(layers){
     cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
       dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-       ##Join ICES6
-          cw_con_ices6 = full_join(cw_con_ices6_status,cw_con_ices6_trend, by = c('rgn_id','dimension','score')) %>%
-                         dplyr::rename(region_id = rgn_id)%>%
-                         mutate(indicator = "ices6")
+    ##Join ICES6
+    cw_con_ices6 = cw_con_ices6_status %>%
+      rbind(cw_con_ices6_trend) %>%
+      mutate(indicator = "ices6")
 
 
     ##Dioxin
@@ -1238,46 +1264,85 @@ CW = function(layers){
 
 
     ##Join all indicators
-        #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
-
-        cw_con = cw_con_ices6
-
-      ## Average CON indicators for Status and Trend
-
-      cw_con = cw_con %>%
-              select(-indicator) %>%
-              group_by(region_id,dimension)%>%
-              summarise(score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
-              ungroup() %>%
-              mutate(subcom = 'CON')%>%
-              arrange(dimension,region_id)
+    #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
+    cw_con = cw_con_ices6 # temporary
 
 
+    ## Average CON indicators for Status and Trend
+
+    # will likely involve:
+    # cw_con = cw_con %>%
+    #   select(-indicator) %>%
+    #   group_by(region_id,dimension)%>%
+    #   summarise(score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
+    #   ungroup()
+
+
+    ## create scores variable
+    scores = cw_con %>%
+      mutate(goal = 'CON') %>%
+      dplyr::select(goal,
+                    dimension,
+                    region_id = rgn_id,
+                    score) %>%
+      arrange(dimension,region_id)
+
+    #debug JSL, temporary
+    # scores = scores %>%
+    #   rbind(cw_con %>%
+    #   mutate(goal = 'CON') %>%
+    #   dplyr::select(goal,
+    #                 dimension,
+    #                 region_id = rgn_id,
+    #                 score) %>%
+    #   arrange(dimension,region_id))
+
+    return(scores)
+
+}
+
+CW = function(scores){
   #####----------------------######
   ## CW status & CW Trend
 
-      ## Status is the geometric mean of NUT, CON, TRA status for most recent year
-      ## Trend is the geometric mean of NUT, CON trend - consequences is if one trend value is 0, geometric mean is zero
+  ## Status is the geometric mean of NUT, CON, TRA status for most recent year
+  ## Trend is the geometric mean of NUT, CON trend - consequences is if one trend value is 0, geometric mean is zero
 
-      ##
-      scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
-               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>%
-               select(-subcom)%>%
-               arrange(dimension,region_id)%>%
-               group_by(region_id,dimension) %>%
-               mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
-                                    mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
-               ungroup()%>%
-               distinct()%>%
-               mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
+  ## by @jennifergriffiths, commented out by @jules32 temporarily
+  # scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
+  #   full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>%
+  #   select(-subcom)%>%
+  #   arrange(dimension,region_id)%>%
+  #   group_by(region_id,dimension) %>%
+  #   mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
+  #                         mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
+  #   ungroup()%>%
+  #   distinct()%>%
+  #   mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
 
+  s <- scores %>%
+    filter(goal %in% c('NUT', 'TRA', 'CON')) %>%
+    filter(!(dimension %in% c('pressures', 'resilience'))) %>%
+    arrange(dimension,region_id)%>%
+    group_by(region_id,dimension) %>%
+    mutate(score =
+             ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
+                    mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
+    ungroup()%>%
+    distinct()%>%
+    mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
 
-      # return scores
-        scores = scores %>%
-                  mutate(goal   = 'CW')
+  ## summarize scores as CW based on NUT, TRA, CON
+  s <- s  %>%
+    group_by(region_id, dimension) %>%
+    summarize(score = mean(score, na.rm=TRUE)) %>% # temporary!
+    mutate(goal = "CW") %>%
+    ungroup() %>%
+    select(region_id, goal, dimension, score) %>%
+    data.frame()
 
-      return(scores)
+  return(scores)
 }
 
 
