@@ -1308,37 +1308,43 @@ CW = function(scores){
   ## Status is the geometric mean of NUT, CON, TRA status for most recent year
   ## Trend is the geometric mean of NUT, CON trend - consequences is if one trend value is 0, geometric mean is zero
 
-  ## by @jennifergriffiths, commented out by @jules32 temporarily
-  # scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
-  #   full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>%
-  #   select(-subcom)%>%
-  #   arrange(dimension,region_id)%>%
-  #   group_by(region_id,dimension) %>%
-  #   mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
-  #                         mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
-  #   ungroup()%>%
-  #   distinct()%>%
-  #   mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
+  ### function to calculate geometric mean:
+  geometric.mean2 <- function (x, na.rm = TRUE) {
+    if (is.null(nrow(x))) {
+      exp(mean(log(x), na.rm = TRUE))
+    }
+    else {
+      exp(apply(log(x), 2, mean, na.rm = na.rm))
+    }
+  }
 
-
-  s <- scores %>%
+  ## subset CW subgoals
+  scores_cw <- scores %>%
     filter(goal %in% c('NUT', 'TRA', 'CON')) %>%
-    filter(!(dimension %in% c('pressures', 'resilience'))) %>%
-    arrange(dimension,region_id)%>%
-    group_by(region_id,dimension) %>%
-    mutate(score =
-             ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
-                    mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
-    ungroup()%>%
-    distinct()%>%
-    mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
+    arrange(dimension,region_id)
 
-  ## summarize scores as CW based on NUT, TRA, CON
-  s <- s  %>%
-    group_by(region_id, dimension) %>%
-    summarize(score = mean(score, na.rm=TRUE)) %>% # temporary!
+  ## Calculate geometric mean for status, arithmetic mean for trend (ignore NAs)
+  ## NOTE to @jennifergriffiths: there are still several 'NaN's, perhaps because of TRA?
+  ## also, rounding score doesn't seem to work here; ends up with .00 precision. maybe round later?
+  s <- rbind(
+    scores_cw %>%
+      filter(dimension %in% 'status') %>%
+      group_by(region_id) %>%
+      summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
+      ungroup() %>%
+      mutate(dimension = 'status'),
+    scores_cw %>%
+      filter(dimension %in% 'trend') %>%
+      group_by(region_id) %>%
+      summarize(score = round(mean(score, na.rm=TRUE),2)) %>% # round trend to 2 decimals
+      ungroup() %>%
+      mutate(dimension = 'trend')) %>%
+    arrange(region_id)
+
+
+  ## return scores
+  scores <- s  %>%
     mutate(goal = "CW") %>%
-    ungroup() %>%
     select(region_id, goal, dimension, score) %>%
     data.frame()
 
