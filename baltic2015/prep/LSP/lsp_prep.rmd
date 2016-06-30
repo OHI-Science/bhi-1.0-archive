@@ -17,6 +17,9 @@ library(stringr)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
 library(stringr) # install.packages("stringr")
+library(rgdal)  # install.packages('rgdal')
+library(raster) # install.packages('raster')
+library(rgeos)  # install.packages('rgeos')
 
 # source
 source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
@@ -120,14 +123,6 @@ if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
 
 dir_shp <- file.path(dir_M, 'git-annex/Baltic')
 
-
-
-## libraries
-library(dplyr)
-library(rgdal)  # install.packages('rgdal')
-library(raster) # install.packages('raster')
-library(rgeos)  # install.packages('rgeos')
-
 ```
 
 ## Read in MPA and BHI regions shapefiles 
@@ -171,7 +166,6 @@ bhi = spTransform(bhi, mpa@proj4string)
 MPA regions were divided by with BHI region shape file, and thus we were able to calculate the total MPA area within each BHI region. MPA area per region is saved in the prep folder (`mpa_area_per_rgn.csv). 
 
 The csv. file includes information: Area per MPA, Date established, MPA status, total MPA area per region.  
-
 
 
 ```{r intersect BHI and MPA, echo=FALSE, message=FALSE, cache=TRUE}
@@ -419,7 +413,7 @@ trend_data = mpa_mgmt %>%
   group_by(country, year) %>%
   summarize(area_total = sum(mpa_area_km2)) %>%
   mutate(area_cumulative = cumsum(area_total)) %>%
-  ungroup 
+  ungroup()
 
 write_csv(trend_data, file.path(dir_lsp, 'cumulative_mpa_area_trend_data.csv'))
           
@@ -492,39 +486,83 @@ r.trend.2 = trend_data_1 %>%
 ## TRY 3:calculate the status of the past five years and draw a trend for those years. 
 
 # status_per_year_by_country = mpa_mgmt_with_wt %>%
-#                  dplyr::select(BSPA_ID, country, eez_area_km2, mpa_area_km2, weight, year = date_est) %>%
-#                  filter(!duplicated(BSPA_ID)) %>% #remove duplicated rows of the same MPA 
+#                  dplyr::select(BSPA_ID, BHI_ID, country, eez_area_km2, mpa_area_km2, weight, year = date_est) %>%
+#                  filter(!duplicated(BSPA_ID)) %>% #remove duplicated rows of the same MPA
 #                  group_by(country) %>%
-#                  mutate(total_eez_km2 = sum(eez_area_km2), 
-#                         cum_wt_mpa_are = cumsum(mpa_area_km2)) %>%
+#                  arrange(year) %>%
+#                  mutate(total_eez_km2 = sum(eez_area_km2)) %>%
+#                  summarize(cum_mpa_area = cumsum(mpa_area_km2)) %>%
 #                  ungroup %>%
 #                  group_by(country, year) %>%
-#                  mutate(sum_wt_mpa_area = sum(mpa_area_km2 * weight),
-#                         ref = 0.1 * total_eez_km2, 
+#                  mutate(sum_wt_mpa_area = sum(cum_mpa_area * weight)),
+#                         ref = 0.1 * total_eez_km2,
 #                         status = round(sum_wt_mpa_area / ref *100, 1)) %>%
 #                  filter(!duplicated(year)) %>%
-#                  dplyr::select(country, 
+#                  dplyr::select(country,
 #                                year,
 #                                status) %>%
-#                  ungroup 
-# 
-# trend_data_3 = status_per_year_by_country %>%
-#   filter(!is.na(year)) %>% # one russian MPA didn't have info on established year
-#   mutate(year = as.integer(year)) %>%
-#   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
-#   group_by(country) %>%
-#   fill(status) %>%
-#   mutate(status = ifelse(is.na(status), 0, status)) 
-# 
-# r.trend.3 = trend_data_3 %>%
-#   filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
-#   group_by(country) %>%
-#   do(dlm = lm(status ~ year, data = .)) %>%
-#   # mutate(score = coef(dlm[['year']]))
-#   mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) ### this last line did not work... not sure why... 
+#                  ungroup()
+
+
+## new info: 
+### calculating total eez area, by BHI_ID
+eez_data = mpa_mgmt_with_wt %>%
+                 dplyr::select(BSPA_ID, BHI_ID, country, eez_area_km2) %>%
+                 filter(!duplicated(BSPA_ID)) %>% #remove duplicated rows of the same MPA
+                 filter(!duplicated(BHI_ID)) %>%
+                 group_by(country) %>%
+                 summarize(total_eez_km2 = sum(eez_area_km2)) %>%
+                 ungroup()
+  
+
+### calculating cumulative mpa area, by country, by year -> 
+### TODO: should do sum(area*wt) first, then cumsum!!
+cum_mpa = mpa_mgmt_with_wt %>%
+                 dplyr::select(BSPA_ID, BHI_ID, country, eez_area_km2, mpa_area_km2, year = date_est) %>%
+                 filter(!is.na(year), 
+                        !duplicated(BSPA_ID)) %>% # the same MPA could exist in different BHI_IDs 
+                 group_by(country, year) %>%
+                 dplyr::summarize(sum_mpa_km2 = sum(mpa_area_km2)) %>%
+                 arrange(year) %>%
+                 mutate(cum_mpa_area = cumsum(sum_mpa_km2)) %>%
+                 dplyr::select(-sum_mpa_km2)
+
+### cobmine cumulative mpa area with total eez area
+
+status_per_year_by_country = full_join(cum_mpa, eez_data, by = 'country') %>% 
+  full_join(dplyr::select(mpa_mgmt_with_wt,
+                          - mpa_area_km2,
+                          - eez_area_km2),
+                          by = 'country') %>%
+  filter(!is.na(year)) %>%
+  group_by(country, year) %>%
+  summarize(status = cum_mpa_area*weight/total_eez_km2) 
+  
+
+## previous trend_data_3 attempts
+
+trend_data_3 = status_per_year_by_country %>%
+  filter(!is.na(year)) %>% # one russian MPA didn't have info on established year
+  mutate(year = as.integer(year)) %>%
+  tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
+  group_by(country) %>%
+  fill(status) %>%
+  mutate(status = ifelse(is.na(status), 0, status)) %>%
+  ungroup()
+
+r.trend.3 = trend_data_3 %>%
+  filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
+  group_by(country) %>%
+  summarize(dlm = cor(status, year))
+  
+  do(dlm = lm(status ~ as.integer(year), data = .)) %>%
+  
+  mutate(score = coef(dlm[['year']]))
+  mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) ### this last line did not work... not sure why...
 
 ## Trial #4: compare the management status from the shape file (older) and the status csv file (newer), and using the relative status of the two to represent change: If mgmt_wt_csv > mgmt_wt_shape, trend = 0.2; if equal, trend = 0; if mgmt_wt_csv < mgmt_wt_shape, trend = -0.2. 
 
+## might be hard to justify using two data sets that dont match.... 
 
 mgmt_wt_csv = data.frame( status_csv = c("Designated", "Designated_and_partly_managed", "Designated_and_managed"),
                           weight_csv = c(0.3, 0.6, 1) )
