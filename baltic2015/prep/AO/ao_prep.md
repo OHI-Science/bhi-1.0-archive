@@ -1163,8 +1163,8 @@ head(shp_score3@data)
 
 Prepare object with score by basin.
  - **Select score2**
- - **Do not apply score to 33 and 44 for Gulf of Finland (Finnish data only so only use for 32)**
- - *Need to NA for additional regions - wait for Jens comments*
+ - Although scores is calculated by basin, Jens Olsson suggests not applying the score to regions where no sampling occurred. Therefore,13 regions have the score replaced with NA. *These regions are: 1,4,8,11,15,17,21,20,22,25,31,33,34*
+ - See this map of sampling locations provided by Jens Olsson for the above justification (note that the Finnish sites are not marked but covered the entire coastline as they are ICES regions. Coloration of the coastal waters is indication HELCOM coastal water type. ![map](ao_prep_files/figure-markdown_github/CoastalFishSamplingLocations.png?raw=true)
  - **Object exported in section 6**
 
 ``` r
@@ -1174,8 +1174,8 @@ Prepare object with score by basin.
 bhi_score = bhi_mean_score_colors%>%
             filter(score_type == "score2") %>%
             select(bhi_id, mean_basin_score) %>%
-            mutate(mean_basin_score = ifelse(bhi_id %in% c(33,34), NA, mean_basin_score),
-                   dimension= "score")%>%  ## replace 33,34 with NA because no obs from that part of Gulf of Finland
+            mutate(mean_basin_score = ifelse(bhi_id %in% c(1,4,8,11,15,17,21,20,22,25,31,33,34), NA, mean_basin_score),
+                   dimension= "score")%>%  ## replace these regions with NA because no obs from these regions
             dplyr::rename(rgn_id=bhi_id,
                           score=mean_basin_score)%>%
             mutate(score = round(score*100)) %>%  ## score from 0-100
@@ -1187,7 +1187,7 @@ str(bhi_score)
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    42 obs. of  3 variables:
     ##  $ rgn_id   : int  1 2 3 4 5 6 7 8 9 10 ...
     ##  $ dimension: chr  "score" "score" "score" "score" ...
-    ##  $ score    : num  20 20 27 27 20 20 NA NA 70 70 ...
+    ##  $ score    : num  NA 20 27 NA 20 20 NA NA 70 70 ...
 
 ``` r
 ## Export this object in section 6. ~ Line 835
@@ -1200,7 +1200,7 @@ Size the points by number of time series with GES assessment
 ``` r
 ## Number of observations
 ##basin_n_obs    
-
+##Plot points
 plot_score = bhi_score %>% 
              full_join(.,basin_lookup, by= c("rgn_id"= "bhi_id")) %>%
              full_join(., basin_n_obs, by=c("basin_name" ="Basin_HOLAS"))
@@ -1211,9 +1211,43 @@ ggplot(plot_score)+
   ggtitle("AO Status Score")
 ```
 
-    ## Warning: Removed 6 rows containing missing values (geom_point).
+    ## Warning: Removed 16 rows containing missing values (geom_point).
 
 ![](ao_prep_files/figure-markdown_github/final%20score%20object%20plotted-1.png)<!-- -->
+
+``` r
+## Plot map
+shp_scoreFinal = BHIshp2
+
+shp_scoreFinal@data = shp_scoreFinal@data %>%
+                      full_join(., plot_score, by=c("BHI_ID"= "rgn_id"))%>%
+                       mutate(cols = ifelse(is.na(score) == TRUE, "grey",
+                                      ifelse(score >= 0 & score < 20, "orange1",
+                                      ifelse(score >= 20 & score < 50, "yellow2",
+                                      ifelse(score >= 50 & score < 75, "light blue",
+                                      ifelse(score >= 75 & score <=100, "blue", "grey"))))))
+
+head(shp_scoreFinal@data)
+```
+
+    ##   BHI_ID dimension score basin_name  n    cols
+    ## 1      1     score    NA   Kattegat 10    grey
+    ## 2      2     score    20   Kattegat 10 yellow2
+    ## 3      3     score    27 Great Belt 10 yellow2
+    ## 4      4     score    NA Great Belt 10    grey
+    ## 5      5     score    20  The Sound  2 yellow2
+    ## 6      6     score    20  The Sound  2 yellow2
+
+``` r
+par(mfrow=c(1,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
+ plot(shp_scoreFinal, col=shp_scoreFinal@data$cols)
+ plot(c(1,2,3),c(1,2,3), type='n', fg="white",bg="white", xaxt='n',yaxt='n')
+  legend("center", legend=c("No Score","0 - 19", "20 - 49", "50 - 74", "75 -100"), 
+         fill=c("grey","orange1","yellow2","light blue", "blue"), bty='n', cex=1.5)
+  mtext("AO Status", side = 3, outer=TRUE, line=1.5)
+```
+
+![](ao_prep_files/figure-markdown_github/final%20score%20object%20plotted-2.png)<!-- -->
 
 5. Calculate Trend of the status
 --------------------------------
