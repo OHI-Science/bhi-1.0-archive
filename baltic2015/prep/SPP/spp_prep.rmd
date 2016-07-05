@@ -5,55 +5,30 @@ params:
     datasource: csv
 ---
 
-## Preparation of SPP data layers
+# Preparation of SPP data layers
 **For Biodiverity goal**
 
-```{r setup}
+## TABLE OF CONTENTS
+### Background and Overview.........................Section 1  
 
-## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
+### Data............................................Section 2  
 
-## source common libraries, directories, functions, etc
-source('~/github/bhi/baltic2015/prep/common.r')
+### Goal model......................................Section 3  
 
-## rprojroot
-root <- rprojroot::is_rstudio_project
+### Data prep (alternative 1, not preferred)........Section 4  
+
+### Data prep (alternative 2, preferred)............Section 5  
+
+### Data layer saved to layers......................Section 6  
+
+### Data layer issues / concerns....................Section 7  
 
 
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-
-dir_spp    = file.path(dir_prep, 'SPP')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_spp, 'spp_prep.rmd')
-
-```
 
 ## 1. Background and Overview
+In the OHI framework, the Biodiversity goal (BD) has two subgoals- species (SPP) and habitats (HAB). In BHI, we use only SPP to represent BD.
 
-### 1.1
+### 1.1 Species biodiversity
 "People value biodiversity in particular for its existence value. The risk of species extinction generates great emotional and moral concern for many people."
 
 ### 1.2 References
@@ -76,7 +51,7 @@ Not Applicable (NA)
 *Not-evaluated species*
 Not Evaluated (NE)
 
-## 2. Data Extraction and Prep
+## 2. Data
 Two different data sources and goal calculation approaches are explored. 
 **Option 1**  
 HELCOM has spatial occurrence data layers for species and species are given an IUCN threat category.  
@@ -217,7 +192,7 @@ Difference taxa groups had different levels and categorization of presence/absen
 
 
 
-## 3. Goal status and trend
+## 3. Goal model
 BD goal will only be based on the SPP sub-component
 
 ### 3.1 Goal status
@@ -248,6 +223,50 @@ TBD
 
 
 # Two alternative data sources and status calculations follow.  Need to assess which is best.  
+
+
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_spp    = file.path(dir_prep, 'SPP')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_spp, 'spp_prep.rmd')
+
+```
 
 ## 4. Spatial data data layer preparation
 
@@ -385,7 +404,8 @@ write.csv(species_list, file.path(dir_spp,'species_list_included.csv'), row.name
 ```
 
 
-### 4.2 Data layer for functions.r
+### 4.2 Data layer for functions.r 
+If this data set is used, the data layer can be exported here.  
 ```{r data layer for functions.r}
 data3 = data3 %>%
         select(rgn_id, species_name, IUCN_numeric) %>%
@@ -958,7 +978,6 @@ shared_species_dist %>% select(latin_name)%>% distinct() %>% nrow() #1474
 Breeding birds were distributed by country so no basin assignment currently.  
 ```{r}
 
-
 ## recreate object without DD and NE
 shared_species_dist_n = shared_species_dist %>%
                        count(basin,taxa_group,helcom_category)
@@ -969,8 +988,61 @@ ggplot(shared_species_dist_n, aes(x=taxa_group, y=n, fill=helcom_category))+
    theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
   ggtitle("Count of species in each IUCN category")
 
+## Count of species not by category
+shared_species_dist_n_no_category = shared_species_dist %>%
+                       count(basin,taxa_group)
+
+ggplot(shared_species_dist_n_no_category, aes(x=taxa_group, y=n))+
+  geom_bar(stat="identity")+
+  facet_wrap(~basin)+
+  #facet_wrap(~basin, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of species by taxa group in each basin")
 
 
+
+## distribution without DD with each taxa group separately by basin & threat
+#invert
+##color to highlight Gulf of Finland
+col_gof =rep(c(rep("black",9),"red",rep("black",7)),4)
+ggplot(filter(shared_species_dist_n, taxa_group=="invert"))+
+    geom_point(aes(basin,n), size=2.5, colour=col_gof)+
+  facet_wrap(~helcom_category, scales="free_y")+
+  ylab("Count of species")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of Invert species in each IUCN category by Basin")
+
+## limit the number of invert basins
+data_filtered_plot = shared_species_dist_n %>% filter(taxa_group=="invert")%>% filter(basin %in% c("Bothnian Bay", "Bothnian Sea","Aland Sea","The Quark","Gulf of Finland"))
+ggplot(data_filtered_plot)+
+    geom_point(aes(basin,n), size=2.5)+
+  facet_wrap(~helcom_category, scales="free_y")+
+  ylab("Count of species")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of Invert species in each IUCN category Northern basins")
+
+
+
+#macrophytes
+ggplot(filter(shared_species_dist_n, taxa_group=="macrophytes"))+
+    geom_point(aes(basin,n))+
+  facet_wrap(~helcom_category, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of macrophytes species in each IUCN category by Basin")
+
+#fish
+ggplot(filter(shared_species_dist_n, taxa_group=="fish"))+
+    geom_point(aes(basin,n))+
+  facet_wrap(~helcom_category, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of fish species in each IUCN category by Basin")
+
+#mammals
+ggplot(filter(shared_species_dist_n, taxa_group=="mammals"))+
+    geom_point(aes(basin,n))+
+  facet_wrap(~helcom_category, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of mammals species in each IUCN category by Basin")
 
 ```
 
@@ -1225,12 +1297,75 @@ ggplot(basin_status_compare)+
 
 ```
 
+
+### 5.8 Apply basin status to BHI regions
+
+#### 5.8.1 Read in basin to BHI ID lookup
+```{r read in basin bhi id lookup}
+
+basin_lookup = read.csv(
+              file.path(dir_spp,'bhi_basin_country_lookup.csv'), sep=";", stringsAsFactors = FALSE) 
+basin_lookup = basin_lookup %>%
+               select(Subbasin, BHI_ID)%>%
+               dplyr::rename(basin = Subbasin,
+                             rgn_id = BHI_ID)
+              
+str(basin_lookup)
+```
+
+#### 5.8.2 Join basin lookup to spp_status_basin_geo
+```{r join basin lookup to spp status calculated with taxa group geometric mean}
+
+spp_status_rgn_geo = full_join(spp_status_basin_geo, basin_lookup, by="basin") %>%
+                      arrange(rgn_id)
+
+str(spp_status_rgn_geo)
+
+```
+
+#### 5.8.3 Plot status (geometric taxa group mean) by BHI region
+```{r plot status from geometric mean by bhi region}
+
+ggplot(spp_status_rgn_geo)+
+  geom_point(aes(rgn_id, status),size=2.5)+
+  ylim(0,1)+
+  ggtitle("SPP status by BHI region (calculated from taxa group geometric mean)")
+
+```
+
+
+#### 5.8.4 Prepare data for layers
+```{r prepare data for layers status from geometric taxa mean}
+
+spp_status_rgn_geo = spp_status_rgn_geo %>%
+                     select(rgn_id,status) %>%
+                     dplyr::rename(score=status)%>%
+                     mutate(dimension = 'status')
+head(spp_status_rgn_geo)
+
+```
+
+
+### 6. Send data layer to layers
+Using calculations done in Section 5 (data from Checklists and Redlist). Status is the geometric mean of the taxa group status calculations.  
+
+#### 6.1 Write status layers
+```{r write status layer to csv}
+write.csv(spp_status_rgn_geo, file.path(dir_layers,'bd_spp_status_bhi2015.csv'), row.names = FALSE)
+
+```
+
+
+## 7. Data layer considerations / concerns 
+
+### 7.1 Aquatic insects
+Aquatic insects included by species which results in a very high species richnessness in the Bothnian Bay, Sea, and Gulf of Finland.  Jonne says that in some parts of the Baltic Sea insect larvae only indentified to family while others to species (we only have those identified to species in the checklist species distribtuion).  Therefore, the species richness gradient we see is not correct (not strong enough differences between saline and not saline).  A solution would be to use only orders for insect groups (given highest threat) and use species level for other invertebrate taxa.  
+
+
 ## TO DO
-1. Apply basin scores to BHI regions   (use file 'bhi_basin_country_lookup.csv')
-2. Send data layer to layers  
-3. Update functions.r if using the checklist and redlist data  
-4. Decide how to deal with birds that have spatial dist by country (not basin)  
-5. Decide if it is a problem that status is dominated by inverts with LC  
-6. check to see if any invasives included in the species list  
-7. How to calculate a trend?  
+
+1. Decide how to deal with birds that have spatial dist by country (not basin)  
+2. Decide if it is a problem that status is dominated by inverts with LC  
+3. check to see if any invasives included in the species list  
+4. How to calculate a trend?  
 

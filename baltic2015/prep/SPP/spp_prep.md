@@ -2,88 +2,33 @@ spp\_prep
 ================
 
 Preparation of SPP data layers
-------------------------------
+==============================
 
 **For Biodiverity goal**
 
-``` r
-## Libraries
-library(readr)
-```
+TABLE OF CONTENTS
+-----------------
 
-    ## Warning: package 'readr' was built under R version 3.2.4
+### Background and Overview.........................Section 1
 
-``` r
-library(dplyr)
-```
+### Data............................................Section 2
 
-    ## 
-    ## Attaching package: 'dplyr'
+### Goal model......................................Section 3
 
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
+### Data prep (alternative 1, not preferred)........Section 4
 
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
+### Data prep (alternative 2, preferred)............Section 5
 
-``` r
-library(tidyr)
-library(ggplot2)
-```
+### Data layer saved to layers......................Section 6
 
-    ## Warning: package 'ggplot2' was built under R version 3.2.4
-
-``` r
-library(RMySQL)
-```
-
-    ## Loading required package: DBI
-
-``` r
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-```
-
-    ## Warning: package 'rprojroot' was built under R version 3.2.4
-
-``` r
-## source common libraries, directories, functions, etc
-source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-
-dir_spp    = file.path(dir_prep, 'SPP')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_spp, 'spp_prep.rmd')
-```
+### Data layer issues / concerns....................Section 7
 
 1. Background and Overview
 --------------------------
 
-### 1.1
+In the OHI framework, the Biodiversity goal (BD) has two subgoals- species (SPP) and habitats (HAB). In BHI, we use only SPP to represent BD.
+
+### 1.1 Species biodiversity
 
 "People value biodiversity in particular for its existence value. The risk of species extinction generates great emotional and moral concern for many people."
 
@@ -102,8 +47,8 @@ Near Threatened (NT)
 Least Concern (LC) Data Deficient (DD) Not Applicable (NA)
 *Not-evaluated species* Not Evaluated (NE)
 
-2. Data Extraction and Prep
----------------------------
+2. Data
+-------
 
 Two different data sources and goal calculation approaches are explored. **Option 1**
 HELCOM has spatial occurrence data layers for species and species are given an IUCN threat category.
@@ -234,8 +179,8 @@ Difference taxa groups had different levels and categorization of presence/absen
 3.  Macrophytes, Mammals, Inverts only have either X or blank.
 4.  Macrophytes spp have many synonym names, manually combined so only the main latin name has all presence/absence occurences for all synonyms.
 
-3. Goal status and trend
-------------------------
+3. Goal model
+-------------
 
 BD goal will only be based on the SPP sub-component
 
@@ -264,6 +209,91 @@ TBD
 
 Two alternative data sources and status calculations follow. Need to assess which is best.
 ==========================================================================================
+
+``` r
+## Libraries
+library(readr)
+```
+
+    ## Warning: package 'readr' was built under R version 3.2.4
+
+``` r
+library(dplyr)
+```
+
+    ## Warning: package 'dplyr' was built under R version 3.2.5
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
+library(ggplot2)
+```
+
+    ## Warning: package 'ggplot2' was built under R version 3.2.4
+
+``` r
+library(RMySQL)
+```
+
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
+    ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
+
+``` r
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+```
+
+    ## Warning: package 'rprojroot' was built under R version 3.2.4
+
+``` r
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_spp    = file.path(dir_prep, 'SPP')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_spp, 'spp_prep.rmd')
+```
 
 4. Spatial data data layer preparation
 --------------------------------------
@@ -340,7 +370,7 @@ ggplot(data2)+
   ggtitle ("Species presence and vulnerability by region")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20raw%20by%20region-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20raw%20by%20region-1.png)
 
 ``` r
 ggplot(data2)+
@@ -351,7 +381,7 @@ ggplot(data2)+
   ggtitle ("Species presence and vulnerability by region")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20raw%20by%20region-2.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20raw%20by%20region-2.png)
 
 #### 4.1.5 Distribution in IUCN categories
 
@@ -374,7 +404,7 @@ percent_vuln = data2 %>%
     ## Source: local data frame [24 x 5]
     ## 
     ##           taxa   IUCN     n n_tot percent
-    ##         (fctr) (fctr) (int) (int)   (dbl)
+    ##         <fctr> <fctr> <int> <int>   <dbl>
     ## 1      benthos     DD    23    54      43
     ## 2      benthos     EN     1    54       2
     ## 3      benthos     LC     4    54       7
@@ -406,7 +436,7 @@ ggplot(percent_vuln, aes(x=taxa, y=percent, fill=IUCN))+
   ggtitle("Percent of species in each IUCN category")
 ```
 
-![](spp_prep_files/figure-markdown_github/distribution%20in%20IUCN%20categories-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/distribution%20in%20IUCN%20categories-1.png)
 
 #### 4.1.6 Total number of species in each taxa group by IUCN categroy
 
@@ -416,7 +446,7 @@ ggplot(percent_vuln, aes(x=taxa, y=n, fill=IUCN))+
   ggtitle("Number of species in each IUCN category")
 ```
 
-![](spp_prep_files/figure-markdown_github/number%20of%20species%20in%20each%20taxa%20group-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/number%20of%20species%20in%20each%20taxa%20group-1.png)
 
 ``` r
 ggplot(filter(percent_vuln, IUCN != "DD"), aes(x=taxa, y=n, fill=IUCN))+
@@ -424,7 +454,7 @@ ggplot(filter(percent_vuln, IUCN != "DD"), aes(x=taxa, y=n, fill=IUCN))+
   ggtitle("Number of species in each IUCN category without DD")
 ```
 
-![](spp_prep_files/figure-markdown_github/number%20of%20species%20in%20each%20taxa%20group-2.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/number%20of%20species%20in%20each%20taxa%20group-2.png)
 
 #### 4.1.7 Remove DD species
 
@@ -488,6 +518,8 @@ write.csv(species_list, file.path(dir_spp,'species_list_included.csv'), row.name
 
 ### 4.2 Data layer for functions.r
 
+If this data set is used, the data layer can be exported here.
+
 ``` r
 data3 = data3 %>%
         select(rgn_id, species_name, IUCN_numeric) %>%
@@ -533,7 +565,7 @@ head(sum_spp)
     ## Source: local data frame [6 x 2]
     ## 
     ##   rgn_id     n
-    ##    (int) (int)
+    ##    <int> <int>
     ## 1      1    83
     ## 2      2    87
     ## 3      3    60
@@ -578,7 +610,7 @@ ggplot(spp_status)+
   ggtitle("SPP status by BHI region")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20spp%20status-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20spp%20status-1.png)
 
 ``` r
 ## Size points to number of species in a region
@@ -590,7 +622,7 @@ ggplot(spp_status)+
   ggtitle("SPP status by BHI region, n= species richness")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20spp%20status-2.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20spp%20status-2.png)
 
 5. Data layer preparation with checklist distribution data
 ----------------------------------------------------------
@@ -878,7 +910,7 @@ ggplot(species_checklist, aes(x=taxa_group))+
   ggtitle("Number of species in the checklist")
 ```
 
-![](spp_prep_files/figure-markdown_github/species%20and%20taxa%20group%20checklist-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/species%20and%20taxa%20group%20checklist-1.png)
 
 ``` r
 ## number of unique latin names
@@ -916,7 +948,7 @@ ggplot(redlist, aes(x=taxa_group))+
   ggtitle("Number of species in the redlist")
 ```
 
-![](spp_prep_files/figure-markdown_github/number%20species%20redlist-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/number%20species%20redlist-1.png)
 
 ``` r
 ## number of unique latin names
@@ -975,10 +1007,7 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
       full_species %>% filter(is.na(list_type.y)) %>%select(taxa_group)%>%distinct()  ## breeding birds, invert, macrophytes mammals
 ```
 
-    ## Source: local data frame [4 x 1]
-    ## 
     ##       taxa_group
-    ##            (chr)
     ## 1 breeding birds
     ## 2         invert
     ## 3    macrophytes
@@ -989,12 +1018,10 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
    full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="mammals") #Pusa hispida  
 ```
 
-    ## Source: local data frame [1 x 6]
-    ## 
     ##     latin_name taxa_group list_type.x assessment_unit helcom_category
-    ##          (chr)      (chr)       (chr)           (chr)           (chr)
-    ## 1 Pusa hispida    mammals   checklist              NA              NA
-    ## Variables not shown: list_type.y (chr)
+    ## 1 Pusa hispida    mammals   checklist            <NA>            <NA>
+    ##   list_type.y
+    ## 1        <NA>
 
 ``` r
    redlist %>% filter(taxa_group == "mammals") ##Phoca hispida botnica 
@@ -1033,16 +1060,16 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
    full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="breeding birds")
 ```
 
-    ## Source: local data frame [4 x 6]
-    ## 
     ##                                      latin_name     taxa_group list_type.x
-    ##                                           (chr)          (chr)       (chr)
     ## 1                            Actitis hypoleucos breeding birds   checklist
     ## 2          Larus minutus (Hydrocoloeus minutus) breeding birds   checklist
     ## 3 Larus ridibundus (Chroicocephalus ridibundus) breeding birds   checklist
     ## 4          Mergus albellus (Mergellus albellus) breeding birds   checklist
-    ## Variables not shown: assessment_unit (chr), helcom_category (chr),
-    ##   list_type.y (chr)
+    ##   assessment_unit helcom_category list_type.y
+    ## 1            <NA>            <NA>        <NA>
+    ## 2            <NA>            <NA>        <NA>
+    ## 3            <NA>            <NA>        <NA>
+    ## 4            <NA>            <NA>        <NA>
 
 ``` r
     redlist %>% filter(grepl("Actitis", latin_name)) ## look for Actitis hypoleucos 
@@ -1106,33 +1133,635 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
            full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="macrophytes") ##310 species
 ```
 
-    ## Source: local data frame [310 x 6]
-    ## 
-    ##                                    latin_name  taxa_group list_type.x
-    ##                                         (chr)       (chr)       (chr)
-    ## 1  Ranunculus trichophyllus subsp. Eradicatus macrophytes   checklist
-    ## 2                   Porphyridium aerugineum 3 macrophytes   checklist
-    ## 3                          Polygonum foliosum macrophytes   checklist
-    ## 4                      Acinetospora crinita   macrophytes   checklist
-    ## 5                    Acrochaete cladophorae   macrophytes   checklist
-    ## 6                       Acrochaete flustrae   macrophytes   checklist
-    ## 7                    Acrochaete heteroclada   macrophytes   checklist
-    ## 8                        Acrochaete inflata   macrophytes   checklist
-    ## 9                    Acrochaete leptochaete   macrophytes   checklist
-    ## 10                    Acrochaete operculata   macrophytes   checklist
-    ## ..                                        ...         ...         ...
-    ## Variables not shown: assessment_unit (chr), helcom_category (chr),
-    ##   list_type.y (chr)
+    ##                                          latin_name  taxa_group
+    ## 1        Ranunculus trichophyllus subsp. Eradicatus macrophytes
+    ## 2                         Porphyridium aerugineum 3 macrophytes
+    ## 3                                Polygonum foliosum macrophytes
+    ## 4                            Acinetospora crinita   macrophytes
+    ## 5                          Acrochaete cladophorae   macrophytes
+    ## 6                             Acrochaete flustrae   macrophytes
+    ## 7                          Acrochaete heteroclada   macrophytes
+    ## 8                              Acrochaete inflata   macrophytes
+    ## 9                          Acrochaete leptochaete   macrophytes
+    ## 10                          Acrochaete operculata   macrophytes
+    ## 11                              Acrochaete repens   macrophytes
+    ## 12                             Acrochaete viridis   macrophytes
+    ## 13                          Acrochaete wittrockii   macrophytes
+    ## 14                        Acrochaetium attenuatum   macrophytes
+    ## 15                          Acrochaetium balticum   macrophytes
+    ## 16                       Acrochaetium catenulatum   macrophytes
+    ## 17                        Acrochaetium cytophagum   macrophytes
+    ## 18                         Acrochaetium dumontiae   macrophytes
+    ## 19                          Acrochaetium emergens   macrophytes
+    ## 20                        Acrochaetium endozoicum   macrophytes
+    ## 21                         Acrochaetium gynandrum   macrophytes
+    ## 22                       Acrochaetium hallandicum   macrophytes
+    ## 23                            Acrochaetium humile   macrophytes
+    ## 24                          Acrochaetium immersum   macrophytes
+    ## 25                            Acrochaetium kylini   macrophytes
+    ## 26                         Acrochaetium leptonema   macrophytes
+    ## 27                            Acrochaetium macula   macrophytes
+    ## 28                     Acrochaetium microscopicum   macrophytes
+    ## 29                           Acrochaetium minimum   macrophytes
+    ## 30                       Acrochaetium moniliforme   macrophytes
+    ## 31                            Acrochaetium nemalii  macrophytes
+    ## 32                          Acrochaetium parvulum   macrophytes
+    ## 33                          Acrochaetium reductum   macrophytes
+    ## 34                      Acrochaetium rhipidandrum   macrophytes
+    ## 35                         Acrochaetium rosulatum   macrophytes
+    ## 36                          Acrochaetium savianum   macrophytes
+    ## 37                        Acrochaetium secundatum   macrophytes
+    ## 38                       Acrochaetium stilophorae   macrophytes
+    ## 39                        Acrochaetium virgatulum   macrophytes
+    ## 40                             Acrosiphonia arcta   macrophytes
+    ## 41                           Acrosiphonia sonderi   macrophytes
+    ## 42                             Acrothrix gracilis   macrophytes
+    ## 43                            Aegagropila linnaei   macrophytes
+    ## 44  Aglaothamnion bipinnatum Feldmann-Mazoyer 1941  macrophytes
+    ## 45                          Aglaothamnion hookeri   macrophytes
+    ## 46                           Aglaothamnion roseum   macrophytes
+    ## 47                      Aglaothamnion tenuissimum   macrophytes
+    ## 48                              Ahnfeltia plicata   macrophytes
+    ## 49                               Alaria esculenta   macrophytes
+    ## 50                               Alisma gramineum   macrophytes
+    ## 51                       Alisma plantago-aquatica   macrophytes
+    ## 52                            Alisma wahlenbergii   macrophytes
+    ## 53                         Antithamnion cruciatum   macrophytes
+    ## 54                          Antithamnion villosum   macrophytes
+    ## 55                      Antithamnionella floccosa   macrophytes
+    ## 56                            Aphanochaete repens   macrophytes
+    ## 57                         Apoglossum ruscifolium   macrophytes
+    ## 58                           Arthrocladia villosa   macrophytes
+    ## 59                            Ascophyllum nodosum   macrophytes
+    ## 60                          Asperococcus bullosus   macrophytes
+    ## 61                        Asperococcus ensiformis   macrophytes
+    ## 62                        Asperococcus fistulosus   macrophytes
+    ## 63                         Atractophora hypnoides   macrophytes
+    ## 64                      Bangiadulcis atropurpurea   macrophytes
+    ## 65                          Batrachospermum atrum   macrophytes
+    ## 66                             Batrachospermum sp.  macrophytes
+    ## 67                           Blastophysa rhizopus   macrophytes
+    ## 68                            Blidingia marginata   macrophytes
+    ## 69                               Blidingia minima   macrophytes
+    ## 70                          Bolbocoleon piliferum   macrophytes
+    ## 71                         Bolboschoenus maritimus  macrophytes
+    ## 72                     Bonnemaisonia asparagoides   macrophytes
+    ## 73                         Bonnemaisonia hamifera   macrophytes
+    ## 74                           Botrytella micromora   macrophytes
+    ## 75                          Botrytella reinboldii   macrophytes
+    ## 76                       Brongniartella byssoides   macrophytes
+    ## 77                             Bryopsis hypnoides   macrophytes
+    ## 78                               Bryopsis plumosa   macrophytes
+    ## 79                           Butomus umbellatus L.  macrophytes
+    ## 80                       Callithamnion corymbosum   macrophytes
+    ## 81                       Callithamnion tetragonum   macrophytes
+    ## 82                         Callitriche cophocarpa   macrophytes
+    ## 83                    Callitriche hermaphroditica   macrophytes
+    ## 84                           Callitriche palustris  macrophytes
+    ## 85                          Callophyllis cristata   macrophytes
+    ## 86                               Caltha palustris   macrophytes
+    ## 87                         Capsosiphon fulvescens   macrophytes
+    ## 88                             Ceramium cimbricum   macrophytes
+    ## 89                             Ceramium diaphanum   macrophytes
+    ## 90                            Ceramium echionotum   macrophytes
+    ## 91                              Ceramium pallidum   macrophytes
+    ## 92                            Ceramium siliquosum   macrophytes
+    ## 93                            Ceramium tenuicorne   macrophytes
+    ## 94                              Ceramium virgatum   macrophytes
+    ## 95                            Ceratocolax hartzii   macrophytes
+    ## 96                         Ceratophyllum demersum   macrophytes
+    ## 97                             Chaetomorpha aerea   macrophytes
+    ## 98                         Chaetomorpha ligustica   macrophytes
+    ## 99                             Chaetomorpha linum   macrophytes
+    ## 100                       Chaetomorpha melagonium   macrophytes
+    ## 101                        Chaetophora incrassata   macrophytes
+    ## 102                                  Chara aspera   macrophytes
+    ## 103                                 Chara baltica   macrophytes
+    ## 104                                 Chara braunii   macrophytes
+    ## 105                               Chara canescens   macrophytes
+    ## 106                               Chara connivens   macrophytes
+    ## 107                              Chara globularis   macrophytes
+    ## 108                                 Chara hispida   macrophytes
+    ## 109                                 Chara horrida   macrophytes
+    ## 110                             Chara polyacantha   macrophytes
+    ## 111                               Chara tomentosa   macrophytes
+    ## 112                                 Chara virgata   macrophytes
+    ## 113                                Chara vulgaris   macrophytes
+    ## 114                          Chilionema ocellatum   macrophytes
+    ## 115                         Chlorochytrium cohnii   macrophytes
+    ## 116                   Chlorochytrium dermatocolax   macrophytes
+    ## 117                           Chondria dasyphylla   macrophytes
+    ## 118                              Chondrus crispus   macrophytes
+    ## 119                                  Chorda filum   macrophytes
+    ## 120                      Chordaria flagelliformis   macrophytes
+    ## 121                           Choreonema thuretii   macrophytes
+    ## 122                         Chroodactylon ornatum   macrophytes
+    ## 123                      Chylocladia verticillata   macrophytes
+    ## 124                              Cladophora albida  macrophytes
+    ## 125                          Cladophora dalmatica   macrophytes
+    ## 126                           Cladophora flexuosa   macrophytes
+    ## 127                             Cladophora fracta   macrophytes
+    ## 128                          Cladophora glomerata   macrophytes
+    ## 129                        Cladophora hutchinsiae   macrophytes
+    ## 130                        Cladophora laetevirens   macrophytes
+    ## 131                        Cladophora lehmanniana   macrophytes
+    ## 132                         Cladophora pachyderma   macrophytes
+    ## 133                            Cladophora pygmaea   macrophytes
+    ## 134                          Cladophora rupestris   macrophytes
+    ## 135                            Cladophora sericea   macrophytes
+    ## 136                            Cladophora vadorum   macrophytes
+    ## 137                          Cladophora vagabunda   macrophytes
+    ## 138                         Cladosiphon contortus   macrophytes
+    ## 139                           Cladosiphon zosterae  macrophytes
+    ## 140                       Cladostephus spongiosus   macrophytes
+    ## 141                           Coccomyxa parasitica  macrophytes
+    ## 142                          Coccotylus truncatus   macrophytes
+    ## 143                                Codium fragile   macrophytes
+    ## 144                           Colaconema daviesii   macrophytes
+    ## 145                       Colaconema membranaceum   macrophytes
+    ## 146                         Colaconema nemalionis   macrophytes
+    ## 147                         Colaconema pectinatum   macrophytes
+    ## 148                           Colaconema strictum   macrophytes
+    ## 149                          Colpomenia peregrina   macrophytes
+    ## 150                           Compsonema saxicola   macrophytes
+    ## 151                    Compsothamnion gracillimum   macrophytes
+    ## 152                      Compsothamnion thuyoides   macrophytes
+    ## 153                         Corallina officinalis   macrophytes
+    ## 154                             Crassula aquatica   macrophytes
+    ## 155                               Cruoria pellita   macrophytes
+    ## 156                            Cruoriopsis danica   macrophytes
+    ## 157                            Cutleria multifida   macrophytes
+    ## 158                        Cystoclonium purpureum   macrophytes
+    ## 159                            Cystoseira baccata   macrophytes
+    ## 160                      Dangemannia microcystris   macrophytes
+    ## 161                            Dasya baillouviana   macrophytes
+    ## 162                           Delamarea attenuata   macrophytes
+    ## 163                          Delesseria sanguinea   macrophytes
+    ## 164                               Derbesia marina   macrophytes
+    ## 165                          Desmarestia aculeata   macrophytes
+    ## 166                           Desmarestia viridis   macrophytes
+    ## 167                        Dictyosiphon chordaria   macrophytes
+    ## 168                    Dictyosiphon foeniculaceus   macrophytes
+    ## 169                            Dictyota dichotoma   macrophytes
+    ## 170                                Dilsea carnosa   macrophytes
+    ## 171                         Drepanocladus aduncus   macrophytes
+    ## 172                       Dudresnaya verticillata   macrophytes
+    ## 173                             Dumontia contorta   macrophytes
+    ## 174                       Ectocarpus fasciculatus   macrophytes
+    ## 175                        Ectocarpus siliculosus   macrophytes
+    ## 176                            Elachista fucicola   macrophytes
+    ## 177                           Elachista stellaris   macrophytes
+    ## 178                             Elatine hydropiper  macrophytes
+    ## 179                              Elatine triandra   macrophytes
+    ## 180                         Eleocharis acicularis   macrophytes
+    ## 181                          Eleocharis palustris   macrophytes
+    ## 182                            Eleocharis parvula   macrophytes
+    ## 183                          Eleocharis uniglumis   macrophytes
+    ## 184                             Elodea canadensis   macrophytes
+    ## 185                              Elodea nuttallii   macrophytes
+    ## 186                      Enteromorpha jugoslavica   macrophytes
+    ## 187                          Epicladia cyclostoma   macrophytes
+    ## 188                            Epicladia flustrae   macrophytes
+    ## 189                        Epicladia heterotricha   macrophytes
+    ## 190                           Epicladia perforans   macrophytes
+    ## 191                          Epicladia phillipsii   macrophytes
+    ## 192                            Epicladia testarum   macrophytes
+    ## 193                           Equisetum fluviatile  macrophytes
+    ## 194                     Erythrocladia irregularis   macrophytes
+    ## 195                        Erythrodermis traillii   macrophytes
+    ## 196                         Erythrotrichia carnea   macrophytes
+    ## 197                    Erythrotrichia investiens    macrophytes
+    ## 198                        Erythrotrichia reflexa   macrophytes
+    ## 199                             Eudesme virescens   macrophytes
+    ## 200                          Eugomontia sacculata   macrophytes
+    ## 201                              Euthora cristata   macrophytes
+    ## 202                        Feldmannia irregularis   macrophytes
+    ## 203                         Feldmannia kjellmanii   macrophytes
+    ## 204                             Fissidens fontanus  macrophytes
+    ## 205                       Fontinalis antipyretica   macrophytes
+    ## 206                        Fontinalis dalecarlica   macrophytes
+    ## 207                           Fontinalis hypnoides  macrophytes
+    ## 208                              Fucus evanescens   macrophytes
+    ## 209                                 Fucus radicans  macrophytes
+    ## 210                                Fucus serratus   macrophytes
+    ## 211                                Fucus spiralis   macrophytes
+    ## 212                             Fucus vesiculosus   macrophytes
+    ## 213                       Furcellaria lumbricalis   macrophytes
+    ## 214                            Gayralia oxysperma   macrophytes
+    ## 215                      Giraudia sphacelarioides   macrophytes
+    ## 216                      Gloiosiphonia capillaris   macrophytes
+    ## 217                               Glyceria maxima   macrophytes
+    ## 218                            Gomontia polyrhiza   macrophytes
+    ## 219                           Gracilaria gracilis   macrophytes
+    ## 220                    Gracilaria vermiculophylla   macrophytes
+    ## 221                           Grania efflorescens   macrophytes
+    ## 222                     Griffithsia corallinoides   macrophytes
+    ## 223                       Griffithsia devoniensis   macrophytes
+    ## 224                              Gymnogongrus sp.   macrophytes
+    ## 225                         Haemescharia hennedyi   macrophytes
+    ## 226                        Halarachnion ligulatum   macrophytes
+    ## 227                            Halidrys siliquosa   macrophytes
+    ## 228                           Halonema subsimplex   macrophytes
+    ## 229                                Halorhiza vaga   macrophytes
+    ## 230                         Halosiphon tomentosus   macrophytes
+    ## 231                         Halothrix lumbricalis   macrophytes
+    ## 232                            Haplospora globosa   macrophytes
+    ## 233                          Harveyella mirabilis   macrophytes
+    ## 234                          Hecatonema terminale   macrophytes
+    ## 235                        Helminthora divaricata   macrophytes
+    ## 236                        Herponema desmarestiae   macrophytes
+    ## 237                        Heterosiphonia japonica  macrophytes
+    ## 238                        Heterosiphonia plumosa   macrophytes
+    ## 239                        Hildenbrandia crouanii   macrophytes
+    ## 240                       Hildenbrandia rivularis   macrophytes
+    ## 241                           Hildenbrandia rubra   macrophytes
+    ## 242                          Himanthalia elongata   macrophytes
+    ## 243                            Hincksia granulosa   macrophytes
+    ## 244                            Hincksia hincksiae   macrophytes
+    ## 245                                Hincksia ovata   macrophytes
+    ## 246                            Hincksia sandriana   macrophytes
+    ## 247                           Hippuris tetraphylla  macrophytes
+    ## 248                           Hippuris vulgaris L.  macrophytes
+    ## 249                    Hydrocharis morsus-ranae L.  macrophytes
+    ## 250                         Hydrolithon farinosum   macrophytes
+    ## 251                           Isoëtes echinospora   macrophytes
+    ## 252                           Isoëtes lacustris L.  macrophytes
+    ## 253                       Isthmoplea sphaerophora   macrophytes
+    ## 254                            Laminaria digitata   macrophytes
+    ## 255                          Laminaria hyperborea   macrophytes
+    ## 256                    Laminariocolax aecidioides   macrophytes
+    ## 257                  Laminariocolax tomentosoides   macrophytes
+    ## 258                       Lamprothamnium papulosum  macrophytes
+    ## 259                              Leathesia marina   macrophytes
+    ## 260                                   Lemna gibba   macrophytes
+    ## 261                                   Lemna minor   macrophytes
+    ## 262                                 Lemna trisulca  macrophytes
+    ## 263                          Leptodictyum riparium  macrophytes
+    ## 264                    Leptonematella fasciculata   macrophytes
+    ## 265                             Leptophytum laeve   macrophytes
+    ## 266                             Limosella aquatica  macrophytes
+    ## 267                      Lithophyllum crouaniorum   macrophytes
+    ## 268                       Lithophyllum pustulatum   macrophytes
+    ## 269                        Titanoderma pustulatum   macrophytes
+    ## 270                        Lithothamnion glaciale   macrophytes
+    ## 271                         Lithothamnion sonderi   macrophytes
+    ## 272                         Litosiphon laminariae   macrophytes
+    ## 273                         Lomentaria articulata   macrophytes
+    ## 274                         Lomentaria clavellosa   macrophytes
+    ## 275                         Lomentaria orcadensis   macrophytes
+    ## 276                         Mastocarpus stellatus   macrophytes
+    ## 277                     Meiodiscus spetsbergensis   macrophytes
+    ## 278                         Melobesia membranacea   macrophytes
+    ## 279                           Membranoptera alata   macrophytes
+    ## 280                              Mesogloia lanosa   macrophytes
+    ## 281                         Mesogloia vermiculata   macrophytes
+    ## 282                          Microcoryne ocellata   macrophytes
+    ## 283                        Microspongium globosum   macrophytes
+    ## 284                     Microspongium tenuissimum   macrophytes
+    ## 285                     Mikrosyphar polysiphoniae   macrophytes
+    ## 286                         Mikrosyphar porphyrae   macrophytes
+    ## 287                          Mikrosyphar zosterae   macrophytes
+    ## 288                           Monostroma balticum   macrophytes
+    ## 289                          Monostroma grevillei   macrophytes
+    ## 290                            Myriactula chordae   macrophytes
+    ## 291                            Myriactula fucorum   macrophytes
+    ## 292                           Myriactula haydenii   macrophytes
+    ## 293                         Myriactula rivulariae   macrophytes
+    ## 294                           Myriocladia lovenii   macrophytes
+    ## 295                            Myrionema balticum   macrophytes
+    ## 296                            Myrionema magnusii   macrophytes
+    ## 297                            Myrionema seriatum   macrophytes
+    ## 298                         Myrionema strangulans   macrophytes
+    ## 299                    Myriophyllum alterniflorum   macrophytes
+    ## 300                        Myriophyllum sibiricum   macrophytes
+    ## 301                       Myriophyllum spicatum L.  macrophytes
+    ## 302                    Myriophyllum verticillatum   macrophytes
+    ## 303                     Myriotrichia clavaeformis   macrophytes
+    ## 304                                  Najas marina   macrophytes
+    ## 305                        Nemalion helminthoides   macrophytes
+    ## 306                         Neosiphonia elongella   macrophytes
+    ## 307                           Neosiphonia harveyi   macrophytes
+    ## 308                           Nitella confervacea   macrophytes
+    ## 309                              Nitella flexilis   macrophytes
+    ## 310                        Nitella gracilis (Sm.)   macrophytes
+    ##     list_type.x assessment_unit helcom_category list_type.y
+    ## 1     checklist            <NA>            <NA>        <NA>
+    ## 2     checklist            <NA>            <NA>        <NA>
+    ## 3     checklist            <NA>            <NA>        <NA>
+    ## 4     checklist            <NA>            <NA>        <NA>
+    ## 5     checklist            <NA>            <NA>        <NA>
+    ## 6     checklist            <NA>            <NA>        <NA>
+    ## 7     checklist            <NA>            <NA>        <NA>
+    ## 8     checklist            <NA>            <NA>        <NA>
+    ## 9     checklist            <NA>            <NA>        <NA>
+    ## 10    checklist            <NA>            <NA>        <NA>
+    ## 11    checklist            <NA>            <NA>        <NA>
+    ## 12    checklist            <NA>            <NA>        <NA>
+    ## 13    checklist            <NA>            <NA>        <NA>
+    ## 14    checklist            <NA>            <NA>        <NA>
+    ## 15    checklist            <NA>            <NA>        <NA>
+    ## 16    checklist            <NA>            <NA>        <NA>
+    ## 17    checklist            <NA>            <NA>        <NA>
+    ## 18    checklist            <NA>            <NA>        <NA>
+    ## 19    checklist            <NA>            <NA>        <NA>
+    ## 20    checklist            <NA>            <NA>        <NA>
+    ## 21    checklist            <NA>            <NA>        <NA>
+    ## 22    checklist            <NA>            <NA>        <NA>
+    ## 23    checklist            <NA>            <NA>        <NA>
+    ## 24    checklist            <NA>            <NA>        <NA>
+    ## 25    checklist            <NA>            <NA>        <NA>
+    ## 26    checklist            <NA>            <NA>        <NA>
+    ## 27    checklist            <NA>            <NA>        <NA>
+    ## 28    checklist            <NA>            <NA>        <NA>
+    ## 29    checklist            <NA>            <NA>        <NA>
+    ## 30    checklist            <NA>            <NA>        <NA>
+    ## 31    checklist            <NA>            <NA>        <NA>
+    ## 32    checklist            <NA>            <NA>        <NA>
+    ## 33    checklist            <NA>            <NA>        <NA>
+    ## 34    checklist            <NA>            <NA>        <NA>
+    ## 35    checklist            <NA>            <NA>        <NA>
+    ## 36    checklist            <NA>            <NA>        <NA>
+    ## 37    checklist            <NA>            <NA>        <NA>
+    ## 38    checklist            <NA>            <NA>        <NA>
+    ## 39    checklist            <NA>            <NA>        <NA>
+    ## 40    checklist            <NA>            <NA>        <NA>
+    ## 41    checklist            <NA>            <NA>        <NA>
+    ## 42    checklist            <NA>            <NA>        <NA>
+    ## 43    checklist            <NA>            <NA>        <NA>
+    ## 44    checklist            <NA>            <NA>        <NA>
+    ## 45    checklist            <NA>            <NA>        <NA>
+    ## 46    checklist            <NA>            <NA>        <NA>
+    ## 47    checklist            <NA>            <NA>        <NA>
+    ## 48    checklist            <NA>            <NA>        <NA>
+    ## 49    checklist            <NA>            <NA>        <NA>
+    ## 50    checklist            <NA>            <NA>        <NA>
+    ## 51    checklist            <NA>            <NA>        <NA>
+    ## 52    checklist            <NA>            <NA>        <NA>
+    ## 53    checklist            <NA>            <NA>        <NA>
+    ## 54    checklist            <NA>            <NA>        <NA>
+    ## 55    checklist            <NA>            <NA>        <NA>
+    ## 56    checklist            <NA>            <NA>        <NA>
+    ## 57    checklist            <NA>            <NA>        <NA>
+    ## 58    checklist            <NA>            <NA>        <NA>
+    ## 59    checklist            <NA>            <NA>        <NA>
+    ## 60    checklist            <NA>            <NA>        <NA>
+    ## 61    checklist            <NA>            <NA>        <NA>
+    ## 62    checklist            <NA>            <NA>        <NA>
+    ## 63    checklist            <NA>            <NA>        <NA>
+    ## 64    checklist            <NA>            <NA>        <NA>
+    ## 65    checklist            <NA>            <NA>        <NA>
+    ## 66    checklist            <NA>            <NA>        <NA>
+    ## 67    checklist            <NA>            <NA>        <NA>
+    ## 68    checklist            <NA>            <NA>        <NA>
+    ## 69    checklist            <NA>            <NA>        <NA>
+    ## 70    checklist            <NA>            <NA>        <NA>
+    ## 71    checklist            <NA>            <NA>        <NA>
+    ## 72    checklist            <NA>            <NA>        <NA>
+    ## 73    checklist            <NA>            <NA>        <NA>
+    ## 74    checklist            <NA>            <NA>        <NA>
+    ## 75    checklist            <NA>            <NA>        <NA>
+    ## 76    checklist            <NA>            <NA>        <NA>
+    ## 77    checklist            <NA>            <NA>        <NA>
+    ## 78    checklist            <NA>            <NA>        <NA>
+    ## 79    checklist            <NA>            <NA>        <NA>
+    ## 80    checklist            <NA>            <NA>        <NA>
+    ## 81    checklist            <NA>            <NA>        <NA>
+    ## 82    checklist            <NA>            <NA>        <NA>
+    ## 83    checklist            <NA>            <NA>        <NA>
+    ## 84    checklist            <NA>            <NA>        <NA>
+    ## 85    checklist            <NA>            <NA>        <NA>
+    ## 86    checklist            <NA>            <NA>        <NA>
+    ## 87    checklist            <NA>            <NA>        <NA>
+    ## 88    checklist            <NA>            <NA>        <NA>
+    ## 89    checklist            <NA>            <NA>        <NA>
+    ## 90    checklist            <NA>            <NA>        <NA>
+    ## 91    checklist            <NA>            <NA>        <NA>
+    ## 92    checklist            <NA>            <NA>        <NA>
+    ## 93    checklist            <NA>            <NA>        <NA>
+    ## 94    checklist            <NA>            <NA>        <NA>
+    ## 95    checklist            <NA>            <NA>        <NA>
+    ## 96    checklist            <NA>            <NA>        <NA>
+    ## 97    checklist            <NA>            <NA>        <NA>
+    ## 98    checklist            <NA>            <NA>        <NA>
+    ## 99    checklist            <NA>            <NA>        <NA>
+    ## 100   checklist            <NA>            <NA>        <NA>
+    ## 101   checklist            <NA>            <NA>        <NA>
+    ## 102   checklist            <NA>            <NA>        <NA>
+    ## 103   checklist            <NA>            <NA>        <NA>
+    ## 104   checklist            <NA>            <NA>        <NA>
+    ## 105   checklist            <NA>            <NA>        <NA>
+    ## 106   checklist            <NA>            <NA>        <NA>
+    ## 107   checklist            <NA>            <NA>        <NA>
+    ## 108   checklist            <NA>            <NA>        <NA>
+    ## 109   checklist            <NA>            <NA>        <NA>
+    ## 110   checklist            <NA>            <NA>        <NA>
+    ## 111   checklist            <NA>            <NA>        <NA>
+    ## 112   checklist            <NA>            <NA>        <NA>
+    ## 113   checklist            <NA>            <NA>        <NA>
+    ## 114   checklist            <NA>            <NA>        <NA>
+    ## 115   checklist            <NA>            <NA>        <NA>
+    ## 116   checklist            <NA>            <NA>        <NA>
+    ## 117   checklist            <NA>            <NA>        <NA>
+    ## 118   checklist            <NA>            <NA>        <NA>
+    ## 119   checklist            <NA>            <NA>        <NA>
+    ## 120   checklist            <NA>            <NA>        <NA>
+    ## 121   checklist            <NA>            <NA>        <NA>
+    ## 122   checklist            <NA>            <NA>        <NA>
+    ## 123   checklist            <NA>            <NA>        <NA>
+    ## 124   checklist            <NA>            <NA>        <NA>
+    ## 125   checklist            <NA>            <NA>        <NA>
+    ## 126   checklist            <NA>            <NA>        <NA>
+    ## 127   checklist            <NA>            <NA>        <NA>
+    ## 128   checklist            <NA>            <NA>        <NA>
+    ## 129   checklist            <NA>            <NA>        <NA>
+    ## 130   checklist            <NA>            <NA>        <NA>
+    ## 131   checklist            <NA>            <NA>        <NA>
+    ## 132   checklist            <NA>            <NA>        <NA>
+    ## 133   checklist            <NA>            <NA>        <NA>
+    ## 134   checklist            <NA>            <NA>        <NA>
+    ## 135   checklist            <NA>            <NA>        <NA>
+    ## 136   checklist            <NA>            <NA>        <NA>
+    ## 137   checklist            <NA>            <NA>        <NA>
+    ## 138   checklist            <NA>            <NA>        <NA>
+    ## 139   checklist            <NA>            <NA>        <NA>
+    ## 140   checklist            <NA>            <NA>        <NA>
+    ## 141   checklist            <NA>            <NA>        <NA>
+    ## 142   checklist            <NA>            <NA>        <NA>
+    ## 143   checklist            <NA>            <NA>        <NA>
+    ## 144   checklist            <NA>            <NA>        <NA>
+    ## 145   checklist            <NA>            <NA>        <NA>
+    ## 146   checklist            <NA>            <NA>        <NA>
+    ## 147   checklist            <NA>            <NA>        <NA>
+    ## 148   checklist            <NA>            <NA>        <NA>
+    ## 149   checklist            <NA>            <NA>        <NA>
+    ## 150   checklist            <NA>            <NA>        <NA>
+    ## 151   checklist            <NA>            <NA>        <NA>
+    ## 152   checklist            <NA>            <NA>        <NA>
+    ## 153   checklist            <NA>            <NA>        <NA>
+    ## 154   checklist            <NA>            <NA>        <NA>
+    ## 155   checklist            <NA>            <NA>        <NA>
+    ## 156   checklist            <NA>            <NA>        <NA>
+    ## 157   checklist            <NA>            <NA>        <NA>
+    ## 158   checklist            <NA>            <NA>        <NA>
+    ## 159   checklist            <NA>            <NA>        <NA>
+    ## 160   checklist            <NA>            <NA>        <NA>
+    ## 161   checklist            <NA>            <NA>        <NA>
+    ## 162   checklist            <NA>            <NA>        <NA>
+    ## 163   checklist            <NA>            <NA>        <NA>
+    ## 164   checklist            <NA>            <NA>        <NA>
+    ## 165   checklist            <NA>            <NA>        <NA>
+    ## 166   checklist            <NA>            <NA>        <NA>
+    ## 167   checklist            <NA>            <NA>        <NA>
+    ## 168   checklist            <NA>            <NA>        <NA>
+    ## 169   checklist            <NA>            <NA>        <NA>
+    ## 170   checklist            <NA>            <NA>        <NA>
+    ## 171   checklist            <NA>            <NA>        <NA>
+    ## 172   checklist            <NA>            <NA>        <NA>
+    ## 173   checklist            <NA>            <NA>        <NA>
+    ## 174   checklist            <NA>            <NA>        <NA>
+    ## 175   checklist            <NA>            <NA>        <NA>
+    ## 176   checklist            <NA>            <NA>        <NA>
+    ## 177   checklist            <NA>            <NA>        <NA>
+    ## 178   checklist            <NA>            <NA>        <NA>
+    ## 179   checklist            <NA>            <NA>        <NA>
+    ## 180   checklist            <NA>            <NA>        <NA>
+    ## 181   checklist            <NA>            <NA>        <NA>
+    ## 182   checklist            <NA>            <NA>        <NA>
+    ## 183   checklist            <NA>            <NA>        <NA>
+    ## 184   checklist            <NA>            <NA>        <NA>
+    ## 185   checklist            <NA>            <NA>        <NA>
+    ## 186   checklist            <NA>            <NA>        <NA>
+    ## 187   checklist            <NA>            <NA>        <NA>
+    ## 188   checklist            <NA>            <NA>        <NA>
+    ## 189   checklist            <NA>            <NA>        <NA>
+    ## 190   checklist            <NA>            <NA>        <NA>
+    ## 191   checklist            <NA>            <NA>        <NA>
+    ## 192   checklist            <NA>            <NA>        <NA>
+    ## 193   checklist            <NA>            <NA>        <NA>
+    ## 194   checklist            <NA>            <NA>        <NA>
+    ## 195   checklist            <NA>            <NA>        <NA>
+    ## 196   checklist            <NA>            <NA>        <NA>
+    ## 197   checklist            <NA>            <NA>        <NA>
+    ## 198   checklist            <NA>            <NA>        <NA>
+    ## 199   checklist            <NA>            <NA>        <NA>
+    ## 200   checklist            <NA>            <NA>        <NA>
+    ## 201   checklist            <NA>            <NA>        <NA>
+    ## 202   checklist            <NA>            <NA>        <NA>
+    ## 203   checklist            <NA>            <NA>        <NA>
+    ## 204   checklist            <NA>            <NA>        <NA>
+    ## 205   checklist            <NA>            <NA>        <NA>
+    ## 206   checklist            <NA>            <NA>        <NA>
+    ## 207   checklist            <NA>            <NA>        <NA>
+    ## 208   checklist            <NA>            <NA>        <NA>
+    ## 209   checklist            <NA>            <NA>        <NA>
+    ## 210   checklist            <NA>            <NA>        <NA>
+    ## 211   checklist            <NA>            <NA>        <NA>
+    ## 212   checklist            <NA>            <NA>        <NA>
+    ## 213   checklist            <NA>            <NA>        <NA>
+    ## 214   checklist            <NA>            <NA>        <NA>
+    ## 215   checklist            <NA>            <NA>        <NA>
+    ## 216   checklist            <NA>            <NA>        <NA>
+    ## 217   checklist            <NA>            <NA>        <NA>
+    ## 218   checklist            <NA>            <NA>        <NA>
+    ## 219   checklist            <NA>            <NA>        <NA>
+    ## 220   checklist            <NA>            <NA>        <NA>
+    ## 221   checklist            <NA>            <NA>        <NA>
+    ## 222   checklist            <NA>            <NA>        <NA>
+    ## 223   checklist            <NA>            <NA>        <NA>
+    ## 224   checklist            <NA>            <NA>        <NA>
+    ## 225   checklist            <NA>            <NA>        <NA>
+    ## 226   checklist            <NA>            <NA>        <NA>
+    ## 227   checklist            <NA>            <NA>        <NA>
+    ## 228   checklist            <NA>            <NA>        <NA>
+    ## 229   checklist            <NA>            <NA>        <NA>
+    ## 230   checklist            <NA>            <NA>        <NA>
+    ## 231   checklist            <NA>            <NA>        <NA>
+    ## 232   checklist            <NA>            <NA>        <NA>
+    ## 233   checklist            <NA>            <NA>        <NA>
+    ## 234   checklist            <NA>            <NA>        <NA>
+    ## 235   checklist            <NA>            <NA>        <NA>
+    ## 236   checklist            <NA>            <NA>        <NA>
+    ## 237   checklist            <NA>            <NA>        <NA>
+    ## 238   checklist            <NA>            <NA>        <NA>
+    ## 239   checklist            <NA>            <NA>        <NA>
+    ## 240   checklist            <NA>            <NA>        <NA>
+    ## 241   checklist            <NA>            <NA>        <NA>
+    ## 242   checklist            <NA>            <NA>        <NA>
+    ## 243   checklist            <NA>            <NA>        <NA>
+    ## 244   checklist            <NA>            <NA>        <NA>
+    ## 245   checklist            <NA>            <NA>        <NA>
+    ## 246   checklist            <NA>            <NA>        <NA>
+    ## 247   checklist            <NA>            <NA>        <NA>
+    ## 248   checklist            <NA>            <NA>        <NA>
+    ## 249   checklist            <NA>            <NA>        <NA>
+    ## 250   checklist            <NA>            <NA>        <NA>
+    ## 251   checklist            <NA>            <NA>        <NA>
+    ## 252   checklist            <NA>            <NA>        <NA>
+    ## 253   checklist            <NA>            <NA>        <NA>
+    ## 254   checklist            <NA>            <NA>        <NA>
+    ## 255   checklist            <NA>            <NA>        <NA>
+    ## 256   checklist            <NA>            <NA>        <NA>
+    ## 257   checklist            <NA>            <NA>        <NA>
+    ## 258   checklist            <NA>            <NA>        <NA>
+    ## 259   checklist            <NA>            <NA>        <NA>
+    ## 260   checklist            <NA>            <NA>        <NA>
+    ## 261   checklist            <NA>            <NA>        <NA>
+    ## 262   checklist            <NA>            <NA>        <NA>
+    ## 263   checklist            <NA>            <NA>        <NA>
+    ## 264   checklist            <NA>            <NA>        <NA>
+    ## 265   checklist            <NA>            <NA>        <NA>
+    ## 266   checklist            <NA>            <NA>        <NA>
+    ## 267   checklist            <NA>            <NA>        <NA>
+    ## 268   checklist            <NA>            <NA>        <NA>
+    ## 269   checklist            <NA>            <NA>        <NA>
+    ## 270   checklist            <NA>            <NA>        <NA>
+    ## 271   checklist            <NA>            <NA>        <NA>
+    ## 272   checklist            <NA>            <NA>        <NA>
+    ## 273   checklist            <NA>            <NA>        <NA>
+    ## 274   checklist            <NA>            <NA>        <NA>
+    ## 275   checklist            <NA>            <NA>        <NA>
+    ## 276   checklist            <NA>            <NA>        <NA>
+    ## 277   checklist            <NA>            <NA>        <NA>
+    ## 278   checklist            <NA>            <NA>        <NA>
+    ## 279   checklist            <NA>            <NA>        <NA>
+    ## 280   checklist            <NA>            <NA>        <NA>
+    ## 281   checklist            <NA>            <NA>        <NA>
+    ## 282   checklist            <NA>            <NA>        <NA>
+    ## 283   checklist            <NA>            <NA>        <NA>
+    ## 284   checklist            <NA>            <NA>        <NA>
+    ## 285   checklist            <NA>            <NA>        <NA>
+    ## 286   checklist            <NA>            <NA>        <NA>
+    ## 287   checklist            <NA>            <NA>        <NA>
+    ## 288   checklist            <NA>            <NA>        <NA>
+    ## 289   checklist            <NA>            <NA>        <NA>
+    ## 290   checklist            <NA>            <NA>        <NA>
+    ## 291   checklist            <NA>            <NA>        <NA>
+    ## 292   checklist            <NA>            <NA>        <NA>
+    ## 293   checklist            <NA>            <NA>        <NA>
+    ## 294   checklist            <NA>            <NA>        <NA>
+    ## 295   checklist            <NA>            <NA>        <NA>
+    ## 296   checklist            <NA>            <NA>        <NA>
+    ## 297   checklist            <NA>            <NA>        <NA>
+    ## 298   checklist            <NA>            <NA>        <NA>
+    ## 299   checklist            <NA>            <NA>        <NA>
+    ## 300   checklist            <NA>            <NA>        <NA>
+    ## 301   checklist            <NA>            <NA>        <NA>
+    ## 302   checklist            <NA>            <NA>        <NA>
+    ## 303   checklist            <NA>            <NA>        <NA>
+    ## 304   checklist            <NA>            <NA>        <NA>
+    ## 305   checklist            <NA>            <NA>        <NA>
+    ## 306   checklist            <NA>            <NA>        <NA>
+    ## 307   checklist            <NA>            <NA>        <NA>
+    ## 308   checklist            <NA>            <NA>        <NA>
+    ## 309   checklist            <NA>            <NA>        <NA>
+    ## 310   checklist            <NA>            <NA>        <NA>
 
 ``` r
 ## check inverts
             full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="invert") ##28 species
 ```
 
-    ## Source: local data frame [28 x 6]
-    ## 
     ##                                 latin_name taxa_group list_type.x
-    ##                                      (chr)      (chr)       (chr)
     ## 1                    Botrylloides leachii      invert   checklist
     ## 2                    Botryllus schlosseri      invert   checklist
     ## 3                   Corophium acherusicum      invert   checklist
@@ -1143,9 +1772,53 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
     ## 8                           Eteone lactea      invert   checklist
     ## 9                          Euspira pallida     invert   checklist
     ## 10 Halichondria (Halichondria) bowerbanki      invert   checklist
-    ## ..                                     ...        ...         ...
-    ## Variables not shown: assessment_unit (chr), helcom_category (chr),
-    ##   list_type.y (chr)
+    ## 11                  Lamprodrilus isoporus      invert   checklist
+    ## 12                    Limnephilus politus      invert   checklist
+    ## 13                  Macropelopia nebulosa      invert   checklist
+    ## 14                Malmgreniella mcintoshi      invert   checklist
+    ## 15                 Nipponnemertes pulchra      invert   checklist
+    ## 16               Parachironomus gracilior      invert   checklist
+    ## 17              Paratanytarsus quintuplex      invert   checklist
+    ## 18                   Phryganea bipunctata      invert   checklist
+    ## 19                     Piguetiella blanci      invert   checklist
+    ## 20                        Pristina foreli      invert   checklist
+    ## 21                    Prodiamesa olivacea      invert   checklist
+    ## 22                 Psectrocladius bisetus      invert   checklist
+    ## 23                         Styela rustica      invert   checklist
+    ## 24                Tanytarsus gr. lestagei      invert   checklist
+    ## 25               Tanytarsus pallidicornis      invert   checklist
+    ## 26                     Thracia phaseolina      invert   checklist
+    ## 27                       Tribelos intextus     invert   checklist
+    ## 28                   Zalutschia mucronata      invert   checklist
+    ##    assessment_unit helcom_category list_type.y
+    ## 1             <NA>            <NA>        <NA>
+    ## 2             <NA>            <NA>        <NA>
+    ## 3             <NA>            <NA>        <NA>
+    ## 4             <NA>            <NA>        <NA>
+    ## 5             <NA>            <NA>        <NA>
+    ## 6             <NA>            <NA>        <NA>
+    ## 7             <NA>            <NA>        <NA>
+    ## 8             <NA>            <NA>        <NA>
+    ## 9             <NA>            <NA>        <NA>
+    ## 10            <NA>            <NA>        <NA>
+    ## 11            <NA>            <NA>        <NA>
+    ## 12            <NA>            <NA>        <NA>
+    ## 13            <NA>            <NA>        <NA>
+    ## 14            <NA>            <NA>        <NA>
+    ## 15            <NA>            <NA>        <NA>
+    ## 16            <NA>            <NA>        <NA>
+    ## 17            <NA>            <NA>        <NA>
+    ## 18            <NA>            <NA>        <NA>
+    ## 19            <NA>            <NA>        <NA>
+    ## 20            <NA>            <NA>        <NA>
+    ## 21            <NA>            <NA>        <NA>
+    ## 22            <NA>            <NA>        <NA>
+    ## 23            <NA>            <NA>        <NA>
+    ## 24            <NA>            <NA>        <NA>
+    ## 25            <NA>            <NA>        <NA>
+    ## 26            <NA>            <NA>        <NA>
+    ## 27            <NA>            <NA>        <NA>
+    ## 28            <NA>            <NA>        <NA>
 
 ``` r
 #### UPDATE NAMES ON REDLIST
@@ -1184,10 +1857,7 @@ dim(full_species) #3147   6
          full_species %>% filter(is.na(list_type.x)) %>%select(taxa_group)%>%distinct()  ## macrophytes, invert, wintering birds, fish
 ```
 
-    ## Source: local data frame [4 x 1]
-    ## 
     ##        taxa_group
-    ##             (chr)
     ## 1     macrophytes
     ## 2          invert
     ## 3 wintering birds
@@ -1198,53 +1868,295 @@ dim(full_species) #3147   6
    full_species %>% filter(is.na(list_type.x)) %>% filter(taxa_group =="wintering birds")
 ```
 
-    ## Source: local data frame [63 x 6]
-    ## 
-    ##                              latin_name      taxa_group list_type.x
-    ##                                   (chr)           (chr)       (chr)
-    ## 1                 Branta bernicla hrota wintering birds          NA
-    ## 2                            Uria aalge wintering birds          NA
-    ## 3                            Uria aalge wintering birds          NA
-    ## 4                            Anas acuta wintering birds          NA
-    ## 5                         Gavia adamsii wintering birds          NA
-    ## 6  Mergus albellus (Mergellus albellus) wintering birds          NA
-    ## 7                  Haliaeetus albicilla wintering birds          NA
-    ## 8                       Anser albifrons wintering birds          NA
-    ## 9                             Alle alle wintering birds          NA
-    ## 10                 Eremophila alpestris wintering birds          NA
-    ## ..                                  ...             ...         ...
-    ## Variables not shown: assessment_unit (chr), helcom_category (chr),
-    ##   list_type.y (chr)
+    ##                                       latin_name      taxa_group
+    ## 1                          Branta bernicla hrota wintering birds
+    ## 2                                     Uria aalge wintering birds
+    ## 3                                     Uria aalge wintering birds
+    ## 4                                     Anas acuta wintering birds
+    ## 5                                  Gavia adamsii wintering birds
+    ## 6           Mergus albellus (Mergellus albellus) wintering birds
+    ## 7                           Haliaeetus albicilla wintering birds
+    ## 8                                Anser albifrons wintering birds
+    ## 9                                      Alle alle wintering birds
+    ## 10                          Eremophila alpestris wintering birds
+    ## 11                                   Anser anser wintering birds
+    ## 12                                 Gavia arctica wintering birds
+    ## 13                              Larus argentatus wintering birds
+    ## 14                                   Fulica atra wintering birds
+    ## 15                              Podiceps auritus wintering birds
+    ## 16                          Anser brachyrhynchus wintering birds
+    ## 17                              Larus cachinnans wintering birds
+    ## 18                             Branta canadensis wintering birds
+    ## 19                                   Larus canus wintering birds
+    ## 20                           Phalacrocorax carbo wintering birds
+    ## 21                           Phalacrocorax carbo wintering birds
+    ## 22                            Bucephala clangula wintering birds
+    ## 23                                 Anas clypeata wintering birds
+    ## 24                            Cygnus columbianus wintering birds
+    ## 25                                   Anas crecca wintering birds
+    ## 26                            Podiceps cristatus wintering birds
+    ## 27                                 Cygnus cygnus wintering birds
+    ## 28                              Anser erythropus wintering birds
+    ## 29                                 Anser fabalis wintering birds
+    ## 30                                 Anser fabalis wintering birds
+    ## 31                                 Aythya ferina wintering birds
+    ## 32                        Carduelis flavirostris wintering birds
+    ## 33                               Aythya fuligula wintering birds
+    ## 34                               Melanitta fusca wintering birds
+    ## 35                            Fulmarus glacialis wintering birds
+    ## 36                            Podiceps grisegena wintering birds
+    ## 37                                Cepphus grylle wintering birds
+    ## 38                                Cepphus grylle wintering birds
+    ## 39                             Clangula hyemalis wintering birds
+    ## 40                                   Gavia immer wintering birds
+    ## 41                              Branta leucopsis wintering birds
+    ## 42                                 Aythya marila wintering birds
+    ## 43                                 Larus marinus wintering birds
+    ## 44                             Calidris maritima wintering birds
+    ## 45                              Mergus merganser wintering birds
+    ## 46                          Hydrocoloeus minutus wintering birds
+    ## 47                          Somateria mollissima wintering birds
+    ## 48                               Melanitta nigra wintering birds
+    ## 49                             Calcarius nivalis wintering birds
+    ## 50                                   Cygnus olor wintering birds
+    ## 51                                 Anas penelope wintering birds
+    ## 52                               Anthus petrosus wintering birds
+    ## 53                            Anas platyrhynchos wintering birds
+    ## 54 Larus ridibundus (Chroicocephalus ridibundus) wintering birds
+    ## 55                        Tachybaptus ruficollis wintering birds
+    ## 56                               Mergus serrator wintering birds
+    ## 57                         Somateria spectabilis wintering birds
+    ## 58                                Gavia stellata wintering birds
+    ## 59                           Polysticta stelleri wintering birds
+    ## 60                                 Anas strepera wintering birds
+    ## 61                                    Alca torda wintering birds
+    ## 62                                    Alca torda wintering birds
+    ## 63                              Rissa tridactyla wintering birds
+    ##    list_type.x
+    ## 1         <NA>
+    ## 2         <NA>
+    ## 3         <NA>
+    ## 4         <NA>
+    ## 5         <NA>
+    ## 6         <NA>
+    ## 7         <NA>
+    ## 8         <NA>
+    ## 9         <NA>
+    ## 10        <NA>
+    ## 11        <NA>
+    ## 12        <NA>
+    ## 13        <NA>
+    ## 14        <NA>
+    ## 15        <NA>
+    ## 16        <NA>
+    ## 17        <NA>
+    ## 18        <NA>
+    ## 19        <NA>
+    ## 20        <NA>
+    ## 21        <NA>
+    ## 22        <NA>
+    ## 23        <NA>
+    ## 24        <NA>
+    ## 25        <NA>
+    ## 26        <NA>
+    ## 27        <NA>
+    ## 28        <NA>
+    ## 29        <NA>
+    ## 30        <NA>
+    ## 31        <NA>
+    ## 32        <NA>
+    ## 33        <NA>
+    ## 34        <NA>
+    ## 35        <NA>
+    ## 36        <NA>
+    ## 37        <NA>
+    ## 38        <NA>
+    ## 39        <NA>
+    ## 40        <NA>
+    ## 41        <NA>
+    ## 42        <NA>
+    ## 43        <NA>
+    ## 44        <NA>
+    ## 45        <NA>
+    ## 46        <NA>
+    ## 47        <NA>
+    ## 48        <NA>
+    ## 49        <NA>
+    ## 50        <NA>
+    ## 51        <NA>
+    ## 52        <NA>
+    ## 53        <NA>
+    ## 54        <NA>
+    ## 55        <NA>
+    ## 56        <NA>
+    ## 57        <NA>
+    ## 58        <NA>
+    ## 59        <NA>
+    ## 60        <NA>
+    ## 61        <NA>
+    ## 62        <NA>
+    ## 63        <NA>
+    ##                                                           assessment_unit
+    ## 1                                                               Wintering
+    ## 2                                         Wintering/Baltic sub-population
+    ## 3                                    Wintering/ N Atlantic sub-population
+    ## 4                                                               Wintering
+    ## 5                                                               Wintering
+    ## 6                                                               Wintering
+    ## 7                                                               Wintering
+    ## 8                                                               Wintering
+    ## 9                                                               Wintering
+    ## 10                                                              Wintering
+    ## 11                                                              Wintering
+    ## 12                                                              Wintering
+    ## 13                                                              Wintering
+    ## 14                                                              Wintering
+    ## 15                                                              Wintering
+    ## 16                                                              Wintering
+    ## 17                                                              Wintering
+    ## 18                                                              Wintering
+    ## 19                                                              Wintering
+    ## 20                     Wintering/N & C European sub-population (sinensis)
+    ## 21                           Wintering/NW European sub-population (carbo)
+    ## 22                                                              Wintering
+    ## 23                                                              Wintering
+    ## 24                                                              Wintering
+    ## 25                                                              Wintering
+    ## 26                                                              Wintering
+    ## 27                                                              Wintering
+    ## 28                                                              Wintering
+    ## 29                   Wintering/ NE & NW European sub-population (fabalis)
+    ## 30 Wintering/ W & C Siberiaan, NE & NW European sub-population (rossicus)
+    ## 31                                                              Wintering
+    ## 32                                                              Wintering
+    ## 33                                                              Wintering
+    ## 34                                                              Wintering
+    ## 35                                                              Wintering
+    ## 36                                                              Wintering
+    ## 37                               Wintering/ Baltic subpopulation (grylle)
+    ## 38   Wintering/ Kattegat & West coast of Sweden sub-population (arcticus)
+    ## 39                                                              Wintering
+    ## 40                                                              Wintering
+    ## 41                                                              Wintering
+    ## 42                                                              Wintering
+    ## 43                                                              Wintering
+    ## 44                                                              Wintering
+    ## 45                                                              Wintering
+    ## 46                                                              Wintering
+    ## 47                                                              Wintering
+    ## 48                                                              Wintering
+    ## 49                                                              Wintering
+    ## 50                                                              Wintering
+    ## 51                                                              Wintering
+    ## 52                                                              Wintering
+    ## 53                                                              Wintering
+    ## 54                                                              Wintering
+    ## 55                                                              Wintering
+    ## 56                                                              Wintering
+    ## 57                                                              Wintering
+    ## 58                                                              Wintering
+    ## 59                                                              Wintering
+    ## 60                                                              Wintering
+    ## 61                               Wintering/ Baltic sub-population (torda)
+    ## 62                      Wintering/ NW European sub-population (islandica)
+    ## 63                                                              Wintering
+    ##    helcom_category list_type.y
+    ## 1               NT     redlist
+    ## 2               LC     redlist
+    ## 3               NE     redlist
+    ## 4               LC     redlist
+    ## 5             <NA>     redlist
+    ## 6               LC     redlist
+    ## 7               LC     redlist
+    ## 8               LC     redlist
+    ## 9             <NA>     redlist
+    ## 10              NE     redlist
+    ## 11              LC     redlist
+    ## 12              CR     redlist
+    ## 13              LC     redlist
+    ## 14              LC     redlist
+    ## 15              NT     redlist
+    ## 16            <NA>     redlist
+    ## 17            <NA>     redlist
+    ## 18            <NA>     redlist
+    ## 19              LC     redlist
+    ## 20              LC     redlist
+    ## 21              LC     redlist
+    ## 22              LC     redlist
+    ## 23            <NA>     redlist
+    ## 24            <NA>     redlist
+    ## 25              LC     redlist
+    ## 26              LC     redlist
+    ## 27              LC     redlist
+    ## 28            <NA>     redlist
+    ## 29              EN     redlist
+    ## 30              LC     redlist
+    ## 31              LC     redlist
+    ## 32              NE     redlist
+    ## 33              LC     redlist
+    ## 34              EN     redlist
+    ## 35            <NA>     redlist
+    ## 36              EN     redlist
+    ## 37              NT     redlist
+    ## 38              VU     redlist
+    ## 39              EN     redlist
+    ## 40            <NA>     redlist
+    ## 41              LC     redlist
+    ## 42              LC     redlist
+    ## 43              LC     redlist
+    ## 44              LC     redlist
+    ## 45              LC     redlist
+    ## 46              NT     redlist
+    ## 47              EN     redlist
+    ## 48              EN     redlist
+    ## 49              LC     redlist
+    ## 50              LC     redlist
+    ## 51              LC     redlist
+    ## 52              LC     redlist
+    ## 53              LC     redlist
+    ## 54              LC     redlist
+    ## 55            <NA>     redlist
+    ## 56              VU     redlist
+    ## 57            <NA>     redlist
+    ## 58              CR     redlist
+    ## 59              EN     redlist
+    ## 60              LC     redlist
+    ## 61              LC     redlist
+    ## 62              NE     redlist
+    ## 63              VU     redlist
 
 ``` r
 ##check fish 
     full_species %>% filter(is.na(list_type.x)) %>% filter(taxa_group =="fish") ## 9 spp
 ```
 
-    ## Source: local data frame [9 x 6]
-    ## 
     ##                latin_name taxa_group list_type.x assessment_unit
-    ##                     (chr)      (chr)       (chr)           (chr)
-    ## 1      Coregonus balticus       fish          NA         Species
-    ## 2       Lophius budegassa       fish          NA         Species
-    ## 3 Osmerus eperlanomarinus       fish          NA         Species
-    ## 4       Hexanchus griseus       fish          NA         Species
-    ## 5           Raja montagui       fish          NA         Species
-    ## 6      Coregonus pallasii       fish          NA         Species
-    ## 7        Acipenser sturio       fish          NA         Species
-    ## 8     Orcynopsis unicolor       fish          NA         Species
-    ## 9         Sphyrna zygaena       fish          NA         Species
-    ## Variables not shown: helcom_category (chr), list_type.y (chr)
+    ## 1      Coregonus balticus       fish        <NA>         Species
+    ## 2       Lophius budegassa       fish        <NA>         Species
+    ## 3 Osmerus eperlanomarinus       fish        <NA>         Species
+    ## 4       Hexanchus griseus       fish        <NA>         Species
+    ## 5           Raja montagui       fish        <NA>         Species
+    ## 6      Coregonus pallasii       fish        <NA>         Species
+    ## 7        Acipenser sturio       fish        <NA>         Species
+    ## 8     Orcynopsis unicolor       fish        <NA>         Species
+    ## 9         Sphyrna zygaena       fish        <NA>         Species
+    ##   helcom_category list_type.y
+    ## 1              NE     redlist
+    ## 2            <NA>     redlist
+    ## 3            <NA>     redlist
+    ## 4            <NA>     redlist
+    ## 5            <NA>     redlist
+    ## 6              NE     redlist
+    ## 7              NE     redlist
+    ## 8            <NA>     redlist
+    ## 9            <NA>     redlist
 
 ``` r
     ##search checklist
     species_checklist %>% filter(grepl("Coregonus", latin_name)) ##look for  Coregonus balticus & Coregonus pallasii 
 ```
 
-    ## Source: local data frame [3 x 3]
-    ## 
     ##               latin_name taxa_group list_type
-    ##                    (chr)      (chr)     (chr)
     ## 1       Coregonus albula       fish checklist
     ## 2 Coregonus maraena s.l.       fish checklist
     ## 3        Coregonus peled       fish checklist
@@ -1254,20 +2166,14 @@ dim(full_species) #3147   6
    species_checklist %>% filter(grepl("Lophius", latin_name)) ## Lophius budegassa
 ```
 
-    ## Source: local data frame [1 x 3]
-    ## 
     ##            latin_name taxa_group list_type
-    ##                 (chr)      (chr)     (chr)
     ## 1 Lophius piscatorius       fish checklist
 
 ``` r
    species_checklist %>% filter(grepl("Osmerus", latin_name)) ## Osmerus eperlanomarinus
 ```
 
-    ## Source: local data frame [1 x 3]
-    ## 
     ##          latin_name taxa_group list_type
-    ##               (chr)      (chr)     (chr)
     ## 1 Osmerus eperlanus       fish checklist
 
 ``` r
@@ -1275,28 +2181,21 @@ dim(full_species) #3147   6
    species_checklist %>% filter(grepl("Hexanchus", latin_name)) ## Hexanchus griseus  
 ```
 
-    ## Source: local data frame [0 x 3]
-    ## 
-    ## Variables not shown: latin_name (chr), taxa_group (chr), list_type (chr)
+    ## [1] latin_name taxa_group list_type 
+    ## <0 rows> (or 0-length row.names)
 
 ``` r
    species_checklist %>% filter(grepl("Raja", latin_name)) ## Raja montagui (Spotted ray )
 ```
 
-    ## Source: local data frame [1 x 3]
-    ## 
     ##     latin_name taxa_group list_type
-    ##          (chr)      (chr)     (chr)
     ## 1 Raja clavata       fish checklist
 
 ``` r
    species_checklist %>% filter(grepl("Acipenser", latin_name)) ## Acipenser sturio
 ```
 
-    ## Source: local data frame [5 x 3]
-    ## 
     ##                  latin_name taxa_group list_type
-    ##                       (chr)      (chr)     (chr)
     ## 1           Acipenser baeri       fish checklist
     ## 2 Acipenser gueldenstaedtii       fish checklist
     ## 3      Acipenser oxyrinchus       fish checklist
@@ -1307,17 +2206,15 @@ dim(full_species) #3147   6
    species_checklist %>% filter(grepl("Orcynopsis", latin_name)) ## Orcynopsis unicolor
 ```
 
-    ## Source: local data frame [0 x 3]
-    ## 
-    ## Variables not shown: latin_name (chr), taxa_group (chr), list_type (chr)
+    ## [1] latin_name taxa_group list_type 
+    ## <0 rows> (or 0-length row.names)
 
 ``` r
    species_checklist %>% filter(grepl("Sphyrna", latin_name)) ## Sphyrna zygaena 
 ```
 
-    ## Source: local data frame [0 x 3]
-    ## 
-    ## Variables not shown: latin_name (chr), taxa_group (chr), list_type (chr)
+    ## [1] latin_name taxa_group list_type 
+    ## <0 rows> (or 0-length row.names)
 
 #### 5.2.4 shared species object
 
@@ -1368,10 +2265,7 @@ shared_species %>% select(latin_name)%>%distinct()%>%nrow()
 shared_species %>% select(latin_name)%>% filter(duplicated(.)==TRUE)
 ```
 
-    ## Source: local data frame [6 x 1]
-    ## 
     ##                latin_name
-    ##                     (chr)
     ## 1            Gadus morhua
     ## 2            Gadus morhua
     ## 3            Gadus morhua
@@ -1383,10 +2277,7 @@ shared_species %>% select(latin_name)%>% filter(duplicated(.)==TRUE)
 shared_species %>% filter(latin_name== "Gadus morhua" | latin_name== "Malacoceros fuliginosus" | latin_name=="Phoca vitulina vitulina" | latin_name=="Phocoena phocoena") 
 ```
 
-    ## Source: local data frame [10 x 6]
-    ## 
     ##                 latin_name taxa_group list_type.x
-    ##                      (chr)      (chr)       (chr)
     ## 1             Gadus morhua       fish   checklist
     ## 2             Gadus morhua       fish   checklist
     ## 3             Gadus morhua       fish   checklist
@@ -1397,8 +2288,17 @@ shared_species %>% filter(latin_name== "Gadus morhua" | latin_name== "Malacocero
     ## 8  Phoca vitulina vitulina    mammals   checklist
     ## 9        Phocoena phocoena    mammals   checklist
     ## 10       Phocoena phocoena    mammals   checklist
-    ## Variables not shown: assessment_unit (chr), helcom_category (chr),
-    ##   list_type.y (chr)
+    ##                     assessment_unit helcom_category list_type.y
+    ## 1                           Species              VU     redlist
+    ## 2            Kattegat subpopulation              CR     redlist
+    ## 3      Western Baltic subpopulation              NT     redlist
+    ## 4      Eastern Baltic subpopulation              VU     redlist
+    ## 5                           Species              LC     redlist
+    ## 6                           Species              NE     redlist
+    ## 7     Southern Baltic subpopulation              LC     redlist
+    ## 8           Kalmarsun subpopulation              VU     redlist
+    ## 9         Baltic Sea Sub-population              CR     redlist
+    ## 10 Western Baltic Sea subpopulation              VU     redlist
 
 ``` r
 ## select the species assessment
@@ -1430,7 +2330,7 @@ ggplot(shared_species_threat_n, aes(x=taxa_group, y=n, fill=helcom_category))+
   ggtitle("Count of species in each IUCN category")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20shared_species%20by%20threat-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20shared_species%20by%20threat-1.png)
 
 ### 5.3 Select data for analysis
 
@@ -1446,7 +2346,7 @@ shared_species_dd_ne = bind_rows(filter(shared_species,helcom_category == 'DD'),
 str(shared_species_dd_ne)
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    729 obs. of  5 variables:
+    ## 'data.frame':    729 obs. of  5 variables:
     ##  $ latin_name     : chr  "Lycodes gracilis" "Lebetus guilleti" "Lebetus scorpioides" "Lesueurigobius friesii" ...
     ##  $ taxa_group     : chr  "fish" "fish" "fish" "fish" ...
     ##  $ list_type.x    : chr  "checklist" "checklist" "checklist" "checklist" ...
@@ -1469,7 +2369,7 @@ ggplot(shared_species_dd_ne_threat_n, aes(x=taxa_group, y=n, fill=helcom_categor
   ggtitle("Count of excluded species ")
 ```
 
-![](spp_prep_files/figure-markdown_github/exclude%20DD%20and%20NE%20from%20shared_species-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/exclude%20DD%20and%20NE%20from%20shared_species-1.png)
 
 ``` r
 ##object excluding DD and NE
@@ -1500,7 +2400,7 @@ ggplot(shared_species_threat_n, aes(x=taxa_group, y=n, fill=helcom_category))+
   ggtitle("Count of species in each IUCN category")
 ```
 
-![](spp_prep_files/figure-markdown_github/exclude%20DD%20and%20NE%20from%20shared_species-2.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/exclude%20DD%20and%20NE%20from%20shared_species-2.png)
 
 ### 5.4 Score threat level
 
@@ -1527,10 +2427,7 @@ vuln_lookup = shared_species2 %>%
 vuln_lookup ## note, no species with EX
 ```
 
-    ## Source: local data frame [6 x 2]
-    ## 
     ##   helcom_category helcom_category_numeric
-    ##             (chr)                   (dbl)
     ## 1              NT                     0.2
     ## 2              LC                     0.0
     ## 3              VU                     0.4
@@ -1590,14 +2487,14 @@ species_dist = bind_rows(fish_long,
               full_join(., dist_loc, by="location")
 ```
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factor and character
-    ## vector, coercing into character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
 
 ``` r
 str(species_dist)
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    75447 obs. of  6 variables:
+    ## 'data.frame':    75447 obs. of  6 variables:
     ##  $ latin_name : chr  "Myxine glutinosa" "Lampetra fluviatilis" "Petromyzon marinus" "Lamna nasus" ...
     ##  $ common_name: chr  "Hagfish" "River lamprey" "Sea lamprey" "Porbeagle" ...
     ##  $ location   : chr  "Kattegat" "Kattegat" "Kattegat" "Kattegat" ...
@@ -1651,7 +2548,83 @@ ggplot(shared_species_dist_n, aes(x=taxa_group, y=n, fill=helcom_category))+
   ggtitle("Count of species in each IUCN category")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)
+
+``` r
+## Count of species not by category
+shared_species_dist_n_no_category = shared_species_dist %>%
+                       count(basin,taxa_group)
+
+ggplot(shared_species_dist_n_no_category, aes(x=taxa_group, y=n))+
+  geom_bar(stat="identity")+
+  facet_wrap(~basin)+
+  #facet_wrap(~basin, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of species by taxa group in each basin")
+```
+
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-2.png)
+
+``` r
+## distribution without DD with each taxa group separately by basin & threat
+#invert
+##color to highlight Gulf of Finland
+col_gof =rep(c(rep("black",9),"red",rep("black",7)),4)
+ggplot(filter(shared_species_dist_n, taxa_group=="invert"))+
+    geom_point(aes(basin,n), size=2.5, colour=col_gof)+
+  facet_wrap(~helcom_category, scales="free_y")+
+  ylab("Count of species")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of Invert species in each IUCN category by Basin")
+```
+
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-3.png)
+
+``` r
+## limit the number of invert basins
+data_filtered_plot = shared_species_dist_n %>% filter(taxa_group=="invert")%>% filter(basin %in% c("Bothnian Bay", "Bothnian Sea","Aland Sea","The Quark","Gulf of Finland"))
+ggplot(data_filtered_plot)+
+    geom_point(aes(basin,n), size=2.5)+
+  facet_wrap(~helcom_category, scales="free_y")+
+  ylab("Count of species")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of Invert species in each IUCN category Northern basins")
+```
+
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-4.png)
+
+``` r
+#macrophytes
+ggplot(filter(shared_species_dist_n, taxa_group=="macrophytes"))+
+    geom_point(aes(basin,n))+
+  facet_wrap(~helcom_category, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of macrophytes species in each IUCN category by Basin")
+```
+
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-5.png)
+
+``` r
+#fish
+ggplot(filter(shared_species_dist_n, taxa_group=="fish"))+
+    geom_point(aes(basin,n))+
+  facet_wrap(~helcom_category, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of fish species in each IUCN category by Basin")
+```
+
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-6.png)
+
+``` r
+#mammals
+ggplot(filter(shared_species_dist_n, taxa_group=="mammals"))+
+    geom_point(aes(basin,n))+
+  facet_wrap(~helcom_category, scales="free_y")+
+   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Count of mammals species in each IUCN category by Basin")
+```
+
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-7.png)
 
 ### 5.6.2 Export shared\_species\_dist object
 
@@ -1716,7 +2689,7 @@ head(sum_spp_basin)
     ## Source: local data frame [6 x 2]
     ## 
     ##                basin     n
-    ##               (fctr) (int)
+    ##               <fctr> <int>
     ## 1          Aland Sea   203
     ## 2       Arkona Basin   386
     ## 3 Bay of Mecklenburg   502
@@ -1744,24 +2717,19 @@ spp_ex_basin = shared_species_dist %>%
 spp_ex_basin
 ```
 
-    ## Source: local data frame [2 x 7]
-    ## 
     ##   taxa_group           latin_name                common_name
-    ##        (chr)                (chr)                      (chr)
     ## 1       fish Acipenser oxyrinchus American atlantic sturgeon
     ## 2       fish Acipenser oxyrinchus American atlantic sturgeon
-    ## Variables not shown: helcom_category (chr), weights (dbl), basin (fctr),
-    ##   presence (dbl)
+    ##   helcom_category weights          basin presence
+    ## 1              RE       1 Bornholm Basin        1
+    ## 2              RE       1   Gdansk Basin        1
 
 ``` r
 ## which are RE (regionally extinct)
 spp_ex_basin %>% select(latin_name,common_name)%>%distinct() ##2 
 ```
 
-    ## Source: local data frame [1 x 2]
-    ## 
     ##             latin_name                common_name
-    ##                  (chr)                      (chr)
     ## 1 Acipenser oxyrinchus American atlantic sturgeon
 
 ``` r
@@ -1797,7 +2765,7 @@ ggplot(spp_status_basin)+
   ggtitle("SPP status by Basin")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20basin%20status-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20basin%20status-1.png)
 
 ``` r
 ## Size points to number of species in a region
@@ -1811,7 +2779,7 @@ ggplot(spp_status_basin)+
   ggtitle("SPP status by Basin, n= species richness")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20basin%20status-2.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20basin%20status-2.png)
 
 ### 5.7.2 Calulate SPP status using checklist and redlist data by taxa group and geometric mean
 
@@ -1864,7 +2832,7 @@ ggplot(spp_status_basin_taxa_group)+
   ggtitle("Taxa group Status by Basin, n= species richness")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20taxa_group%20Status-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20taxa_group%20Status-1.png)
 
 ##### 5.7.2.3 For each taxa group - Scale lower end to zero if 75% extinct
 
@@ -1885,11 +2853,11 @@ spp_ex_basin_taxa_group
     ## Source: local data frame [2 x 7]
     ## 
     ##   taxa_group           latin_name                common_name
-    ##        (chr)                (chr)                      (chr)
+    ##        <chr>                <chr>                      <chr>
     ## 1       fish Acipenser oxyrinchus American atlantic sturgeon
     ## 2       fish Acipenser oxyrinchus American atlantic sturgeon
-    ## Variables not shown: helcom_category (chr), weights (dbl), basin (fctr),
-    ##   presence (dbl)
+    ## Variables not shown: helcom_category <chr>, weights <dbl>, basin <fctr>,
+    ##   presence <dbl>.
 
 ``` r
 ## which are RE (regionally extinct)
@@ -1899,7 +2867,7 @@ spp_ex_basin_taxa_group %>% select(latin_name,common_name)%>%distinct() ##2
     ## Source: local data frame [1 x 2]
     ## 
     ##             latin_name                common_name
-    ##                  (chr)                      (chr)
+    ##                  <chr>                      <chr>
     ## 1 Acipenser oxyrinchus American atlantic sturgeon
 
 ``` r
@@ -1933,7 +2901,7 @@ ggplot(spp_status_basin_taxa_group)+
   ggtitle("Taxa group Status by Basin, n= species richness")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20taxa_group%20Status%20again-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20taxa_group%20Status%20again-1.png)
 
 ##### 5.7.2.5 Calculate Geometric Mean for Basin status
 
@@ -1955,7 +2923,7 @@ ggplot(spp_status_basin_geo)+
   ggtitle("SPP Basin status from geometric mean of taxa group status")
 ```
 
-![](spp_prep_files/figure-markdown_github/plot%20basin%20Status%20from%20geometric%20mean-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/plot%20basin%20Status%20from%20geometric%20mean-1.png)
 
 #### 5.7.3 Compare alternative approaches to Basin level SPP status calculation
 
@@ -1977,15 +2945,100 @@ ggplot(basin_status_compare)+
   ggtitle("SPP Basin status method comparision")
 ```
 
-![](spp_prep_files/figure-markdown_github/comparsion%20of%20basin%20level%20spp%20status-1.png)<!-- -->
+![](spp_prep_files/figure-markdown_github/comparsion%20of%20basin%20level%20spp%20status-1.png)
+
+### 5.8 Apply basin status to BHI regions
+
+#### 5.8.1 Read in basin to BHI ID lookup
+
+``` r
+basin_lookup = read.csv(
+              file.path(dir_spp,'bhi_basin_country_lookup.csv'), sep=";", stringsAsFactors = FALSE) 
+basin_lookup = basin_lookup %>%
+               select(Subbasin, BHI_ID)%>%
+               dplyr::rename(basin = Subbasin,
+                             rgn_id = BHI_ID)
+              
+str(basin_lookup)
+```
+
+    ## 'data.frame':    42 obs. of  2 variables:
+    ##  $ basin : chr  "Kattegat" "Kattegat" "Great Belt" "Great Belt" ...
+    ##  $ rgn_id: int  1 2 3 4 5 6 7 8 9 10 ...
+
+#### 5.8.2 Join basin lookup to spp\_status\_basin\_geo
+
+``` r
+spp_status_rgn_geo = full_join(spp_status_basin_geo, basin_lookup, by="basin") %>%
+                      arrange(rgn_id)
+```
+
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
+
+``` r
+str(spp_status_rgn_geo)
+```
+
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    42 obs. of  4 variables:
+    ##  $ basin      : chr  "Kattegat" "Kattegat" "Great Belt" "Great Belt" ...
+    ##  $ status     : num  0.821 0.821 0.741 0.741 0.755 ...
+    ##  $ status_type: chr  "taxa group geometric mean" "taxa group geometric mean" "taxa group geometric mean" "taxa group geometric mean" ...
+    ##  $ rgn_id     : int  1 2 3 4 5 6 7 8 9 10 ...
+
+#### 5.8.3 Plot status (geometric taxa group mean) by BHI region
+
+``` r
+ggplot(spp_status_rgn_geo)+
+  geom_point(aes(rgn_id, status),size=2.5)+
+  ylim(0,1)+
+  ggtitle("SPP status by BHI region (calculated from taxa group geometric mean)")
+```
+
+![](spp_prep_files/figure-markdown_github/plot%20status%20from%20geometric%20mean%20by%20bhi%20region-1.png)
+
+#### 5.8.4 Prepare data for layers
+
+``` r
+spp_status_rgn_geo = spp_status_rgn_geo %>%
+                     select(rgn_id,status) %>%
+                     dplyr::rename(score=status)%>%
+                     mutate(dimension = 'status')
+head(spp_status_rgn_geo)
+```
+
+    ## Source: local data frame [6 x 3]
+    ## 
+    ##   rgn_id     score dimension
+    ##    <int>     <dbl>     <chr>
+    ## 1      1 0.8209306    status
+    ## 2      2 0.8209306    status
+    ## 3      3 0.7406169    status
+    ## 4      4 0.7406169    status
+    ## 5      5 0.7548106    status
+    ## 6      6 0.7548106    status
+
+### 6. Send data layer to layers
+
+Using calculations done in Section 5 (data from Checklists and Redlist). Status is the geometric mean of the taxa group status calculations.
+
+#### 6.1 Write status layers
+
+``` r
+write.csv(spp_status_rgn_geo, file.path(dir_layers,'bd_spp_status_bhi2015.csv'), row.names = FALSE)
+```
+
+7. Data layer considerations / concerns
+---------------------------------------
+
+### 7.1 Aquatic insects
+
+Aquatic insects included by species which results in a very high species richnessness in the Bothnian Bay, Sea, and Gulf of Finland. Jonne says that in some parts of the Baltic Sea insect larvae only indentified to family while others to species (we only have those identified to species in the checklist species distribtuion). Therefore, the species richness gradient we see is not correct (not strong enough differences between saline and not saline). A solution would be to use only orders for insect groups (given highest threat) and use species level for other invertebrate taxa.
 
 TO DO
 -----
 
-1.  Apply basin scores to BHI regions (use file 'bhi\_basin\_country\_lookup.csv')
-2.  Send data layer to layers
-3.  Update functions.r if using the checklist and redlist data
-4.  Decide how to deal with birds that have spatial dist by country (not basin)
-5.  Decide if it is a problem that status is dominated by inverts with LC
-6.  check to see if any invasives included in the species list
-7.  How to calculate a trend?
+1.  Decide how to deal with birds that have spatial dist by country (not basin)
+2.  Decide if it is a problem that status is dominated by inverts with LC
+3.  check to see if any invasives included in the species list
+4.  How to calculate a trend?
