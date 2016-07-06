@@ -4,6 +4,21 @@ ao\_prep.rmd
 Artisanal Opportunity (AO) Goal Data Prep
 =========================================
 
+TABLE OF CONTENTS
+-----------------
+
+### Goal Overview..............................Section 1
+
+### Data.......................................Section 2
+
+### Status Data layer prepartion...............Section 3
+
+### Final AO status prepartion.................Section 4
+
+### Trend data layer preparation...............Section 5
+
+### Export data layers.........................Section 6
+
 1. Goal Overview
 ----------------
 
@@ -65,6 +80,8 @@ Assign value of NA to these regions. Stocks were not assessed
 
     ## Warning: package 'readr' was built under R version 3.2.4
 
+    ## Warning: package 'dplyr' was built under R version 3.2.5
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -76,9 +93,15 @@ Assign value of NA to these regions. Stocks were not assessed
     ## 
     ##     intersect, setdiff, setequal, union
 
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
     ## Warning: package 'ggplot2' was built under R version 3.2.4
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
     ## Warning: package 'rprojroot' was built under R version 3.2.4
 
@@ -104,15 +127,15 @@ head(coastal_fish)
     ## Source: local data frame [6 x 11]
     ## 
     ##   Basin_HOLAS Basin_assessment country monitoring_area    period
-    ##         (chr)            (chr)   (chr)           (chr)     (chr)
+    ##         <chr>            <chr>   <chr>           <chr>     <chr>
     ## 1   Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
     ## 2   Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
     ## 3   Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
     ## 4   Aland Sea  Archipelago Sea Finland      ICES SD 29 1998-2013
     ## 5   Aland Sea  Archipelago Sea Finland           Finbo 2002-2013
     ## 6   Aland Sea  Archipelago Sea Finland        Kumlinge 2003-2013
-    ## Variables not shown: coastal_water_type (chr), core_indicator (chr), taxa
-    ##   (chr), assessment_method (chr), status (chr), status_comment (chr)
+    ## Variables not shown: coastal_water_type <chr>, core_indicator <chr>, taxa
+    ##   <chr>, assessment_method <chr>, status <chr>, status_comment <chr>.
 
 ``` r
 dim(coastal_fish)
@@ -250,7 +273,7 @@ basin_lookup
     ## Source: local data frame [42 x 2]
     ## 
     ##    bhi_id         basin_name
-    ##     (int)              (chr)
+    ##     <int>              <chr>
     ## 1       1           Kattegat
     ## 2       2           Kattegat
     ## 3       3         Great Belt
@@ -283,10 +306,10 @@ coastal_fish %>% filter(is.na(status)) #No
 
     ## Source: local data frame [0 x 11]
     ## 
-    ## Variables not shown: Basin_HOLAS (chr), Basin_assessment (chr), country
-    ##   (chr), monitoring_area (chr), period (chr), coastal_water_type (chr),
-    ##   core_indicator (chr), taxa (chr), assessment_method (chr), status (chr),
-    ##   status_comment (chr)
+    ## Variables not shown: Basin_HOLAS <chr>, Basin_assessment <chr>, country
+    ##   <chr>, monitoring_area <chr>, period <chr>, coastal_water_type <chr>,
+    ##   core_indicator <chr>, taxa <chr>, assessment_method <chr>, status <chr>,
+    ##   status_comment <chr>.
 
 ``` r
 ## Assign three alternative 0-1 scores
@@ -310,7 +333,7 @@ coastal_fish_scores
     ## Source: local data frame [120 x 14]
     ## 
     ##    Basin_HOLAS Basin_assessment country monitoring_area    period
-    ##          (chr)            (chr)   (chr)           (chr)     (chr)
+    ##          <chr>            <chr>   <chr>           <chr>     <chr>
     ## 1    Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
     ## 2    Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
     ## 3    Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
@@ -322,9 +345,9 @@ coastal_fish_scores
     ## 9    Aland Sea  Archipelago Sea Finland        Kumlinge 2003-2013
     ## 10   Aland Sea  Archipelago Sea Finland      ICES SD 29 1998-2013
     ## ..         ...              ...     ...             ...       ...
-    ## Variables not shown: coastal_water_type (chr), core_indicator (chr), taxa
-    ##   (chr), assessment_method (chr), status (chr), status_comment (chr),
-    ##   score1 (dbl), score2 (dbl), score3 (dbl)
+    ## Variables not shown: coastal_water_type <chr>, core_indicator <chr>, taxa
+    ##   <chr>, assessment_method <chr>, status <chr>, status_comment <chr>,
+    ##   score1 <dbl>, score2 <dbl>, score3 <dbl>.
 
 #### 3.2.2 Plot alternative scores by location
 
@@ -349,7 +372,7 @@ ggplot(filter(temp_long, score_type=="score1")) +
   ggtitle("Scoring Method 1")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-1.png)
 
 ``` r
 #Score 2
@@ -361,7 +384,7 @@ ggplot(filter(temp_long, score_type=="score2")) +
   ggtitle("Scoring Method 2")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-2.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-2.png)
 
 ``` r
 #Score 3
@@ -373,7 +396,7 @@ ggplot(filter(temp_long, score_type=="score3")) +
   ggtitle("Scoring Method 3")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-3.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-3.png)
 
 ### 3.3 Unique indicators per monitoring location
 
@@ -399,7 +422,7 @@ coastal_fish_scores_long
     ## Source: local data frame [360 x 13]
     ## 
     ##    Basin_HOLAS Basin_assessment country monitoring_area    period
-    ##          (chr)            (chr)   (chr)           (chr)     (chr)
+    ##          <chr>            <chr>   <chr>           <chr>     <chr>
     ## 1    Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
     ## 2    Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
     ## 3    Aland Sea        Aland Sea  Sweden          Lagnoe 2002-2013
@@ -411,9 +434,9 @@ coastal_fish_scores_long
     ## 9    Aland Sea  Archipelago Sea Finland        Kumlinge 2003-2013
     ## 10   Aland Sea  Archipelago Sea Finland      ICES SD 29 1998-2013
     ## ..         ...              ...     ...             ...       ...
-    ## Variables not shown: coastal_water_type (chr), core_indicator (chr), taxa
-    ##   (chr), assessment_method (chr), status (chr), status_comment (chr),
-    ##   score_type (chr), score (dbl)
+    ## Variables not shown: coastal_water_type <chr>, core_indicator <chr>, taxa
+    ##   <chr>, assessment_method <chr>, status <chr>, status_comment <chr>,
+    ##   score_type <chr>, score <dbl>.
 
 ``` r
 ## Number of indicators by monitoring location
@@ -431,7 +454,7 @@ indicator_count %>% print(n=60)
     ## Source: local data frame [50 x 3]
     ## 
     ##                              monitoring_area unique_indicator
-    ##                                        (chr)            (int)
+    ##                                        <chr>            <int>
     ## 1  Area south of Zealand (Smalandsfarvandet)                2
     ## 2                                  Arhus Bay                2
     ## 3                                      Askoe                2
@@ -482,7 +505,7 @@ indicator_count %>% print(n=60)
     ## 48                Venoe Bay and Nissum Broad                2
     ## 49                                     Vinoe                2
     ## 50                 Wismar Bight and Salzhaff                2
-    ## Variables not shown: unique_taxa_func (int)
+    ## Variables not shown: unique_taxa_func <int>.
 
 ``` r
 ##which stations have only 1 core indicator type (either have only functional or only key spp)
@@ -508,7 +531,7 @@ indicator_taxa_count %>% print(n=96)
     ## Source: local data frame [96 x 3]
     ## 
     ##                              monitoring_area core_indicator
-    ##                                        (chr)          (chr)
+    ##                                        <chr>          <chr>
     ## 1  Area south of Zealand (Smalandsfarvandet)     Functional
     ## 2  Area south of Zealand (Smalandsfarvandet)    Key species
     ## 3                                  Arhus Bay     Functional
@@ -605,7 +628,7 @@ indicator_taxa_count %>% print(n=96)
     ## 94                                     Vinoe    Key species
     ## 95                 Wismar Bight and Salzhaff     Functional
     ## 96                 Wismar Bight and Salzhaff    Key species
-    ## Variables not shown: unique_taxa_func (int)
+    ## Variables not shown: unique_taxa_func <int>.
 
 ``` r
 ## which locations are missing an indicator type
@@ -615,7 +638,7 @@ indicator_taxa_count %>% filter(monitoring_area %in% one_indicator$monitoring_ar
     ## Source: local data frame [4 x 3]
     ## 
     ##              monitoring_area core_indicator unique_taxa_func
-    ##                        (chr)          (chr)            (int)
+    ##                        <chr>          <chr>            <int>
     ## 1             Hjarbaek Fjord     Functional                1
     ## 2               Odense Fiord    Key species                1
     ## 3 Skive Fiord og Lovns Broad    Key species                1
@@ -637,7 +660,7 @@ ggplot(indicator_taxa_count) + geom_point(aes(monitoring_area, unique_taxa_func)
                                     plot.margin = unit(c(1,1,1,1), "cm")) 
 ```
 
-![](ao_prep_files/figure-markdown_github/unique%20indicators%20monitoring%20region-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/unique%20indicators%20monitoring%20region-1.png)
 
 ``` r
 ##Number of NAs by each indicator
@@ -649,7 +672,7 @@ indicator_taxa_count %>%  spread(core_indicator,unique_taxa_func)%>%
     ## Source: local data frame [1 x 2]
     ## 
     ##   Func_na KeySpp_na
-    ##     (int)     (int)
+    ##     <int>     <int>
     ## 1       3         1
 
 ### 3.4 BHI score
@@ -673,7 +696,7 @@ basin_n_obs
     ## Source: local data frame [15 x 2]
     ## 
     ##               Basin_HOLAS     n
-    ##                     (chr) (int)
+    ##                     <chr> <int>
     ## 1               Aland Sea    12
     ## 2            Arkona Basin    10
     ## 3      Bay of Mecklenburg     8
@@ -703,7 +726,7 @@ monitoring_indicator_mean
     ## Source: local data frame [288 x 5]
     ## 
     ##    Basin_HOLAS monitoring_area core_indicator score_type
-    ##          (chr)           (chr)          (chr)      (chr)
+    ##          <chr>           <chr>          <chr>      <chr>
     ## 1    Aland Sea           Finbo     Functional     score1
     ## 2    Aland Sea           Finbo     Functional     score2
     ## 3    Aland Sea           Finbo     Functional     score3
@@ -715,7 +738,7 @@ monitoring_indicator_mean
     ## 9    Aland Sea      ICES SD 29     Functional     score3
     ## 10   Aland Sea      ICES SD 29    Key species     score1
     ## ..         ...             ...            ...        ...
-    ## Variables not shown: mean_core_monitoring_score (dbl)
+    ## Variables not shown: mean_core_monitoring_score <dbl>.
 
 ``` r
 # indicator mean by HOLAS basin
@@ -729,7 +752,7 @@ basin_indicator_mean
     ## Source: local data frame [90 x 4]
     ## 
     ##     Basin_HOLAS core_indicator score_type mean_core_basin_score
-    ##           (chr)          (chr)      (chr)                 (dbl)
+    ##           <chr>          <chr>      <chr>                 <dbl>
     ## 1     Aland Sea     Functional     score1                0.8750
     ## 2     Aland Sea     Functional     score2                0.9000
     ## 3     Aland Sea     Functional     score3                0.9375
@@ -755,7 +778,7 @@ basin_mean_score
     ## Source: local data frame [45 x 3]
     ## 
     ##           Basin_HOLAS score_type mean_basin_score
-    ##                 (chr)      (chr)            (dbl)
+    ##                 <chr>      <chr>            <dbl>
     ## 1           Aland Sea     score1             0.94
     ## 2           Aland Sea     score2             0.95
     ## 3           Aland Sea     score3             0.97
@@ -778,7 +801,7 @@ basin_mean_score
     ## Source: local data frame [118 x 4]
     ## 
     ##           Basin_HOLAS score_type mean_basin_score bhi_id
-    ##                 (chr)      (chr)            (dbl)  (int)
+    ##                 <chr>      <chr>            <dbl>  <int>
     ## 1           Aland Sea     score1             0.94     35
     ## 2           Aland Sea     score1             0.94     36
     ## 3           Aland Sea     score2             0.95     35
@@ -866,7 +889,7 @@ ggplot(monitoring_indicator_mean) +
   ggtitle("Monitoring Area Indicator Mean Score")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-1.png)
 
 ``` r
 ##plot monitoring area indicator mean scores by HOLAS basin
@@ -880,7 +903,7 @@ ggplot(monitoring_indicator_mean) +
    ggtitle("Monitoring Area Indicator Mean Score by Basin")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-2.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-2.png)
 
 ``` r
 ggplot(monitoring_indicator_mean)+
@@ -891,7 +914,7 @@ ggplot(monitoring_indicator_mean)+
 ggtitle("Monitoring Area Indicator Mean Score by Basin")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-3.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-3.png)
 
 #### 3.4.1.2 Plot the monitoring area mean scores on a map
 
@@ -943,7 +966,7 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-1.png)
 
 ``` r
 ##Plot Scoring Alternative 2
@@ -962,7 +985,7 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-2.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-2.png)
 
 ``` r
 ##Plot Scoring Alternative 3
@@ -981,7 +1004,7 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-3.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-3.png)
 
 #### 3.4.1.3 Plot Basin Indicator scores
 
@@ -1002,7 +1025,7 @@ ggplot(basin_indicator_mean) +
          plot.margin = unit(c(1,1,1,1), "cm")) 
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20basin%20indicator%20scores-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20basin%20indicator%20scores-1.png)
 
 #### 3.4.1.4 Plot Basin mean score across indicators
 
@@ -1020,7 +1043,7 @@ ggplot(basin_mean_score) +
          plot.margin = unit(c(1,1,1,1), "cm")) 
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20basin%20mean%20across%20indicators-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20basin%20mean%20across%20indicators-1.png)
 
 #### 3.4.1.5 Plot BHI Scores
 
@@ -1032,16 +1055,20 @@ There are no scores for Kiel Bay and Gdansk Basin, there for no scores for BHI r
 library(rgdal)
 ```
 
+    ## Warning: package 'rgdal' was built under R version 3.2.5
+
     ## Loading required package: sp
 
-    ## rgdal: version: 1.1-3, (SVN revision 594)
+    ## Warning: package 'sp' was built under R version 3.2.5
+
+    ## rgdal: version: 1.1-10, (SVN revision 622)
     ##  Geospatial Data Abstraction Library extensions to R successfully loaded
     ##  Loaded GDAL runtime: GDAL 2.0.1, released 2015/09/15
     ##  Path to GDAL shared files: C:/R-3.2.3/library/rgdal/gdal
     ##  GDAL does not use iconv for recoding strings.
     ##  Loaded PROJ.4 runtime: Rel. 4.9.1, 04 March 2015, [PJ_VERSION: 491]
     ##  Path to PROJ.4 shared files: C:/R-3.2.3/library/rgdal/proj
-    ##  Linking to sp version: 1.2-2
+    ##  Linking to sp version: 1.2-3
 
 ``` r
 BHIshp = readOGR("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/March2016WkshpPlots/shapefiles", "BHI_regions_plus_buffer_25km")
@@ -1143,7 +1170,7 @@ head(shp_score3@data)
     mtext("AO Score", side = 3, outer=TRUE, line=1.5)
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20BHI%20scores-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20BHI%20scores-1.png)
 
 #### 3.4.1.6 Status review and decisions
 
@@ -1175,7 +1202,7 @@ bhi_score = bhi_mean_score_colors%>%
             filter(score_type == "score2") %>%
             select(bhi_id, mean_basin_score) %>%
             mutate(mean_basin_score = ifelse(bhi_id %in% c(1,4,8,11,15,17,21,20,22,25,31,33,34), NA, mean_basin_score),
-                   dimension= "score")%>%  ## replace these regions with NA because no obs from these regions
+                   dimension= "status")%>%  ## replace these regions with NA because no obs from these regions
             dplyr::rename(rgn_id=bhi_id,
                           score=mean_basin_score)%>%
             mutate(score = round(score*100)) %>%  ## score from 0-100
@@ -1186,7 +1213,7 @@ str(bhi_score)
 
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    42 obs. of  3 variables:
     ##  $ rgn_id   : int  1 2 3 4 5 6 7 8 9 10 ...
-    ##  $ dimension: chr  "score" "score" "score" "score" ...
+    ##  $ dimension: chr  "status" "status" "status" "status" ...
     ##  $ score    : num  NA 20 27 NA 20 20 NA NA 70 70 ...
 
 ``` r
@@ -1213,7 +1240,7 @@ ggplot(plot_score)+
 
     ## Warning: Removed 16 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/final%20score%20object%20plotted-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/final%20score%20object%20plotted-1.png)
 
 ``` r
 ## Plot map
@@ -1231,12 +1258,12 @@ head(shp_scoreFinal@data)
 ```
 
     ##   BHI_ID dimension score basin_name  n    cols
-    ## 1      1     score    NA   Kattegat 10    grey
-    ## 2      2     score    20   Kattegat 10 yellow2
-    ## 3      3     score    27 Great Belt 10 yellow2
-    ## 4      4     score    NA Great Belt 10    grey
-    ## 5      5     score    20  The Sound  2 yellow2
-    ## 6      6     score    20  The Sound  2 yellow2
+    ## 1      1    status    NA   Kattegat 10    grey
+    ## 2      2    status    20   Kattegat 10 yellow2
+    ## 3      3    status    27 Great Belt 10 yellow2
+    ## 4      4    status    NA Great Belt 10    grey
+    ## 5      5    status    20  The Sound  2 yellow2
+    ## 6      6    status    20  The Sound  2 yellow2
 
 ``` r
 par(mfrow=c(1,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
@@ -1247,7 +1274,7 @@ par(mfrow=c(1,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
   mtext("AO Status", side = 3, outer=TRUE, line=1.5)
 ```
 
-![](ao_prep_files/figure-markdown_github/final%20score%20object%20plotted-2.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/final%20score%20object%20plotted-2.png)
 
 5. Calculate Trend of the status
 --------------------------------
@@ -1313,7 +1340,7 @@ geom_hline(yintercept =0) +
   ggtitle("Time Series slope by Indicator type and Taxa")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20slopes-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20slopes-1.png)
 
 ``` r
 ## Only Functional groups
@@ -1328,7 +1355,7 @@ geom_hline(yintercept =0) +
   ggtitle("Time Series slope for Functional Group by Taxa")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20slopes-2.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20slopes-2.png)
 
 ``` r
 ## Only Key Species
@@ -1343,7 +1370,7 @@ geom_hline(yintercept =0) +
   ggtitle("Time Series slope for Key Species by Taxa")
 ```
 
-![](ao_prep_files/figure-markdown_github/plot%20slopes-3.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20slopes-3.png)
 
 ### 5.2 Remove Ringkoebing Fjord and Nissum Fjord
 
@@ -1399,7 +1426,7 @@ basin_n_obs_slope  ## the number of time series here are greater. This could be 
     ## Source: local data frame [14 x 2]
     ## 
     ##                basin_name     n
-    ##                    (fctr) (int)
+    ##                    <fctr> <int>
     ## 1               Aland Sea    12
     ## 2            Arkona Basin    18
     ## 3          Bornholm Basin    11
@@ -1428,7 +1455,7 @@ ggplot(slope) +
   ggtitle("Mean slope by basin and indicator taxa")
 ```
 
-![](ao_prep_files/figure-markdown_github/mean%20slope%20by%20group%20by%20basin-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/mean%20slope%20by%20group%20by%20basin-1.png)
 
 ``` r
 ## new object only mean value
@@ -1466,7 +1493,7 @@ ggplot(slope2) +
   ggtitle("Mean slope by basin and indicator type")
 ```
 
-![](ao_prep_files/figure-markdown_github/mean%20indicator%20slope-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/mean%20indicator%20slope-1.png)
 
 ``` r
 ## new object only basin and indicator mean
@@ -1496,7 +1523,7 @@ ggplot(slope3) +
   ggtitle("Mean slope by basin")
 ```
 
-![](ao_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
 ``` r
 ## new object, only basin mean
@@ -1516,8 +1543,8 @@ slope4 = slope4 %>%
         arrange(bhi_id)
 ```
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
 #### 5.6.1 Plot slopes by BHI region
 
@@ -1532,7 +1559,7 @@ ggplot(slope4) +
 
     ## Warning: Removed 8 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/slope%20bhi%20region%20slopes-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/slope%20bhi%20region%20slopes-1.png)
 
 ``` r
 ## 
@@ -1576,7 +1603,7 @@ par(mfrow=c(1,1))
     mtext("AO Slope for Trend", side = 3, outer=TRUE, line=1.5, cex=2)
 ```
 
-![](ao_prep_files/figure-markdown_github/slope%20bhi%20region%20slopes-2.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/slope%20bhi%20region%20slopes-2.png)
 
 ### 5.1 Final slope object
 
@@ -1616,8 +1643,8 @@ plot_slope = bhi_slope %>%
                    full_join(., basin_n_obs_slope, by="basin_name")
 ```
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factor and character
-    ## vector, coercing into character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
 
 ``` r
 ggplot(plot_slope)+
@@ -1629,7 +1656,7 @@ ggplot(plot_slope)+
 
     ## Warning: Removed 8 rows containing missing values (geom_point).
 
-![](ao_prep_files/figure-markdown_github/plot%20final%20code%20object-1.png)<!-- -->
+![](ao_prep_files/figure-markdown_github/plot%20final%20code%20object-1.png)
 
 6. Export Layers for functions.r
 --------------------------------

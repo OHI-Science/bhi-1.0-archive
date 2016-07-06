@@ -6,6 +6,22 @@ params:
 ---
 # Artisanal Opportunity (AO) Goal Data Prep
 
+## TABLE OF CONTENTS
+
+### Goal Overview..............................Section 1  
+
+### Data.......................................Section 2  
+
+### Status Data layer prepartion...............Section 3  
+
+### Final AO status prepartion.................Section 4  
+
+### Trend data layer preparation...............Section 5  
+
+### Export data layers.........................Section 6  
+
+
+
 ## 1. Goal Overview
 
 ### 1.1 Components
@@ -635,7 +651,7 @@ bhi_score = bhi_mean_score_colors%>%
             filter(score_type == "score2") %>%
             select(bhi_id, mean_basin_score) %>%
             mutate(mean_basin_score = ifelse(bhi_id %in% c(1,4,8,11,15,17,21,20,22,25,31,33,34), NA, mean_basin_score),
-                   dimension= "score")%>%  ## replace these regions with NA because no obs from these regions
+                   dimension= "status")%>%  ## replace these regions with NA because no obs from these regions
             dplyr::rename(rgn_id=bhi_id,
                           score=mean_basin_score)%>%
             mutate(score = round(score*100)) %>%  ## score from 0-100
