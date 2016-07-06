@@ -6,34 +6,71 @@
 
 
 ##----------------------------------------------------#
-
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
 ## set additional directories
-
 dir_eco    = file.path(dir_prep, 'ECO')
+##----------------------------------------------------#
 
 
-## UPDATE when data updated in database
+
+
+##----------------------------------------------------#
+## DATE OF LAST DATA EXTRACTION FROM DATABASE ##
+    ## **update this date when code is run**
+    ## 7 JULY 2016
+##----------------------------------------------------#
+
+
+##----------------------------------------------------#
+## Get GDP data from database ##
+
+## library(RMySQL) # required
+
+
+## STEP 1:
+      ##run your personal mysql config script to read in passcode
+
+
+## STEP 2:
+    ## Connect to the BHI database
+      con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
+      dbListTables(con) # shows all tables in the DB
+
+      ##Fetch NUTS3 GDP data
+      t<-dbSendQuery(con, paste("select * from nama_10r_3gdp_1_Data_download05_12_2016_joined;",sep=""))
+      nuts3_gdp <-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+      head(nuts3_gdp)
+      tail(nuts3_gdp)
+      dbClearResult(t) # clears selection (IMPORTANT!)
+
+
+      ## Fetch NUTS0 (national) GDP data, EU countries
+      t<-dbSendQuery(con, paste("select * from nama_10_gdp_1_Data;",sep=""))
+      nuts0_gdp <-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+      head(nuts0_gdp)
+      tail(nuts0_gdp)
+      dbClearResult(t) # clears selection (IMPORTANT!)
+
+
+      ## Fetch Russian national GDP data
+      t<-dbSendQuery(con, paste("select * from naida_10_gdp_1_Data_cleaned;",sep=""))
+      ru_nat_gdp <-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+      head(ru_nat_gdp)
+      tail(ru_nat_gdp)
+      dbClearResult(t) # clears selection (IMPORTANT!)
 
 
 
-#
-# #get GDP data from database
-# library(RMySQL)
-#
-# #run your personal mysql config script to read in passcode
-#
-# #connect to the BHI database
-# con<-dbConnect(MySQL(),user=conf[,1],password=conf[,2],dbname="BHI_level_1",host=conf[,3], port=3306) # sets up the connection
-# dbListTables(con) # shows all tables in the DB
-#
-# #fetch GPD data from database, use BHI_relevant = 'NUTS3' should draw only NUTS3 data with is associated with a BHI region (database also contains some NUTS2)
-# t<-dbSendQuery(con, paste("select * from nama_10r_3gdp_ID_assigned where BHI_relevant = 'NUTS3';",sep="")) #BHI_relevant = 1 when geo\\time (NUTS3_ID) associated with 1 or more BHI_ID
-# data<-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
-# head(data) #GPD data
-# dbClearResult(t) # clears selection (IMPORTANT!)
-# dbDisconnect(con) # closes connection (IMPORTANT!)
-#
-# #data object overview and clean-up
-# glimpse(data)
+      ## CLOSE CONNECTION
+      dbDisconnect(con) # closes connection (IMPORTANT!)
+
+##----------------------------------------------------#
+
+
+
+##----------------------------------------------------#
+## Write data to csv ##
+write.csv(nuts3_gdp, file.path(dir_eco, "eco_data_database/nuts3_gdp.csv"),row.names = FALSE)
+write.csv(nuts0_gdp, file.path(dir_eco, "eco_data_database/nuts0_gdp.csv"),row.names = FALSE)
+write.csv(ru_nat_gdp, file.path(dir_eco, "eco_data_database/ru_nat_gdp.csv"),row.names = FALSE)
