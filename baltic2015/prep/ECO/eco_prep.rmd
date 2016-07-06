@@ -1,6 +1,9 @@
 ---
-title: "eco_prep"
-output: github_document
+title: "eco_prep.rmd"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
 params: 
     datasource: csv
 ---
@@ -115,8 +118,19 @@ employment (thousands of people) *need to exclude this*
  
 
 ### 2.5 Aligning BHI regions with NUTS3 regions and population density
+NEED TO ADD LINK to MARC methods  
+ 
+NUTS3 GDP data is joined in the database to the area and population density information associated with that NUTS3 and BHI region.
 
-UPDATE with Marc's methods or link
+#### 2.5.1 Guide to column names in regional GDP associated with population density and area:  
+PopTot = total population in the BHI region's 25km buffer overlapping with a NUTS3 region  
+PopUrb = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region  
+PopRur = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region  
+PopTot_density_in_buffer_per_km2" = total population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
+PopUrb_density_in_buffer_per_km2 = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
+PopRur_density_in_buffer_per_km2 = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
+NUTS3_area_in_BHI_buffer_km2 = area of a NUTS3 region associated with the 25km buffer of a BHI region  
+
 
 
 ## 3. Goal Model
@@ -151,9 +165,9 @@ NEED TO UPDATE - this may change
 This should be check and updated when data are updated in database. Data should be extract from database by ´eco_prep_database_call.r´ and saved to folder ´eco_data_database´
 
 ```{r read in regional gdp}
-regional_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nama_10r_3gdp_1_Data_download05-12-2016.csv'), sep=";")
+regional_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nuts3_gdp.csv'))
 
-dim(regional_gdp) #20760     6
+dim(regional_gdp) #21375    18
 
 str(regional_gdp)
 ```
@@ -163,55 +177,269 @@ str(regional_gdp)
 unique(regional_gdp$UNIT) ## Million euro 
 
 regional_gdp = regional_gdp %>%
+               select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2,-HELCOM_ID)%>% ## remove data not needed
               dplyr::rename(year = TIME, nuts3 = GEO, nuts3_name = GEO_LABEL,
-                            unit = UNIT, value = Value, flag_notes = Flag_and_Footnotes)%>%
+                            unit = UNIT, value = Value, flag_notes = Flag_and_Footnotes,
+                            rgn_id = BHI_ID,pop = PopTot,pop_km2 = PopTot_density_in_buffer_per_km2,
+                            country_abb = CNTR_CODE,country=rgn_nam, basin= Subbasin,
+                            area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)%>%
               mutate(nuts3 = as.character(nuts3), 
-                     nuts3_name = as.character(nuts3_name))
+                     nuts3_name = as.character(nuts3_name),
+                     unit = as.character(unit),
+                     country_abb=as.character(country_abb),
+                     country = as.character(country),
+                     basin = as.character(basin))
+
+str(regional_gdp)
+
 
 
 ```
 
+#### 5.1.3 Find NUTS3 regions assigned to incorrect BHI region
+Due to small differences in the shapefiles, some NUTS3 regions assigned to a BHI region belonging to a different country.  
+```{r}
+## find mis-assigned NUTS and BHI regions
+mis_assigned =regional_gdp %>% 
+  filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia",country)) %>% ## include Russia because some mis-assigned
+select(country,country_abb, rgn_id,nuts3) %>% distinct() %>% arrange(rgn_id,country) %>%
+  dplyr::rename(BHI_ID = rgn_id,
+                country_bhi = country,
+                country_abb_nuts = country_abb)
+#write to csv
+#write.csv(mis_assigned, file.path(dir_eco,"mis_assigned_bhi_nuts3.csv"),row.names = FALSE)
+```
+
+#### 5.1.4 Manually fix NUTS3 regions assigned to incorrect BHI region
+```{r fix mis-assigned NUTS3 regions}
+## upload corrected files - the file exported in 5.1.3 was reviewed and corrected manually
+correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"),sep=";", stringsAsFactors = FALSE)
+str(correct_assign)
+
+regional_gdp1 = full_join(regional_gdp,correct_assign,
+                          by=c("country"="country_bhi", "country_abb"="country_abb_nuts",
+                               "rgn_id"="BHI_ID", "nuts3"))
+
+## replace the country and rgn_id with the "corrected column"
+regional_gdp1 = regional_gdp1 %>%
+                select(-country,-rgn_id,-MISASSIGNED,-BHI_ID_manual,-country_manual)%>%
+                dplyr::rename(rgn_id = correct_BHI_ID,
+                              country= correct_country) %>%
+                arrange(nuts3)
+
+```
+
+#### 5.1.5 check NA in final years
+```{r check NA in 2014}
+##check 2014 - is max year?
+regional_gdp1 %>% 
+  select(country_abb,year,value)%>%
+  group_by(country_abb)%>%
+  summarise(max_year = max(year))%>%
+  ungroup()%>%
+  left_join(.,select(regional_gdp1, country_abb,year,value,nuts3,rgn_id),
+            by=c("country_abb","max_year"="year"))%>%
+  filter(!is.na(rgn_id))%>%
+  print(n=100)%>%
+  filter(!is.na(value))%>%
+  select(country_abb)%>%
+  distinct()
+
+## only Estonia and Denmark provide 2014 data
+
+## check 2013
+regional_gdp1 %>% 
+  select(country_abb,year,value,rgn_id,nuts3)%>%
+  filter(year == 2013) %>%
+  filter(!is.na(rgn_id))%>%
+  filter(!is.na(value))%>%
+  select(country_abb)%>%
+  distinct()
+## all countries have 2013 data
+
+```
+
+
 ### 5.2 Data associations with Baltic and BHI
 #### 5.2.1 Filter for Baltic countries
+Only NUTS3 regions associated with a BHI ID have a country name, so this effectively selects the NUTS3 regions on the Baltic Coast  
 ```{r filter for baltic countries}
 ## read in EU country abbreviations and names
-eu_lookup = read.csv(file.path(dir_eco, 'EUcountrynames.csv'), sep=";")  
+##eu_lookup = read.csv(file.path(dir_eco, 'EUcountrynames.csv'), sep=";")  
 
 ## add country names to regional_gdp and filter for Baltic countries
-regional_gdp2 = regional_gdp %>%
-               mutate(country_abb = substr(nuts3,1,2))%>%
-               left_join(., eu_lookup, by="country_abb") %>%
+regional_gdp2 = regional_gdp1 %>%
                filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country))
                
 str(regional_gdp2)
 unique(regional_gdp2$country)
+unique(regional_gdp2$country_abb)
 
 
 ```
 
-#### 5.2.2 Filter for regions associated with BHI regions
+#### 5.2.2 Remove 2014
+Only 2 countries have data
+```{r remove 2014 from regional data}
+regional_gdp2 = regional_gdp2 %>%
+                filter(year < 2014)
 
-#### 5.2.3 Plot regional GDP, divide by country
+```
+
+
+#### 5.2.2 Plot regional GDP, divide by country
+Check to make sure each BHI region is only associated with NUTS regions from a single country
 ```{r plot regional gdp raw}
+ggplot(regional_gdp2) +
+  geom_point(aes(year, value, col=nuts3))+
+  facet_wrap(~country)+
+  ylab("GDP (million euro)")+
+  #guides(color="none")+
+  ggtitle("regional GDP by countries")
 
 
+ggplot(regional_gdp2) +
+  geom_point(aes(year, value, col=country),size=.7)+
+  facet_wrap(~rgn_id, scales="free_y")+
+  ylab("GDP (million euro)")+
+  ggtitle("NUTS3 GDP by BHI region")
+
+
+```
+
+#### 5.2.3 Check data flags
+```{r check regional data data flags}
+regional_gdp2 %>% filter(!is.na(flag_notes))
+## no data flags
+
+regional_gdp2 = regional_gdp2 %>%
+                select(-flag_notes)
 
 ```
 
 
 ### 5.3 BHI region GDP
+Each regional GDP is divided among BHI regions proportional to the population of the NUTS3 region associated with the BHI region.  
 
-#### 5.3.1 Population density in 25km for each NUTS3 region
+Currently the population of the entire NUTS3 region is not extracted so the total GDP of the NUTS3 region is divided among the BHI regions, rather than dividing the fraction of the NUTS3 GDP associated with the NUTS3 25km coastal population.  
 
-#### 5.3.2 Percent NUTS3 region buffer pop den per BHI region
+#### 5.3.1 NUTS3 - BHI region lookup
+```{r nuts3 and bhi region lookup}
+nuts3_bhi_lookup = regional_gdp2 %>%
+                   select(rgn_id,nuts3)%>%
+                   distinct()
 
-#### 5.3.3 GDP allocated to BHI regions
-
-#### 5.3.4 BHI region total GDP
-
-#### 5.3.5 Select years
+```
 
 
+#### 5.3.2 Identify total NUTS3 population in the 25km buffer
+Sum across BHI regions associated with a NUTS3. This is the same for all years as population data comes from a single year.  
+
+```{r NUTS3 population in the buff }
+
+nuts3_buffer_pop= regional_gdp2 %>%
+                  select(nuts3,pop,area_nuts3_in_bhi_buffer)%>%
+                  distinct()%>% ## because duplicated for each year
+                  group_by(nuts3)%>%
+                  summarise(pop_nuts3 = sum(pop),
+                            area_nuts3 = sum(area_nuts3_in_bhi_buffer))%>%
+                  ungroup()
+
+
+```
+
+
+#### 5.3.3 Join the total NUTS3 area and population to the per BHI region
+```{r join total nuts3 area and pop to bhi region data}
+nuts3_bhi_join  = nuts3_buffer_pop %>%
+                  full_join(., regional_gdp2, by="nuts3")
+
+
+```
+
+
+#### 5.3.4 Calculate the GDP fraction for BHI region based on the population fraction
+
+```{r calculation GDP fraction based on population fraction}
+nuts3_bhi_join2 = nuts3_bhi_join %>%
+                  mutate(bhi_pop_prop = pop / pop_nuts3,
+                         bhi_gdp_prop = value * bhi_pop_prop) %>%
+                  arrange(rgn_id, year)
+
+
+nuts3_bhi_join2 %>% select(nuts3, country,pop_nuts3, pop,bhi_pop_prop)%>%distinct()%>%arrange(nuts3)
+  
+```
+
+#### 5.3.5 Plot the population fraction and GDP fraction from each NUTS3 associated with each BHI region
+```{r plot pop and gdp fraction in each bhi}
+ggplot(nuts3_bhi_join2)+
+  geom_point(aes(rgn_id,bhi_pop_prop,colour=nuts3))+
+  facet_wrap(~country)+
+  ylim(0,1)+
+  ggtitle("Population Fraction of NUTS3 regions for each BHI region")
+  
+ggplot(nuts3_bhi_join2)+
+  geom_point(aes(year,bhi_gdp_prop,colour=nuts3),size=.8)+
+  facet_wrap(~rgn_id, scales="free_y")+
+  guides(colour="none")+
+  ggtitle("NUTS3 GDP allocated to each BHI region based on population")
+  
+
+```
+
+#### 5.3.6 Calculate the total BHI region buffer population and total BHI region GDP
+```{r calculate bhi region pop and gdp}
+
+bhi_gdp = nuts3_bhi_join2 %>%
+          group_by(rgn_id,year)%>%
+          summarise(bhi_pop = sum(pop),
+                    bhi_gdp = sum(bhi_gdp_prop))%>%
+          ungroup()%>%
+          mutate(bhi_gdp_per_capita = bhi_gdp/bhi_pop)
+
+str(bhi_gdp)
+
+```
+
+#### 5.3.7 Plot Total GDP per BHI region
+```{r plot total gdp per BHI region}
+ggplot(bhi_gdp)+
+  geom_point(aes(year,bhi_gdp),size=1)+
+  facet_wrap(~rgn_id, scales="free_y")+
+  ylab("GDP (million euro)")+
+  ggtitle("BHI region GDP")
+
+```
+
+#### 5.3.7 Plot GDP per capita (population in the 25km buffer) by BHI region
+```{r plot per capita gdp per BHI region}
+ggplot(bhi_gdp)+
+  geom_point(aes(year,bhi_gdp_per_capita),size=1)+
+  facet_wrap(~rgn_id, scales="free_y")+
+  ylab("GDP per capita (million euro)")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("BHI region per capita GDP")
+
+```
+
+### 5.4 Data layer for layers
+Will export per capita GDP. This value only changes because of changes in GDP size, the population size is static because only have data from 2005.  
+### 5.4.1 Prepare object for csv
+```{r prepare regional bhi gdp for layers}
+bhi_gdp_layer = bhi_gdp %>%
+                select(rgn_id,year,bhi_gdp_per_capita)
+
+
+```
+### 5.4.2
+
+```{r write regional gdp bhi layer}
+write.csv(bhi_gdp_layer, file.path(dir_layers, "le_gdp_region_bhi2015.csv"),row.names=FALSE)
+
+```
 
 
 ## 6.Country GDP prep
@@ -222,14 +450,14 @@ unique(regional_gdp2$country)
 
 ```{r read in country gdp}
 ## read EU national GDP
-country_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nama_10_gdp_1_Data.csv'), sep=";")
+country_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nuts0_gdp.csv'))
  dim(country_gdp) #[1] 4428    8
  str(country_gdp)
  
 ## read in Russian national GDP
-russian_nat_gdp = read.csv(file.path(dir_eco, 'eco_data_database/naida_10_gdp_1_Data_cleaned.csv'), sep=";")
+russian_nat_gdp = read.csv(file.path(dir_eco, 'eco_data_database/ru_nat_gdp.csv'))
 
-dim(russian_nat_gdp) #16  6
+dim(russian_nat_gdp) #16 6
 str(russian_nat_gdp)
 
 ```
@@ -275,10 +503,11 @@ unique(country_gdp$unit)
 ##[3] Chain linked volumes, index 2010=100
 
 country_gdp = country_gdp %>%
+              mutate(unit = as.character(unit))%>%
               filter(unit == "Current prices, million euro")%>%
               mutate(unit = "million euro")
 
-dim(country_gdp) #[1] 576   8
+dim(country_gdp) #[1] 128   8
 
 ## Russia GDP, clean unit code
 russian_nat_gdp = russian_nat_gdp %>%
@@ -337,8 +566,121 @@ ggplot(country_gdp3)+
 
 ```
 
+### 6.4 Per capita national gdp
+
+#### 6.4.1 read in population data
+These data are in the folder 'eco_data_database' but have not yet been taken from server into BHI database
+```{r read in national population data}
+eu_pop = read.csv(file.path(dir_eco, 'eco_data_database/demo_gind_1_Data_cleaned.csv'), sep=";", stringsAsFactors = FALSE)
+
+str(eu_pop)
+dim(eu_pop)
+
+ru_pop = read.csv(file.path(dir_eco, 'eco_data_database/naida_10_pe_1_Data_cleaned.csv'), sep=";", stringsAsFactors = FALSE)
+
+str(ru_pop)
+dim(ru_pop)
+
+
+```
+
+
+#### 6.4.2 clean population data
+EU population size information:  
+Population on 1 January: Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.  
+[Source](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)  
+```{r clean national population data}
+## EU countries
+eu_pop2 = eu_pop %>%
+          select(-TIME_LABEL)%>%
+          dplyr::rename(year = TIME,
+                        country_abb = GEO,
+                        country= GEO_LABEL,
+                        unit = INDIC_DE,
+                        value = Value,
+                        flag_notes = Flag.and.Footnotes)%>%
+          filter(unit == "Population on 1 January - total " )%>% # select this meauresure of population size
+          mutate(value = ifelse(value== ":", NA, value),
+                value= as.numeric(value))
+
+
+## select only Baltic countries and data since 2000
+eu_pop3 = eu_pop2 %>%
+          mutate(country = ifelse(country =="Germany (until 1990 former territory of the FRG)","Germany",country),
+                 country = ifelse(country =="Germany (including former GDR)","Germany",country),
+                 country_abb = ifelse(country_abb == "DE_TOT","DE",country_abb))%>%
+          filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country)) %>%
+          filter(year >=2000)
+
+str(eu_pop3)           
+
+## check data flags
+eu_pop3 %>% select(flag_notes)%>%distinct()
+eu_pop3 %>% filter(flag_notes == "b")  ## b = break in time series -- this should be fine
+
+eu_pop3 = eu_pop3 %>%
+          select(-flag_notes)
+
+##-----------------------------------------------------------##
+## russian data
+
+ru_pop2 = ru_pop%>%
+          dplyr::rename(year = TIME,
+                        country_abb = GEO,
+                        country= GEO_LABEL,
+                        unit = NA_ITEM,
+                        unit_type = UNIT_LABEL,
+                        value = Value,
+                        flag_notes = Flag.and.Footnotes)%>%
+          filter(unit=="Total population national concept") %>% ## other unit is employment
+          mutate(value = value *1000)%>% ## convert value to total people not in thousands unit
+         select(-unit_type,-UNIT)%>%
+        filter(year>=2000)
+
+##check data flags
+ru_pop2 %>% select(flag_notes)%>%distinct()
+ru_pop2 %>% filter(flag_notes =="e") ## population estimated in 2012 and 2013
+
+ru_pop2 = ru_pop2 %>%
+          select(-flag_notes)
+str(ru_pop2)
+```
+
+#### 6.4.3 Combine EU and Russian data
+```{r combined national pop data}
+nat_pop = bind_rows(eu_pop3, ru_pop2)
+
+## add column for the 2005 value, should I use to be consistent with regional gdp
+nat_pop_2005 = nat_pop %>%
+               filter(year==2005) %>%
+               dplyr::rename(pop_2005 = value)%>%
+               select(country, pop_2005)
+
+nat_pop = nat_pop %>%
+          full_join(., nat_pop_2005, by="country")
+
+```
+
+
+
+#### 6.4.4 Plot national population over time
+```{r plot national population}
+
+
+ggplot(nat_pop)+
+  geom_point(aes(year,value))+
+  geom_hline(aes(yintercept = pop_2005))+
+  facet_wrap(~country, scales="free_y")+
+  ylab("Number of people")+
+  ggtitle("National Population Size")
+
+```
+
+### 6.5 Per capita National GDP
+
+####
+
 ### 6.3 Join BHI region id to countries
 
-### Population data - get per capita GDP
 
 ### 6.4 Create and export country GDP data layer
