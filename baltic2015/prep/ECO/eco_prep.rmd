@@ -134,14 +134,17 @@ NUTS3_area_in_BHI_buffer_km2 = area of a NUTS3 region associated with the 25km b
 
 
 ## 3. Goal Model
+### 3.1 Status
+Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r)  
+c = current year, r=reference year  
+reference point is a moving window (single year value)  
+Region is the BHI region which is comprised of GDP data from the associated NUTS3 regions
+data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out) 
+each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region  
+Data are in per capita GDP in millions of euro, using only population size from 2005 for all years.  
 
-'Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r)  
-'c = current year, r=reference year  '
-'reference point is a moving window (single year value)
-'Region is the BHI region which is comprised of GDP data from the associated NUTS3 regions
-'data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out)  
-'each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region
-
+### 3.2 Trend
+Trend will be calculated based on the last 5 status years by fitting a linear model.
 
 
 
@@ -555,6 +558,14 @@ country_gdp3 = bind_rows(select(country_gdp2, year, country, country_abb, unit, 
                     select(russian_nat_gdp, year, country, country_abb, unit, value, flag_notes))
 str(country_gdp3)
 
+## check flag_notes
+country_gdp3 %>% select(flag_notes)%>% distinct()
+country_gdp3%>% filter(flag_notes == "estimated") ## two years GDP is estimated for Russia, 2000,2001  ## elimate column
+
+
+country_gdp3 = country_gdp3 %>%
+               select(-flag_notes)
+
 ```  
 
 #### 6.2.3 Plot National GDP
@@ -677,10 +688,137 @@ ggplot(nat_pop)+
 ```
 
 ### 6.5 Per capita National GDP
+Calculate the national per capita GDP. Do in two different ways: (1) use the population in each year to calculate per capita GDP and (2) use the 2005 population in every year, such that the change in per capita GDP only reflect GDP change not population changes. This is to explore the consequences because regional per capita GDP is only possible by the second approach.  
 
-####
+#### 6.5.1 Join GDP and population data
+```{r join nat gdp and pop}
+## rename some columns for clarity
+str(country_gdp3)
+str(nat_pop)
 
-### 6.3 Join BHI region id to countries
+country_gdp3 = country_gdp3 %>%
+               dplyr::rename(unit_gdp = unit,
+                             gdp = value)
 
 
-### 6.4 Create and export country GDP data layer
+nat_pop = nat_pop %>%
+          dplyr::rename(unit_pop = unit,
+                        pop_size = value)
+
+
+## join
+nat_gdp_pop = full_join(country_gdp3,nat_pop,
+                        by=c("country","country_abb","year"))%>%
+              arrange(country,year)
+
+
+dim(nat_gdp_pop) ##192  8
+str(nat_gdp_pop)
+nat_gdp_pop %>% select(country)%>%distinct() #check country list
+
+```
+
+#### 6.5.2 Calculate national per capita GDP two ways
+```{r national per capita gdp calculated}
+nat_gdp_pop = nat_gdp_pop %>%
+              mutate(gdp_per_cap = gdp / pop_size,
+                     gdp_per_cap_2005 = gdp / pop_2005)
+
+```
+
+
+#### 6.5.3 Plot national per capita GDP calcuated two ways
+Note, there is no population data for Russia in 2014, that is why there is a difference in the number of data points between the two methods.  
+```{r plot nat per cap gdp both calculations}
+ggplot(nat_gdp_pop)+
+  geom_point(aes(year, gdp_per_cap, colour=country))+
+  geom_line(aes(year, gdp_per_cap, colour=country))+
+  ylab("GDP per capita (million euro)")+
+  ggtitle("National per capita GDP, population size by year")
+
+ggplot(nat_gdp_pop)+
+  geom_point(aes(year, gdp_per_cap_2005, colour=country))+
+  geom_line(aes(year, gdp_per_cap_2005, colour=country))+
+  ylab("GDP per capita (million euro)")+
+  ggtitle("National per capita GDP, population size fixed to 2005")
+
+
+## comparison plot
+ggplot(nat_gdp_pop)+
+  geom_point(aes(year, gdp_per_cap_2005), colour="green",shape=0)+
+  geom_line(aes(year, gdp_per_cap_2005),colour="green")+
+    geom_point(aes(year, gdp_per_cap),shape=1)+
+  geom_line(aes(year, gdp_per_cap))+
+  facet_wrap(~country, scales="free_y")+
+  ylab("GDP per capita (million euro)")+
+  ggtitle("National per capita GDP, compare population size alternatives")
+
+
+```
+
+#### 6.5.4 Decision on national per capita GDP
+Seems to have relatively little effect.  Choose to use a fixed population size (2005) so that it is consistent with the regional GDP approach.
+```{r clean up nat gpd per cap so only one method}
+nat_gdp_pop = nat_gdp_pop %>%
+              select(year, country, country_abb, unit_gdp, gdp_per_cap_2005)%>%
+              mutate(unit_gdp = "per capita million euro")
+
+```
+
+### 6.6 Join BHI regions on countries
+
+#### 6.6.1 Load BHI region lookup
+```{r load region basin country lookup}
+bhi_lookup = read.csv(file.path(dir_eco, "bhi_basin_country_lookup.csv"), sep=";",stringsAsFactors = FALSE) %>%
+            select(rgn_nam, BHI_ID)%>%
+            dplyr::rename(country= rgn_nam,
+                          rgn_id = BHI_ID)
+
+str(bhi_lookup)
+
+```
+
+#### 6.6.2 Join BHI region lookup and national GDP data
+```{r join region lookup and nat gdp}
+
+rgn_nat_gdp = full_join(bhi_lookup,nat_gdp_pop,
+                        by="country")
+
+str(rgn_nat_gdp)
+
+## check unique rgns
+rgn_nat_gdp %>% select(rgn_id) %>% distinct() %>% nrow() ##42
+
+
+```
+
+#### 6.6.3 plot national gdp by region to check
+
+```{r plot nat gdp by bhi region}
+ggplot(rgn_nat_gdp)+
+  geom_point(aes(year,gdp_per_cap_2005))+
+  facet_wrap(~rgn_id)+
+  ylab("GDP per capita (million euro)")+
+  ggtitle("National Per Capita GDP by BHI region")
+
+
+```
+
+### 6.7 Natioanl GDP Data layer for layers
+Will export per national capita GDP. This value only changes because of changes in GDP size, the population size is static because using fixed population size from 2005.  
+
+#### 6.7.1 Prepare object for csv
+```{r prepare national bhi gdp for layers}
+bhi_nat_gdp_layer = rgn_nat_gdp %>%
+                      select(rgn_id,year,gdp_per_cap_2005)%>%
+                      filter(year < 2014) ## so years are consistent with regional gdp
+
+str(bhi_nat_gdp_layer)
+```
+#### 6.7.2
+
+```{r write national gdp bhi layer}
+write.csv(bhi_nat_gdp_layer, file.path(dir_layers, "le_gdp_country_bhi2015.csv"),row.names=FALSE)
+
+```
+

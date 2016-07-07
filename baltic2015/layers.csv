@@ -77,9 +77,9 @@ Data sources:
 
 - [Eurostat](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp)
 
-",bhi_gdp_per_capita,mio euro,le_gdp_region_bhi2015.csv,population_inland25km,global GDP data were applied to each region after weighting by each region's coastal population.,le_gdp,~/github/ohi-global/eez2014/layers/le_gdp.csv,global,rgn_id,,,year,bhi_gdp_per_capita,,TRUE,2000,2012,"113,8","91799,25",FALSE,,,,42,FALSE
+",bhi_gdp_per_capita,mio euro per capita,le_gdp_region_bhi2015.csv,population_inland25km,global GDP data were applied to each region after weighting by each region's coastal population.,le_gdp,~/github/ohi-global/eez2014/layers/le_gdp.csv,global,rgn_id,,,year,bhi_gdp_per_capita,,TRUE,2000,2012,"113,8","91799,25",FALSE,,,,42,FALSE
 LE,le_jobs_sector_year,Jobs,gapfilled,value,jobs,le_jobs_sector_year_gl2014.csv,equal,global trends were applied equally to each region. ,le_jobs_sector_year,~/github/ohi-global/eez2014/layers/le_jobs_sector_year.csv,global,rgn_id,,sector,year,value,,TRUE,1998,2010,0,410244,FALSE,,,,42,FALSE
-ECO,le_gdp_country,GDP per country,"Gross Domestic Product (GDP) data (nominal values) from Eurostat.
+ECO,le_gdp_country,national per capita GDP,"Gross Domestic Product (GDP) data (nominal values) from Eurostat.
 
 
 
@@ -89,8 +89,8 @@ Data sources:
 
 - [Eurostat](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp)
 
-",gdp_mio_euro,EURO,le_gdp_country_bhi2015.csv,equal,global unemployment percentages were applied equally to each region. ,le_unemployment,~/github/ohi-global/eez2014/layers/le_unemployment.csv,global,rgn_id,,,year,gdp_mio_euro,,TRUE,2000,2012,"6170,8",2754860,FALSE,,,,42,FALSE
-LE,le_wage_sector_year,Wages,gapfilled,value,2010 USD,le_wage_sector_year_gl2014.csv,equal,global wages were applied equally to each region. ,le_wage_sector_year,~/github/ohi-global/eez2014/layers/le_wage_sector_year.csv,global,rgn_id,,sector,year,value,,TRUE,1993,2008,"307,699",238506,FALSE,,,,42,FALSE
+",gdp_per_cap_2005,mio euro per capita,le_gdp_country_bhi2015.csv,equal,global unemployment percentages were applied equally to each region. ,le_nat_gdp,~/github/ohi-global/eez2014/layers/le_unemployment.csv,global,rgn_id,,,year,gdp_per_cap_2005,,TRUE,2000,2012,"6170,8",2754860,FALSE,,,,42,FALSE
+LE,le_wage_sector_year,Wages,gapfilled,value,2010 USD,le_wage_sector_year_gl2014.csv,equal,global wages were applied equally to each region. ,le_wage_sector_year,~/github/ohi-global/eez2014/layers/le_wage_sector_year.csv,global,rgn_id,,sector,year,value,,TRUE,1993,2008,307699,238506,FALSE,,,,42,FALSE
 LE,le_workforcesize_adj,Modeled Livelihoods & Economies data,adjusted workforce size,jobs,jobs,le_workforcesize_adj_sc2014-popn-inland25km.csv,population_inland25km,global workforce data were applied to each region after weighting by each region's coastal population.,le_workforcesize_adj,~/github/ohi-global/eez2014/layers/le_workforcesize_adj.csv,global,rgn_id,,,year,jobs,,TRUE,1990,2012,"12598,3",14542100,FALSE,,,,42,FALSE
 LE pressures,le_sector_weight,Jobs weighting,Jobs weighting by sector (defaulting to 1),weight,value,le_sector_weight_gl2014.csv,equal,,le_sector_weight,~/github/ohi-global/eez2014/layers/le_sector_weight.csv,global,rgn_id,,sector,,weight,,TRUE,,,1,1,TRUE,,,,42,FALSE
 LIV ECO,le_popn,Total population by subregion,Population data from The World Bank,count,count,le_popn_gl2014.csv,equal,,le_popn,~/github/ohi-global/eez2014/layers/le_popn.csv,global,rgn_id,,,year,count,,TRUE,1960,2012,1215650,148689000,FALSE,,,,42,FALSE
@@ -565,7 +565,7 @@ Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 
-",resilience score,resilience score,mariculture_gl2014.csv,equal,global resilience data were applied equally to all regions.,mariculture,~/github/ohi-global/eez2014/layers/mariculture.csv,global,rgn_id,,,,resilience.score,,TRUE,,,"0,625","0,958333",TRUE,,,,42,FALSE
+",resilience score,resilience score,mariculture_gl2014.csv,equal,global resilience data were applied equally to all regions.,mariculture,~/github/ohi-global/eez2014/layers/mariculture.csv,global,rgn_id,,,,resilience.score,,TRUE,,,625,"0,958333",TRUE,,,,42,FALSE
 resilience,g_msi_gov, MSI sustainability and regulations,"Mariculture practice assessment criteria from the Mariculture Sustainability Index (MSI).
 
 
