@@ -865,16 +865,17 @@ ECO = function(layers){
 
   ## Status model: Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r)
 
+  ## Updated 7 July 2016, Jennifer Griffiths. If there is no data for status or trend, is NA
 
 
   ## read in data
   ## in data prep, year range included is selected
     ##if different time periods exisit for region and country, NAs for status will be produced
   le_gdp_region   = SelectLayersData(layers, layers='le_gdp_region') %>%
-    dplyr::select(rgn_id = id_num, year, gdp_mio_euro = val_num)
+    dplyr::select(rgn_id = id_num, year, rgn_gdp_per_cap = val_num)
 
   le_gdp_country  = SelectLayersData(layers, layers='le_gdp_country') %>%
-    dplyr::select(rgn_id = id_num, year, gdp_mio_euro = val_num)
+    dplyr::select(rgn_id = id_num, year, nat_gdp_per_cap = val_num)
 
 
   ## temp readin TODO: SelectLayers()
@@ -889,7 +890,7 @@ ECO = function(layers){
 
   ## ECO region: prepare for calculations with a lag
   eco_region = le_gdp_region %>%
-    dplyr::rename(gdp = gdp_mio_euro) %>%
+    dplyr::rename(gdp = rgn_gdp_per_cap) %>%
     filter(!is.na(gdp)) %>%
     group_by(rgn_id)%>%
     mutate(year_ref = lag(year, lag_win, order_by=year),
@@ -902,7 +903,7 @@ ECO = function(layers){
 
   ## ECO country
   eco_country = le_gdp_country %>%
-    dplyr::rename(gdp = gdp_mio_euro) %>%
+    dplyr::rename(gdp = nat_gdp_per_cap) %>%
     filter(!is.na(gdp)) %>%
     group_by(rgn_id)%>%
     mutate(year_ref = lag(year, lag_win, order_by=year),
@@ -919,15 +920,18 @@ ECO = function(layers){
                mutate(status = pmin(1, Xeco)) # status calculated cannot exceed 1
 
   eco_status = eco_status_calc%>%
-              group_by(rgn_id)%>%
-              filter(year== max(year))%>%       #select status as most recent year
-              ungroup()%>%
-              full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
-              mutate(score=round(status*100),   #scale to 0 to 100
-                     dimension = 'status')%>%
-              select(region_id = rgn_id,score, dimension)%>%
-              mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
-                                    ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
+    group_by(rgn_id)%>%
+    filter(year== max(year))%>%       #select status as most recent year
+    ungroup()%>%
+    full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
+    mutate(score=round(status*100),   #scale to 0 to 100
+           dimension = 'status')%>%
+    select(region_id = rgn_id,score, dimension)
+
+  ## this is where could change NA value of status to zero
+  #%>%
+  ##mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
+  ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
 
 
   ## calculate trend for 5 years (5 data points)
