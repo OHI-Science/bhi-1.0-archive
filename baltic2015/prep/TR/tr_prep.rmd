@@ -1,0 +1,123 @@
+---
+title: "tr_prep.rmd"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+
+# Prepare Data Layers for Tourism and Recreation (TR) Goal 
+
+## 1. Background
+
+## 2. Data
+
+### 2.1 Regional Accommodation Stays Data
+
+Eurostat dataset on Nights spent at tourist accommodation establishments by NUTS 2 regions [tour_occ_nin2](http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2&lang=en)
+
+Download Date: 10 Feb 2016, Download By: Jennifer Griffiths  
+
+[Metadata](http://ec.europa.eu/eurostat/cache/metadata/en/tour_occ_esms.htm)
+
+Selected all Geographic areas (includes NUTS0, NUTS1, NUTS2)  
+
+Selected all accommodation categories combined:Hotels; holiday and other short-stay 
+accommodation; camping grounds, recreational vehicle parks and trailer parks  
+
+
+Select all years available: 1990-2014  
+
+Missing data indicated by colon (:)  
+
+### 2.1 Regional Accommodation Stays Coastal/Non-Coastal Data
+
+Eurostat dataset on Nights spent at tourist accommodation establishments by coastal and non-coastal area and by NUTS 2 regions (from 2012 onwards) [tour_occ_nin2c](http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2c&lang=en)  
+Download Date: 10 Feb 2016, Download By: Jennifer Griffiths  
+
+[Metadata](http://ec.europa.eu/eurostat/cache/metadata/en/tour_occ_esms.htm)  
+
+Selected all Geographic areas (includes NUTS0, NUTS1, NUTS2)  
+
+Selected all accommodation categories combined:Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks  
+
+Selected Total, and split between Coastal & non-coastal regions  
+
+Selected years available: 2012-2014  
+
+Missing data indicated by colon (:)  
+
+ 
+
+## 3. Goal Model
+
+
+
+## 4. Data Layer Preparation
+
+
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+dir_tr    = file.path(dir_prep, 'TR')
+
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_tr, 'tr_prep.rmd') 
+```
+
+### 4. Data clean and organize
+
+#### 4.1 Read in data
+```{r TODO, echo=FALSE, message=FALSE}
+## read in data...
+
+## plot data...
+
+```
+
+
+
+
+## 5. Prepare and Save Data Layers
+
+## 6. Explore Status and Trend calculation
+
+## 7. Issues or Concerns
