@@ -18,7 +18,7 @@ dir_eco    = file.path(dir_prep, 'ECO')
 ##----------------------------------------------------#
 ## DATE OF LAST DATA EXTRACTION FROM DATABASE ##
     ## **update this date when code is run**
-    ## 7 JULY 2016
+    ## 8 JULY 2016
 ##----------------------------------------------------#
 
 
@@ -60,6 +60,22 @@ dir_eco    = file.path(dir_prep, 'ECO')
       tail(ru_nat_gdp)
       dbClearResult(t) # clears selection (IMPORTANT!)
 
+      ## Fetch Finnish population data from buffer
+      t<-dbSendQuery(con, paste("select * from NUTS3_BHI_ID_Pop_density_in_buffer;",sep=""))
+      fi_pop <-fetch(t,n=-1) # loads selection and assigns it to variable 'data'
+      head(fi_pop)
+      tail(fi_pop)
+
+      ## select only 3 Finnish NUTS3
+      fi_pop = fi_pop %>%
+               filter(NUTS_ID %in% c("FI186","FI182","FI181"))
+
+      head(fi_pop)
+      tail(fi_pop)
+
+
+      dbClearResult(t) # clears selection (IMPORTANT!)
+
 
 
       ## CLOSE CONNECTION
@@ -74,3 +90,5 @@ dir_eco    = file.path(dir_prep, 'ECO')
 write.csv(nuts3_gdp, file.path(dir_eco, "eco_data_database/nuts3_gdp.csv"),row.names = FALSE)
 write.csv(nuts0_gdp, file.path(dir_eco, "eco_data_database/nuts0_gdp.csv"),row.names = FALSE)
 write.csv(ru_nat_gdp, file.path(dir_eco, "eco_data_database/ru_nat_gdp.csv"),row.names = FALSE)
+write.csv(fi_pop, file.path(dir_eco, "eco_data_database/fi_pop.csv"),row.names = FALSE)
+
