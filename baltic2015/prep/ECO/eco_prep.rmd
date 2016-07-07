@@ -120,6 +120,9 @@ employment (thousands of people) *need to exclude this*
 ### 2.5 Aligning BHI regions with NUTS3 regions and population density
 NEED TO ADD LINK to MARC methods  
  
+[NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013.  Believe 2006 was used by Marc to join with BHI shapefile.  NEED TO HAVE MARC CONFIRM. This may lead to some NUTS3 naming discrepancies between the shapefile associations and the GDP data. See more in Section 4.2.2  
+
+
 NUTS3 GDP data is joined in the database to the area and population density information associated with that NUTS3 and BHI region.
 
 #### 2.5.1 Guide to column names in regional GDP associated with population density and area:  
@@ -149,13 +152,28 @@ Trend will be calculated based on the last 5 status years by fitting a linear mo
 
 
 ## 4. Other
-NEED TO UPDATE - this may change
+
 ### 4.1 Interpreting NA and zero
 #### 4.1.1 Status Score of Zero
-'Status scores of zero were assigned when the region had no data or insufficient data but the indicator is applicable
+'Status scores of NA were assigned when the region had no data or insufficient data but the indicator is applicable
 
 #### 4.1.2 Trend value of NA
-'Trend values of NA are assigned if there are not 5 years of data available to calculate a trend
+Trend values of NA are assigned if there are not 5 years of data available to calculate a trend
+
+### 4.2 Data issues
+
+#### 4.2.1 Missing German data
+No GDP data for the following German NUTS3 regions: DE80H, DE805,DE80D, DE801,DE80F, DE80I. This means that there is no data for BHI regions 13 and 16. 
+
+#### 4.2.2 Mis-assignments
+(1) NUTS3 regions are assigned to a BHI region due to minor differences in borders.  These are fixed manually in the data preparation in section 5.1.4
+
+(2) Finnish NUTS3 names have changed for the NUTS3 regions associated with BHI 32. These NUTS3 population data must be manually linked to BHI region 32. Fixed manally in section 5.1.5
+
+(3) No data assigned to BHI 21 - this appears to be an error associated with the assignment of NUTS3 PL634 - unclear why this happens and is not fixed.  
+
+#### 4.2.3 GDP used is for entire NUTS3 -
+Population data was not extracted for the entire NUTS3 area, only for the buffer area.  Therefore, the entire GDP for the NUTS3 is allocated among BHI regions, rather than only the GDP associated with the population in the buffer.
 
 
 
@@ -232,7 +250,72 @@ regional_gdp1 = regional_gdp1 %>%
 
 ```
 
-#### 5.1.5 check NA in final years
+#### 5.1.5 Correct error with Finnish name change
+This is to assign data to BHI 32 and add one additional assignment to BHI 31.
+```{r fix error with Finnish Name change}
+new_fi_nuts3 = c("FI1C4","FI1B1")
+old_fi_nuts3 = c("FI186","FI182","FI181")
+
+## select the GDP associated with the new NUTS3 names
+gdp_new = regional_gdp1 %>%
+          filter(nuts3 %in% new_fi_nuts3)
+
+## select the population in the buffer associated with the old NUTS3 names
+old_pop = read.csv(file.path(dir_eco, 'eco_data_database/fi_pop.csv'), stringsAsFactors = FALSE)
+
+
+##modify objects to join information
+gdp_new = gdp_new %>%
+          select(year,nuts3, nuts3_name,unit,value,flag_notes)
+
+old_pop = old_pop %>%
+          select(BHI_ID, NUTS_ID, PopTot,
+                 PopTot_density_in_buffer_per_km2,CNTR_CODE,rgn_nam,
+                 Subbasin,NUTS3_area_in_BHI_buffer_km2)%>%
+          dplyr::rename(rgn_id = BHI_ID, nuts3 = NUTS_ID,
+                        pop = PopTot, 
+                        pop_km2 = PopTot_density_in_buffer_per_km2,
+                        country_abb = CNTR_CODE,country=rgn_nam, basin= Subbasin,
+                        area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)
+old_pop = old_pop %>%
+          mutate(new_nuts3 = ifelse(rgn_id == 32 & nuts3 == "FI181","FI1B1",
+                             ifelse(rgn_id == 36 & nuts3 == "FI181","FI1B1",
+                             ifelse(rgn_id == 32 & nuts3 == "FI182","FI1B1",
+                             ifelse(rgn_id == 32 & nuts3 == "FI186","FI1C4","")))))%>%
+          mutate(new_pop = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop),pop),
+                 new_pop_km2 = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop_km2),pop_km2),
+                 new_area_in_buffer =ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(area_nuts3_in_bhi_buffer),area_nuts3_in_bhi_buffer) )%>% ## need to make a single object associated with 32 and FI1B1 so GDP not assigned in duplicate
+          select(-nuts3,-pop,-pop_km2,-area_nuts3_in_bhi_buffer)%>%
+          distinct()%>%
+          dplyr::rename(pop = new_pop,
+                        pop_km2 = new_pop_km2,
+                        area_nuts3_in_bhi_buffer= new_area_in_buffer)
+
+## join
+updated_fi = full_join(old_pop,gdp_new,
+                       by=c("new_nuts3"="nuts3"))
+
+head(updated_fi)
+str(updated_fi)
+
+updated_fi = updated_fi %>%
+             dplyr::rename(nuts3 = new_nuts3)%>%
+             select(year,nuts3, nuts3_name,unit, value,flag_notes,
+                    pop,pop_km2,country_abb , basin ,area_nuts3_in_bhi_buffer,
+                    rgn_id,country)
+##check colnames order matches with regional_gdp1
+colnames(regional_gdp1);colnames(updated_fi)
+
+
+## remove FI NUTS that had no associated population and replace with the updated
+regional_gdp1 = regional_gdp1 %>%
+                filter(!nuts3 %in% new_fi_nuts3) %>%
+                bind_rows(.,updated_fi)
+```
+
+
+
+#### 5.1.6 check NA in final years
 ```{r check NA in 2014}
 ##check 2014 - is max year?
 regional_gdp1 %>% 
@@ -623,6 +706,13 @@ eu_pop3 = eu_pop2 %>%
           filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country)) %>%
           filter(year >=2000)
 
+  dim(eu_pop3) ## Germany is duplicated because of GDR and FRG but in more recent years, value occurs twice ##144 6
+
+eu_pop3 = eu_pop3 %>%
+          distinct()
+
+dim(eu_pop3) ##129 6
+
 str(eu_pop3)           
 
 ## check data flags
@@ -712,7 +802,7 @@ nat_gdp_pop = full_join(country_gdp3,nat_pop,
               arrange(country,year)
 
 
-dim(nat_gdp_pop) ##192  8
+dim(nat_gdp_pop) ##145  8
 str(nat_gdp_pop)
 nat_gdp_pop %>% select(country)%>%distinct() #check country list
 
@@ -819,6 +909,244 @@ str(bhi_nat_gdp_layer)
 
 ```{r write national gdp bhi layer}
 write.csv(bhi_nat_gdp_layer, file.path(dir_layers, "le_gdp_country_bhi2015.csv"),row.names=FALSE)
+
+```
+
+
+
+## 7. Status and Trend Calculation
+Status and trend are calculated in functions.r but code is tested and explored here.
+
+
+### 7.1 Assign data layer
+```{r read in data layers for status and trend calc}
+
+  le_gdp_region   = bhi_gdp_layer %>%
+                  dplyr::rename(rgn_gdp_per_cap = bhi_gdp_per_capita)
+
+  le_gdp_country  = bhi_nat_gdp_layer %>%
+                    dplyr::rename(nat_gdp_per_cap = gdp_per_cap_2005)
+
+
+```
+
+### 7.2 Set parameters
+```{r set parameters for status and trend calc}
+ ## set lag window for reference point calculations
+  lag_win = 5  # 5 year lag
+  trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points)
+  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1))) #unique BHI region numbers to make sure all included with final score and trend
+
+```
+
+### 7.3 Status calculation
+
+#### 7.3.1 prepare region and country layers
+```{r eco status calc}
+## ECO region: prepare for calculations with a lag
+  eco_region = le_gdp_region %>%
+    dplyr::rename(gdp = rgn_gdp_per_cap) %>%
+    filter(!is.na(gdp)) %>%
+    group_by(rgn_id)%>%
+    mutate(year_ref = lag(year, lag_win, order_by=year),
+           ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
+    arrange(year)%>%
+    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    ungroup() %>%
+    mutate(rgn_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
+    select(rgn_id,year,rgn_value)
+
+head( eco_region)
+dim(eco_region) ##210 3
+  
+## ECO country
+  eco_country = le_gdp_country %>%
+    dplyr::rename(gdp = nat_gdp_per_cap) %>%
+    filter(!is.na(gdp)) %>%
+    group_by(rgn_id)%>%
+    mutate(year_ref = lag(year, lag_win, order_by=year),
+           ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
+    arrange(year)%>%
+    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    ungroup() %>%
+    mutate(cntry_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
+    select(rgn_id,year,cntry_value)
+
+  head(eco_country)
+  dim(eco_country) ## 252  3
+  
+
+
+
+```
+
+#### 7.3.2 Calculate status time series
+```{r calc eco status time series}
+## calculate status
+  eco_status_calc = inner_join(eco_region,eco_country, by=c("rgn_id","year"))%>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
+               mutate(Xeco = rgn_value/cntry_value)%>% #calculate status
+               mutate(status = pmin(1, Xeco)) # status calculated cannot exceed 1
+
+  head(eco_status_calc)
+  dim(eco_status_calc) ## 210 6
+  
+```
+
+#### 7.3.3 Extract most recent year status
+```{r extract eco most recent year status}
+eco_status = eco_status_calc%>%
+              group_by(rgn_id)%>%
+              filter(year== max(year))%>%       #select status as most recent year
+              ungroup()%>%
+              full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
+              mutate(score=round(status*100),   #scale to 0 to 100
+                     dimension = 'status')%>%
+              select(region_id = rgn_id,score, dimension) #%>%
+              ##mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
+                                    ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
+
+head(eco_status)
+
+
+## what is max year
+max_year_status= eco_status_calc%>%
+              group_by(rgn_id)%>%
+              filter(year== max(year))%>%       #select status as most recent year
+              ungroup()%>%
+              select(rgn_id,year)
+max_year_status %>% select(year)%>% distinct() ## all final years are 2013
+```
+
+### 7.3.4 Which BHI regions have no status
+Regions 13,16,19,21,22,30,32,33 have NA status.
+
+Russian regions have NA status because no regional data (19,22,33)
+
+Regions with no coast line have no status because not joined to a NUTS reion (30)
+
+Regions with missing regional data: 13,16 (from Germany see below)
+
+Region with mis-assigned NUTS3 to BHI regions: 21 - See 4.2.2 about Polish NUTS3 regions
+```{r which eco status are na}
+eco_status %>% filter(is.na(score)) #13,16,19,21,22,30,33
+
+
+eco_status_calc %>% filter(rgn_id == 13)
+eco_region %>% filter(rgn_id == 13) ## No data for associated German NUTS3 DE80H, DE805, DE80D
+
+eco_status_calc %>% filter(rgn_id == 16)
+eco_region %>% filter(rgn_id == 16)## no data for associated German NUTS3 DE80F, DE80I
+
+eco_status_calc %>% filter(rgn_id == 21)
+eco_region %>% filter(rgn_id == 21)  ## based on Eurostat nuts3 map (http://ec.europa.eu/eurostat/statistical-atlas/gis/viewer/#) should be associated with PL634. PL634 assigned to 17 and 18.  This appears to be an error!!
+
+
+
+```
+
+
+### 7.3.1 Plot status
+Status values in the time series are between 0 and 1.  
+There are no values for Russia because we do not have regional GDP data.  
+Status values for the most recent year (2013 for all regions) are transformed to value between 0 and 100
+```{r plot eco status}
+## plot eco status time series
+ggplot(eco_status_calc)+
+  geom_point(aes(year,status))+
+  facet_wrap(~rgn_id)+
+  ylim(0,1)+
+  ylab("Status")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("ECO status time series")
+
+## plot eco status time series, less range on y-axis
+ggplot(eco_status_calc)+
+  geom_point(aes(year,status))+
+  facet_wrap(~rgn_id)+
+  ylim(.8,1)+
+  ylab("Status")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("ECO status time series - different y-axis range")
+
+
+## plot final year (2013) status
+
+ggplot(eco_status)+
+  geom_point(aes(region_id,score), size=2)+
+  ylim(0,100)+
+  ylab("Status score")+
+  xlab("BHI region")+
+  ggtitle("ECO status score in 2013")
+
+```
+
+
+### 7.4 Trend calculation
+
+#### 7.4.1 Calculate Trend
+```{r eco trend calc}
+  
+  ## calculate trend for 5 years (5 data points)
+  ## years are filtered in eco_region and eco_country, so not filtered for here
+      eco_trend = eco_status_calc %>%
+        filter(year >= max(year - trend_yr))%>%                #select five years of data for trend
+        filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
+        group_by(rgn_id) %>%
+        mutate(regr_length = n())%>%                            #get the number of status years available for greggion
+        filter(regr_length == (trend_yr + 1))%>%                   #only do the regression for regions that have 5 data points
+          do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
+            summarize(rgn_id = rgn_id,
+                      score = coef(mdl)['year'] * lag_win)%>%
+        ungroup() %>%
+        full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
+        mutate(score = round(score, 2),
+               dimension = "trend") %>%
+        select(region_id = rgn_id, dimension, score) %>%
+        data.frame()
+
+
+```
+
+#### 7.4.2 Which regions have NA trend?
+Same regions as NA status (13,16,19,21,22,30,33)
+```{r na eco trend}
+eco_trend %>% filter(is.na(score)) ## 13,16,19,21,22,30,33
+
+```
+
+
+#### 7.4.3 Plot trend
+
+```{r plot eco trend}
+ggplot(eco_trend)+
+  geom_point(aes(region_id,score), size=2)+
+  geom_hline(yintercept = 0)+
+  ylim(-1,1)+
+  ylab("Status score")+
+  xlab("BHI region")+
+  ggtitle("ECO 5 yr trend score")
+
+
+
+```
+
+
+
+#### 7.5 Plot trend and status together
+```{r plot eco trend and status together}
+
+plot_eco = bind_rows(eco_status,eco_trend)
+
+ggplot(plot_eco)+
+  geom_point(aes(region_id,score),size=2.5)+
+  facet_wrap(~dimension, scales = "free_y")+
+  ylab("Score")+
+  ggtitle("ECO Status and Trend")
+
 
 ```
 
