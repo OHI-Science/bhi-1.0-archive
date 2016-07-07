@@ -1,6 +1,22 @@
 ico\_prep
 ================
 
+-   [Prepare Iconic Species data layer for goal Sense of Place](#prepare-iconic-species-data-layer-for-goal-sense-of-place)
+    -   [1. Background](#background)
+    -   [2. Data](#data)
+        -   [2.1 Data sources](#data-sources)
+        -   [2.2 Data folder for raw data](#data-folder-for-raw-data)
+        -   [2.3 Data for ICO](#data-for-ico)
+        -   [2.4 Selecting ICO species](#selecting-ico-species)
+        -   [References for Redlist criteria / threat levels](#references-for-redlist-criteria-threat-levels)
+    -   [3. Goal model](#goal-model)
+    -   [4. Prepare ICO data layer](#prepare-ico-data-layer)
+        -   [4.1 Data organization](#data-organization)
+        -   [4.2 Calculate status](#calculate-status)
+        -   [4.3 Apply basin status to BHI regions](#apply-basin-status-to-bhi-regions)
+    -   [5. ICO trend](#ico-trend)
+    -   [6. Data layers for layers folder](#data-layers-for-layers-folder)
+
 Prepare Iconic Species data layer for goal Sense of Place
 =========================================================
 
@@ -15,6 +31,8 @@ library(readr)
 library(dplyr)
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.2.5
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -28,6 +46,11 @@ library(dplyr)
 
 ``` r
 library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
 library(ggplot2)
 ```
 
@@ -37,7 +60,11 @@ library(ggplot2)
 library(RMySQL)
 ```
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 library(stringr)
@@ -230,7 +257,7 @@ ggplot(ico_spp_data)+
   ggtitle("Presence/Absence of ICO species by basin")
 ```
 
-![](ico_prep_files/figure-markdown_github/plot%20ico%20species%20by%20basin-1.png)<!-- -->
+![](ico_prep_files/figure-markdown_github/plot%20ico%20species%20by%20basin-1.png)
 
 ### 4.2 Calculate status
 
@@ -325,7 +352,7 @@ ggplot(ico_status_basin)+
   ggtitle("ICO status by Basin")
 ```
 
-![](ico_prep_files/figure-markdown_github/plot%20ico%20basin%20status-1.png)<!-- -->
+![](ico_prep_files/figure-markdown_github/plot%20ico%20basin%20status-1.png)
 
 ``` r
 ## Size points to number of species in a region
@@ -339,7 +366,7 @@ ggplot(ico_status_basin)+
   ggtitle("ICO status by Basin, n= species richness")
 ```
 
-![](ico_prep_files/figure-markdown_github/plot%20ico%20basin%20status-2.png)<!-- -->
+![](ico_prep_files/figure-markdown_github/plot%20ico%20basin%20status-2.png)
 
 ### 4.3 Apply basin status to BHI regions
 
@@ -361,8 +388,8 @@ ico_status = ico_status_basin %>%
              full_join(.,basin_lookup, by="basin")
 ```
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factor and character
-    ## vector, coercing into character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
 
 ``` r
 ico_status = ico_status %>%
@@ -387,7 +414,7 @@ ggplot(ico_status)+
   ggtitle("ICO status by BHI region, n= species richness")
 ```
 
-![](ico_prep_files/figure-markdown_github/plot%20BHI%20region%20status-1.png)<!-- -->
+![](ico_prep_files/figure-markdown_github/plot%20BHI%20region%20status-1.png)
 
 5. ICO trend
 ------------

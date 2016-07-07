@@ -1,6 +1,9 @@
 ---
 title: "ico_prep"
-output: github_document
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
 params: 
     datasource: csv
 ---

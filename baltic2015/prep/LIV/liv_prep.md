@@ -1,6 +1,22 @@
 liv\_preo
 ================
 
+-   [LIV subgoal data preparation](#liv-subgoal-data-preparation)
+    -   [1. Background](#background)
+    -   [2. Data](#data)
+        -   [2.1 NUTS0 (country) and NUTS2 region Employment rate](#nuts0-country-and-nuts2-region-employment-rate)
+        -   [2.2 Russian data](#russian-data)
+        -   [2.3 Population density data](#population-density-data)
+        -   [2.4 Aligning BHI regions with NUTS3 regions and population density](#aligning-bhi-regions-with-nuts3-regions-and-population-density)
+    -   [3. Goal model](#goal-model)
+    -   [4. Other](#other)
+    -   [5. Regional data prep](#regional-data-prep)
+        -   [5.1 Data organization](#data-organization)
+        -   [5.2 Select Baltic Countries](#select-baltic-countries)
+        -   [5.3 BHI region Employment](#bhi-region-employment)
+    -   [6. Country data prep](#country-data-prep)
+        -   [6.1 Organize data](#organize-data)
+
 LIV subgoal data preparation
 ============================
 
@@ -15,6 +31,8 @@ library(readr)
 library(dplyr)
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.2.5
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -28,6 +46,11 @@ library(dplyr)
 
 ``` r
 library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
 library(ggplot2)
 ```
 
@@ -37,7 +60,11 @@ library(ggplot2)
 library(RMySQL)
 ```
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 library(stringr)
@@ -235,8 +262,8 @@ regional_employ = regional_employ %>%
                filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y): joining factor and character
-    ## vector, coercing into character vector
+    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
 
 #### 5.2.2 Filter for regions associated with BHI regions
 

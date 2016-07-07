@@ -1,27 +1,43 @@
 spp\_prep
 ================
 
+-   [Preparation of SPP data layers](#preparation-of-spp-data-layers)
+    -   [1. Background and Overview](#background-and-overview)
+        -   [1.1 Species biodiversity](#species-biodiversity)
+        -   [1.2 References](#references)
+    -   [2. Data](#data)
+        -   [2.1 Data sources and information for HELCOM spatial data](#data-sources-and-information-for-helcom-spatial-data)
+        -   [2.2 Data sources and information for checklist data](#data-sources-and-information-for-checklist-data)
+    -   [3. Goal model](#goal-model)
+        -   [3.1 Goal status](#goal-status)
+        -   [3.2 Goal trend](#goal-trend)
+-   [Two alternative data sources and status calculations follow. Need to assess which is best.](#two-alternative-data-sources-and-status-calculations-follow.-need-to-assess-which-is-best.)
+    -   [4. Spatial data data layer preparation](#spatial-data-data-layer-preparation)
+        -   [4.1 Data organization](#data-organization)
+        -   [4.2 Data layer for functions.r](#data-layer-for-functions.r)
+        -   [4.3 Status calcalculation](#status-calcalculation)
+    -   [5. Data layer preparation with checklist distribution data](#data-layer-preparation-with-checklist-distribution-data)
+        -   [5.1 Data organization](#data-organization-1)
+        -   [5.2 Data attributes](#data-attributes)
+        -   [5.3 Select data for analysis](#select-data-for-analysis)
+        -   [5.4 Score threat level](#score-threat-level)
+        -   [5.5 Species distributions](#species-distributions)
+        -   [5.6 Species distributions + Threat score](#species-distributions-threat-score)
+        -   [5.6.1 Plot IUCN category by taxa and basin](#plot-iucn-category-by-taxa-and-basin)
+        -   [5.6.2 Export shared\_species\_dist object](#export-shared_species_dist-object)
+        -   [5.7 Status calculation by basin](#status-calculation-by-basin)
+        -   [5.7.1 Calulate SPP status using checklist and redlist data with all species weighted equally](#calulate-spp-status-using-checklist-and-redlist-data-with-all-species-weighted-equally)
+        -   [5.7.2 Calulate SPP status using checklist and redlist data by taxa group and geometric mean](#calulate-spp-status-using-checklist-and-redlist-data-by-taxa-group-and-geometric-mean)
+        -   [5.8 Apply basin status to BHI regions](#apply-basin-status-to-bhi-regions)
+        -   [6. Send data layer to layers](#send-data-layer-to-layers)
+    -   [7. Data layer considerations / concerns](#data-layer-considerations-concerns)
+        -   [7.1 Aquatic insects](#aquatic-insects)
+    -   [TO DO](#to-do)
+
 Preparation of SPP data layers
 ==============================
 
 **For Biodiverity goal**
-
-TABLE OF CONTENTS
------------------
-
-### Background and Overview.........................Section 1
-
-### Data............................................Section 2
-
-### Goal model......................................Section 3
-
-### Data prep (alternative 1, not preferred)........Section 4
-
-### Data prep (alternative 2, preferred)............Section 5
-
-### Data layer saved to layers......................Section 6
-
-### Data layer issues / concerns....................Section 7
 
 1. Background and Overview
 --------------------------

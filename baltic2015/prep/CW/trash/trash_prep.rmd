@@ -1,7 +1,19 @@
 ---
-title: "Trash Layer Prep (Jambeck et al 2015)"
-output: html_document
+title: "trash_prep.rmd"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
 ---
+
+# Preparation of TRA (trash) data layer
+
+
+## 1. Background
+
+## 2. Data
 
 Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html)
 
@@ -11,21 +23,92 @@ Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from la
 - (ii) the percentage of waste that is plastic; and 
 - (iii) the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic.
 
-## Potential path forward:
+### 2.1 Data storage
+
+Raw data are stored in `prep/CW/trash/raw`. 
+
+`trash_prep.rmd` renames headers and filters for Baltic countries; saves as `prep/CW/trash/intermediate/trash_jambeck_baltic.csv`
+
+
+### 2.2 Data Info 
+
+Jambeck et al 2015: Plastic waste inputs from land into the ocean
+http://science.sciencemag.org/content/347/6223/768.full.pdf+html
+
+[rendered html methods](https://cdn.rawgit.com/OHI-Science/bhi/draft/baltic2015/prep/CW/trash/trash_prep.html)
+
+raw data stored:
+'~/github/bhi/baltic2015/prep/CW/raw/trash/1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
+
+"the framework includes: (i) the mass of waste generated per capita annually; (ii) the percentage of waste that is plastic; and (iii) the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic."
+
+
+Footnotes from .xls file column headers 
+1 - Based upon 2010 Gross National Income
+2 - Based upon a 50 km coastal buffer created in GIS with global population densities
+3 - Bold data were taken directly from World Bank estimates
+4 - Bold data were taken directly from World Bank estimates 
+5 - Using a model developed for this study (see Supplemental Information)
+6 - From U.S. national litter study
+7 - Calculated values
+8 - Economic status changed from 2005 to 2010; waste generation rate and %plastic were assigned using average values for the 2010 economic category  
+
+## 3. Goal model Potential path forward:
 
 **Status**: 2010 modeled values / ref point  
 **Ref pt**: maximum for Europe in 2010 or 2025 (explored below)  
 **Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal.
 
-```{r setup and load data, echo = FALSE, message = FALSE, warning = FALSE}
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+library(readxl) # install.packages('readxl')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_tra    = file.path(dir_prep, 'CW/trash')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_tra, 'tra_prep.rmd')
+
+```
+## 4. Data layer preparation
+
+### 4.1 Read in data
+
+```{r read in data and clean}
 
 ## packages, directories
-library(dplyr)
-library(readr)  # install.packages('readr')
-library(readxl) # install.packages('readxl')
-library(ggplot2)
-library(stringr)
-
 dir_prep   = '~/github/bhi/baltic2015/prep'
 dir_raw    = file.path(dir_prep, 'CW/trash/raw')
 trash_file = '1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
@@ -58,7 +141,7 @@ data_clean = data_raw %>%
 
 ```
 
-## Filter Baltic data 
+### 4.2 Filter Baltic data 
 Note: these data are for all of these countries, so do fraction of coastline or something to downweight
 ```{r filter baltic data, echo = TRUE, message = FALSE, warning = FALSE}
 
@@ -68,7 +151,7 @@ baltic = data_clean %>%
 #write.csv(baltic, '~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
 ```
 
-## Modeled Mismanaged plastic waste 2010 
+### 4.3 Modeled Mismanaged plastic waste 2010 
 
 ```{r baltic data explore, echo = FALSE, message = FALSE, warning = FALSE}
 ## plot 2010
@@ -78,7 +161,7 @@ ggplot(baltic, aes(country, modeled_waste_2010)) +
 ```
 
 
-## Modeled Mismanaged plastic waste 2025
+### 4.4 Modeled Mismanaged plastic waste 2025
 
 ```{r data explore 2025, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -89,7 +172,7 @@ ggplot(baltic, aes(country, modeled_waste_2025)) +
 ```
 
 
-## Prepare data layer for Toolbox 
+### 4.5 Prepare data layer for Toolbox 
 
 **Plan:** 
 
@@ -105,7 +188,7 @@ Need a min and a max reference point (they will ultimately be inverted for CW bu
 Note: Because Russia is reported as a whole country, we used the proportion of population in Kaliningrad+St Petersburg to the coastal popultion reported by Jambeck et al. See figure below. 
 
 
-## To find reference point, combine Europe with Russia, downweight Russia
+#### To find reference point, combine Europe with Russia, downweight Russia
 It made sense to downweight Kaliningrad and St Petersburg by coastal population density instead of total Russia population density because of the distribution along the coasts:
 
 ![figure of Russia coastal population density](RussiaCoastalPopFig_Wikipedia.jpg)
@@ -195,7 +278,7 @@ baltic_explore = eur_rus %>%
 ```
 
 
-### Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025
+### 4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025
 
 ```{r plot and save layer, echo = FALSE, message = FALSE, warning = FALSE}
 

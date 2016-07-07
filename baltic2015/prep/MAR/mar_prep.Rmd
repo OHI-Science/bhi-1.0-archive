@@ -1,11 +1,14 @@
 ---
 title: "mar_rep"
-output: github_document
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
 params: 
     datasource: csv
 ---
 # Preparation of Mariculture (MAR) subgoal data layer
----
+
 ```{r setup}
 
 ## source common libraries, directories, functions, etc

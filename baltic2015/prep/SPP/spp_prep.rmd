@@ -1,28 +1,15 @@
 ---
 title: "spp_prep"
-output: github_document
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
 params: 
     datasource: csv
 ---
 
 # Preparation of SPP data layers
 **For Biodiverity goal**
-
-## TABLE OF CONTENTS
-### Background and Overview.........................Section 1  
-
-### Data............................................Section 2  
-
-### Goal model......................................Section 3  
-
-### Data prep (alternative 1, not preferred)........Section 4  
-
-### Data prep (alternative 2, preferred)............Section 5  
-
-### Data layer saved to layers......................Section 6  
-
-### Data layer issues / concerns....................Section 7  
-
 
 
 ## 1. Background and Overview

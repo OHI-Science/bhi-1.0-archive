@@ -1,26 +1,13 @@
 ---
 title: "ao_prep.rmd"
-output: github_document
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
 params: 
     datasource: csv
 ---
 # Artisanal Opportunity (AO) Goal Data Prep
-
-## TABLE OF CONTENTS
-
-### Goal Overview..............................Section 1  
-
-### Data.......................................Section 2  
-
-### Status Data layer prepartion...............Section 3  
-
-### Final AO status prepartion.................Section 4  
-
-### Trend data layer preparation...............Section 5  
-
-### Export data layers.........................Section 6  
-
-
 
 ## 1. Goal Overview
 

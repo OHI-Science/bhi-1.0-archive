@@ -1,6 +1,37 @@
 contaminants\_prep
 ================
 
+-   [Contaminant Data Prep](#contaminant-data-prep)
+    -   [1. Indicators](#indicators)
+        -   [1.2 (1) PCB concentration indicator](#pcb-concentration-indicator)
+        -   [1.3 (2) TEQ value for PCBs and Dioxins](#teq-value-for-pcbs-and-dioxins)
+        -   [1.4 (3) PFOS indicator](#pfos-indicator)
+        -   [1.5 Additional references](#additional-references)
+    -   [2. Data](#data)
+        -   [2.1 Data sources](#data-sources)
+        -   [2.2 Data prep prior to database](#data-prep-prior-to-database)
+    -   [3. Other Info](#other-info)
+        -   [3.1 Congers in ICES database](#congers-in-ices-database)
+    -   [4. Data Prep - PCB Indicator](#data-prep---pcb-indicator)
+        -   [4.1 Basic data cleaning and organization](#basic-data-cleaning-and-organization)
+        -   [4.2 Evaluate sites sampled](#evaluate-sites-sampled)
+        -   [4.3 Data flagged for quality](#data-flagged-for-quality)
+        -   [4.5 Status and Trend Evaluation](#status-and-trend-evaluation)
+        -   [4.5.7 Plot linear model trends - 2 approaches](#plot-linear-model-trends---2-approaches)
+        -   [4.6 Method discussion with Anna Sobek](#method-discussion-with-anna-sobek)
+        -   [4.7 Final Status and Trend obejcts](#final-status-and-trend-obejcts)
+    -   [5. Data Prep - Dioxin Indicator](#data-prep---dioxin-indicator)
+        -   [5.1 Basic data cleaning and organization](#basic-data-cleaning-and-organization-1)
+        -   [5.2 Filter data for year](#filter-data-for-year)
+        -   [5.3 Assess Qflagged data](#assess-qflagged-data)
+        -   [5.4 Toxicity Equivalent (TEQ) values](#toxicity-equivalent-teq-values)
+        -   [5.5 Assess if dioxins and pcbs share sub\_sample\_ref](#assess-if-dioxins-and-pcbs-share-sub_sample_ref)
+        -   [5.6 TEQ concentration for each sub\_sample\_ref](#teq-concentration-for-each-sub_sample_ref)
+        -   [5.7 Mean TEQ value by date and location](#mean-teq-value-by-date-and-location)
+        -   [5.8 Join Dioxin and dioxin-like PCB obs for same date and location](#join-dioxin-and-dioxin-like-pcb-obs-for-same-date-and-location)
+        -   [TO DO](#to-do)
+    -   [6. Data Prep - PFOS Indicator](#data-prep---pfos-indicator)
+
 ``` r
 ## source common libraries, directories, functions, etc
 # Libraries
@@ -12,6 +43,8 @@ library(readr)
 ``` r
 library(dplyr)
 ```
+
+    ## Warning: package 'dplyr' was built under R version 3.2.5
 
     ## 
     ## Attaching package: 'dplyr'
@@ -26,6 +59,11 @@ library(dplyr)
 
 ``` r
 library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
 library(ggplot2)
 ```
 
@@ -35,7 +73,11 @@ library(ggplot2)
 library(RMySQL)
 ```
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 library(stringr)
@@ -66,23 +108,8 @@ create_readme(dir_con, 'contaminants_prep.rmd')
 Contaminant Data Prep
 =====================
 
-TABLE OF CONTENTS
------------------
-
-Section 1.......................Indicator Overview
-
-Section 2.......................Data Overview
-
-Section 3.......................Other Info
-
-Section 4.......................ICES6 Indicator prep
-
-Section 5.......................Dioxin Indicator prep
-
-Section 6.......................PFOS Indicator prep
-
-1 Indicators
-------------
+1. Indicators
+-------------
 
 3 indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.
 
@@ -362,7 +389,7 @@ ggplot(pcb2) + geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~bhi_id)
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20data-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20data-1.png)
 
 #### 4.1.4 Filter for ICES 6 PCBs
 
@@ -387,7 +414,7 @@ ggplot(pcb3) + geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~bhi_id)
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20ices%206-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20ices%206-1.png)
 
 #### 4.1.6 Stations with No BHI ID
 
@@ -434,7 +461,7 @@ ggplot(pcb4) + geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~bhi_id)
 ```
 
-![](contaminants_prep_files/figure-markdown_github/assign%20missing%20bhi%20regions-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/assign%20missing%20bhi%20regions-1.png)
 
 #### 4.1.8 Join to HOLAS basins and evaluate data coverage
 
@@ -509,7 +536,7 @@ ggplot(pcb5) + geom_point(aes(date,value, colour=congener)) +
 
     ## Warning: Removed 24 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%20by%20basin-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20by%20basin-1.png)
 
 ### 4.2 Evaluate sites sampled
 
@@ -666,8 +693,8 @@ lookup_impact = lookup_impact %>%
 pcb_sites = pcb_sites %>% left_join(., lookup_impact, by=c("station2"="Station_Name2", "country"="Country"))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y): joining factors with different
-    ## levels, coercing to character vector
+    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factors with different levels, coercing to character vector
 
 ``` r
 dim(pcb_sites) # 55 26
@@ -1069,7 +1096,7 @@ ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
   ggtitle("CB101_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
 ``` r
 ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
@@ -1079,7 +1106,7 @@ ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
    ggtitle("CB138_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 ``` r
 ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
@@ -1089,7 +1116,7 @@ ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
    ggtitle("CB153_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-3.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-3.png)
 
 ``` r
 ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
@@ -1099,7 +1126,7 @@ ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
    ggtitle("CB180_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-4.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-4.png)
 
 ``` r
 ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
@@ -1109,7 +1136,7 @@ ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
    ggtitle("CB28_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-5.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-5.png)
 
 ``` r
 ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
@@ -1119,7 +1146,7 @@ ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
    ggtitle("CB52_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-6.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-6.png)
 
 #### 4.3.4 Number of observations w/ and w/o qflag
 
@@ -1208,7 +1235,7 @@ ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
   ggtitle("Plot 1. CB101_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB101-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB101-1.png)
 
 ``` r
 ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
@@ -1218,7 +1245,7 @@ ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
   ggtitle("Plot 2. CB101_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB101-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB101-2.png)
 
 **CB138**
 Plot 1.First both raw values (red) and adjusted (black).
@@ -1232,7 +1259,7 @@ ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
   ggtitle("Plot 1. CB138_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB138-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB138-1.png)
 
 ``` r
 ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
@@ -1242,7 +1269,7 @@ ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
   ggtitle("Plot 2. CB138_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB138-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB138-2.png)
 
 **CB153**
 Plot 1.First both raw values (red) and adjusted (black).
@@ -1256,7 +1283,7 @@ ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
   ggtitle("Plot 1. CB153_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB153-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB153-1.png)
 
 ``` r
 ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
@@ -1266,7 +1293,7 @@ ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
   ggtitle("Plot 2.CB153_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB153-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB153-2.png)
 
 **CB180**
 Plot 1.First both raw values (red) and adjusted (black).
@@ -1280,7 +1307,7 @@ ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
   ggtitle("Plot 1. CB180_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB180-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB180-1.png)
 
 ``` r
 ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
@@ -1290,7 +1317,7 @@ ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
   ggtitle("Plot 2. CB180_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB180-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB180-2.png)
 
 **CB28**
 Plot 1. First both raw values (red) and adjusted (black).
@@ -1304,7 +1331,7 @@ ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
   ggtitle("Plot 1. CB28_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB28-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB28-1.png)
 
 ``` r
 ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
@@ -1314,7 +1341,7 @@ ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
   ggtitle("Plot 2. CB28_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB28-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB28-2.png)
 
 **CB52**
 Plot 1. First both raw values (red) and adjusted (black).
@@ -1328,7 +1355,7 @@ ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
   ggtitle("Plot 1. CB52_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB52-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB52-1.png)
 
 ``` r
 ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
@@ -1338,7 +1365,7 @@ ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
   ggtitle("Plot 2. CB52_ug/kg")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB52-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB52-2.png)
 
 #### 4.4 ICES6 PCB
 
@@ -1405,7 +1432,7 @@ ggplot(ices6_1) +
                                     hjust=.5, vjust=.5, face = "plain"))
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20with%20qflag-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20with%20qflag-1.png)
 
 ``` r
 ices6_2= ices6_2 %>%
@@ -1422,7 +1449,7 @@ ggplot(ices6_2) +
                                     hjust=.5, vjust=.5, face = "plain"))
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20with%20qflag-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20with%20qflag-2.png)
 
 #### 4.4.3 ICES6 mean value by date and location
 
@@ -1494,7 +1521,7 @@ ggplot(plotdata_temp) +
 
     ## Warning: Removed 82 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-1.png)
 
 ``` r
 ##showing the human health threshold                    
@@ -1508,7 +1535,7 @@ ggplot(plotdata_temp) +
 
     ## Warning: Removed 82 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-2.png)
 
 ``` r
 ##Plot variation in the 5 year status period
@@ -1519,7 +1546,7 @@ ggplot(filter(plotdata_temp, year >2008 & year < 2013)) +
   ggtitle("Mean ICES6 concentration (ug/kg) variation by basin, 2009-2013")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-3.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-3.png)
 
 **Plot By BHI Region** Gray dots are the ices6 concentration mean by date and location including qflagg-adjusted values.
 Red dots are the ices6 concentration mean by date and location excluding qflagged values.
@@ -1536,7 +1563,7 @@ ggplot(plotdata_temp) +
 
     ## Warning: Removed 82 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/ices6%20mean%20date%20and%20location%20plot%20by%20bhi%20region-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/ices6%20mean%20date%20and%20location%20plot%20by%20bhi%20region-1.png)
 
 ``` r
  #plot by year
@@ -1549,7 +1576,7 @@ ggplot(plotdata_temp) +
 
     ## Warning: Removed 82 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/ices6%20mean%20date%20and%20location%20plot%20by%20bhi%20region-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/ices6%20mean%20date%20and%20location%20plot%20by%20bhi%20region-2.png)
 
 ``` r
 ##showing the human health threshold                    
@@ -1563,7 +1590,7 @@ ggplot(plotdata_temp) +
 
     ## Warning: Removed 82 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/ices6%20mean%20date%20and%20location%20plot%20by%20bhi%20region-3.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/ices6%20mean%20date%20and%20location%20plot%20by%20bhi%20region-3.png)
 
 #### 4.4.5 Most recent year obs by each location
 
@@ -1576,7 +1603,7 @@ ices6_1datemean %>% arrange(year) %>%group_by(basin_name) %>% summarise(last(yea
     ## Source: local data frame [11 x 2]
     ## 
     ##                basin_name last(year)
-    ##                    (fctr)      (int)
+    ##                    <fctr>      <int>
     ## 1               Aland Sea       2013
     ## 2            Arkona Basin       2013
     ## 3          Bornholm Basin       2014
@@ -1610,7 +1637,7 @@ ices6_2datemean %>% arrange(year) %>% group_by(basin_name) %>% summarise(last(ye
     ## Source: local data frame [10 x 2]
     ## 
     ##                basin_name last(year)
-    ##                    (fctr)      (int)
+    ##                    <fctr>      <int>
     ## 1               Aland Sea       2011
     ## 2            Arkona Basin       2013
     ## 3          Bornholm Basin       2013
@@ -1698,7 +1725,7 @@ ices6_mean_basin
     ## Source: local data frame [10 x 4]
     ## 
     ##                basin_name ices6_mean_ug_kg num_obs num_loc
-    ##                    (fctr)            (dbl)   (int)   (int)
+    ##                    <fctr>            <dbl>   <int>   <int>
     ## 1               Aland Sea             9.71       5       1
     ## 2            Arkona Basin             9.18       7       4
     ## 3          Bornholm Basin             5.98      21       4
@@ -1721,7 +1748,7 @@ ices6_mean_basin_rgn
     ## Source: local data frame [42 x 6]
     ## 
     ##        basin_name ices6_mean_ug_kg num_obs num_loc rgn_id mean_type
-    ##            (fctr)            (dbl)   (int)   (int)  (int)     (chr)
+    ##            <fctr>            <dbl>   <int>   <int>  <int>     <chr>
     ## 1       Aland Sea             9.71       5       1     35     basin
     ## 2       Aland Sea             9.71       5       1     36     basin
     ## 3    Arkona Basin             9.18       7       4     11     basin
@@ -1748,7 +1775,7 @@ ggplot(ices6_mean_basin_rgn) +
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%20mean%20basin-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20basin-1.png)
 
 #### 4.5.2 Mean BHI Region
 
@@ -1787,7 +1814,7 @@ ices6_mean_region
     ## Source: local data frame [15 x 4]
     ## 
     ##    rgn_id ices6_mean_ug_kg num_obs num_loc
-    ##     (dbl)            (dbl)   (int)   (int)
+    ##     <dbl>            <dbl>   <int>   <int>
     ## 1       1             4.27       8       2
     ## 2      11             8.41       4       1
     ## 3      13            10.21       3       3
@@ -1825,7 +1852,7 @@ ggplot(ices6_mean_region) +
 
     ## Warning: Removed 27 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%20mean%20region-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20region-1.png)
 
 #### 4.5.3 Mean BHI Region
 
@@ -1849,7 +1876,7 @@ ggplot(ices6_mean) +
 
     ## Warning: Removed 42 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-1.png)
 
 ``` r
 ggplot(ices6_mean) + 
@@ -1860,7 +1887,7 @@ ggplot(ices6_mean) +
 
     ## Warning: Removed 42 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-2.png)
 
 #### 4.5.4 Calculate Status
 
@@ -1889,7 +1916,7 @@ ggplot(ices6_mean)+
 
     ## Warning: Removed 42 rows containing missing values (geom_point).
 
-![](contaminants_prep_files/figure-markdown_github/plot%20status-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20status-1.png)
 
 #### 4.5.6 Trend calculation by Basin
 
@@ -1978,7 +2005,7 @@ ggplot(trend_alts)+
   ggtitle("Alternative Trend Model Fitting (2004-2013)")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20trend%20alternatives-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20trend%20alternatives-1.png)
 
 #### 4.5.8 Trend calculation by Basin with mixed-effects model
 
@@ -2288,8 +2315,8 @@ pcb3 = pcb2 %>%
       select(-congener_match,-congener_full,-WHO_Compound_Name,-congener_category)
 ```
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
 ``` r
 dim(pcb2);dim(pcb3) 
@@ -2378,7 +2405,7 @@ ggplot(pcb4) +
   ggtitle("Dioxin-like PCB pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/convert%20pcb%20units-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/convert%20pcb%20units-1.png)
 
 ### 5.2 Filter data for year
 
@@ -2440,7 +2467,7 @@ ggplot(dioxin3)+
   ggtitle("Dioxins pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20dixoin%20qflag-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20dixoin%20qflag-1.png)
 
 #### 5.3.3 How many congeners and sub\_samp\_ref for dioxin-like pcbs have qflags?
 
@@ -2485,7 +2512,7 @@ ggplot(pcb5)+
   ggtitle("Dioxin-like PCB pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20dioxin-like%20pcb%20qflag-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20dioxin-like%20pcb%20qflag-1.png)
 
 #### 5.3.5 Adjust Qflagged values
 
@@ -2517,8 +2544,8 @@ dioxin5 = dioxin4 %>%
           select(-congener_match,-congener_full,-WHO_Compound_Name,-congener_category)
 ```
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
 ``` r
 dim(dioxin4); dim(dioxin5)  ## same number of rows, all dioxins have a TEF conversion
@@ -2550,7 +2577,7 @@ ggplot(dioxin6) +
   ggtitle("Dioxins pg/g TEQ")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20congener-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20congener-1.png)
 
 ``` r
 ggplot(pcb7) +
@@ -2561,7 +2588,7 @@ ggplot(pcb7) +
   ggtitle("Dioxin-like PCB pg/g TEQ")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20congener-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20congener-2.png)
 
 #### 5.4.3 Plot TEQ by Country
 
@@ -2574,7 +2601,7 @@ ggplot(dioxin6) +
   ggtitle("Dioxins pg/g TEQ")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20country-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20country-1.png)
 
 ``` r
 ggplot(pcb7) +
@@ -2585,7 +2612,7 @@ ggplot(pcb7) +
   ggtitle("Dioxin-like PCB pg/g TEQ")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20country-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20TEQ%20by%20country-2.png)
 
 ### 5.5 Assess if dioxins and pcbs share sub\_sample\_ref
 
@@ -2653,11 +2680,11 @@ dim(sub_samp_share)
   loc_share= full_join(diox_loc,pcb_loc, by=c("country","station","date")) %>% arrange(date)
 ```
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factors with
-    ## different levels, coercing to character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factors with different levels, coercing to character vector
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factors with
-    ## different levels, coercing to character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factors with different levels, coercing to character vector
 
 ``` r
   ## are any dates and location hared?
@@ -2854,7 +2881,7 @@ ggplot(dioxin_sumteq1)+
   ggtitle("Total Dioxin TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-1.png)
 
 ``` r
 ## colour code station
@@ -2866,7 +2893,7 @@ ggplot(dioxin_sumteq1)+
   ggtitle("Total Dioxin TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-2.png)
 
 ``` r
 ## box plot
@@ -2879,7 +2906,7 @@ ggplot(dioxin_sumteq1)+
   ggtitle("Total Dioxin TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-3.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20dioxin-3.png)
 
 #### 5.6.3 Dioxin-like PCB sum TEQ by sub\_sample\_ref
 
@@ -2945,7 +2972,7 @@ ggplot(pcb_sumteq1)+
   ggtitle("Total  dioxin-like PCB TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-1.png)
 
 ``` r
 ## colour code latitude
@@ -2957,7 +2984,7 @@ ggplot(pcb_sumteq1)+
   ggtitle("Total dioxin-like PCB TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-2.png)
 
 ``` r
 ## box plot
@@ -2970,7 +2997,7 @@ ggplot(pcb_sumteq1)+
   ggtitle("Total Dioxin TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-3.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-3.png)
 
 ### 5.7 Mean TEQ value by date and location
 
@@ -3017,7 +3044,7 @@ ggplot(dioxin_sumteq2)+
   ggtitle("Mean Total Dioxin TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin%20TEQ%20by%20date%20and%20location-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin%20TEQ%20by%20date%20and%20location-1.png)
 
 #### 5.7.3 dioxin-like PCB mean TEQ value by date and location
 
@@ -3062,7 +3089,7 @@ ggplot(pcb_sumteq2)+
   ggtitle("Mean Total dioxin-like PCB TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin-like%20pcb%20TEQ%20by%20date%20and%20location-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin-like%20pcb%20TEQ%20by%20date%20and%20location-1.png)
 
 ### 5.8 Join Dioxin and dioxin-like PCB obs for same date and location
 
@@ -3093,13 +3120,13 @@ n_obs_pcb = n_obs) %>%
 join_teq = inner_join(dioxin_sumteq3,pcb_sumteq3)
 ```
 
-    ## Joining by: c("country", "station", "lat", "lon", "date", "year", "species")
+    ## Joining, by = c("country", "station", "lat", "lon", "date", "year", "species")
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y): joining factors with
-    ## different levels, coercing to character vector
+    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factors with different levels, coercing to character vector
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y): joining factors with
-    ## different levels, coercing to character vector
+    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factors with different levels, coercing to character vector
 
 #### 5.8.2 Plot Dioxin and dioxin-like observations
 
@@ -3112,7 +3139,7 @@ ggplot(join_teq)+
   ggtitle("Mean total TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-1.png)
 
 ``` r
 ggplot(join_teq)+
@@ -3122,7 +3149,7 @@ ggplot(join_teq)+
   ggtitle("Mean total TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-2.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-2.png)
 
 #### 5.8.3 Sum dioxin and dioxin-like PCB mean TEQ values by date and location
 
@@ -3147,7 +3174,7 @@ ggplot(join_teq)+
   ggtitle("Total TEQ pg/g")
 ```
 
-![](contaminants_prep_files/figure-markdown_github/plot%20total%20TEQ-1.png)<!-- -->
+![](contaminants_prep_files/figure-markdown_github/plot%20total%20TEQ-1.png)
 
 ### TO DO
 

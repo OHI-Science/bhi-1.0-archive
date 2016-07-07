@@ -1,6 +1,32 @@
 nutrient\_load\_prep
 ================
 
+-   [Prep Nutrient Load Pressure Layers](#prep-nutrient-load-pressure-layers)
+-   [1. Background on Nutrient Load Pressures](#background-on-nutrient-load-pressures)
+-   [2. Data Sources](#data-sources)
+    -   [2.1 N & P Loads](#n-p-loads)
+    -   [2.2 Maximum Allowable Inputs (MAI)](#maximum-allowable-inputs-mai)
+    -   [2.3 Data scale](#data-scale)
+-   [3. Data rescaling decisions](#data-rescaling-decisions)
+-   [4. Read in all data](#read-in-all-data)
+-   [5. Nitrogen Layer Prep](#nitrogen-layer-prep)
+    -   [5.1 Combine N\_load with Target N\_load](#combine-n_load-with-target-n_load)
+    -   [5.2 Plot time series of load by basin with target indicated](#plot-time-series-of-load-by-basin-with-target-indicated)
+    -   [5.3 Calculate current N load pressure](#calculate-current-n-load-pressure)
+    -   [5.4 Rescale the N load pressure](#rescale-the-n-load-pressure)
+    -   [5.5 Plot normalized N load pressure score by basin](#plot-normalized-n-load-pressure-score-by-basin)
+    -   [5.6 Assign basin pressure value to BHI regions](#assign-basin-pressure-value-to-bhi-regions)
+    -   [5.7 Plot map of N pressure score by BHI region](#plot-map-of-n-pressure-score-by-bhi-region)
+-   [6. Phosphorus Layer Prep](#phosphorus-layer-prep)
+    -   [6.1 Combine P\_load with Target P\_load](#combine-p_load-with-target-p_load)
+    -   [6.2 Plot time series of load by basin with target indicated](#plot-time-series-of-load-by-basin-with-target-indicated-1)
+    -   [6.3 Calculate current P load pressure](#calculate-current-p-load-pressure)
+    -   [6.4 Rescale the P load pressure](#rescale-the-p-load-pressure)
+    -   [6.5 Plot normalized P load pressure score by basin](#plot-normalized-p-load-pressure-score-by-basin)
+    -   [6.6 Assign basin P pressure value to BHI regions](#assign-basin-p-pressure-value-to-bhi-regions)
+    -   [6.7 Plot map of P pressure score by BHI region](#plot-map-of-p-pressure-score-by-bhi-region)
+-   [Save data as csv in Layers](#save-data-as-csv-in-layers)
+
 Prep Nutrient Load Pressure Layers
 ----------------------------------
 
@@ -15,6 +41,8 @@ library(readr)
 library(dplyr)
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.2.5
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -28,6 +56,11 @@ library(dplyr)
 
 ``` r
 library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
 library(ggplot2)
 ```
 
@@ -37,7 +70,11 @@ library(ggplot2)
 library(RMySQL)
 ```
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 library(stringr)
@@ -279,7 +316,7 @@ ggplot(n_load2) +
   facet_wrap(~basin, scales ="free_y")
 ```
 
-![](nutrient_load_prep_files/figure-markdown_github/nload%20ts%20plot-1.png)<!-- -->
+![](nutrient_load_prep_files/figure-markdown_github/nload%20ts%20plot-1.png)
 
 ### 5.3 Calculate current N load pressure
 
@@ -298,7 +335,7 @@ n_current
     ## Source: local data frame [7 x 2]
     ## 
     ##             basin n_current
-    ##             (chr)     (dbl)
+    ##             <chr>     <dbl>
     ## 1   Baltic Proper    370012
     ## 2    Bothnian Bay     56962
     ## 3    Bothnian Sea     72846
@@ -347,7 +384,7 @@ axis(side=1, at=c(seq(1,nrow(n_current_score),1)), labels=n_current_score$basin,
 mtext("Basin",side=1, outer=TRUE, line=3)
 ```
 
-![](nutrient_load_prep_files/figure-markdown_github/nload%20score%20normalized%20basin%20plot-1.png)<!-- -->
+![](nutrient_load_prep_files/figure-markdown_github/nload%20score%20normalized%20basin%20plot-1.png)
 
 ### 5.6 Assign basin pressure value to BHI regions
 
@@ -364,16 +401,20 @@ po_nload = full_join(n_current_score, basin_lookup, by=c("basin"="basin_name_loa
 library(rgdal)
 ```
 
+    ## Warning: package 'rgdal' was built under R version 3.2.5
+
     ## Loading required package: sp
 
-    ## rgdal: version: 1.1-3, (SVN revision 594)
+    ## Warning: package 'sp' was built under R version 3.2.5
+
+    ## rgdal: version: 1.1-10, (SVN revision 622)
     ##  Geospatial Data Abstraction Library extensions to R successfully loaded
     ##  Loaded GDAL runtime: GDAL 2.0.1, released 2015/09/15
     ##  Path to GDAL shared files: C:/R-3.2.3/library/rgdal/gdal
     ##  GDAL does not use iconv for recoding strings.
     ##  Loaded PROJ.4 runtime: Rel. 4.9.1, 04 March 2015, [PJ_VERSION: 491]
     ##  Path to PROJ.4 shared files: C:/R-3.2.3/library/rgdal/proj
-    ##  Linking to sp version: 1.2-2
+    ##  Linking to sp version: 1.2-3
 
 ``` r
 BHIshp = readOGR("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/March2016WkshpPlots/shapefiles", "BHI_regions_plus_buffer_25km")
@@ -451,7 +492,7 @@ legend("bottomright", ncol=3, fill=c("white",cols10),
        legend=c("0",">0-0.1","0.1-0.2","0.2-0.3","0.3-0.4","0.4-0.5","0.5-0.6","0.6-0.7","0.7-0.8","0.8-0.9","0.9-1.0"), title="Pressure Value", cex=.7,bty='n')
 ```
 
-![](nutrient_load_prep_files/figure-markdown_github/N%20pressure%20on%20map-1.png)<!-- -->
+![](nutrient_load_prep_files/figure-markdown_github/N%20pressure%20on%20map-1.png)
 
 6. Phosphorus Layer Prep
 ------------------------
@@ -471,7 +512,7 @@ ggplot(p_load2) +
   facet_wrap(~basin, scales ="free_y")
 ```
 
-![](nutrient_load_prep_files/figure-markdown_github/pload%20ts%20plot-1.png)<!-- -->
+![](nutrient_load_prep_files/figure-markdown_github/pload%20ts%20plot-1.png)
 
 ### 6.3 Calculate current P load pressure
 
@@ -490,7 +531,7 @@ p_current
     ## Source: local data frame [7 x 2]
     ## 
     ##             basin p_current
-    ##             (chr)     (dbl)
+    ##             <chr>     <dbl>
     ## 1   Baltic Proper     14651
     ## 2    Bothnian Bay      2824
     ## 3    Bothnian Sea      2527
@@ -539,7 +580,7 @@ axis(side=1, at=c(seq(1,nrow(p_current_score),1)), labels=p_current_score$basin,
 mtext("Basin",side=1, outer=TRUE, line=3)
 ```
 
-![](nutrient_load_prep_files/figure-markdown_github/pload%20score%20normalized%20basin%20plot-1.png)<!-- -->
+![](nutrient_load_prep_files/figure-markdown_github/pload%20score%20normalized%20basin%20plot-1.png)
 
 ### 6.6 Assign basin P pressure value to BHI regions
 
@@ -615,7 +656,7 @@ legend("bottomright", ncol=3, fill=c("white",cols10),
        legend=c("0",">0-0.1","0.1-0.2","0.2-0.3","0.3-0.4","0.4-0.5","0.5-0.6","0.6-0.7","0.7-0.8","0.8-0.9","0.9-1.0"), title="Pressure Value", cex=.7,bty='n')
 ```
 
-![](nutrient_load_prep_files/figure-markdown_github/P%20pressure%20on%20map-1.png)<!-- -->
+![](nutrient_load_prep_files/figure-markdown_github/P%20pressure%20on%20map-1.png)
 
 Save data as csv in Layers
 --------------------------

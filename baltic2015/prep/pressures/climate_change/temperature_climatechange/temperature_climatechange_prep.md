@@ -1,6 +1,29 @@
 temperature\_climatechange\_prep
 ================
 
+-   [Prepare Pressure Layer - Sea Surface Temperature Climate Change pressure](#prepare-pressure-layer---sea-surface-temperature-climate-change-pressure)
+    -   [1. Background](#background)
+    -   [2. Data](#data)
+        -   [2.1 Data source](#data-source)
+        -   [2.2 Hindcast](#hindcast)
+        -   [2.3 Projections](#projections)
+    -   [3. Pressure model](#pressure-model)
+        -   [3.1 Current conditions](#current-conditions)
+        -   [3.2 rescaling data](#rescaling-data)
+        -   [3.3 BHI region pressure](#bhi-region-pressure)
+    -   [4. Prepate Data Layer](#prepate-data-layer)
+        -   [4.1 Read in data](#read-in-data)
+        -   [4.2 Plot data](#plot-data)
+        -   [4.3 Clean data](#clean-data)
+        -   [4.3 Current conditions 2010-2014](#current-conditions-2010-2014)
+        -   [4.4.1 Plot Current condition](#plot-current-condition)
+        -   [4.5 Historic Min](#historic-min)
+        -   [4.6 Future max](#future-max)
+        -   [4.7 Plot min, max, and current](#plot-min-max-and-current)
+        -   [4.8 Rescale data for pressure layer](#rescale-data-for-pressure-layer)
+        -   [4.9 Assign basin values to BHI regions](#assign-basin-values-to-bhi-regions)
+        -   [4.10 Write to layers](#write-to-layers)
+
 Prepare Pressure Layer - Sea Surface Temperature Climate Change pressure
 ========================================================================
 
@@ -15,6 +38,8 @@ library(readr)
 library(dplyr)
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.2.5
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -28,6 +53,11 @@ library(dplyr)
 
 ``` r
 library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
 library(ggplot2)
 ```
 
@@ -37,7 +67,11 @@ library(ggplot2)
 library(RMySQL)
 ```
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 library(stringr)
@@ -144,7 +178,7 @@ ggplot(hind_sst)+
 
     ## Warning: Removed 2 rows containing missing values (geom_path).
 
-![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-1.png)<!-- -->
+![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-1.png)
 
 ``` r
 ggplot(proj_sst)+
@@ -155,7 +189,7 @@ ggplot(proj_sst)+
 
     ## Warning: Removed 2 rows containing missing values (geom_path).
 
-![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-2.png)<!-- -->
+![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-2.png)
 
 ``` r
 ggplot(proj2_sst)+
@@ -166,7 +200,7 @@ ggplot(proj2_sst)+
 
     ## Warning: Removed 2 rows containing missing values (geom_path).
 
-![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-3.png)<!-- -->
+![](temperature_climatechange_prep_files/figure-markdown_github/plot%20data-3.png)
 
 ### 4.3 Clean data
 
@@ -232,7 +266,7 @@ sst_current
     ## Source: local data frame [17 x 2]
     ## 
     ##          basin_name_holas current_sst
-    ##                    (fctr)       (dbl)
+    ##                    <fctr>       <dbl>
     ## 1               Aland Sea    16.01649
     ## 2            Arkona Basin    18.30592
     ## 3      Bay of Mecklenburg    18.30592
@@ -261,7 +295,7 @@ ggplot(sst_current)+
   ggtitle("Mean SST 2010-2014 from hindcast time series")
 ```
 
-![](temperature_climatechange_prep_files/figure-markdown_github/plot%20current%20condition-1.png)<!-- -->
+![](temperature_climatechange_prep_files/figure-markdown_github/plot%20current%20condition-1.png)
 
 ### 4.5 Historic Min
 
@@ -281,7 +315,7 @@ hist_min
     ## Source: local data frame [17 x 2]
     ## 
     ##          basin_name_holas hist_min
-    ##                    (fctr)    (dbl)
+    ##                    <fctr>    <dbl>
     ## 1               Aland Sea 12.20052
     ## 2            Arkona Basin 14.39512
     ## 3      Bay of Mecklenburg 14.39512
@@ -319,7 +353,7 @@ future_max1
     ## Source: local data frame [17 x 2]
     ## 
     ##          basin_name_holas future_max
-    ##                    (fctr)      (dbl)
+    ##                    <fctr>      <dbl>
     ## 1               Aland Sea   16.80924
     ## 2            Arkona Basin   18.98328
     ## 3      Bay of Mecklenburg   18.98328
@@ -351,7 +385,7 @@ future_max2
     ## Source: local data frame [17 x 2]
     ## 
     ##          basin_name_holas future_max
-    ##                    (fctr)      (dbl)
+    ##                    <fctr>      <dbl>
     ## 1               Aland Sea   19.46610
     ## 2            Arkona Basin   20.87886
     ## 3      Bay of Mecklenburg   20.87886
@@ -390,7 +424,7 @@ ggplot(sst_data)+
   ggtitle("Basin Jul-Aug SST Historic Min, Current, Future Max")
 ```
 
-![](temperature_climatechange_prep_files/figure-markdown_github/plot%20min,%20max,%20current-1.png)<!-- -->
+![](temperature_climatechange_prep_files/figure-markdown_github/plot%20min,%20max,%20current-1.png)
 
 ### 4.8 Rescale data for pressure layer
 
@@ -409,7 +443,7 @@ Some current temperatures are warmer than the near future max if use the ECHAM5 
     ## Source: local data frame [17 x 6]
     ## 
     ##          basin_name_holas current_sst future_echam5 future_hadcm3 hist_min
-    ##                    (fctr)       (dbl)         (dbl)         (dbl)    (dbl)
+    ##                    <fctr>       <dbl>         <dbl>         <dbl>    <dbl>
     ## 1               Aland Sea    16.01649      16.80924      19.46610 12.20052
     ## 2            Arkona Basin    18.30592      18.98328      20.87886 14.39512
     ## 3      Bay of Mecklenburg    18.30592      18.98328      20.87886 14.39512
@@ -427,7 +461,7 @@ Some current temperatures are warmer than the near future max if use the ECHAM5 
     ## 15              The Quark    16.01649      16.80924      19.46610 12.20052
     ## 16              The Sound    18.20104      18.77648      20.67413 14.99148
     ## 17  Western Gotland Basin    18.95239      18.85925      21.96635 14.57497
-    ## Variables not shown: sst_rescale (dbl)
+    ## Variables not shown: sst_rescale <dbl>.
 
 ### 4.9 Assign basin values to BHI regions
 
@@ -448,8 +482,8 @@ sst_rescale = sst_rescale %>%
               arrange(rgn_id)
 ```
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining factors with
-    ## different levels, coercing to character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factors with different levels, coercing to character vector
 
 #### 4.9.3 Plot rescaled SST by BHI ID
 
@@ -460,7 +494,7 @@ ggplot(sst_rescale)+
    ggtitle("SST pressure data layer")
 ```
 
-![](temperature_climatechange_prep_files/figure-markdown_github/plot%20sst%20by%20bhi%20id-1.png)<!-- -->
+![](temperature_climatechange_prep_files/figure-markdown_github/plot%20sst%20by%20bhi%20id-1.png)
 
 ### 4.10 Write to layers
 

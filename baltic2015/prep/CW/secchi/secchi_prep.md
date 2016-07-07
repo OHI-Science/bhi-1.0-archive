@@ -1,6 +1,35 @@
 secchi\_prep
 ================
 
+-   [Nutrient subgoal data layer prep - Secchi data](#nutrient-subgoal-data-layer-prep---secchi-data)
+    -   [1. Background on using Secchi](#background-on-using-secchi)
+    -   [2. Secchi Data](#secchi-data)
+        -   [2.1 Data sources](#data-sources)
+        -   [2.2 Data Cleaning and decision-making](#data-cleaning-and-decision-making)
+    -   [3. Data Prep](#data-prep)
+        -   [3.1 Read in data](#read-in-data)
+        -   [3.2 Remove coastal observations](#remove-coastal-observations)
+        -   [3.3 Target values](#target-values)
+        -   [3.4 HELCOM HOLAS Basin](#helcom-holas-basin)
+        -   [3.5 Select summer data and plot](#select-summer-data-and-plot)
+        -   [3.6 Assign secchi data to a HOLAS basin](#assign-secchi-data-to-a-holas-basin)
+        -   [3.7 Restrict data to before 2014](#restrict-data-to-before-2014)
+        -   [3.8 Evaluate number of stations sampled in each basin](#evaluate-number-of-stations-sampled-in-each-basin)
+        -   [3.9 Mean secchi Calculation](#mean-secchi-calculation)
+        -   [3.9.1 Calculate mean monthly value for each summer month](#calculate-mean-monthly-value-for-each-summer-month)
+        -   [3.9.2 Plot mean monthly value by basin](#plot-mean-monthly-value-by-basin)
+        -   [3.9.3 Calculate summer mean secchi (basin)](#calculate-summer-mean-secchi-basin)
+        -   [3.9.4 Plot summer mean secchi](#plot-summer-mean-secchi)
+        -   [3.9.5 Plot summer secchi with target values indicated](#plot-summer-secchi-with-target-values-indicated)
+    -   [4. Status and Trend exploration](#status-and-trend-exploration)
+        -   [4.1 Goal Model & Trend](#goal-model-trend)
+        -   [4.2 What year will the status be calculated for for each basin?](#what-year-will-the-status-be-calculated-for-for-each-basin)
+        -   [4.3 Calculate status](#calculate-status)
+        -   [4.4 Plot Basin status over time](#plot-basin-status-over-time)
+        -   [4.5 Plot BHI region status and trend values](#plot-bhi-region-status-and-trend-values)
+        -   [4.6 Save csv files](#save-csv-files)
+    -   [5. Next steps](#next-steps)
+
 Nutrient subgoal data layer prep - Secchi data
 ==============================================
 
@@ -10,6 +39,8 @@ source('~/github/bhi/baltic2015/prep/common.r')
 ```
 
     ## Warning: package 'readr' was built under R version 3.2.4
+
+    ## Warning: package 'dplyr' was built under R version 3.2.5
 
     ## 
     ## Attaching package: 'dplyr'
@@ -22,9 +53,15 @@ source('~/github/bhi/baltic2015/prep/common.r')
     ## 
     ##     intersect, setdiff, setequal, union
 
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
     ## Warning: package 'ggplot2' was built under R version 3.2.4
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 dir_cw    = file.path(dir_prep, 'CW')
@@ -439,7 +476,7 @@ allData %>% filter(is.na(coast_code) & !is.na(bhi_id)) %>% dim() #  3 10
           plot_map1
 ```
 
-![](secchi_prep_files/figure-markdown_github/remove%20coastal%20data%20points-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/remove%20coastal%20data%20points-1.png)
 
 ``` r
       ## these locations are very coastal or outside of the Baltic Sea
@@ -456,7 +493,7 @@ allData %>% filter(is.na(coast_code) & !is.na(bhi_id)) %>% dim() #  3 10
       plot_map2
 ```
 
-![](secchi_prep_files/figure-markdown_github/remove%20coastal%20data%20points-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/remove%20coastal%20data%20points-2.png)
 
 ``` r
       ## these are clearly coastal stations
@@ -467,21 +504,31 @@ allData %>% filter(is.na(coast_code) & !is.na(bhi_id)) %>% dim() #  3 10
 allData %>% filter(bhi_id %in% 6) %>% select(bhi_id,year,date,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
 ```
 
-    ## Source: local data frame [24 x 7]
-    ## 
-    ##    bhi_id  year       date     lat     lon coast_code supplier
-    ##     (int) (int)     (date)   (dbl)   (dbl)      (int)    (chr)
-    ## 1       6  2007 2007-04-23 55.8517 12.6683          0     ices
-    ## 2       6  2002 2002-02-14 55.8517 12.6683          0     ices
-    ## 3       6  2002 2002-05-21 55.8083 12.7152          0     ices
-    ## 4       6  1999 1999-01-19 56.1270 12.5170         39     ices
-    ## 5       6  1998 1998-03-16 55.7002 12.6860         40     ices
-    ## 6       6  1998 1998-03-30 55.7002 12.6860         40     ices
-    ## 7       6  1998 1998-04-27 55.7002 12.6860         40     ices
-    ## 8       6  1998 1998-05-18 55.8490 12.6795          0     ices
-    ## 9       6  1998 1998-12-08 55.7000 12.7500         40     ices
-    ## 10      6  1998 1998-03-19 55.6200 12.8700          0     ices
-    ## ..    ...   ...        ...     ...     ...        ...      ...
+    ##    bhi_id year       date     lat     lon coast_code supplier
+    ## 1       6 2007 2007-04-23 55.8517 12.6683          0     ices
+    ## 2       6 2002 2002-02-14 55.8517 12.6683          0     ices
+    ## 3       6 2002 2002-05-21 55.8083 12.7152          0     ices
+    ## 4       6 1999 1999-01-19 56.1270 12.5170         39     ices
+    ## 5       6 1998 1998-03-16 55.7002 12.6860         40     ices
+    ## 6       6 1998 1998-03-30 55.7002 12.6860         40     ices
+    ## 7       6 1998 1998-04-27 55.7002 12.6860         40     ices
+    ## 8       6 1998 1998-05-18 55.8490 12.6795          0     ices
+    ## 9       6 1998 1998-12-08 55.7000 12.7500         40     ices
+    ## 10      6 1998 1998-03-19 55.6200 12.8700          0     ices
+    ## 11      6 1998 1998-07-21 55.6200 12.8700          0     ices
+    ## 12      6 1992 1992-08-31 56.1300 12.5100         39     ices
+    ## 13      6 1991 1991-02-26 56.1280 12.5200         39     ices
+    ## 14      6 1991 1991-06-16 56.1300 12.5120         39     ices
+    ## 15      6 1990 1990-04-19 56.1300 12.5100         39     ices
+    ## 16      6 1990 1990-09-25 56.1300 12.5100         39     ices
+    ## 17      6 1988 1988-06-01 55.9000 12.6370          0     ices
+    ## 18      6 1988 1988-06-02 55.9000 12.6370          0     ices
+    ## 19      6 1988 1988-06-02 55.9130 12.6370          0     ices
+    ## 20      6 1988 1988-06-02 55.7850 12.7130          0     ices
+    ## 21      6 1988 1988-06-03 55.7850 12.7130          0     ices
+    ## 22      6 1988 1988-06-06 55.7850 12.7130          0     ices
+    ## 23      6 1988 1988-06-07 55.7850 12.7130          0     ices
+    ## 24      6 1988 1988-06-07 55.9130 12.6370          0     ices
 
 ``` r
     ## three observations in BHI region 6 after 2000
@@ -489,10 +536,7 @@ allData %>% filter(bhi_id %in% 6) %>% select(bhi_id,year,date,lat, lon,coast_cod
 allData %>% filter(bhi_id %in% 6) %>% select(coast_code, supplier)%>%distinct(.)
 ```
 
-    ## Source: local data frame [3 x 2]
-    ## 
     ##   coast_code supplier
-    ##        (int)    (chr)
     ## 1         40     ices
     ## 2          0     ices
     ## 3         39     ices
@@ -502,30 +546,443 @@ allData %>% filter(bhi_id %in% 6) %>% select(coast_code, supplier)%>%distinct(.)
 allData %>% filter(bhi_id %in% 5) %>% select(bhi_id,year,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
 ```
 
-    ## Source: local data frame [430 x 6]
-    ## 
-    ##    bhi_id  year     lat     lon coast_code supplier
-    ##     (int) (int)   (dbl)   (dbl)      (int)    (chr)
-    ## 1       5  2015 55.8667 12.7500         39     smhi
-    ## 2       5  2014 55.8670 12.7500         39     ices
-    ## 3       5  2014 56.2167 12.5167         39     smhi
-    ## 4       5  2014 55.7850 12.9067         39     smhi
-    ## 5       5  2014 55.6508 13.0350         39     smhi
-    ## 6       5  2014 55.6867 13.0367         39     smhi
-    ## 7       5  2014 55.8667 12.7500         39     smhi
-    ## 8       5  2013 55.8670 12.7500         39     ices
-    ## 9       5  2013 55.8667 12.7500         39     smhi
-    ## 10      5  2012 55.8670 12.7500         39     ices
-    ## ..    ...   ...     ...     ...        ...      ...
+    ##     bhi_id year     lat     lon coast_code supplier
+    ## 1        5 2015 55.8667 12.7500         39     smhi
+    ## 2        5 2014 55.8670 12.7500         39     ices
+    ## 3        5 2014 56.2167 12.5167         39     smhi
+    ## 4        5 2014 55.7850 12.9067         39     smhi
+    ## 5        5 2014 55.6508 13.0350         39     smhi
+    ## 6        5 2014 55.6867 13.0367         39     smhi
+    ## 7        5 2014 55.8667 12.7500         39     smhi
+    ## 8        5 2013 55.8670 12.7500         39     ices
+    ## 9        5 2013 55.8667 12.7500         39     smhi
+    ## 10       5 2012 55.8670 12.7500         39     ices
+    ## 11       5 2012 55.7850 12.9067         39     smhi
+    ## 12       5 2012 55.6508 13.0350         39     smhi
+    ## 13       5 2012 55.6867 13.0367         39     smhi
+    ## 14       5 2012 56.2167 12.5167         39     smhi
+    ## 15       5 2012 55.8667 12.7500         39     smhi
+    ## 16       5 2011 55.8670 12.7500         39     ices
+    ## 17       5 2011 55.7850 12.9067         39     smhi
+    ## 18       5 2011 55.6508 13.0350         39     smhi
+    ## 19       5 2011 55.6867 13.0367         39     smhi
+    ## 20       5 2011 56.2167 12.5167         39     smhi
+    ## 21       5 2011 55.8667 12.7500         39     smhi
+    ## 22       5 2010 55.8700 12.7500         39     ices
+    ## 23       5 2010 55.8670 12.7500         39     ices
+    ## 24       5 2010 55.7850 12.9067         39     smhi
+    ## 25       5 2010 55.6508 13.0350         39     smhi
+    ## 26       5 2010 55.6867 13.0367         39     smhi
+    ## 27       5 2010 56.2167 12.5167         39     smhi
+    ## 28       5 2010 55.8667 12.7500         39     smhi
+    ## 29       5 2009 55.8700 12.7500         39     ices
+    ## 30       5 2009 55.8670 12.7500         39     ices
+    ## 31       5 2009 55.7850 12.9067         39     smhi
+    ## 32       5 2009 55.6508 13.0350         39     smhi
+    ## 33       5 2009 55.6867 13.0367         39     smhi
+    ## 34       5 2009 55.8667 12.7500         39     smhi
+    ## 35       5 2009 56.2167 12.5167         39     smhi
+    ## 36       5 2008 55.8700 12.7500         39     ices
+    ## 37       5 2008 55.8670 12.7500         39     ices
+    ## 38       5 2008 56.2167 12.5167         39     smhi
+    ## 39       5 2008 55.7850 12.9067         39     smhi
+    ## 40       5 2008 55.6508 13.0350         39     smhi
+    ## 41       5 2008 55.6867 13.0367         39     smhi
+    ## 42       5 2008 55.8667 12.7500         39     smhi
+    ## 43       5 2007 55.8700 12.7500         39     ices
+    ## 44       5 2007 55.8670 12.7500         39     ices
+    ## 45       5 2007 55.8667 12.7500         39     smhi
+    ## 46       5 2007 56.2167 12.5167         39     smhi
+    ## 47       5 2007 55.7850 12.9067         39     smhi
+    ## 48       5 2007 55.6508 13.0350         39     smhi
+    ## 49       5 2007 55.6867 13.0367         39     smhi
+    ## 50       5 2006 55.8700 12.7500         39     ices
+    ## 51       5 2006 55.8652 12.7485         39     ices
+    ## 52       5 2006 55.8663 12.7488         39     ices
+    ## 53       5 2006 55.8673 12.7497         39     ices
+    ## 54       5 2006 55.8658 12.7490         39     ices
+    ## 55       5 2006 55.8670 12.7478         39     ices
+    ## 56       5 2006 55.8640 12.7487         39     ices
+    ## 57       5 2006 55.8612 12.7490         39     ices
+    ## 58       5 2006 55.8608 12.7502         39     ices
+    ## 59       5 2006 55.8660 12.7477         39     ices
+    ## 60       5 2006 55.8615 12.7493         39     ices
+    ## 61       5 2006 55.8618 12.7493         39     ices
+    ## 62       5 2006 55.8645 12.7483         39     ices
+    ## 63       5 2006 55.8602 12.7502         39     ices
+    ## 64       5 2006 55.8620 12.7500         39     ices
+    ## 65       5 2006 55.8615 12.7507         39     ices
+    ## 66       5 2006 55.8615 12.7495         39     ices
+    ## 67       5 2006 55.8617 12.7483         39     ices
+    ## 68       5 2006 55.8622 12.7490         39     ices
+    ## 69       5 2006 55.8612 12.7502         39     ices
+    ## 70       5 2006 55.8612 12.7505         39     ices
+    ## 71       5 2006 55.8608 12.7507         39     ices
+    ## 72       5 2006 55.8600 12.7497         39     ices
+    ## 73       5 2006 55.8623 12.7495         39     ices
+    ## 74       5 2006 55.8613 12.7498         39     ices
+    ## 75       5 2006 55.8613 12.7495         39     ices
+    ## 76       5 2006 55.8608 12.7505         39     ices
+    ## 77       5 2006 55.8615 12.7498         39     ices
+    ## 78       5 2006 55.8670 12.7500         39     ices
+    ## 79       5 2006 56.2167 12.5167         39     smhi
+    ## 80       5 2006 55.7850 12.9067         39     smhi
+    ## 81       5 2006 55.6508 13.0350         39     smhi
+    ## 82       5 2006 55.6867 13.0367         39     smhi
+    ## 83       5 2006 55.8667 12.7500         39     smhi
+    ## 84       5 2005 55.8700 12.7500         39     ices
+    ## 85       5 2005 55.8668 12.7493         39     ices
+    ## 86       5 2005 55.8700 12.7482         39     ices
+    ## 87       5 2005 55.8660 12.7483         39     ices
+    ## 88       5 2005 55.8665 12.7482         39     ices
+    ## 89       5 2005 55.8663 12.7482         39     ices
+    ## 90       5 2005 55.8660 12.7477         39     ices
+    ## 91       5 2005 55.8670 12.7472         39     ices
+    ## 92       5 2005 55.8658 12.7487         39     ices
+    ## 93       5 2005 55.8663 12.7477         39     ices
+    ## 94       5 2005 55.8673 12.7485         39     ices
+    ## 95       5 2005 55.8687 12.7500         39     ices
+    ## 96       5 2005 55.8780 12.7492         39     ices
+    ## 97       5 2005 55.8663 12.7487         39     ices
+    ## 98       5 2005 55.8662 12.7483         39     ices
+    ## 99       5 2005 55.8662 12.7493         39     ices
+    ## 100      5 2005 55.8687 12.7490         39     ices
+    ## 101      5 2005 55.8727 12.7487         39     ices
+    ## 102      5 2005 55.8663 12.7480         39     ices
+    ## 103      5 2005 55.8700 12.7480         39     ices
+    ## 104      5 2005 55.8688 12.7490         39     ices
+    ## 105      5 2005 55.8683 12.7490         39     ices
+    ## 106      5 2005 55.8665 12.7488         39     ices
+    ## 107      5 2005 55.8653 12.7480         39     ices
+    ## 108      5 2005 55.8665 12.7493         39     ices
+    ## 109      5 2005 55.8725 12.7490         39     ices
+    ## 110      5 2005 55.8683 12.7483         39     ices
+    ## 111      5 2005 55.8662 12.7477         39     ices
+    ## 112      5 2005 55.8662 12.7492         39     ices
+    ## 113      5 2005 55.8700 12.7488         39     ices
+    ## 114      5 2005 55.8655 12.7495         39     ices
+    ## 115      5 2005 55.8658 12.7483         39     ices
+    ## 116      5 2005 55.8660 12.7487         39     ices
+    ## 117      5 2005 55.8670 12.7500         39     ices
+    ## 118      5 2005 55.7947 12.8605         39     ices
+    ## 119      5 2005 56.2167 12.5167         39     smhi
+    ## 120      5 2005 55.7850 12.9067         39     smhi
+    ## 121      5 2005 55.6508 13.0350         39     smhi
+    ## 122      5 2005 55.6867 13.0367         39     smhi
+    ## 123      5 2005 55.8667 12.7500         39     smhi
+    ## 124      5 2004 55.8700 12.7500         39     ices
+    ## 125      5 2004 55.8658 12.7492         39     ices
+    ## 126      5 2004 55.8700 12.7483         39     ices
+    ## 127      5 2004 55.8670 12.7482         39     ices
+    ## 128      5 2004 55.8700 12.7493         39     ices
+    ## 129      5 2004 55.8678 12.7472         39     ices
+    ## 130      5 2004 55.8700 12.7490         39     ices
+    ## 131      5 2004 55.8675 12.7488         39     ices
+    ## 132      5 2004 55.8670 12.7475         39     ices
+    ## 133      5 2004 55.8660 12.7483         39     ices
+    ## 134      5 2004 55.8680 12.7472         39     ices
+    ## 135      5 2004 55.8658 12.7483         39     ices
+    ## 136      5 2004 55.8663 12.7485         39     ices
+    ## 137      5 2004 55.8655 12.7488         39     ices
+    ## 138      5 2004 55.8662 12.7492         39     ices
+    ## 139      5 2004 55.8657 12.7478         39     ices
+    ## 140      5 2004 55.8665 12.7475         39     ices
+    ## 141      5 2004 55.8663 12.7482         39     ices
+    ## 142      5 2004 55.8672 12.7485         39     ices
+    ## 143      5 2004 55.8657 12.7480         39     ices
+    ## 144      5 2004 55.8670 12.7493         39     ices
+    ## 145      5 2004 55.8662 12.7495         39     ices
+    ## 146      5 2004 55.8657 12.7488         39     ices
+    ## 147      5 2004 55.8665 12.7482         39     ices
+    ## 148      5 2004 55.8700 12.7487         39     ices
+    ## 149      5 2004 55.8672 12.7480         39     ices
+    ## 150      5 2004 55.8647 12.7482         39     ices
+    ## 151      5 2004 55.8668 12.7485         39     ices
+    ## 152      5 2004 55.8658 12.7487         39     ices
+    ## 153      5 2004 55.8648 12.7478         39     ices
+    ## 154      5 2004 55.8670 12.7500         39     ices
+    ## 155      5 2004 56.2167 12.5167         39     smhi
+    ## 156      5 2004 55.7850 12.9067         39     smhi
+    ## 157      5 2004 55.6517 13.0350         39     smhi
+    ## 158      5 2004 55.6867 13.0367         39     smhi
+    ## 159      5 2004 55.8667 12.7500         39     smhi
+    ## 160      5 2003 55.8700 12.7500         39     ices
+    ## 161      5 2003 55.8655 12.7497         39     ices
+    ## 162      5 2003 55.8665 12.7485         39     ices
+    ## 163      5 2003 55.8660 12.7483         39     ices
+    ## 164      5 2003 55.8657 12.7487         39     ices
+    ## 165      5 2003 55.8663 12.7482         39     ices
+    ## 166      5 2003 55.8617 12.7497         39     ices
+    ## 167      5 2003 55.8652 12.7482         39     ices
+    ## 168      5 2003 55.8653 12.7483         39     ices
+    ## 169      5 2003 55.8658 12.7485         39     ices
+    ## 170      5 2003 55.8668 12.7488         39     ices
+    ## 171      5 2003 55.8655 12.7482         39     ices
+    ## 172      5 2003 55.8620 12.7495         39     ices
+    ## 173      5 2003 55.8670 12.7482         39     ices
+    ## 174      5 2003 55.8668 12.7500         39     ices
+    ## 175      5 2003 55.8668 12.7527         39     ices
+    ## 176      5 2003 55.8658 12.7478         39     ices
+    ## 177      5 2003 55.8657 12.7482         39     ices
+    ## 178      5 2003 55.8653 12.7480         39     ices
+    ## 179      5 2003 55.8652 12.7483         39     ices
+    ## 180      5 2003 55.8663 12.7490         39     ices
+    ## 181      5 2003 55.8647 12.7482         39     ices
+    ## 182      5 2003 55.8660 12.7482         39     ices
+    ## 183      5 2003 55.8673 12.7485         39     ices
+    ## 184      5 2003 55.8672 12.7482         39     ices
+    ## 185      5 2003 55.8700 12.7485         39     ices
+    ## 186      5 2003 55.8663 12.7485         39     ices
+    ## 187      5 2003 55.8665 12.7497         39     ices
+    ## 188      5 2003 55.8668 12.7480         39     ices
+    ## 189      5 2003 55.8662 12.7485         39     ices
+    ## 190      5 2003 55.8662 12.7478         39     ices
+    ## 191      5 2003 55.8650 12.7493         39     ices
+    ## 192      5 2003 55.8660 12.7488         39     ices
+    ## 193      5 2003 55.8700 12.7482         39     ices
+    ## 194      5 2003 55.8678 12.7482         39     ices
+    ## 195      5 2003 55.8670 12.7500         39     ices
+    ## 196      5 2003 56.2167 12.5167         39     smhi
+    ## 197      5 2003 55.7850 12.9067         39     smhi
+    ## 198      5 2003 55.6517 13.0350         39     smhi
+    ## 199      5 2003 55.6867 13.0367         39     smhi
+    ## 200      5 2003 55.8667 12.7500         39     smhi
+    ## 201      5 2002 55.8700 12.7500         39     ices
+    ## 202      5 2002 55.8670 12.7483         39     ices
+    ## 203      5 2002 55.8655 12.7478         39     ices
+    ## 204      5 2002 55.8665 12.7480         39     ices
+    ## 205      5 2002 55.8673 12.7487         39     ices
+    ## 206      5 2002 55.8670 12.7477         39     ices
+    ## 207      5 2002 55.8662 12.7483         39     ices
+    ## 208      5 2002 55.8658 12.7483         39     ices
+    ## 209      5 2002 55.8655 12.7482         39     ices
+    ## 210      5 2002 55.8510 12.7433         39     ices
+    ## 211      5 2002 55.8662 12.7485         39     ices
+    ## 212      5 2002 55.8665 12.7478         39     ices
+    ## 213      5 2002 55.8648 12.7492         39     ices
+    ## 214      5 2002 55.8658 12.7478         39     ices
+    ## 215      5 2002 55.8672 12.7485         39     ices
+    ## 216      5 2002 55.8665 12.7485         39     ices
+    ## 217      5 2002 55.8655 12.7477         39     ices
+    ## 218      5 2002 55.8658 12.7487         39     ices
+    ## 219      5 2002 55.8668 12.7488         39     ices
+    ## 220      5 2002 55.8648 12.7490         39     ices
+    ## 221      5 2002 55.8662 12.7480         39     ices
+    ## 222      5 2002 55.8663 12.7478         39     ices
+    ## 223      5 2002 55.8663 12.7487         39     ices
+    ## 224      5 2002 55.8657 12.7487         39     ices
+    ## 225      5 2002 55.8657 12.7483         39     ices
+    ## 226      5 2002 55.8663 12.7483         39     ices
+    ## 227      5 2002 55.8700 12.7483         39     ices
+    ## 228      5 2002 55.8648 12.7482         39     ices
+    ## 229      5 2002 55.8650 12.7485         39     ices
+    ## 230      5 2002 55.8665 12.7482         39     ices
+    ## 231      5 2002 55.8675 12.7483         39     ices
+    ## 232      5 2002 55.8665 12.7477         39     ices
+    ## 233      5 2002 55.8655 12.7490         39     ices
+    ## 234      5 2002 55.8688 12.7480         39     ices
+    ## 235      5 2002 55.8668 12.7493         39     ices
+    ## 236      5 2002 55.8660 12.7483         39     ices
+    ## 237      5 2002 55.8652 12.7487         39     ices
+    ## 238      5 2002 55.8670 12.7500         39     ices
+    ## 239      5 2002 56.2167 12.5167         39     smhi
+    ## 240      5 2002 55.7850 12.9067         39     smhi
+    ## 241      5 2002 55.6508 13.0350         39     smhi
+    ## 242      5 2002 55.6867 13.0367         39     smhi
+    ## 243      5 2002 55.8667 12.7500         39     smhi
+    ## 244      5 2001 55.8700 12.7500         39     ices
+    ## 245      5 2001 55.8657 12.7482         39     ices
+    ## 246      5 2001 55.8670 12.7477         39     ices
+    ## 247      5 2001 55.8658 12.7473         39     ices
+    ## 248      5 2001 55.8623 12.7498         39     ices
+    ## 249      5 2001 55.8668 12.7492         39     ices
+    ## 250      5 2001 55.8670 12.7492         39     ices
+    ## 251      5 2001 55.8700 12.7492         39     ices
+    ## 252      5 2001 55.8665 12.7493         39     ices
+    ## 253      5 2001 55.8672 12.7485         39     ices
+    ## 254      5 2001 55.8660 12.7480         39     ices
+    ## 255      5 2001 55.8668 12.7482         39     ices
+    ## 256      5 2001 55.8653 12.7488         39     ices
+    ## 257      5 2001 55.8660 12.7487         39     ices
+    ## 258      5 2001 55.8653 12.7480         39     ices
+    ## 259      5 2001 55.8700 12.7487         39     ices
+    ## 260      5 2001 55.8700 12.7478         39     ices
+    ## 261      5 2001 55.8665 12.7487         39     ices
+    ## 262      5 2001 55.8660 12.7488         39     ices
+    ## 263      5 2001 55.8673 12.7490         39     ices
+    ## 264      5 2001 55.8665 12.7482         39     ices
+    ## 265      5 2001 55.8662 12.7490         39     ices
+    ## 266      5 2001 55.8700 12.7483         39     ices
+    ## 267      5 2001 55.8672 12.7473         39     ices
+    ## 268      5 2001 55.8672 12.7487         39     ices
+    ## 269      5 2001 55.8670 12.7485         39     ices
+    ## 270      5 2001 55.8660 12.7473         39     ices
+    ## 271      5 2001 55.8665 12.7497         39     ices
+    ## 272      5 2001 55.8653 12.7478         39     ices
+    ## 273      5 2001 55.8658 12.7497         39     ices
+    ## 274      5 2001 55.8652 12.7482         39     ices
+    ## 275      5 2001 55.8672 12.7443         39     ices
+    ## 276      5 2001 55.8673 12.7475         39     ices
+    ## 277      5 2001 55.8672 12.7483         39     ices
+    ## 278      5 2001 55.8657 12.7483         39     ices
+    ## 279      5 2001 55.8665 12.7492         39     ices
+    ## 280      5 2001 55.8665 12.7488         39     ices
+    ## 281      5 2001 55.8670 12.7500         39     ices
+    ## 282      5 2001 55.7850 12.9067         39     smhi
+    ## 283      5 2001 56.2167 12.5167         39     smhi
+    ## 284      5 2001 55.6508 13.0350         39     smhi
+    ## 285      5 2001 55.8667 12.7500         39     smhi
+    ## 286      5 2001 55.6867 13.0367         39     smhi
+    ## 287      5 2000 55.8700 12.7500         39     ices
+    ## 288      5 2000 55.8673 12.7485         39     ices
+    ## 289      5 2000 55.8670 12.7497         39     ices
+    ## 290      5 2000 55.8665 12.7487         39     ices
+    ## 291      5 2000 55.8647 12.7470         39     ices
+    ## 292      5 2000 55.8662 12.7488         39     ices
+    ## 293      5 2000 55.8680 12.7478         39     ices
+    ## 294      5 2000 55.8655 12.7495         39     ices
+    ## 295      5 2000 55.8668 12.7483         39     ices
+    ## 296      5 2000 55.8662 12.7487         39     ices
+    ## 297      5 2000 55.8662 12.7480         39     ices
+    ## 298      5 2000 55.8670 12.7485         39     ices
+    ## 299      5 2000 55.8657 12.7487         39     ices
+    ## 300      5 2000 55.8657 12.7482         39     ices
+    ## 301      5 2000 55.8663 12.7483         39     ices
+    ## 302      5 2000 55.8653 12.7490         39     ices
+    ## 303      5 2000 55.8658 12.7478         39     ices
+    ## 304      5 2000 55.8643 12.7490         39     ices
+    ## 305      5 2000 55.8652 12.7495         39     ices
+    ## 306      5 2000 55.8672 12.7487         39     ices
+    ## 307      5 2000 55.8660 12.7480         39     ices
+    ## 308      5 2000 55.8658 12.7480         39     ices
+    ## 309      5 2000 55.8655 12.7478         39     ices
+    ## 310      5 2000 55.8663 12.7480         39     ices
+    ## 311      5 2000 55.8668 12.7490         39     ices
+    ## 312      5 2000 55.8700 12.7482         39     ices
+    ## 313      5 2000 55.8658 12.7477         39     ices
+    ## 314      5 2000 55.8665 12.7480         39     ices
+    ## 315      5 2000 55.8665 12.7485         39     ices
+    ## 316      5 2000 55.8657 12.7475         39     ices
+    ## 317      5 2000 55.8642 12.7535         39     ices
+    ## 318      5 2000 55.8658 12.7487         39     ices
+    ## 319      5 2000 55.8655 12.7480         39     ices
+    ## 320      5 2000 55.8665 12.7493         39     ices
+    ## 321      5 2000 55.6470 12.9550         39     ices
+    ## 322      5 2000 55.8670 12.7500         39     ices
+    ## 323      5 2000 56.2167 12.5167         39     smhi
+    ## 324      5 2000 55.6508 13.0350         39     smhi
+    ## 325      5 2000 55.6867 13.0367         39     smhi
+    ## 326      5 2000 55.7850 12.9067         39     smhi
+    ## 327      5 2000 55.8667 12.7500         39     smhi
+    ## 328      5 2000 55.6467 12.9550         39     smhi
+    ## 329      5 1999 55.8663 12.7495         39     ices
+    ## 330      5 1999 55.8677 12.7493         39     ices
+    ## 331      5 1999 55.8700 12.7507         39     ices
+    ## 332      5 1999 55.8670 12.7488         39     ices
+    ## 333      5 1999 55.8660 12.7495         39     ices
+    ## 334      5 1999 55.8678 12.7493         39     ices
+    ## 335      5 1999 55.8660 12.7502         39     ices
+    ## 336      5 1999 55.8673 12.7488         39     ices
+    ## 337      5 1999 55.8700 12.7492         39     ices
+    ## 338      5 1999 55.8647 12.7505         39     ices
+    ## 339      5 1999 55.8675 12.7503         39     ices
+    ## 340      5 1999 55.8675 12.7497         39     ices
+    ## 341      5 1999 55.8662 12.7507         39     ices
+    ## 342      5 1999 55.8673 12.7495         39     ices
+    ## 343      5 1999 55.8675 12.7493         39     ices
+    ## 344      5 1999 55.8662 12.7492         39     ices
+    ## 345      5 1999 55.8663 12.7488         39     ices
+    ## 346      5 1999 55.8670 12.7495         39     ices
+    ## 347      5 1999 55.8673 12.7497         39     ices
+    ## 348      5 1999 55.8657 12.7488         39     ices
+    ## 349      5 1999 55.8700 12.7505         39     ices
+    ## 350      5 1999 55.8657 12.7513         39     ices
+    ## 351      5 1999 55.8670 12.7507         39     ices
+    ## 352      5 1999 55.8620 12.7515         39     ices
+    ## 353      5 1999 55.8665 12.7503         39     ices
+    ## 354      5 1999 55.8663 12.7485         39     ices
+    ## 355      5 1999 55.8647 12.7510         39     ices
+    ## 356      5 1999 55.8653 12.7498         39     ices
+    ## 357      5 1999 55.8678 12.7495         39     ices
+    ## 358      5 1999 55.8663 12.7478         39     ices
+    ## 359      5 1999 55.8677 12.7490         39     ices
+    ## 360      5 1999 55.8645 12.7495         39     ices
+    ## 361      5 1999 55.8670 12.7500         39     ices
+    ## 362      5 1999 55.7700 12.7970         39     ices
+    ## 363      5 1999 55.5980 12.8580         39     ices
+    ## 364      5 1998 55.8700 12.7500         39     ices
+    ## 365      5 1998 55.8670 12.7503         39     ices
+    ## 366      5 1998 55.8668 12.7487         39     ices
+    ## 367      5 1998 55.8688 12.7487         39     ices
+    ## 368      5 1998 55.8702 12.7478         39     ices
+    ## 369      5 1998 55.8660 12.7503         39     ices
+    ## 370      5 1998 55.8700 12.7495         39     ices
+    ## 371      5 1998 55.8660 12.7500         39     ices
+    ## 372      5 1998 55.8670 12.7495         39     ices
+    ## 373      5 1998 55.8700 12.7492         39     ices
+    ## 374      5 1998 55.8677 12.7497         39     ices
+    ## 375      5 1998 55.8663 12.7485         39     ices
+    ## 376      5 1998 55.8668 12.7495         39     ices
+    ## 377      5 1998 55.8675 12.7505         39     ices
+    ## 378      5 1998 55.8677 12.7503         39     ices
+    ## 379      5 1998 55.8677 12.7490         39     ices
+    ## 380      5 1998 55.8655 12.7490         39     ices
+    ## 381      5 1998 55.8658 12.7507         39     ices
+    ## 382      5 1998 55.8672 12.7490         39     ices
+    ## 383      5 1998 55.8662 12.7477         39     ices
+    ## 384      5 1998 55.8680 12.7490         39     ices
+    ## 385      5 1998 55.8658 12.7500         39     ices
+    ## 386      5 1998 55.8678 12.7495         39     ices
+    ## 387      5 1998 55.8672 12.7493         39     ices
+    ## 388      5 1998 55.8657 12.7483         39     ices
+    ## 389      5 1998 55.8682 12.7493         39     ices
+    ## 390      5 1998 55.8675 12.7497         39     ices
+    ## 391      5 1998 55.8800 12.7500         39     ices
+    ## 392      5 1998 55.5980 12.8580         39     ices
+    ## 393      5 1998 55.8670 12.7500         39     ices
+    ## 394      5 1997 55.8670 12.7500         39     ices
+    ## 395      5 1996 55.8670 12.7500         39     ices
+    ## 396      5 1995 55.8670 12.7500         39     ices
+    ## 397      5 1994 55.8700 12.7500         39     ices
+    ## 398      5 1994 55.8670 12.7500         39     ices
+    ## 399      5 1993 55.8670 12.7500         39     ices
+    ## 400      5 1993 55.8000 12.8500         39     ices
+    ## 401      5 1993 56.2370 12.3920         39     ices
+    ## 402      5 1992 55.9920 12.6920         39     ices
+    ## 403      5 1992 55.8670 12.7500         39     ices
+    ## 404      5 1992 55.7700 12.7970         39     ices
+    ## 405      5 1992 55.6470 12.9550         39     ices
+    ## 406      5 1991 55.7700 12.7970         39     ices
+    ## 407      5 1991 55.8670 12.7500         39     ices
+    ## 408      5 1991 55.9920 12.6920         39     ices
+    ## 409      5 1991 55.6470 12.9550         39     ices
+    ## 410      5 1990 56.1020 12.5850         39     ices
+    ## 411      5 1990 55.9920 12.6920         39     ices
+    ## 412      5 1990 55.8670 12.7500         39     ices
+    ## 413      5 1990 55.7700 12.7970         39     ices
+    ## 414      5 1990 55.6470 12.9550         39     ices
+    ## 415      5 1989 55.8670 12.7500         39     ices
+    ## 416      5 1989 55.7700 12.7970         39     ices
+    ## 417      5 1989 55.6470 12.9550         39     ices
+    ## 418      5 1989 56.1020 12.5850         39     ices
+    ## 419      5 1989 55.9920 12.6920         39     ices
+    ## 420      5 1988 55.8670 12.7500         39     ices
+    ## 421      5 1988 55.7700 12.7970         39     ices
+    ## 422      5 1988 55.6470 12.9550         39     ices
+    ## 423      5 1988 56.2552 12.4343         39     ices
+    ## 424      5 1988 56.2552 12.4342         39     ices
+    ## 425      5 1988 56.2873 12.4443         39     ices
+    ## 426      5 1988 55.9920 12.6920         39     ices
+    ## 427      5 1988 55.7320 12.9200         39     ices
+    ## 428      5 1988 55.7550 12.8780         39     ices
+    ## 429      5 1988 55.5920 12.8420         39     ices
+    ## 430      5 1988 56.1020 12.5850         39     ices
 
 ``` r
 allData %>% filter(bhi_id %in% 5) %>% select(coast_code, supplier)%>%distinct(.)
 ```
 
-    ## Source: local data frame [2 x 2]
-    ## 
     ##   coast_code supplier
-    ##        (int)    (chr)
     ## 1         39     ices
     ## 2         39     smhi
 
@@ -549,12 +1006,10 @@ dim(allData)#14019    10
 allData %>% filter(is.na(bhi_id))  ##manual check is just barely within Latvian EEZ so is region 27
 ```
 
-    ## Source: local data frame [1 x 10]
-    ## 
-    ##   bhi_id secchi  year month     lat     lon cruise       date coast_code
-    ##    (int)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
-    ## 1     NA    2.5  2002     8 57.8562 24.3058   LAAN 2002-08-07          0
-    ## Variables not shown: supplier (chr)
+    ##   bhi_id secchi year month     lat     lon cruise       date coast_code
+    ## 1     NA    2.5 2002     8 57.8562 24.3058   LAAN 2002-08-07          0
+    ##   supplier
+    ## 1     ices
 
 ``` r
 allData = allData %>%
@@ -562,11 +1017,9 @@ allData = allData %>%
 allData %>% filter(is.na(bhi_id))  
 ```
 
-    ## Source: local data frame [0 x 10]
-    ## 
-    ## Variables not shown: bhi_id (dbl), secchi (dbl), year (int), month (int),
-    ##   lat (dbl), lon (dbl), cruise (chr), date (date), coast_code (int),
-    ##   supplier (chr)
+    ##  [1] bhi_id     secchi     year       month      lat        lon       
+    ##  [7] cruise     date       coast_code supplier  
+    ## <0 rows> (or 0-length row.names)
 
 ### 3.3 Target values
 
@@ -580,14 +1033,14 @@ head(target)
     ## Source: local data frame [6 x 6]
     ## 
     ##                basin winter_din winter_dip summer_chl summer_secchi
-    ##                (chr)      (dbl)      (dbl)      (dbl)         (dbl)
+    ##                <chr>      <dbl>      <dbl>      <dbl>         <dbl>
     ## 1           Kattegat        5.0       0.49        1.5           7.6
     ## 2          The_Sound        3.3       0.42        1.2           8.2
     ## 3         Great_Belt        5.0       0.59        1.7           8.5
     ## 4        Little_Belt        7.1       0.71        2.8           7.3
     ## 5           Kiel_Bay        5.5       0.57        2.0           7.4
     ## 6 Bay_of_Mecklenburg        4.3       0.49        1.8           7.1
-    ## Variables not shown: oxy_debt (dbl)
+    ## Variables not shown: oxy_debt <dbl>.
 
 ``` r
 #select just summer_seccchi target
@@ -618,17 +1071,20 @@ summer = allData %>% filter(month %in%c(6:9)) %>%
 head(summer)
 ```
 
-    ## Source: local data frame [6 x 10]
-    ## 
-    ##   bhi_id secchi  year month     lat     lon cruise       date coast_code
-    ##    (dbl)  (dbl) (int) (int)   (dbl)   (dbl)  (chr)     (date)      (int)
-    ## 1      1    8.0  2000     8 56.2300 12.3700   26GT 2000-08-07          0
-    ## 2      2    7.0  2000     8 56.5583 11.0300   26GT 2000-08-08          0
-    ## 3      2    6.3  2000     8 56.8567 10.7917   26GT 2000-08-08          0
-    ## 4      2   10.2  2000     8 57.3000 10.7450   26GT 2000-08-08          0
-    ## 5      2   13.2  2000     8 57.4300 10.7083   26GT 2000-08-08          0
-    ## 6      2   13.0  2000     8 57.4650 10.9000   26GT 2000-08-08          0
-    ## Variables not shown: supplier (chr)
+    ##   bhi_id secchi year month     lat     lon cruise       date coast_code
+    ## 1      1    8.0 2000     8 56.2300 12.3700   26GT 2000-08-07          0
+    ## 2      2    7.0 2000     8 56.5583 11.0300   26GT 2000-08-08          0
+    ## 3      2    6.3 2000     8 56.8567 10.7917   26GT 2000-08-08          0
+    ## 4      2   10.2 2000     8 57.3000 10.7450   26GT 2000-08-08          0
+    ## 5      2   13.2 2000     8 57.4300 10.7083   26GT 2000-08-08          0
+    ## 6      2   13.0 2000     8 57.4650 10.9000   26GT 2000-08-08          0
+    ##   supplier
+    ## 1     ices
+    ## 2     ices
+    ## 3     ices
+    ## 4     ices
+    ## 5     ices
+    ## 6     ices
 
 ``` r
 #Plot
@@ -636,14 +1092,14 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
   facet_wrap(~bhi_id, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-1.png)
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~bhi_id)
 ```
 
-![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/select%20summer%20data-2.png)
 
 ### 3.6 Assign secchi data to a HOLAS basin
 
@@ -661,7 +1117,7 @@ ggplot(summer) + geom_point(aes(month,secchi, colour=supplier))+
 
     ## Warning: Removed 6 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-1.png)
 
 ``` r
 ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
@@ -670,7 +1126,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
     ## Warning: Removed 6 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/assign%20summer%20data%20to%20a%20HOLAS%20basin-2.png)
 
 ### 3.7 Restrict data to before 2014
 
@@ -685,7 +1141,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
   facet_wrap(~basin_name, scales ="free_y")
 ```
 
-![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)
 
 ### 3.8 Evaluate number of stations sampled in each basin
 
@@ -703,7 +1159,7 @@ basin_summary
     ## Groups: basin_name, year [?]
     ## 
     ##    basin_name  year month loc_count
-    ##        (fctr) (int) (int)     (int)
+    ##        <fctr> <int> <int>     <int>
     ## 1   Aland Sea  2000     6         1
     ## 2   Aland Sea  2001     6         1
     ## 3   Aland Sea  2002     6         1
@@ -723,7 +1179,7 @@ ggplot(basin_summary) + geom_point(aes(year,loc_count, colour=factor(month)))+
   ylab("Number Sampling Locations")
 ```
 
-![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/samples%20and%20stations%20by%20basin-1.png)
 
 ### 3.9 Mean secchi Calculation
 
@@ -742,7 +1198,7 @@ head(mean_months)
     ## Source: local data frame [6 x 4]
     ## 
     ##    year month     basin_name mean_secchi
-    ##   (int) (int)         (fctr)       (dbl)
+    ##   <int> <int>         <fctr>       <dbl>
     ## 1  2000     6      Aland Sea         5.5
     ## 2  2000     6   Arkona Basin         7.8
     ## 3  2000     6 Bornholm Basin         6.8
@@ -765,7 +1221,7 @@ ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
 
     ## Warning: Removed 9 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/plot%20mean%20monthly-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/plot%20mean%20monthly-1.png)
 
 ### 3.9.3 Calculate summer mean secchi (basin)
 
@@ -789,7 +1245,7 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/plot%20mean%20summer%20secchi-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/plot%20mean%20summer%20secchi-1.png)
 
 ### 3.9.5 Plot summer secchi with target values indicated
 
@@ -800,8 +1256,8 @@ secchi_target = left_join(mean_months_summer,target, by=c("basin_name" = "basin"
                 dplyr::rename(target_secchi = summer_secchi)
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
 ``` r
 head(secchi_target)
@@ -810,7 +1266,7 @@ head(secchi_target)
     ## Source: local data frame [6 x 4]
     ## 
     ##    year         basin_name mean_secchi target_secchi
-    ##   (int)              (chr)       (dbl)         (dbl)
+    ##   <int>              <chr>       <dbl>         <dbl>
     ## 1  2000          Aland Sea         5.5           6.9
     ## 2  2000       Arkona Basin         8.0           7.2
     ## 3  2000 Bay of Mecklenburg         6.7           7.1
@@ -827,7 +1283,7 @@ ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/summer%20secchi%20with%20target-1.png)
 
 4. Status and Trend exploration
 -------------------------------
@@ -866,7 +1322,7 @@ last_year = secchi_target%>%
     ## Source: local data frame [17 x 2]
     ## 
     ##                basin_name last_year
-    ##                     (chr)     (int)
+    ##                     <chr>     <int>
     ## 1               Aland Sea      2012
     ## 2            Arkona Basin      2013
     ## 3      Bay of Mecklenburg      2013
@@ -892,7 +1348,7 @@ last_year %>% filter(last_year < 2013)
     ## Source: local data frame [6 x 2]
     ## 
     ##        basin_name last_year
-    ##             (chr)     (int)
+    ##             <chr>     <int>
     ## 1       Aland Sea      2012
     ## 2     Bothian Sea      2011
     ## 3      Great Belt      2009
@@ -923,7 +1379,7 @@ Status must be calculated in data prep because calculation for a basin and then 
     ## Source: local data frame [226 x 4]
     ## 
     ##     year            basin_name mean_secchi target_secchi
-    ##    (int)                 (chr)       (dbl)         (dbl)
+    ##    <int>                 <chr>       <dbl>         <dbl>
     ## 1   2000             Aland Sea         5.5           6.9
     ## 2   2000          Arkona Basin         8.0           7.2
     ## 3   2000    Bay of Mecklenburg         6.7           7.1
@@ -968,8 +1424,8 @@ Status must be calculated in data prep because calculation for a basin and then 
                 select (rgn_id = bhi_id, dimension, score=status)
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
 ``` r
     bhi_trend = left_join(basin_lookup,basin_trend, by="basin_name") %>%
@@ -978,8 +1434,8 @@ Status must be calculated in data prep because calculation for a basin and then 
                 select(rgn_id = bhi_id, dimension, score )
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
 ### 4.4 Plot Basin status over time
 
@@ -994,7 +1450,7 @@ ggplot(basin_status) + geom_point((aes(year,status)))+
 
     ## Warning: Removed 12 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)
 
 ### 4.5 Plot BHI region status and trend values
 
@@ -1010,7 +1466,7 @@ ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + ge
 
     ## Warning: Removed 6 rows containing missing values (geom_point).
 
-![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)<!-- -->
+![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)
 
 ### 4.6 Save csv files
 

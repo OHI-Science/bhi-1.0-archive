@@ -1,6 +1,19 @@
 resilience\_prep
 ================
 
+-   [Preparation of Resilience Data Layers](#preparation-of-resilience-data-layers)
+    -   [1. Ecological](#ecological)
+    -   [1.1 Biological Integrity](#biological-integrity)
+    -   [1.2 Goal-specific Regulations](#goal-specific-regulations)
+        -   [1.2.1 Background](#background)
+        -   [1.2.2 Scoring](#scoring)
+        -   [1.2.3 Goal Weighting & Mapping](#goal-weighting-mapping)
+        -   [1.2.4 Resilience Data Layer](#resilience-data-layer)
+        -   [1.2.5 Goal-specific data layer preparation](#goal-specific-data-layer-preparation)
+        -   [1.2.6 Exploring alternative mapping and weighting outcomes](#exploring-alternative-mapping-and-weighting-outcomes)
+    -   [TO DO](#to-do)
+    -   [2. Social](#social)
+
 Preparation of Resilience Data Layers
 =====================================
 
@@ -15,6 +28,8 @@ library(readr)
 library(dplyr)
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.2.5
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -28,6 +43,11 @@ library(dplyr)
 
 ``` r
 library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
 library(ggplot2)
 ```
 
@@ -37,7 +57,11 @@ library(ggplot2)
 library(RMySQL)
 ```
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 library(stringr)
@@ -271,7 +295,7 @@ ggplot(goal_spec) +
   ggtitle("Existence Score")
 ```
 
-![](resilience_prep_files/figure-markdown_github/plot%20raw%20score-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/plot%20raw%20score-1.png)
 
 ``` r
 ggplot(goal_spec) + 
@@ -285,7 +309,7 @@ ggplot(goal_spec) +
 
     ## Warning: Removed 669 rows containing missing values (geom_point).
 
-![](resilience_prep_files/figure-markdown_github/plot%20raw%20score-2.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/plot%20raw%20score-2.png)
 
 #### 1.2.5.5 Separate Existance and Compliance
 
@@ -315,7 +339,7 @@ ggplot(goal_spec_compli, aes(CountryName,fill=as.character(compli_numeric)))+
   ggtitle("Compliance Components Assessed by Country & Directive")
 ```
 
-![](resilience_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
 #### 1.2.5.7 Mean Compliance score
 
@@ -362,7 +386,7 @@ ggplot(goal_spec_compli_mean)+
 
     ## Warning: Removed 45 rows containing missing values (geom_point).
 
-![](resilience_prep_files/figure-markdown_github/plot%20mean%20compliance%20score-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/plot%20mean%20compliance%20score-1.png)
 
 #### 1.2.5.9 Existence score
 
@@ -443,7 +467,7 @@ ggplot(goal_spec_overall)+
   ggtitle("Overall Score per Regulation")
 ```
 
-![](resilience_prep_files/figure-markdown_github/plot%20overall%20score-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/plot%20overall%20score-1.png)
 
 #### 1.2.5.12 Plot Overall score by country across all directives
 
@@ -457,7 +481,7 @@ ggplot(goal_spec_overall)+
   ggtitle("Overall Score per Regulation")
 ```
 
-![](resilience_prep_files/figure-markdown_github/plot%20overall%20score%20by%20country-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/plot%20overall%20score%20by%20country-1.png)
 
 ### 1.2.6 Exploring alternative mapping and weighting outcomes
 
@@ -532,8 +556,8 @@ map_direct_weights = left_join(map_direct_long, weights_importance,
                         by=c("regulation"="layer"))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y): joining factor and character
-    ## vector, coercing into character vector
+    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
 
 ``` r
 ## join country scoring to mapping and weights
@@ -562,7 +586,7 @@ ggplot(country_G_direct)+
   ggtitle("Country G value (overall resilience) per Goal with direct mapping")
 ```
 
-![](resilience_prep_files/figure-markdown_github/direct%20mapping%20G-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/direct%20mapping%20G-1.png)
 
 ``` r
 ggplot(country_G_direct)+
@@ -574,7 +598,7 @@ ggplot(country_G_direct)+
   ggtitle("Country G value (overall resilience) per Goal with direct mapping")
 ```
 
-![](resilience_prep_files/figure-markdown_github/direct%20mapping%20G-2.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/direct%20mapping%20G-2.png)
 
 #### 1.2.6.3 Calculate *G* for each country for direct and indirect mapping
 
@@ -622,8 +646,8 @@ map_indirect_direct_weights = left_join(map_indirect_direct_long, weights_import
                         by=c("regulation"="layer"))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y): joining factor and character
-    ## vector, coercing into character vector
+    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
 
 ``` r
 ## join country scoring to mapping and weights
@@ -652,7 +676,7 @@ ggplot(country_G_indirect_direct)+
   ggtitle("Country G value (overall resilience) per Goal w/ indirect + direct mapping")
 ```
 
-![](resilience_prep_files/figure-markdown_github/calcuate%20G%20indirect%20and%20direct-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/calcuate%20G%20indirect%20and%20direct-1.png)
 
 ``` r
 ggplot(country_G_direct)+
@@ -664,7 +688,7 @@ ggplot(country_G_direct)+
   ggtitle("Country G value (overall resilience) per Goal w/ indirect +direct mapping")
 ```
 
-![](resilience_prep_files/figure-markdown_github/calcuate%20G%20indirect%20and%20direct-2.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/calcuate%20G%20indirect%20and%20direct-2.png)
 
 #### 1.2.6.4 Plot comparison of *G* by mapping approach
 
@@ -684,7 +708,7 @@ ggplot(country_G_compare)+
   ggtitle("Country G Mapping Comparison")
 ```
 
-![](resilience_prep_files/figure-markdown_github/G%20comparison-1.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/G%20comparison-1.png)
 
 ``` r
 ## plot country G direct 
@@ -698,7 +722,7 @@ ggplot(country_G_compare)+
   ggtitle("Country G Mapping Comparison")
 ```
 
-![](resilience_prep_files/figure-markdown_github/G%20comparison-2.png)<!-- -->
+![](resilience_prep_files/figure-markdown_github/G%20comparison-2.png)
 
 TO DO
 -----

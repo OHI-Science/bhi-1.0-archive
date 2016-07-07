@@ -1,23 +1,34 @@
 ao\_prep.rmd
 ================
 
+-   [Artisanal Opportunity (AO) Goal Data Prep](#artisanal-opportunity-ao-goal-data-prep)
+    -   [1. Goal Overview](#goal-overview)
+        -   [1.1 Components](#components)
+        -   [1.2 Goal model](#goal-model)
+    -   [2. Data](#data)
+        -   [2.1 Data Source](#data-source)
+        -   [2.2 Data locations](#data-locations)
+        -   [2.3 GES status scoring](#ges-status-scoring)
+        -   [2.4 Regions with no data](#regions-with-no-data)
+    -   [3.Data layer preparation](#data-layer-preparation)
+        -   [3.1 Read in data](#read-in-data)
+        -   [3.2 Assign scores to GES status](#assign-scores-to-ges-status)
+        -   [3.3 Unique indicators per monitoring location](#unique-indicators-per-monitoring-location)
+        -   [3.4 BHI score](#bhi-score)
+    -   [4. AO Status](#ao-status)
+        -   [4.1 Final score objects](#final-score-objects)
+    -   [5. Calculate Trend of the status](#calculate-trend-of-the-status)
+        -   [5.1 Read in slopes](#read-in-slopes)
+        -   [5.2 Remove Ringkoebing Fjord and Nissum Fjord](#remove-ringkoebing-fjord-and-nissum-fjord)
+        -   [5.3 Mean Slope group x basin](#mean-slope-group-x-basin)
+        -   [5.4 Mean slope for each indicator (Functional group, Key Spp)](#mean-slope-for-each-indicator-functional-group-key-spp)
+        -   [5.5 Basin mean slope](#basin-mean-slope)
+        -   [5.6 Apply slopes by Basin to BHI Region](#apply-slopes-by-basin-to-bhi-region)
+        -   [5.1 Final slope object](#final-slope-object)
+    -   [6. Export Layers for functions.r](#export-layers-for-functions.r)
+
 Artisanal Opportunity (AO) Goal Data Prep
 =========================================
-
-TABLE OF CONTENTS
------------------
-
-### Goal Overview..............................Section 1
-
-### Data.......................................Section 2
-
-### Status Data layer prepartion...............Section 3
-
-### Final AO status prepartion.................Section 4
-
-### Trend data layer preparation...............Section 5
-
-### Export data layers.........................Section 6
 
 1. Goal Overview
 ----------------

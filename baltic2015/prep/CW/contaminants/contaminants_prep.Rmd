@@ -1,6 +1,9 @@
 ---
 title: "contaminants_prep"
-output: github_document
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
 params: 
     datasource: csv
 ---
@@ -36,21 +39,8 @@ create_readme(dir_con, 'contaminants_prep.rmd')
 ```
 
 # Contaminant Data Prep
-## TABLE OF CONTENTS
-Section 1.......................Indicator Overview  
 
-Section 2.......................Data Overview  
-
-Section 3.......................Other Info  
-
-Section 4.......................ICES6 Indicator prep  
-
-Section 5.......................Dioxin Indicator prep  
-
-Section 6.......................PFOS Indicator prep  
-
-
-## 1 Indicators
+## 1. Indicators
 3 indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
 
 ### 1.2 (1) PCB concentration indicator

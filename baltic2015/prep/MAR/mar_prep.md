@@ -1,8 +1,27 @@
 mar\_rep
 ================
 
-\# Preparation of Mariculture (MAR) subgoal data layer
-------------------------------------------------------
+-   [Preparation of Mariculture (MAR) subgoal data layer](#preparation-of-mariculture-mar-subgoal-data-layer)
+    -   [1. Background](#background)
+    -   [2. Data](#data)
+        -   [2.1 Data sources](#data-sources)
+        -   [2.2 Production regions and BHI assignments](#production-regions-and-bhi-assignments)
+    -   [3. Data Layer Preparation](#data-layer-preparation)
+        -   [3.1 Read in data](#read-in-data)
+        -   [3.1 Plot the data by country's mar\_region](#plot-the-data-by-countrys-mar_region)
+        -   [3.2 FAO data](#fao-data)
+        -   [4.3 Combined country production data and FAO data for Germany](#combined-country-production-data-and-fao-data-for-germany)
+        -   [4.4 Use mar\_lookup to allocate production among BHI regions](#use-mar_lookup-to-allocate-production-among-bhi-regions)
+        -   [4.5 Create objects to save to put in layers, save a csv](#create-objects-to-save-to-put-in-layers-save-a-csv)
+        -   [Population density data](#population-density-data)
+    -   [MAR Goal Model](#mar-goal-model)
+    -   [Calculate MAR status and trend](#calculate-mar-status-and-trend)
+    -   [Plot status and trend as a figure](#plot-status-and-trend-as-a-figure)
+    -   [Plot MAR status time series](#plot-mar-status-time-series)
+    -   [Plot status as a map](#plot-status-as-a-map)
+
+Preparation of Mariculture (MAR) subgoal data layer
+===================================================
 
 ``` r
 ## source common libraries, directories, functions, etc
@@ -15,6 +34,8 @@ library(readr)
 ``` r
 library(dplyr)
 ```
+
+    ## Warning: package 'dplyr' was built under R version 3.2.5
 
     ## 
     ## Attaching package: 'dplyr'
@@ -29,6 +50,11 @@ library(dplyr)
 
 ``` r
 library(tidyr)
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.2.5
+
+``` r
 library(ggplot2)
 ```
 
@@ -38,7 +64,11 @@ library(ggplot2)
 library(RMySQL)
 ```
 
+    ## Warning: package 'RMySQL' was built under R version 3.2.5
+
     ## Loading required package: DBI
+
+    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 library(stringr)
@@ -273,7 +303,7 @@ facet_wrap(~mar_region, scales="free_y")
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](mar_prep_files/figure-markdown_github/plot%20raw%20data-1.png)<!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20raw%20data-1.png)
 
 ### 3.2 FAO data
 
@@ -346,7 +376,7 @@ ggplot(fao3)+
 
     ## Warning: Removed 14 rows containing missing values (geom_point).
 
-![](mar_prep_files/figure-markdown_github/plot%20fao%20data%20raw-1.png)<!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20fao%20data%20raw-1.png)
 
 #### 4.2.3 Select Germany rainbow trout timeseries
 
@@ -424,6 +454,24 @@ str(fao_de)
 production2 = bind_rows(production1, fao_de)
 ```
 
+    ## Warning in bind_rows_(x, .id): binding factor and character vector,
+    ## coercing into character vector
+
+    ## Warning in bind_rows_(x, .id): binding factor and character vector,
+    ## coercing into character vector
+
+    ## Warning in bind_rows_(x, .id): binding factor and character vector,
+    ## coercing into character vector
+
+    ## Warning in bind_rows_(x, .id): binding factor and character vector,
+    ## coercing into character vector
+
+    ## Warning in bind_rows_(x, .id): binding factor and character vector,
+    ## coercing into character vector
+
+    ## Warning in bind_rows_(x, .id): binding factor and character vector,
+    ## coercing into character vector
+
 #### 4.3.1 Plot combined data by country
 
 ``` r
@@ -440,7 +488,7 @@ ggplot(production2)+
 
     ## Warning: Removed 10 rows containing missing values (geom_path).
 
-![](mar_prep_files/figure-markdown_github/plot%20combined%20data-1.png)<!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20combined%20data-1.png)
 
 ### 4.4 Use mar\_lookup to allocate production among BHI regions
 
@@ -459,7 +507,7 @@ lookup
     ## Source: local data frame [35 x 4]
     ## 
     ##    country         mar_region   BHI rgn_factor
-    ##     (fctr)             (fctr) (int)      (dbl)
+    ##     <fctr>             <fctr> <int>      <dbl>
     ## 1   Sweden    Norra ostkusten    41       0.33
     ## 2   Sweden    Norra ostkusten    39       0.33
     ## 3   Sweden    Norra ostkusten    37       0.33
@@ -484,11 +532,11 @@ prod_allot = full_join(lookup, production2, by=c("country","mar_region"))%>%
             ungroup()
 ```
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
-    ## Warning in outer_join_impl(x, y, by$x, by$y): joining character vector and
-    ## factor, coercing into character vector
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
 
 #### 4.4.1 Plot production per BHI region
 
@@ -502,7 +550,7 @@ ggplot(prod_allot)+
   ggtitle("Production (tons) by BHI region")
 ```
 
-![](mar_prep_files/figure-markdown_github/plot%20production%20by%20bhi%20region-1.png)<!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20production%20by%20bhi%20region-1.png)
 
 ### 4.5 Create objects to save to put in layers, save a csv
 
@@ -522,7 +570,7 @@ head(mar_harvest_tonnes)
     ## Source: local data frame [6 x 4]
     ## 
     ##   rgn_id species_code  year tonnes
-    ##    (int)        (dbl) (dbl)  (dbl)
+    ##    <int>        <dbl> <dbl>  <dbl>
     ## 1      1           23  2005  74.75
     ## 2      1           23  2006  55.00
     ## 3      1           23  2007  65.25
@@ -607,7 +655,7 @@ bhi_pop
     ## Source: local data frame [42 x 2]
     ## 
     ##    rgn_id  popsum
-    ##     (int)   (int)
+    ##     <int>   <int>
     ## 1       1  852713
     ## 2       2 1754535
     ## 3       3 1971018
@@ -743,7 +791,7 @@ Calculate MAR status and trend to get feedback. Code here is copied from functio
     ## Source: local data frame [84 x 4]
     ## 
     ##    region_id  score dimension  goal
-    ##        (int)  (dbl)     (chr) (chr)
+    ##        <int>  <dbl>     <chr> <chr>
     ## 1          1  56.12    status   MAR
     ## 2          2  94.73    status   MAR
     ## 3          3 100.00    status   MAR
@@ -778,7 +826,7 @@ mtext("BHI Region", side=1, line=.5, outer=TRUE, cex=.8)
 mtext("MAR Status and Trend", side=3, line=.5, outer=TRUE, cex=1.2)
 ```
 
-![](mar_prep_files/figure-markdown_github/plot%20status,%20trend-1.png)<!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20status,%20trend-1.png)
 
 Plot MAR status time series
 ---------------------------
@@ -796,21 +844,25 @@ ggplot(filter(mar_status_score, !is.na(status))) +
   ggtitle("MAR Status 5 Years by BHI region (exclude regions with NA status")
 ```
 
-![](mar_prep_files/figure-markdown_github/plot%20status%20time%20series-1.png)<!-- -->
+![](mar_prep_files/figure-markdown_github/plot%20status%20time%20series-1.png)
 
 Plot status as a map
 --------------------
 
+    ## Warning: package 'rgdal' was built under R version 3.2.5
+
     ## Loading required package: sp
 
-    ## rgdal: version: 1.1-3, (SVN revision 594)
+    ## Warning: package 'sp' was built under R version 3.2.5
+
+    ## rgdal: version: 1.1-10, (SVN revision 622)
     ##  Geospatial Data Abstraction Library extensions to R successfully loaded
     ##  Loaded GDAL runtime: GDAL 2.0.1, released 2015/09/15
     ##  Path to GDAL shared files: C:/R-3.2.3/library/rgdal/gdal
     ##  GDAL does not use iconv for recoding strings.
     ##  Loaded PROJ.4 runtime: Rel. 4.9.1, 04 March 2015, [PJ_VERSION: 491]
     ##  Path to PROJ.4 shared files: C:/R-3.2.3/library/rgdal/proj
-    ##  Linking to sp version: 1.2-2
+    ##  Linking to sp version: 1.2-3
 
     ## OGR data source with driver: ESRI Shapefile 
     ## Source: "C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/March2016WkshpPlots/shapefiles", layer: "BHI_regions_plus_buffer_25km"
@@ -868,4 +920,4 @@ plot(BHIshp2, col=BHIshp2@data$cols, main = "score 1")
     mtext("MAR Current Status", side = 3, outer=TRUE, line=1.5)
 ```
 
-![](mar_prep_files/figure-markdown_github/Current%20status%20map-1.png)<!-- -->
+![](mar_prep_files/figure-markdown_github/Current%20status%20map-1.png)
