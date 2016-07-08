@@ -417,7 +417,9 @@ AO = function(layers){
 
 
       ## join status and trend
-        ao_stock = full_join(ao_stock_status, ao_stock_trend, by = c('rgn_id','dimension','score')) %>%
+        ao_stock = rbind(ao_stock_status %>%
+                           mutate(dimension = 'status'),
+                         ao_stock_trend) %>%
           dplyr::rename(region_id = rgn_id)
 
 
@@ -432,7 +434,8 @@ AO = function(layers){
 
 
         scores = ao_stock %>%
-          mutate(goal   = 'AO')
+          mutate(goal = 'AO') %>%
+          select(goal, dimension, region_id, score)
 
         return(scores)
 
