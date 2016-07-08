@@ -1367,16 +1367,13 @@ CW = function(scores){
       summarize(score = round(mean_NAall(score),2)) %>% # round trend to 2 decimals #if all values are NA, NA not NaN returned; if only some values are NA, exclude
       ungroup() %>%
       mutate(dimension = 'trend')) %>%
-    arrange(region_id)
-
-
-  ## return scores
-  scores <- s  %>%
+    arrange(region_id) %>%
     mutate(goal = "CW") %>%
     select(region_id, goal, dimension, score) %>%
     data.frame()
 
-  return(scores)
+  ## return all scores
+  return(rbind(scores, s))
 }
 
 
