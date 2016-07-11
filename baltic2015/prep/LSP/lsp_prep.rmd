@@ -427,7 +427,7 @@ Cum_area_y = m*year_y + b; m = slope
 
 Trend = Future_year * m ; future_year = 5
 
-TODO: see the three trials of trend calculation... 
+TODO: see the four trials of trend calculation... 
 
 ``` {r trend calculation, ECHO = FALSE, message = FALSE}
 
@@ -525,11 +525,9 @@ trend_data_3 = status_per_year_by_country %>%
 r.trend.3 = trend_data_3 %>%
   filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
   group_by(country) %>%
-  summarize(dlm = cor(status, year))
-  
+  # summarize(dlm = cor(status, year)) %>%
   do(dlm = lm(status ~ as.integer(year), data = .)) %>%
-  
-  mutate(score = coef(dlm[['year']]))
+  # mutate(score = coef(dlm[['year']]))
   mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) ### this last line did not work... not sure why...
 
 ## Trial #4: compare the management status from the shape file (older) and the status csv file (newer), and using the relative status of the two to represent change: If mgmt_wt_csv > mgmt_wt_shape, trend = 0.2; if equal, trend = 0; if mgmt_wt_csv < mgmt_wt_shape, trend = -0.2. 
