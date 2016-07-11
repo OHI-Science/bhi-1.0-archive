@@ -1,4 +1,4 @@
-liv\_preo
+liv\_prep
 ================
 
 -   [LIV subgoal data preparation](#liv-subgoal-data-preparation)
@@ -43,6 +43,11 @@ LIV subgoal data preparation
 
 1. Background
 -------------
+
+"This sub-goal describes livelihood quantity and quality for people living on the coast.
+Ideally, this sub-goal would speak to the quality and quantity of marine jobs in an area. It would encompass all the marine sectors that supply jobs and wages to coastal communities, incorporating information on the sustainability of different sectors while also telling about the working conditions and job satisfaction. "
+
+[Reference](http://ohi-science.org/goals/#livelihoods-and-economies)
 
 2. Data
 -------
