@@ -687,7 +687,7 @@ ECO = function(layers){
     group_by(rgn_id)%>%
     filter(year== max(year))%>%       #select status as most recent year
     ungroup()%>%
-    full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
+    full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status
     mutate(score=round(status*100),   #scale to 0 to 100
            dimension = 'status')%>%
     select(region_id = rgn_id,score, dimension)
