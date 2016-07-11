@@ -667,6 +667,7 @@ accom_coast %>% select(TERRTYPO, TERRTYPO_LABEL)%>% distinct()
     ## 3   NCST_A Non-coastal area
 
 ``` r
+## figure out which are the NUTS1 abbreviations from the other NUTS level abbreviations, select only NUTS1
 accom_coast2 = accom_coast1 %>%
                mutate(country_abb = substr(nuts,1,2))%>% ## set up country abbreviation
                left_join(., eu_names, by="country_abb")%>% ## join to eu country names
@@ -902,19 +903,19 @@ dim(accom1)##11250     8
     ## [1] 11250     7
 
 ``` r
-dim(nuts2_pop_area2) ## 61 8
+dim(nuts2_pop_area2) ## 60 8
 ```
 
     ## [1] 60  8
 
 ``` r
-dim(accom_nuts1) ##1425  15
+dim(accom_nuts1) ##1400  14
 ```
 
     ## [1] 1400   14
 
 ``` r
-str(accom_nuts1)
+str(accom_nuts1) ## this is now missing the Finnish data where there are name discrepancies
 ```
 
     ## 'data.frame':    1400 obs. of  14 variables:
@@ -934,7 +935,7 @@ str(accom_nuts1)
     ##  $ area        : num  14538 11736 5647 7517 32425 ...
 
 ``` r
-## this is now missing the Finnish data where there are name discrepancies
+## Get Finnish data renamed so that accommodating and population data match
 fi_accom_newnuts = accom1 %>%
                    filter(nuts %in% c("FI1C","FI1B", "FI1D"))
 fi_accom_newnuts
@@ -1346,7 +1347,7 @@ accom_coast_nuts = accom_coast2 %>%
 
 
 
-## are there BHI regions missing
+## are there BHI regions missing?
 accom_coast_nuts %>% select(rgn_id)%>% distinct() %>% arrange(rgn_id)
 ```
 
@@ -1491,7 +1492,7 @@ accom_coast_nuts1 = accom_coast_nuts %>%
                     mutate(year = as.numeric(year))
 ```
 
-#### 4.3.2 Plot proportion coastal NUTS1
+#### 4.3.2 Plot proportion coastal NUTS1 accommodation stays
 
 Very consistent across the three years
 
@@ -1518,7 +1519,7 @@ accom_coast_nuts2 = accom_coast_nuts1 %>%
                     summarise(mean_prop_coastal = mean(prop_coastal, na.rm=TRUE))
 ```
 
-#### 4.3.4 Plot Mean proportion coastal for each NUTS1
+#### 4.3.4 Plot Mean proportion coastal accommodation stays for each NUTS1
 
 ``` r
 ggplot(accom_coast_nuts2)+
@@ -1611,14 +1612,14 @@ nuts2_buffer_pop= accom_nuts5 %>%
                   ungroup()
 ```
 
-#### 4.5.2 Join the total NUTS2 area and population to the per BHI region
+#### 4.5.2 Join the total NUTS2 area and population to the per BHI region data
 
 ``` r
 accom_nuts6  = nuts2_buffer_pop %>%
                   full_join(., accom_nuts5, by="nuts2")
 ```
 
-#### 4.5.3 Calculate the population fraction for each region
+#### 4.5.3 Calculate the population fraction in a BHI region from a NUTS2 out of the NUTS2 total buffer population
 
 ``` r
 accom_nuts6 = accom_nuts6 %>%
@@ -1738,7 +1739,8 @@ Use per capita night stays \#\#\# 5.1 Prepare layer
 
 ``` r
 tr_layer = accom_nuts7 %>%
-            select(rgn_id,year,bhi_coastal_stays_per_cap)
+            select(rgn_id,year,bhi_coastal_stays_per_cap)%>%
+            arrange(rgn_id,year)
 
 ## check max year
 tr_layer %>% select(rgn_id,year)%>% filter(!is.na(year)) %>% group_by(rgn_id) %>% summarise(max_year= max(year)) %>% ungroup() %>% print(n=42)
@@ -1809,16 +1811,16 @@ tr_layer
     ## 
     ##    rgn_id  year bhi_coastal_stays_per_cap
     ##     <int> <int>                     <dbl>
-    ## 1      12  2000                  2.054525
-    ## 2      12  2001                  2.077130
-    ## 3      12  2002                  2.112202
-    ## 4      12  2003                  2.128983
-    ## 5      12  2004                  2.207780
-    ## 6      12  2005                  2.295696
-    ## 7      12  2006                  2.415560
-    ## 8      12  2007                  2.474752
-    ## 9      12  2008                  2.433507
-    ## 10     12  2009                  2.255103
+    ## 1       1  2000                  7.741518
+    ## 2       1  2001                  7.972017
+    ## 3       1  2002                  8.525023
+    ## 4       1  2003                  9.085089
+    ## 5       1  2004                  8.706518
+    ## 6       1  2005                  8.961763
+    ## 7       1  2006                  9.485306
+    ## 8       1  2007                  9.541751
+    ## 9       1  2008                  9.387226
+    ## 10      1  2009                  9.745505
     ## ..    ...   ...                       ...
 
 ### 6.2 Set Parameters
@@ -1845,12 +1847,13 @@ tr_status_score = tr_layer %>%
     ungroup() %>%
     mutate(rgn_value = nights/ref_val) %>% #calculate rgn_value per year, numerator of score function
     select(rgn_id,year,rgn_value)%>%
-    mutate(status = pmin(1,rgn_value)) # status calculated cannot exceed 1
+    mutate(status = pmin(1,rgn_value)) ## if regions have no data, are not included here, final year will be included below
 
  ## select last year of data in timeseries for status
   tr_status = tr_status_score %>%
     group_by(rgn_id) %>%
     summarise_each(funs(last), rgn_id, status) %>%  #this will be all same year because of code above selecting the max year
+    full_join(bhi_rgn, .,by="rgn_id")%>% #all regions now listed, have NA for for status
     mutate(score = status*100,
             dimension = 'status') %>% ##scale to 0 to 100
      select(region_id = rgn_id,score, dimension)
@@ -1900,6 +1903,8 @@ ggplot(tr_status)+
   xlab("BHI region")+
   ggtitle("TR status score in 2014")
 ```
+
+    ## Warning: Removed 5 rows containing missing values (geom_point).
 
 ![](tr_prep_files/figure-markdown_github/plot%20tr%20status-3.png)
 
@@ -1953,7 +1958,7 @@ ggplot(plot_tr)+
   ggtitle("TR Status and Trend")
 ```
 
-    ## Warning: Removed 5 rows containing missing values (geom_point).
+    ## Warning: Removed 10 rows containing missing values (geom_point).
 
 ![](tr_prep_files/figure-markdown_github/plot%20tr%20trend%20and%20status%20together-1.png)
 
