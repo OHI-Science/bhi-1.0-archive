@@ -10,48 +10,6 @@ params:
 
 #LIV subgoal data preparation
 
-```{r setup}
-
-## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
-source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-dir_liv    = file.path(dir_prep, 'LIV')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_liv, 'liv_prep.rmd')
-```
-
 ## 1. Background
 
 
@@ -144,24 +102,70 @@ Xliv = (Employment_Region_c/Employment_Region_r)/(Employment_Country_c/Employmen
 
 
 
+
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+dir_liv    = file.path(dir_prep, 'LIV')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_liv, 'liv_prep.rmd')
+```
+
 ## 5. Regional data prep
 
 ### 5.1 Data organization
 
 #### 5.1.1 read in data
-UPDATE after data put in database
+
 ```{r read in regional data}
 ## read in
-regional_employ = read.csv(file.path(dir_liv, 'liv_data_database/lfst_r_lfe2emprt_1_Data_NUTS2_cleaned.csv'), sep = ";")
+regional_employ = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_employ.csv'), stringsAsFactors = FALSE)
 
 dim(regional_employ) #[1] 5344    9
 str(regional_employ)
 
+nuts2_pop_area = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_pop_area.csv'), stringsAsFactors = FALSE)
+dim(nuts2_pop_area)
+str(nuts2_pop_area)
 ```
 
-#### 5.1.2 Clean data object
+#### 5.1.2 Clean Regional employment data object
 ```{r clean regional data object}
-regional_employ = regional_employ %>%
+regional_employ1 = regional_employ %>%
                   select(-TIME_LABEL,-SEX,-AGE) %>%
                   dplyr::rename(year = TIME, nuts2 = GEO, nuts2_name = GEO_LABEL,
                                 unit=UNIT, value = Value, flag_notes = Flag.and.Footnotes)%>%
@@ -173,81 +177,342 @@ regional_employ = regional_employ %>%
                                       ifelse(flag_notes== "bu", "break in timeseries and low reliability",""))))
                   
 
+str(regional_employ1)
+
+## check dataflags
+regional_employ1 %>% select(flag_notes)%>% distinct()
+regional_employ1 %>% filter(flag_notes =="low reliability" ) #not Baltic country
+regional_employ1 %>% filter(flag_notes =="break in timeseries and low reliability" ) #not Baltic country
+regional_employ1 %>% filter(flag_notes =="break in timeseries") ## this is not such a concern
+
+## remove flags_notes
+regional_employ1 = regional_employ1 %>%
+                   select(-flag_notes)
 
 ```
 
 
-### 5.2 Select Baltic Countries
+#### 5.1.3 Clean nuts2_pop_area
+```{r clean nuts pop area data}
+## nuts2 population data
+str(nuts2_pop_area)
 
-#### 5.2.1 read in EU lookup
-```{r}
+nuts2_pop_area1 = nuts2_pop_area %>%
+                  select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2, -HELCOM_ID) %>%
+                  dplyr::rename(rgn_id = BHI_ID,
+                                nuts2 = NUTS_ID,
+                                pop = PopTot,
+                                pop_km2 = PopTot_density_in_buffer_per_km2,
+                                country_abb= CNTR_CODE,
+                                country = rgn_nam,
+                                basin = Subbasin,
+                                area = NUTS3_area_in_BHI_buffer_km2) ## this last column has NUTS3 in name, but is for NUTS2 data
 
-# read in EU country abbreviations and names
-eu_lookup = read.csv(file.path(dir_liv, 'EUcountrynames.csv'), sep=";")  
+str(nuts2_pop_area1)
+
+```
+
+#### 4.1.3 Check NUTS2 names from Finland 
+Shapefiles have names from 2006, check accom1 and accom_coast1 to see if the names have been updated, will need to fix. 
+![Map of old NUTS2 names for GUlf of Finland](BHI_regions_NUTS2_plot.png?raw=true)  
+![Map of new NUTS2 names for GUlf of Finland](new_FI_nuts2.png?raw=true)  
+```{r check fi nuts2 names}
+
+regional_employ1%>% filter(grepl("FI",nuts2))%>% select(nuts2, nuts2_name)%>% distinct()
+## These are the newer region names : FI1B, FI1C, FI1D
+
+
+nuts2_pop_area1 %>% filter(grepl("FI",nuts2))%>% select(nuts2)%>% distinct()
+## These are the older region names: FI18, FI1A
+
+## Challenge because of coasts
+## FI1C is associated with both the Gulf of Finland and the Aland Sea. FI1B has a small fraction associated with Aland Sea, the rest is Gulf of Finland
+
+## Old FI18, contains both FI1C and FI1B.  May need to combine data from the new regions, and apply fraction from the older region.  Helsinki is in FI1B, which would assign almost entirely to BHI 32 and whereas FI1C would divide more equally btween BHI 36 and BHI 32. Therefore, combining these regions in order to apply the division generated from the old region may have a different result.
+
+## old FI1A seems to be the same along the coast as the new FI1D but new FI1D covers inland areas previously in FI13
+
+## Do this after joining accom and accom_coast with the nuts2_pop_area data, will have to add these regions back in.
 
 
 ```
 
-#### 5.2.2 join to regional_employ
+#### 4.1.4 Check for incorrectly assigned NUTS2 regions to BHI regions and fix 
+Note - (as in NUTS3 assignment issues see ECO), BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
+```{r check for incorrectly assigned NUTS2 regions}
+## write to csv, fix manually, re-import csv
+misassigned_nuts2 = nuts2_pop_area1 %>% select(nuts2,country,rgn_id)
 
-```{r join eu country names to regional employment}
+## write.csv(misassigned_nuts2 , file.path(dir_liv, "misassigned_nuts2.csv"), row.names=FALSE)
 
-## add country names to regional_gdp and filter for Baltic countries
-regional_employ = regional_employ %>%
-               mutate(country_abb = substr(nuts2,1,2))%>%
-               left_join(., eu_lookup, by="country_abb") %>%
-               filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country))
-               
+## read in corrected assignments - same file as used for TR
+
+corrected_nuts2 = read.csv(file.path(dir_liv,"misassigned_nuts2_manually_corrected.csv"),sep=";",stringsAsFactors = FALSE)
+
+
+## join nuts2_pop_area1 with corrected data and fix
+
+nuts2_pop_area2 = nuts2_pop_area1 %>%
+                  full_join(., corrected_nuts2,
+                            by=c("rgn_id","nuts2","country"))%>%
+                 select(-country,-rgn_id,-incorrect,-BHI_ID_manual, -X.country_manual)%>%
+                 dplyr::rename(country =X.correct_country,
+                               rgn_id = X.correct_BH_ID)%>%
+                  select(rgn_id,nuts2,country,country_abb,basin,pop,pop_km2,area) %>%
+                  group_by(rgn_id, nuts2, country,country_abb,basin)%>%
+                  summarise(pop =sum(pop),
+                            pop_km2 = sum(pop_km2),
+                            area = sum(area)) %>% ## some regions occurr twice because of correcting the assignment, sum to get single value for each region
+                  ungroup()
+
+
+str(nuts2_pop_area2)
 ```
 
-#### 5.2.2 Filter for regions associated with BHI regions
+### 5.2 Join datasets
 
-#### 5.2.3 Plot regional Employment percentage, divide by country
-```{r plot regional gdp raw}
+#### 5.2.1 Join accom times series with nuts pop and area 
+Join data with inner join, this will exclude Finland areas with name mismatches. Fix Finnish data and add back into the dataset
+```{r join regional_employ1 with nuts_pop_area1}
+employ_nuts1 = inner_join(regional_employ1, nuts2_pop_area2,
+                         by=c("nuts2"))
 
+dim(regional_employ1)## 5344    5
+dim(nuts2_pop_area2) ## 60 8
+dim(employ_nuts1) ##896  12
+
+str(employ_nuts1) ## this is now missing the Finnish data where there are name discrepancies
 
 
 ```
 
+#### 5.2.2 Get Finnish data that was excluded
+One challenge is that the new regions are two regions (FI1B,FI1C) where the old region was one (FI18). FI1B includes Helsinki and plot below shows similar pattern but that FI1B is between 5.8 to 6.8 higher than FI1C. 
 
-### 5.3 BHI region Employment
+Assume because FI1B is where Helsinki is located, this is the majority of the population, so apply the FI1B rate. 
 
-#### 5.3.1 Population density in 25km for each NUTS2 region
+FI1D (new name) areas match old FIA1 areas - so this is a straight-forward fix.  
 
-#### 5.3.2 Percent NUTS2 region buffer pop den per BHI region
+![See Population density from Eurostat](pop_density_nuts2_FI.png?raw=TRUE)
+[Eurostat Population density image source](http://ec.europa.eu/eurostat/statistical-atlas/gis/viewer/#). Layer is under 'Background Maps' 
 
-#### 5.3.3 Employment allocated to BHI regions
-Population Employed = Percent Employment * Population in 25km buffer by NUTS2_BHI
+```{r Get Finnish data that was excluded}
 
-#### 5.3.4 BHI region total Population Employed
+## Get Finnish data renamed so that employmodating and population data match
+fi_employ_newnuts = regional_employ1 %>%
+                   filter(nuts2 %in% c("FI1C","FI1B", "FI1D"))
+fi_employ_newnuts
 
-#### 5.3.5 Select years
+## compare the employment percentage between FI1C and FI1B which used to be one region
+ggplot(fi_employ_newnuts)+
+  geom_point(aes(year,value, colour=nuts2, shape=nuts2))+
+  ggtitle("Comparison of Finnish Region NUTS2 Employment percentage")
+
+## difference between FI1B and FI1C
+fi_employ_newnuts %>% 
+  select(-nuts2_name)%>%
+  spread(nuts2,value) %>%
+  mutate(diff_1b_1c = FI1B - FI1C) %>%
+  filter(!is.na(diff_1b_1c))
+            
+##Assume because FI1B is where Helsinki is located, this is the majority of the population, so apply the FI1B rate. 
+    ## Therefore, only retain data for FI1B (exclude FI1C)
+
+fi_employ_newnuts1 = fi_employ_newnuts %>% 
+                     filter(nuts2 != "FI1C")
 
 
 
 
+## assign old nuts names to employ data
+fi_employ_newnuts1 = fi_employ_newnuts1 %>%
+                    mutate(nuts_old = ifelse(nuts2 == "FI1B", "FI18",
+                                      ifelse(nuts2 == "FI1D", "FI1A","")),
+                           nuts2_name_old= ifelse(nuts2 == "FI1B","old region",nuts2_name ))%>%
+                    select(-nuts2, -nuts2_name)%>%
+                    dplyr::rename(nuts2=nuts_old,
+                                  nuts2_name = nuts2_name_old)
+                        
+head(fi_employ_newnuts1) ## there are NA but were NA for all regions in those years
+
+## Get population data associated with old nuts names
+fi_nuts_oldnuts = nuts2_pop_area2 %>%
+                  filter(nuts2 %in% c("FI18","FI1A"))
+
+fi_nuts_oldnuts
+
+
+## join fi employ to fi pop and area
+
+fi_employ_correct_nuts = full_join(fi_employ_newnuts1, fi_nuts_oldnuts,
+                          by=c("nuts2"))%>%
+                          select(year,nuts2,nuts2_name,unit,
+                                 value,rgn_id,country,country_abb,basin, pop,
+                                 pop_km2,area)
+
+
+str(fi_employ_correct_nuts)
+
+```
+
+#### 5.2.3 Join Finnish data to other regional data
+```{r Join Finnish data to other regional data}
+### bind to rest of data
+colnames(fi_employ_correct_nuts)
+colnames(employ_nuts1)
+
+
+employ_nuts2 = bind_rows(employ_nuts1, fi_employ_correct_nuts)%>%
+              dplyr::rename(employ_rate =value)
+```
+
+
+#### 5.2.4 Plot and check regional employment time series 
+```{r  Plot and check regional employment time series }
+ggplot(employ_nuts2)+
+  geom_point(aes(year,employ_rate, colour=nuts2))+
+  geom_line(aes(year,employ_rate, colour=nuts2))+
+  facet_wrap(~country, scale="free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Time series Percent Employed NUTS2")
+
+
+```
+
+#### 5.2.5 Restrict dataset to year 2000 to 2014
+```{r restrict regional dataset years}
+
+employ_nuts3 = employ_nuts2 %>% 
+              filter(year >=2000)
+```
+
+
+### 5.3 Are BHI regions missing?
+```{r are bhi regions missing from regional employ and pop join}
+employ_nuts3 %>% select(rgn_id)%>%distinct()%>%arrange(rgn_id)
+
+## there are 37 regions
+
+##missing: 19,21, 22,30,33
+
+## expected missing - 19,22, and 33 from Russia
+## 21 from Poland because not assigned
+## 30 has no coastline
+
+```
+
+### 5.4 Calculate number of employed people and allocation to BHI regions
+
+
+#### 5.4.1 Calculate the number of employed in BHI region with NUTS2 percentage
+Use population within the 25km buffer and employment percentage to get the number of employed people. Population is constant at 2005 population size.
+```{r calculate number of regionally employed }
+
+
+employ_nuts4 = employ_nuts3 %>%
+               mutate(employ_pop = (employ_rate/100) * pop)
+                
+
+```
+
+#### 5.4.2 Plot the number of people employed in each BHI region by NUTS2 region
+```{r plot number of nuts3 employed by bhi region}
+ggplot(employ_nuts4)+
+  geom_point(aes(year,employ_pop, colour=nuts2),size=.6)+
+  facet_wrap(~rgn_id, scale="free_y")+
+  guides(colour="none")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Time series Number of People Employed in NUTS2 (25km buffer) by BHI region")
+
+```
 
 
 
-## 6. Country data prep
+#### 5.4.3 Calculate total employed by BHI region
+```{r jCalculate total employed by BHI region}
+
+employ_nuts5 = employ_nuts4 %>%
+               select(country,country_abb,rgn_id,year,employ_pop)%>%
+               group_by(country,country_abb,rgn_id,year)%>%
+               summarise(employ_pop_bhi = sum(employ_pop)) %>%
+               ungroup()
+```
+
+#### 5.4.4 Plot Number of BHI employed
+
+```{r plot number of BHI employed}
+ggplot(employ_nuts5)+
+  geom_point(aes(year,employ_pop_bhi, colour=country),size=.6)+
+  facet_wrap(~rgn_id, scale="free_y")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Time series Number of People Employed BHI region (25km buffer)")
+
+
+```
+
+### 5.5 Data layer for layers
+
+#### 5.5.1 Prepare object for csv
+```{r prepare regional liv object for csv}
+liv_regional_employ = employ_nuts5 %>%
+                     select(rgn_id, year, employ_pop_bhi)%>%
+                     arrange(rgn_id, year)
+
+
+```
+
+#### 5.5.2 Write object to csv
+```{r write regional layer to csv}
+write.csv(liv_regional_employ, file.path(dir_layers, 'liv_regional_employ_bhi2015.csv'),row.names =FALSE)
+
+```
+
+
+
+### 6. Country data prep
 
 ### 6.1 Organize data
 
 #### 6.1.1 Read in data
 ```{r read in national data}
-## read in employement
-country_employ = read.csv(file.path(dir_liv, 'liv_data_database/lfst_r_lfe2emprt_1_Data_NUTS0_cleaned.csv'), sep = ";")
+## read in NUTS0 (national) employement from EU
+nat_employ = read.csv(file.path(dir_liv, 'liv_data_database/nuts0_employ.csv'), stringsAsFactors = FALSE)
 
-dim(country_employ) #[1] 528    9
-str(country_employ)
+dim(nat_employ) #[1] 528    9
+str(nat_employ)
 
-## read in 
+## read in Russian national  pouplation and employment
+ru_data = read.csv(file.path(dir_liv, 'liv_data_database/naida_10_pe_1_Data_cleaned.csv'), sep=";",stringsAsFactors = FALSE)
+dim(ru_data)
+str(ru_data)
+
+## Read in EU population size
+eu_pop = read.csv(file.path(dir_liv, 'liv_data_database/demo_gind_1_Data_cleaned.csv'), sep=";", stringsAsFactors = FALSE)
+
+str(eu_pop)
+dim(eu_pop)
+
+
+# read in EU country abbreviations and names
+eu_lookup = read.csv(file.path(dir_liv, 'EUcountrynames.csv'), sep=";")  
+dim(eu_lookup)
+str(eu_lookup)
+
+## read in BHI look up table
+bhi_lookup = read.csv(file.path(dir_liv, "bhi_basin_country_lookup.csv"), sep=";",stringsAsFactors = FALSE) %>%
+            select(rgn_nam, BHI_ID)%>%
+            dplyr::rename(country= rgn_nam,
+                          rgn_id = BHI_ID)
+
 
 ```
 
-#### 6.1.2 Clean data object
+#### 6.1.2 Clean National EU employment data object
 ```{r clean country data object}
-country_employ = country_employ %>%
+nat_employ1 = nat_employ %>%
                   select(-TIME_LABEL,-SEX,-AGE) %>%
                   dplyr::rename(year = TIME, country_abb = GEO, country = GEO_LABEL,
                                 unit=UNIT, value = Value, flag_notes = Flag.and.Footnotes)%>%
@@ -256,9 +521,491 @@ country_employ = country_employ %>%
                          unit = as.character(unit),
                          flag_notes = ifelse(flag_notes== "b", "break in timeseries", ""))
                   
+head(nat_employ1)
+
+
+### check data flags
+nat_employ1 %>% select(flag_notes)%>% distinct()
+nat_employ1 %>% filter(flag_notes == "break in timeseries") # not a major concern
+
+### remove flag_notes
+
+nat_employ1 = nat_employ1 %>%
+              select(-flag_notes)
+
+## Select only Baltic countries and data 2000 to end
+nat_employ2 = nat_employ1 %>%
+              filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country)) %>%
+          filter(year >=2000)
+
+dim(nat_employ2)  
+nat_employ2 %>% select(country) %>% distinct()
+
+### plot employment by country
+ggplot(nat_employ2)+
+  geom_point(aes(year, value))+
+  facet_wrap(~country) +
+  ggtitle("Percent employed ")
+
+
+```
+
+#### 6.1.3 Clean Russian data object
+Russian employment and population is in "thousand persons", transform into total number of people
+```{r clean russian nat data object}
+## divide population and employment into separate objects
+
+ru_data = ru_data %>%
+          select(-UNIT) %>%
+          dplyr::rename(year = TIME, 
+                        country_abb = GEO,
+                        country = GEO_LABEL,
+                        unit = UNIT_LABEL,
+                        dat_descrip = NA_ITEM,
+                        value = Value,
+                         flag_notes = Flag.and.Footnotes)
+
+ru_data %>% select(unit, dat_descrip)%>% distinct()
+
+ru_pop = ru_data %>%
+         filter(dat_descrip == "Total population national concept")%>%
+         mutate(ru_pop = value *1000) %>% ##transform into total number of people from thousands of people
+         select(-value)
+
+ru_employ = ru_data %>%
+         filter(dat_descrip == "Total employment domestic concept")%>%
+          mutate(ru_employ = value *1000) %>% ##transform into total number of people from thousands of people
+         select(-value)
+
+
+## check flags
+
+ru_pop %>% select(flag_notes)%>% distinct()
+ru_pop %>% filter(flag_notes == 'b' | flag_notes == 'e') ## estimated in 2012, 2013, 1989 break in time seires
+
+ru_pop = ru_pop %>%
+         select(-flag_notes)
+
+ru_employ %>% select(flag_notes)%>% distinct() ## none flagged
+ru_employ = ru_employ %>%
+            select(-flag_notes)
+
+
+## Select only data from 2000 to end
+ru_pop = ru_pop %>%
+         filter(year >=2000)
+
+ru_employ= ru_employ %>%
+         filter(year >=2000)
+
+
+## Plot data
+## plop Russia employment
+ggplot(ru_employ) +
+  geom_point(aes(year, ru_employ))+
+  ylab("Number of people")+
+  ggtitle("Number of People Employed - Russia")
+
+```
+
+
+#### 6.1.4 Clean EU nat population data object
+
+EU population size information:  
+Population on 1 January: Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.  
+[Source](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)  
+```{r clean national population data}
+## EU countries
+eu_pop2 = eu_pop %>%
+          select(-TIME_LABEL)%>%
+          dplyr::rename(year = TIME,
+                        country_abb = GEO,
+                        country= GEO_LABEL,
+                        unit = INDIC_DE,
+                        value = Value,
+                        flag_notes = Flag.and.Footnotes)%>%
+          filter(unit == "Population on 1 January - total " )%>% # select this meauresure of population size
+          mutate(value = ifelse(value== ":", NA, value),
+                value= as.numeric(value))
+
+
+## select only Baltic countries and data since 2000
+eu_pop3 = eu_pop2 %>%
+          mutate(country = ifelse(country =="Germany (until 1990 former territory of the FRG)","Germany",country),
+                 country = ifelse(country =="Germany (including former GDR)","Germany",country),
+                 country_abb = ifelse(country_abb == "DE_TOT","DE",country_abb))%>%
+          filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country)) %>%
+          filter(year >=2000)
+
+  dim(eu_pop3) ## Germany is duplicated because of GDR and FRG but in more recent years, value occurs twice ##144 6
+
+eu_pop3 = eu_pop3 %>%
+          distinct()
+
+dim(eu_pop3) ##129 6
+
+str(eu_pop3)           
+
+## check data flags
+eu_pop3 %>% select(flag_notes)%>%distinct()
+eu_pop3 %>% filter(flag_notes == "b")  ## b = break in time series -- this should be fine
+
+eu_pop3 = eu_pop3 %>%
+          select(-flag_notes)
+```
+
+### 6.2 Transform EU data in number of people employed
+Use 2005 population size. This is to be consistent with only have 2005 population size for the regional data. The same approach is used for ECO national data layer preparation.  
+
+This will mean that the data differ slightly from the Russian employment which are provided as number of people and probably then reflect population size changes as well.  
+
+However, because there is no regional Russian data, there is no Russian status calculation.
+
+#### 6.2.1 Join EU national employment percent to population size from 2005
+```{r join eu nat employ percent eu_pop3}
+nat_pop_2005 = eu_pop3 %>%
+               filter(year==2005) %>%
+               dplyr::rename(pop_2005 = value)%>%
+               select(country, pop_2005)
+
+nat_employ3 = full_join(nat_employ2,nat_pop_2005,
+                        by="country")
+
+## number employed
+nat_employ3 = nat_employ3 %>%
+              dplyr::rename(employ_rate = value) %>%
+              mutate(employ_pop = (employ_rate/100) * pop_2005) %>%  ## make sure to convert percentage to proportion
+              select(-employ_rate, -pop_2005,-unit)
+
+```
+
+### 6.3 Join EU and Russian data
+### 6.3.1  Join EU and Russian data
+```{r join eu and russian nat employ data}
+colnames(ru_employ)
+colnames(nat_employ3)
+
+## modify ru object
+ru_employ = ru_employ %>%
+            select(-dat_descrip)%>%
+            dplyr::rename(employ_pop = ru_employ)
+
+
+
+## bind rows
+nat_employ4 = bind_rows(nat_employ3, ru_employ)
+
+```
+
+#### 6.3.2 Plot joined EU and Russian employment data
+```{r plot joined EU and russian employment data}
+ggplot(nat_employ4) +
+  geom_point(aes(year, employ_pop, colour = country))+
+  geom_line(aes(year, employ_pop, colour = country))+
+  ylab("Number of people")+
+  ggtitle("Number of People Employed")
+
+```
+
+### 6.3.3. Restrict to Final year 2014 
+Same as the regional data
+
+```{r restrict national data last year}
+nat_employ4 = nat_employ4 %>%
+              filter( year < 2015)
+
+```
+
+### 6.4 National data by BHI regions
+
+#### 6.4.1 Join national data to BHI regions
+```{r}
+
+rgn_nat_employ =  full_join(bhi_lookup,nat_employ4,
+                        by="country")
+
+```
+
+#### 6.4.2 Plot national data by BHI region
+```{r plot national data by BHI region}
+ggplot(rgn_nat_employ)+
+  geom_point(aes(year,employ_pop,colour=country),size=.7)+
+  facet_wrap(~rgn_id, scales="free_y")+
+  ggtitle("Number People Employed Nationally for each BHI region")
+
+```
+
+
+### 6.5 Prepare national data layer for layer
+
+#### 6.5.1 Prepare Object
+```{r prepare national object for layers}
+
+liv_national_employ = rgn_nat_employ %>%
+                     select(rgn_id, year, employ_pop)%>%
+                     arrange(rgn_id, year)
+
+```
+
+
+#### 6.5.2 Write to csv
+```{r write national layer to csv}
+write.csv(liv_national_employ, file.path(dir_layers,'liv_national_employ_bhi2015.csv'),row.names = FALSE)
+
+```
+
+
+## 7. Status and Trend calculation exploration
+Status and trend are calculated in functions.r but code is tested and explored here.
+
+
+### 7.1 Assign data layer
+```{r read in data layers for status and trend calc}
+
+  liv_regional_employ
+
+  liv_national_employ 
+  
+```
+
+
+### 7.2 Set parameters
+```{r set parameters for status and trend calc}
+ ## set lag window for reference point calculations
+  lag_win = 5  # 5 year lag
+  trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points)
+  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1))) #unique BHI region numbers to make sure all included with final score and trend
+
+```
+
+### 7.3 Status calculation
+
+#### 7.3.1 prepare region and country layers
+```{r liv status calc}
+## LIV region: prepare for calculations with a lag
+  liv_region = liv_regional_employ %>%
+    dplyr::rename(employ = employ_pop_bhi) %>%
+    filter(!is.na(employ)) %>%
+    group_by(rgn_id)%>%
+    mutate(year_ref = lag(year, lag_win, order_by=year),
+           ref_val = lag(employ, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
+    arrange(year)%>%
+    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    ungroup() %>%
+    mutate(rgn_value = employ/ref_val) %>% #calculate rgn_value per year, numerator of score function
+    select(rgn_id,year,rgn_value) %>%
+   arrange(rgn_id,year)
+
+head( liv_region)
+dim(liv_region) ##222 3
+  
+## LIV country
+  liv_country =   liv_national_employ %>%
+    dplyr::rename(employ = employ_pop) %>%
+    filter(!is.na(employ)) %>%
+    group_by(rgn_id)%>%
+    mutate(year_ref = lag(year, lag_win, order_by=year),
+           ref_val = lag(employ, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
+    arrange(year)%>%
+    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    ungroup() %>%
+    mutate(cntry_value = employ/ref_val) %>% #calculate rgn_value per year, numerator of score function
+    select(rgn_id,year,cntry_value) %>%
+    arrange(rgn_id,year)
+
+  head(liv_country)
+  dim(liv_country) ## 252  3
+  
+
+
+
+```
+
+#### 7.3.2 Calculate status time series
+```{r calc liv status time series}
+## calculate status
+  liv_status_calc = inner_join(liv_region,liv_country, by=c("rgn_id","year"))%>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
+               mutate(Xliv = rgn_value/cntry_value)%>% #calculate status
+               mutate(status = pmin(1, Xliv)) # status calculated cannot exceed 1
+
+  head(liv_status_calc)
+  dim(liv_status_calc) ## 222 6
+  
+```
+
+#### 7.3.3 Extract most recent year status
+```{r extract liv most recent year status}
+liv_status = liv_status_calc%>%
+              group_by(rgn_id)%>%
+              filter(year== max(year))%>%       #select status as most recent year
+              ungroup()%>%
+              full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
+              mutate(score=round(status*100),   #scale to 0 to 100
+                     dimension = 'status')%>%
+              select(region_id = rgn_id,score, dimension) #%>%
+              ##mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
+                                    ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
+
+head(liv_status)
+
+
+## what is max year
+max_year_status= liv_status_calc%>%
+              group_by(rgn_id)%>%
+              filter(year== max(year))%>%       #select status as most recent year
+              ungroup()%>%
+              select(rgn_id,year)
+max_year_status %>% select(year)%>% distinct() ## all final years are 2014
+```
+
+
+### 7.3.4 Which BHI regions have no status
+Regions 19,21,22,30,33 have NA status.
+
+Russian regions have NA status because no regional data (19,22,33)
+
+Regions with no coast line have no status because not joined to a NUTS reion (30)
+
+Region with mis-assigned NUTS3 to BHI regions: 21 - See 4.2.2 about Polish NUTS3 regions
+```{r which liv status are na}
+liv_status %>% filter(is.na(score)) #19,21,22,30,33
 
 
 ```
 
 
-#### Transform employment % into # of people employed
+### 7.3.1 Plot status
+Status values in the time series are between 0 and 1.  
+There are no values for Russia because we do not have regional GDP data.  
+Status values for the most recent year (2014 for all regions) are transformed to value between 0 and 100
+```{r plot liv status}
+## plot liv status time series
+ggplot(liv_status_calc)+
+  geom_point(aes(year,status))+
+  facet_wrap(~rgn_id)+
+  ylim(0,1)+
+  ylab("Status")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("LIV status time series")
+
+## plot liv status time series, less range on y-axis
+ggplot(liv_status_calc)+
+  geom_point(aes(year,status))+
+  facet_wrap(~rgn_id)+
+  ylim(.8,1)+
+  ylab("Status")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("LIV status time series - different y-axis range")
+
+
+## plot final year (2014) status
+
+ggplot(liv_status)+
+  geom_point(aes(region_id,score), size=2)+
+  ylim(0,100)+
+  ylab("Status score")+
+  xlab("BHI region")+
+  ggtitle("LIV status score in 2014")
+
+```
+
+
+### 7.4 Trend calculation
+
+#### 7.4.1 Calculate Trend
+```{r liv trend calc}
+  
+  ## calculate trend for 5 years (5 data points)
+  ## years are filtered in liv_region and liv_country, so not filtered for here
+      liv_trend = liv_status_calc %>%
+        filter(year >= max(year - trend_yr))%>%                #select five years of data for trend
+        filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
+        group_by(rgn_id) %>%
+        mutate(regr_length = n())%>%                            #get the number of status years available for greggion
+        filter(regr_length == (trend_yr + 1))%>%                   #only do the regression for regions that have 5 data points
+          do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
+            summarize(rgn_id = rgn_id,
+                      score = coef(mdl)['year'] * lag_win)%>%
+        ungroup() %>%
+        full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
+        mutate(score = round(score, 2),
+               dimension = "trend") %>%
+        select(region_id = rgn_id, dimension, score) %>%
+        data.frame()
+
+
+```
+
+#### 7.4.2 Which regions have NA trend?
+Same regions as NA status and also Danish regions because have a short time series.  
+
+Should the calculation be modifed so only 3 out of the last five years need for a trend?  
+```{r na liv trend}
+liv_trend %>% filter(is.na(score)) ## 2,3,6,7,9,12,15,19,21,22,30,33
+
+```
+
+
+#### 7.4.3 Plot trend
+
+```{r plot liv trend}
+ggplot(liv_trend)+
+  geom_point(aes(region_id,score), size=2)+
+  geom_hline(yintercept = 0)+
+  ylim(-1,1)+
+  ylab("Status score")+
+  xlab("BHI region")+
+  ggtitle("LIV 5 yr trend score")
+
+
+
+```
+
+
+
+#### 7.5 Plot trend and status together
+```{r plot liv trend and status together}
+
+plot_liv = bind_rows(liv_status,liv_trend)
+
+ggplot(plot_liv)+
+  geom_point(aes(region_id,score),size=2.5)+
+  facet_wrap(~dimension, scales = "free_y")+
+  ylab("Score")+
+  ggtitle("LIV Status and Trend")
+
+
+```
+
+
+## 8. Data issues and concerns
+### 8.1 Shapefile incorrect assignments
+Some corrected in 4.1.4. 
+
+But, Note - (as in NUTS3 assignment issues see ECO), BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18. This could not be fixed manually
+
+### 8.2 Finnish NUTS2 name discrepancies
+See 5.2.2  
+
+One challenge is that the new regions are two regions (FI1B,FI1C) where the old region was one (FI18). FI1B includes Helsinki and plot below shows similar pattern but that FI1B is between 5.8 to 6.8 higher than FI1C. 
+
+Assume because FI1B is where Helsinki is located, this is the majority of the population, so apply the FI1B rate. 
+
+FI1D (new name) areas match old FIA1 areas - so this is a straight-forward fix.  
+
+![See Population density from Eurostat](pop_density_nuts2_FI.png?raw=TRUE)
+[Eurostat Population density image source](http://ec.europa.eu/eurostat/statistical-atlas/gis/viewer/#). Layer is under 'Background Maps'  
+
+### 8.3 No Russian regional data
+No regional employment data for Russia (St. Petersburg and Kalingrad) so status cannot be calculated.  
+
+### 8.4 Employment data for EU transformed from percent to number of people using 2005 population data for all years  
+This is done for both the regional and the national datasets.  
+
+### 8.5 Short Danish timeseries
+Danish regional time series are shorter. Data begin in 2007. Because data from 5 years prevous are need to calculated the regional/ref value, only three status years can be calculated.  This also means that no trend is calculated because 5 years is required.
+
