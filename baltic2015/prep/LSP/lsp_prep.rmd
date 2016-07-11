@@ -349,9 +349,43 @@ write_csv(r.status, file.path(dir_lsp, 'lsp_status_by_rgn.csv'))
 
 ```
 
+Compare total MPA areas with 10% EEZ for each country. The red line reprsents where total MPA area equals that of the reference point (ie. 10% EEZ). Any ponit above that line mean that the country has exceeded the reference point of designated MPA area and therefore will receive a status score of 100, and any point below a lower score.  
+
+```{r compare total MPA area with ref EEZ, ECHo = FALSE, message = FALSE}
+
+mpa_vs_eez = mpa_mgmt_with_wt %>%
+  dplyr::select(BSPA_ID, country, mpa_area_km2, year = date_est) %>%
+  filter(!is.na(year), 
+         !duplicated(BSPA_ID)) %>%  # the same MPA could exist in different BHI_IDs 
+  group_by(country, year)  %>%
+  summarize(total_mpa_per_year = sum(mpa_area_km2)) %>%
+  ungroup() %>%
+  group_by(country) %>%
+  mutate(total_mpa = cumsum(total_mpa_per_year)) %>%
+  filter(year == max(year)) %>%
+  full_join(dplyr::select(eez_data, country, ref_eez_km2), 
+            by = 'country') %>%
+  dplyr::select( -total_mpa_per_year, -year)
+  
+ mpa_vs_eez_plot <- ggplot(mpa_vs_eez, aes(x = ref_eez_km2, y = total_mpa)) +
+ geom_point(aes(color = country), size = 3) +
+ geom_abline(slope = 1, intercept = 0, color = 'red') +
+ geom_text(aes(label = country), nudge_y = -300) +
+ theme(legend.position = 'none') +
+ coord_cartesian(xlim = c(0, 15000), ylim = c(0, 15000)) +
+ labs(title = 'Total MPA vs. Reference EEZ area by country',
+      x = '10% EEZ (km2)', 
+      y = 'Total MPA (km2)')
+
+print( mpa_vs_eez_plot)
+
+```
+
+
 The following graphs show LSP status by country and by BHI ID, as well as the distribution of MPAs by country and by country and management levels.
 
 ```{r plots, ECHO = FALSE, message=FALSE}
+
 ## plot status by country
 
 status_by_country_plot <- ggplot(status_by_country, aes(x = country, y = status)) +
@@ -396,7 +430,7 @@ print(mpa_per_country_plot)
 
 ## plot number of MPAs per country by mgmt levels 
 
-mgmt_weight_alt = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed",           "Designated_and_managed"),
+mgmt_weight_alt = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed"),
                           weight = c(0.3, 0.6, 1) ) # ignore "managed" category 
 
 num_mpa_per_country_mgmt = mpa_mgmt_with_wt %>%
@@ -433,9 +467,9 @@ TODO: see the four trials of trend calculation...
 
 ``` {r trend calculation, ECHO = FALSE, message = FALSE}
 
-# load trend data: For most countries, there were 1-3 years of data in random years. linear model doesn't work on the original data.  Use complete and fill to fill in the blank years. 
+## TRY 1: For most countries, there were 1-3 years of data in random years. linear model doesn't work on the original data. fill in missing data from 2004-2013. Many countries started with 0 km2 MPA or very low in 2004, and all trends are therefore 1. I don't think this is a good approach for trend. In addition, the general definition of trend used in OHI assessments refer to the change of status score in the next five years. Not the absolute change in area. 
 
-trend_data = mpa_mgmt %>%
+area_trend_data = mpa_mgmt %>%
   dplyr::select(name = name_shape, BSPA_ID, BHI_ID, country, date_est, mpa_area_km2) %>%
   filter(!date_est == 'NA') %>% # remove one Russian MPA that has no date of establishment
   filter(!duplicated(BSPA_ID)) %>% # remove duplicated rows of the same MPA area data
@@ -445,32 +479,15 @@ trend_data = mpa_mgmt %>%
   mutate(area_cumulative = cumsum(area_total)) %>%
   ungroup()
 
-write_csv(trend_data, file.path(dir_lsp, 'cumulative_mpa_area_trend_data.csv'))
-          
-## plot: didn't work. 
-# mpa_area_by_year <- ggplot(trend_data, aes(x = country, y = area_cumulative, fill = year)) +
-#  geom_bar(stat = 'identity') +
-#  geom_text(aes(label = sprintf('n = %s', area), y = area_cumulative), 
-#            size = 2, 
-#            angle = 90, hjust = 0, color = 'grey30') +
-#  theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
-#  labs(title = '',
-#       x = 'Country', 
-#       y = 'Number of MPAs',
-#       fill = 'Management Level')
-# 
-# print(mpa_area_by_year)
+# write_csv(area_trend_data, file.path(dir_lsp, 'cumulative_mpa_area_trend_data.csv')) 
 
-## TRY 1: fill in missing data from 2004-2013. Many countries started with 0 km2 MPA or very low in 2004, and all trends are therefore 1. I don't think this is a good approach for trend. In addition, the general definition of trend used in OHI assessments refer to the change of status score in the next five years. Not the absolute change in  
-
-trend_data_1 = trend_data %>%
+trend_data_1 = area_trend_data %>%
   mutate(year = as.integer(year)) %>%
   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
   group_by(country) %>%
   fill(area_cumulative) %>%
   mutate(area_cumulative = ifelse(is.na(area_cumulative), 0, area_cumulative))
 
-  
 r.trend.1 = trend_data_1 %>%
   group_by(country) %>%
   filter(!length(year) == 1) %>%
@@ -479,20 +496,18 @@ r.trend.1 = trend_data_1 %>%
   ungroup %>%
   dplyr::select(country, score); #head(r.trend.1)
 
-#     country score
+### plot r.trend.1
+trend_1_plot <- ggplot(r.trend.1, aes(x = country, y = score)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Trend score by country based on mpa area',
+      x = 'Country', 
+      y = 'Trend score')
 
-# 1   Denmark     1
-# 2   Estonia     1
-# 3   Finland     1
-# 4   Germany     1
-# 5    Latvia     1
-# 6 Lithuania     1
-# 7    Poland     1
-# 8    Russia     1
-# 9    Sweden     1
+print(trend_1_plot)
 
 
-## TRY 2: use the most recent 5 years of cumulative area data to draw a trend. Trend is either 1 or 0. 
+## TRY 2: use the most recent 5 years of cumulative area data to draw a trend. Resulting trend was either 1 or 0. 
 
 r.trend.2 = trend_data_1 %>%
   filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
@@ -502,16 +517,15 @@ r.trend.2 = trend_data_1 %>%
   ungroup %>%
   dplyr::select(country, score); #head(r.trend.2)
 
-#     country score
-# 1   Denmark     0
-# 2   Estonia     0
-# 3   Finland     0
-# 4   Germany     0
-# 5    Latvia     1
-# 6 Lithuania     1
-# 7    Poland     0
-# 8    Russia     0
-# 9    Sweden     1
+### plot r.trend.2 by country
+trend_2_plot <- ggplot(r.trend.2, aes(x = country, y = score)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Trend score by country based on cumulative area',
+      x = 'Country', 
+      y = 'Trend score')
+
+print(trend_2_plot)
 
 ## TRY 3:calculate the status of the past five years and draw a trend for those years. 
 
@@ -532,6 +546,16 @@ r.trend.3 = trend_data_3 %>%
   dplyr::select(country, score) 
 
 write_csv(r.trend.3,  file.path(dir_prep, 'lsp_trend_3.csv'))
+
+### plot r.status.3
+trend_3_plot <- ggplot(r.trend.3, aes(x = country, y = score)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Trend score by country based on status scores',
+      x = 'Country', 
+      y = 'Trend score')
+
+print(trend_3_plot)
   
 ## Trial #4: compare the management status from the shape file (older) and the status csv file (newer), and using the relative status of the two to represent change: If mgmt_wt_csv > mgmt_wt_shape, trend = 0.2; if equal, trend = 0; if mgmt_wt_csv < mgmt_wt_shape, trend = -0.2. 
 
@@ -556,8 +580,18 @@ trend_data_4 = mpa_mgmt %>%
   summarize(score = round(mean(wt_combined), 1)) %>%
   ungroup
 
+### plot trend_4 by country
+trend_4_plot <- ggplot(trend_data_4, aes(x = country, y = score)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Trend score by country based on comparison of managment status changes',
+      x = 'Country', 
+      y = 'Trend score')
 
-trend_4 = mpa_mgmt %>%
+print(trend_4_plot)
+
+### distribute trend scores to BHI_ID's 
+r.trend.4 = mpa_mgmt %>%
   dplyr::select(rgn_id = BHI_ID, country) %>%
   full_join(trend_data_4)
 
@@ -565,7 +599,8 @@ trend_4 = mpa_mgmt %>%
          # score = ifelse(weight_csv > weight_shape, 0.2, -0.2), 
          # score = ifelse(weight_csv = weight_shape, 0, score))
 
-write_csv(trend_data_4, file.path(dir_lsp, "trend_lsp_4.csv"))
+# write_csv(trend_data_4, file.path(dir_lsp, "trend_lsp_4.csv"))
+
 
 ``` 
 
