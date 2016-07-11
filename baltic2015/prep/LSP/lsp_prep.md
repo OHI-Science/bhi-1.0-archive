@@ -235,7 +235,8 @@ eez_data = mpa_mgmt_with_wt %>%
                  dplyr::select( -total_eez_km2)
   
 
-### calculating cumulative_mpa_area*weight, by country, by year 
+### calculating cumulative mpa_area*weight, per country per year:
+### cumulative_sum (weight * mpa_area_km2)
 
 cum_mpa_area_wt = mpa_mgmt_with_wt %>%
                  dplyr::select(BSPA_ID, BHI_ID, weight, country, mpa_area_km2, year = date_est) %>%
@@ -247,7 +248,8 @@ cum_mpa_area_wt = mpa_mgmt_with_wt %>%
                  mutate(cum_mpa_wt = cumsum(sum_mpa_wt)) %>%
                  ungroup()
 
-### caculating status per country per year
+### caculating status per country per year: 
+### cumulative_sum (weight * mpa_area_km2) / ref_point
 
 status_per_year_by_country = full_join(cum_mpa_area_wt, eez_data, by = 'country') %>% 
   group_by(country, year) %>%
