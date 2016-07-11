@@ -312,7 +312,7 @@ status_per_year_by_country = full_join(cum_mpa_area_wt, eez_data, by = 'country'
   ungroup() %>%
   arrange(country, year)
 
-write_csv(r.status, file.path(dir_lsp, 'lsp_status_by_country_year.csv'))
+write_csv(status_per_year_by_country, file.path(dir_lsp, 'lsp_status_by_country_year.csv'))
 
 
 # status by BHI_ID to be uploaded to layers folder
