@@ -200,57 +200,57 @@ write.csv(hind_sal_deep, file.path(dir_cc, 'salinity_climatechange/sal_data_data
 ### 4.1 Read in data from ECHAM5 projection
 ```{r read in projection data}
 
-proj_ar = read.csv(file.path(dir_cc, 'raw_data/Hydro_AR_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_ar = read.csv(file.path(dir_cc, 'raw_data/Hydro_ARecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "AR") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_AR,
                         sal_surface = SALIN_O_5_AR, sal_deep = SALIN_50_AR)
 
-proj_bb = read.csv(file.path(dir_cc, 'raw_data/Hydro_BB_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_bb = read.csv(file.path(dir_cc, 'raw_data/Hydro_BBecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "BB") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BB,
                         sal_surface = SALIN_O_5_BB, sal_deep = SALIN_110_BB)
 
-proj_bn = read.csv(file.path(dir_cc, 'raw_data/Hydro_BN_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_bn = read.csv(file.path(dir_cc, 'raw_data/Hydro_BNecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "BN") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BN,
                         sal_surface = SALIN_O_5_BN, sal_deep = SALIN_97_BN)
 
-proj_bs = read.csv(file.path(dir_cc, 'raw_data/Hydro_BS_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_bs = read.csv(file.path(dir_cc, 'raw_data/Hydro_BSecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "BS") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BS,
                         sal_surface = SALIN_O_5_BS, sal_deep = SALIN_220_BS)
 
-proj_ck = read.csv(file.path(dir_cc, 'raw_data/Hydro_CK_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_ck = read.csv(file.path(dir_cc, 'raw_data/Hydro_CKecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "CK") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_CK,
                         sal_surface = SALIN_O_5_CK, sal_deep = SALIN_125_CK)
 
-proj_fb = read.csv(file.path(dir_cc, 'raw_data/Hydro_FB_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_fb = read.csv(file.path(dir_cc, 'raw_data/Hydro_FBecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "FB") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_FB,
                         sal_surface = SALIN_O_5_FB, sal_deep = SALIN_65_FB)
 
-proj_gf = read.csv(file.path(dir_cc, 'raw_data/Hydro_GF_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_gf = read.csv(file.path(dir_cc, 'raw_data/Hydro_GFecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "GF") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GF,
                         sal_surface = SALIN_O_5_GF, sal_deep = SALIN_85_GF)
 
-proj_gr = read.csv(file.path(dir_cc, 'raw_data/Hydro_GR_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_gr = read.csv(file.path(dir_cc, 'raw_data/Hydro_GRecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "GR") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GR,
                         sal_surface = SALIN_O_5_GR, sal_deep = SALIN_50_GR)
 
-proj_gs = read.csv(file.path(dir_cc, 'raw_data/Hydro_GS_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_gs = read.csv(file.path(dir_cc, 'raw_data/Hydro_GSecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "GS") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GS,
                         sal_surface = SALIN_O_5_GS, sal_deep = SALIN_250_GS)
 
-proj_os = read.csv(file.path(dir_cc, 'raw_data/Hydro_OS_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_os = read.csv(file.path(dir_cc, 'raw_data/Hydro_OSecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "OS") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_OS,
                         sal_surface = SALIN_O_5_OS, sal_deep = SALIN_45_OS)
 
-proj_sb = read.csv(file.path(dir_cc, 'raw_data/Hydro_SB_echam5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+proj_sb = read.csv(file.path(dir_cc, 'raw_data/Hydro_SBecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "SB") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_SB,
                         sal_surface = SALIN_O_5_SB, sal_deep = SALIN_55_SB)
@@ -316,57 +316,57 @@ write.csv(proj_sal_deep, file.path(dir_cc, 'salinity_climatechange/sal_data_data
 ```{r read in projection data hadcm3}
 
 
-proj2_ar = read.csv(file.path(dir_cc, 'raw_data/Hydro_AR_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_ar = read.csv(file.path(dir_cc, 'raw_data/Hydro_ARrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "AR") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_AR,
                         sal_surface = SALIN_O_5_AR, sal_deep = SALIN_50_AR)
 
-proj2_bb = read.csv(file.path(dir_cc, 'raw_data/Hydro_BB_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_bb = read.csv(file.path(dir_cc, 'raw_data/Hydro_BBrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "BB") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BB,
                         sal_surface = SALIN_O_5_BB, sal_deep = SALIN_110_BB)
 
-proj2_bn = read.csv(file.path(dir_cc, 'raw_data/Hydro_BN_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_bn = read.csv(file.path(dir_cc, 'raw_data/Hydro_BNrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "BN") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BN,
                         sal_surface = SALIN_O_5_BN, sal_deep = SALIN_97_BN)
 
-proj2_bs = read.csv(file.path(dir_cc, 'raw_data/Hydro_BS_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_bs = read.csv(file.path(dir_cc, 'raw_data/Hydro_BSrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "BS") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BS,
                         sal_surface = SALIN_O_5_BS, sal_deep = SALIN_220_BS)
 
-proj2_ck = read.csv(file.path(dir_cc, 'raw_data/Hydro_CK_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_ck = read.csv(file.path(dir_cc, 'raw_data/Hydro_CKrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "CK") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_CK,
                         sal_surface = SALIN_O_5_CK, sal_deep = SALIN_125_CK)
 
-proj2_fb = read.csv(file.path(dir_cc, 'raw_data/Hydro_FB_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_fb = read.csv(file.path(dir_cc, 'raw_data/Hydro_FBrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "FB") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_FB,
                         sal_surface = SALIN_O_5_FB, sal_deep = SALIN_65_FB)
 
-proj2_gf = read.csv(file.path(dir_cc, 'raw_data/Hydro_GF_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_gf = read.csv(file.path(dir_cc, 'raw_data/Hydro_GFrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "GF") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GF,
                         sal_surface = SALIN_O_5_GF, sal_deep = SALIN_85_GF)
 
-proj2_gr = read.csv(file.path(dir_cc, 'raw_data/Hydro_GR_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_gr = read.csv(file.path(dir_cc, 'raw_data/Hydro_GRrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "GR") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GR,
                         sal_surface = SALIN_O_5_GR, sal_deep = SALIN_50_GR)
 
-proj2_gs = read.csv(file.path(dir_cc, 'raw_data/Hydro_GS_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_gs = read.csv(file.path(dir_cc, 'raw_data/Hydro_GSrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "GS") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GS,
                         sal_surface = SALIN_O_5_GS, sal_deep = SALIN_250_GS)
 
-proj2_os = read.csv(file.path(dir_cc, 'raw_data/Hydro_OS_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_os = read.csv(file.path(dir_cc, 'raw_data/Hydro_OSrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "OS") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_OS,
                         sal_surface = SALIN_O_5_OS, sal_deep = SALIN_45_OS)
 
-proj2_sb = read.csv(file.path(dir_cc, 'raw_data/Hydro_SB_rcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+proj2_sb = read.csv(file.path(dir_cc, 'raw_data/Hydro_SBrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
           mutate(basin_abb_baltsem = "SB") %>%
           dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_SB,
                         sal_surface = SALIN_O_5_SB, sal_deep = SALIN_55_SB)
