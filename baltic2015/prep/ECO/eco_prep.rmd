@@ -168,7 +168,9 @@ No GDP data for the following German NUTS3 regions: DE80H, DE805,DE80D, DE801,DE
 #### 4.2.2 Mis-assignments
 (1) NUTS3 regions are assigned to a BHI region due to minor differences in borders.  These are fixed manually in the data preparation in section 5.1.4
 
-(2) Finnish NUTS3 names have changed for the NUTS3 regions associated with BHI 32. These NUTS3 population data must be manually linked to BHI region 32. Fixed manally in section 5.1.5
+(2) Finnish NUTS3 names have changed for the NUTS3 regions associated with BHI 32. These NUTS3 population data must be manually linked to BHI region 32. Fixed manally in section 5.1.5.  
+
+(3) Finnish NUTS3 regions also changed for those associated with BHI region 32:old names FI1A3, FI1A2, FI1A1 but new names appear to be in the same locations (new names FI1D7, FI1D6, FI1D5). These are also fixed in 5.1.5  
 
 (3) No data assigned to BHI 21 - this appears to be an error associated with the assignment of NUTS3 PL634 - unclear why this happens and is not fixed.  
 

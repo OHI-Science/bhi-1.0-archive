@@ -243,9 +243,11 @@ No GDP data for the following German NUTS3 regions: DE80H, DE805,DE80D, DE801,DE
 
 1.  NUTS3 regions are assigned to a BHI region due to minor differences in borders. These are fixed manually in the data preparation in section 5.1.4
 
-2.  Finnish NUTS3 names have changed for the NUTS3 regions associated with BHI 32. These NUTS3 population data must be manually linked to BHI region 32. Fixed manally in section 5.1.5
+2.  Finnish NUTS3 names have changed for the NUTS3 regions associated with BHI 32. These NUTS3 population data must be manually linked to BHI region 32. Fixed manally in section 5.1.5.
 
-3.  No data assigned to BHI 21 - this appears to be an error associated with the assignment of NUTS3 PL634 - unclear why this happens and is not fixed.
+3.  Finnish NUTS3 regions also changed for those associated with BHI region 32:old names FI1A3, FI1A2, FI1A1 but new names appear to be in the same locations (new names FI1D7, FI1D6, FI1D5). These are also fixed in 5.1.5
+
+4.  No data assigned to BHI 21 - this appears to be an error associated with the assignment of NUTS3 PL634 - unclear why this happens and is not fixed.
 
 #### 4.2.3 GDP used is for entire NUTS3 -
 
@@ -384,11 +386,12 @@ regional_gdp1 = regional_gdp1 %>%
 
 #### 5.1.5 Correct error with Finnish name change
 
-This is to assign data to BHI 32 and add one additional assignment to BHI 31.
+Finnish name changes to NUTS regions around the Gulf of Finland (minor fraction also Aland Sea) as well as round the Bothnian Sea result in mismatches between names in the GDP data (new names) and the shapefiles (old names).
+![New Finnish NUTS3 names](new_FI_nuts3.png?raw=TRUE) ![Old Finnish NUTS3 names](BHI_regions_NUTS3_plot.png?raw=TRUE)
 
 ``` r
-new_fi_nuts3 = c("FI1C4","FI1B1")
-old_fi_nuts3 = c("FI186","FI182","FI181")
+new_fi_nuts3 = c("FI1C4","FI1B1", "FI1D7","FI1D6","FI1D5")
+old_fi_nuts3 = c("FI186","FI182","FI181", "FI1A3","FI1A2","FI1A1")
 
 ## select the GDP associated with the new NUTS3 names
 gdp_new = regional_gdp1 %>%
@@ -410,12 +413,24 @@ old_pop = old_pop %>%
                         pop = PopTot, 
                         pop_km2 = PopTot_density_in_buffer_per_km2,
                         country_abb = CNTR_CODE,country=rgn_nam, basin= Subbasin,
-                        area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)
+                        area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)%>%
+          mutate(rgn_id = ifelse(rgn_id == 41 & nuts3 == "FI1A3",42,rgn_id),
+                 country = ifelse(country == "Sweden" & nuts3 == "FI1A3", "Finland", country ))%>% ## FI1A3 (old name) miss-assigned to Sweden's BHI 41, fix rgn_id and country
+          group_by(rgn_id,nuts3,country_abb,country,basin)%>%
+          summarise(pop = sum(pop),
+                    pop_km2 = sum(pop_km2),
+                    area_nuts3_in_bhi_buffer = sum(area_nuts3_in_bhi_buffer)) %>%  ## sum because multiple entries for same region due to mis-label
+          ungroup()
+                  
+
 old_pop = old_pop %>%
           mutate(new_nuts3 = ifelse(rgn_id == 32 & nuts3 == "FI181","FI1B1",
                              ifelse(rgn_id == 36 & nuts3 == "FI181","FI1B1",
                              ifelse(rgn_id == 32 & nuts3 == "FI182","FI1B1",
-                             ifelse(rgn_id == 32 & nuts3 == "FI186","FI1C4","")))))%>%
+                             ifelse(rgn_id == 32 & nuts3 == "FI186","FI1C4",
+                             ifelse(rgn_id == 42 & nuts3 == "FI1A1","FI1D5",
+                             ifelse(rgn_id == 42 & nuts3 == "FI1A2","FI1D6",
+                             ifelse(rgn_id == 42 & nuts3 == "FI1A3","FI1D7",""))))))))%>%
           mutate(new_pop = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop),pop),
                  new_pop_km2 = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop_km2),pop_km2),
                  new_area_in_buffer =ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(area_nuts3_in_bhi_buffer),area_nuts3_in_bhi_buffer) )%>% ## need to make a single object associated with 32 and FI1B1 so GDP not assigned in duplicate
@@ -432,41 +447,32 @@ updated_fi = full_join(old_pop,gdp_new,
 head(updated_fi)
 ```
 
-    ##   rgn_id country_abb country           basin new_nuts3     pop pop_km2
-    ## 1     32          FI Finland Gulf of Finland     FI1B1 2343565 31.1095
-    ## 2     32          FI Finland Gulf of Finland     FI1B1 2343565 31.1095
-    ## 3     32          FI Finland Gulf of Finland     FI1B1 2343565 31.1095
-    ## 4     32          FI Finland Gulf of Finland     FI1B1 2343565 31.1095
-    ## 5     32          FI Finland Gulf of Finland     FI1B1 2343565 31.1095
-    ## 6     32          FI Finland Gulf of Finland     FI1B1 2343565 31.1095
-    ##   area_nuts3_in_bhi_buffer year       nuts3_name         unit value
-    ## 1                 399755.4 2000 Helsinki-Uusimaa Million euro 50242
-    ## 2                 399755.4 2001 Helsinki-Uusimaa Million euro 53814
-    ## 3                 399755.4 2002 Helsinki-Uusimaa Million euro 54465
-    ## 4                 399755.4 2003 Helsinki-Uusimaa Million euro 55017
-    ## 5                 399755.4 2004 Helsinki-Uusimaa Million euro 57714
-    ## 6                 399755.4 2005 Helsinki-Uusimaa Million euro 60178
-    ##   flag_notes
-    ## 1         NA
-    ## 2         NA
-    ## 3         NA
-    ## 4         NA
-    ## 5         NA
-    ## 6         NA
+    ## Source: local data frame [6 x 13]
+    ## 
+    ##   rgn_id country_abb country           basin new_nuts3     pop  pop_km2
+    ##    <dbl>       <chr>   <chr>           <chr>     <chr>   <int>    <dbl>
+    ## 1     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
+    ## 2     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
+    ## 3     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
+    ## 4     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
+    ## 5     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
+    ## 6     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
+    ## Variables not shown: area_nuts3_in_bhi_buffer <dbl>, year <int>,
+    ##   nuts3_name <chr>, unit <chr>, value <int>, flag_notes <lgl>.
 
 ``` r
 str(updated_fi)
 ```
 
-    ## 'data.frame':    45 obs. of  13 variables:
-    ##  $ rgn_id                  : int  32 32 32 32 32 32 32 32 32 32 ...
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    90 obs. of  13 variables:
+    ##  $ rgn_id                  : num  32 32 32 32 32 32 32 32 32 32 ...
     ##  $ country_abb             : chr  "FI" "FI" "FI" "FI" ...
     ##  $ country                 : chr  "Finland" "Finland" "Finland" "Finland" ...
     ##  $ basin                   : chr  "Gulf of Finland" "Gulf of Finland" "Gulf of Finland" "Gulf of Finland" ...
     ##  $ new_nuts3               : chr  "FI1B1" "FI1B1" "FI1B1" "FI1B1" ...
-    ##  $ pop                     : int  2343565 2343565 2343565 2343565 2343565 2343565 2343565 2343565 2343565 2343565 ...
-    ##  $ pop_km2                 : num  31.1 31.1 31.1 31.1 31.1 ...
-    ##  $ area_nuts3_in_bhi_buffer: num  4e+05 4e+05 4e+05 4e+05 4e+05 ...
+    ##  $ pop                     : int  2713362 2713362 2713362 2713362 2713362 2713362 2713362 2713362 2713362 2713362 ...
+    ##  $ pop_km2                 : num  2874 2874 2874 2874 2874 ...
+    ##  $ area_nuts3_in_bhi_buffer: num  788775 788775 788775 788775 788775 ...
     ##  $ year                    : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
     ##  $ nuts3_name              : chr  "Helsinki-Uusimaa" "Helsinki-Uusimaa" "Helsinki-Uusimaa" "Helsinki-Uusimaa" ...
     ##  $ unit                    : chr  "Million euro" "Million euro" "Million euro" "Million euro" ...
@@ -524,109 +530,111 @@ regional_gdp1 %>%
   distinct()
 ```
 
-    ## Source: local data frame [99 x 5]
+    ## Source: local data frame [102 x 5]
     ## 
-    ##    country_abb max_year value nuts3 rgn_id
-    ##          <chr>    <int> <int> <chr>  <int>
-    ## 1           DE     2014    NA DE803     10
-    ## 2           DE     2014    NA DEF01      4
-    ## 3           DE     2014    NA DEF02      8
-    ## 4           DE     2014    NA DEF03     10
-    ## 5           DE     2014    NA DEF06     10
-    ## 6           DE     2014    NA DEF08      8
-    ## 7           DE     2014    NA DEF08     10
-    ## 8           DE     2014    NA DEF0A      8
-    ## 9           DE     2014    NA DEF0B      8
-    ## 10          DE     2014    NA DEF0C      4
-    ## 11          DE     2014    NA DEF0C      8
-    ## 12          DE     2014    NA DEF0D     10
-    ## 13          DE     2014    NA DEF0F     10
-    ## 14          DK     2014 48028 DK011      6
-    ## 15          DK     2014 48028 DK011     12
-    ## 16          DK     2014 36356 DK012      6
-    ## 17          DK     2014 36356 DK012     12
-    ## 18          DK     2014 16414 DK013      2
-    ## 19          DK     2014 16414 DK013      6
-    ## 20          DK     2014 16414 DK013     12
-    ## 21          DK     2014  1355 DK014     15
-    ## 22          DK     2014  7633 DK021      2
-    ## 23          DK     2014  7633 DK021     12
-    ## 24          DK     2014 18242 DK022      2
-    ## 25          DK     2014 18242 DK022      3
-    ## 26          DK     2014 18242 DK022      7
-    ## 27          DK     2014 18242 DK022      9
-    ## 28          DK     2014 18242 DK022     12
-    ## 29          DK     2014 17317 DK031      3
-    ## 30          DK     2014 32468 DK032      3
-    ## 31          DK     2014 32468 DK032      4
-    ## 32          DK     2014 19136 DK041      3
-    ## 33          DK     2014 33787 DK042      2
-    ## 34          DK     2014 33787 DK042      3
-    ## 35          DK     2014 23028 DK050      2
-    ## 36          EE     2014 12434 EE001     34
-    ## 37          EE     2014  1405 EE004     25
-    ## 38          EE     2014  1405 EE004     28
-    ## 39          EE     2014  1405 EE004     28
-    ## 40          EE     2014  1405 EE004     31
-    ## 41          EE     2014  1405 EE004     34
-    ## 42          EE     2014  1153 EE006     34
-    ## 43          EE     2014  1567 EE007     34
-    ## 44          EE     2014  1567 EE007     34
-    ## 45          FI     2014    NA FI194     38
-    ## 46          FI     2014    NA FI194     40
-    ## 47          FI     2014    NA FI195     38
-    ## 48          FI     2014    NA FI195     40
-    ## 49          FI     2014    NA FI195     42
-    ## 50          FI     2014    NA FI196     38
-    ## 51          FI     2014    NA FI200     36
-    ## 52          FI     2014    NA FI200     38
-    ## 53          FI     2014    NA FI1B1     32
-    ## 54          FI     2014    NA FI1C4     32
-    ## 55          FI     2014    NA FI1B1     36
-    ## 56          LT     2014    NA LT003     23
-    ## 57          LT     2014    NA LT003     23
-    ## 58          LT     2014    NA LT003     23
-    ## 59          LV     2014    NA LV003     24
-    ## 60          LV     2014    NA LV003     24
-    ## 61          LV     2014    NA LV003     27
-    ## 62          LV     2014    NA LV006     27
-    ## 63          LV     2014    NA LV007     27
-    ## 64          LV     2014    NA LV007     27
-    ## 65          LV     2014    NA LV009     27
-    ## 66          PL     2014    NA PL424     17
-    ## 67          PL     2014    NA PL621     18
-    ## 68          PL     2014    NA PL621     18
-    ## 69          PL     2014    NA PL622     18
-    ## 70          PL     2014    NA PL633     18
-    ## 71          PL     2014    NA PL634     17
-    ## 72          PL     2014    NA PL634     18
-    ## 73          SE     2014    NA SE110     29
-    ## 74          SE     2014    NA SE110     35
-    ## 75          SE     2014    NA SE121     35
-    ## 76          SE     2014    NA SE121     37
-    ## 77          SE     2014    NA SE122     29
-    ## 78          SE     2014    NA SE123     26
-    ## 79          SE     2014    NA SE123     29
-    ## 80          SE     2014    NA SE212     14
-    ## 81          SE     2014    NA SE213     14
-    ## 82          SE     2014    NA SE213     26
-    ## 83          SE     2014    NA SE214     20
-    ## 84          SE     2014    NA SE214     26
-    ## 85          SE     2014    NA SE221     14
-    ## 86          SE     2014    NA SE221     26
-    ## 87          SE     2014    NA SE224      1
-    ## 88          SE     2014    NA SE224      5
-    ## 89          SE     2014    NA SE224     11
-    ## 90          SE     2014    NA SE224     14
-    ## 91          SE     2014    NA SE231      1
-    ## 92          SE     2014    NA SE232      1
-    ## 93          SE     2014    NA SE313     37
-    ## 94          SE     2014    NA SE321     37
-    ## 95          SE     2014    NA SE331     37
-    ## 96          SE     2014    NA SE331     39
-    ## 97          SE     2014    NA SE331     41
-    ## 98          SE     2014    NA SE332     41
-    ## 99          SE     2014    NA SE332     41
+    ##     country_abb max_year value nuts3 rgn_id
+    ##           <chr>    <int> <int> <chr>  <dbl>
+    ## 1            DE     2014    NA DE803     10
+    ## 2            DE     2014    NA DEF01      4
+    ## 3            DE     2014    NA DEF02      8
+    ## 4            DE     2014    NA DEF03     10
+    ## 5            DE     2014    NA DEF06     10
+    ## 6            DE     2014    NA DEF08      8
+    ## 7            DE     2014    NA DEF08     10
+    ## 8            DE     2014    NA DEF0A      8
+    ## 9            DE     2014    NA DEF0B      8
+    ## 10           DE     2014    NA DEF0C      4
+    ## 11           DE     2014    NA DEF0C      8
+    ## 12           DE     2014    NA DEF0D     10
+    ## 13           DE     2014    NA DEF0F     10
+    ## 14           DK     2014 48028 DK011      6
+    ## 15           DK     2014 48028 DK011     12
+    ## 16           DK     2014 36356 DK012      6
+    ## 17           DK     2014 36356 DK012     12
+    ## 18           DK     2014 16414 DK013      2
+    ## 19           DK     2014 16414 DK013      6
+    ## 20           DK     2014 16414 DK013     12
+    ## 21           DK     2014  1355 DK014     15
+    ## 22           DK     2014  7633 DK021      2
+    ## 23           DK     2014  7633 DK021     12
+    ## 24           DK     2014 18242 DK022      2
+    ## 25           DK     2014 18242 DK022      3
+    ## 26           DK     2014 18242 DK022      7
+    ## 27           DK     2014 18242 DK022      9
+    ## 28           DK     2014 18242 DK022     12
+    ## 29           DK     2014 17317 DK031      3
+    ## 30           DK     2014 32468 DK032      3
+    ## 31           DK     2014 32468 DK032      4
+    ## 32           DK     2014 19136 DK041      3
+    ## 33           DK     2014 33787 DK042      2
+    ## 34           DK     2014 33787 DK042      3
+    ## 35           DK     2014 23028 DK050      2
+    ## 36           EE     2014 12434 EE001     34
+    ## 37           EE     2014  1405 EE004     25
+    ## 38           EE     2014  1405 EE004     28
+    ## 39           EE     2014  1405 EE004     28
+    ## 40           EE     2014  1405 EE004     31
+    ## 41           EE     2014  1405 EE004     34
+    ## 42           EE     2014  1153 EE006     34
+    ## 43           EE     2014  1567 EE007     34
+    ## 44           EE     2014  1567 EE007     34
+    ## 45           FI     2014    NA FI194     38
+    ## 46           FI     2014    NA FI194     40
+    ## 47           FI     2014    NA FI195     38
+    ## 48           FI     2014    NA FI195     40
+    ## 49           FI     2014    NA FI195     42
+    ## 50           FI     2014    NA FI196     38
+    ## 51           FI     2014    NA FI200     36
+    ## 52           FI     2014    NA FI200     38
+    ## 53           FI     2014    NA FI1B1     32
+    ## 54           FI     2014    NA FI1C4     32
+    ## 55           FI     2014    NA FI1B1     36
+    ## 56           FI     2014    NA FI1D5     42
+    ## 57           FI     2014    NA FI1D6     42
+    ## 58           FI     2014    NA FI1D7     42
+    ## 59           LT     2014    NA LT003     23
+    ## 60           LT     2014    NA LT003     23
+    ## 61           LT     2014    NA LT003     23
+    ## 62           LV     2014    NA LV003     24
+    ## 63           LV     2014    NA LV003     24
+    ## 64           LV     2014    NA LV003     27
+    ## 65           LV     2014    NA LV006     27
+    ## 66           LV     2014    NA LV007     27
+    ## 67           LV     2014    NA LV007     27
+    ## 68           LV     2014    NA LV009     27
+    ## 69           PL     2014    NA PL424     17
+    ## 70           PL     2014    NA PL621     18
+    ## 71           PL     2014    NA PL621     18
+    ## 72           PL     2014    NA PL622     18
+    ## 73           PL     2014    NA PL633     18
+    ## 74           PL     2014    NA PL634     17
+    ## 75           PL     2014    NA PL634     18
+    ## 76           SE     2014    NA SE110     29
+    ## 77           SE     2014    NA SE110     35
+    ## 78           SE     2014    NA SE121     35
+    ## 79           SE     2014    NA SE121     37
+    ## 80           SE     2014    NA SE122     29
+    ## 81           SE     2014    NA SE123     26
+    ## 82           SE     2014    NA SE123     29
+    ## 83           SE     2014    NA SE212     14
+    ## 84           SE     2014    NA SE213     14
+    ## 85           SE     2014    NA SE213     26
+    ## 86           SE     2014    NA SE214     20
+    ## 87           SE     2014    NA SE214     26
+    ## 88           SE     2014    NA SE221     14
+    ## 89           SE     2014    NA SE221     26
+    ## 90           SE     2014    NA SE224      1
+    ## 91           SE     2014    NA SE224      5
+    ## 92           SE     2014    NA SE224     11
+    ## 93           SE     2014    NA SE224     14
+    ## 94           SE     2014    NA SE231      1
+    ## 95           SE     2014    NA SE232      1
+    ## 96           SE     2014    NA SE313     37
+    ## 97           SE     2014    NA SE321     37
+    ## 98           SE     2014    NA SE331     37
+    ## 99           SE     2014    NA SE331     39
+    ## 100          SE     2014    NA SE331     41
+    ## ..          ...      ...   ...   ...    ...
 
     ## Source: local data frame [2 x 1]
     ## 
@@ -679,7 +687,7 @@ regional_gdp2 = regional_gdp1 %>%
 str(regional_gdp2)
 ```
 
-    ## 'data.frame':    1485 obs. of  13 variables:
+    ## 'data.frame':    1530 obs. of  13 variables:
     ##  $ year                    : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
     ##  $ nuts3                   : chr  "DE803" "DE803" "DE803" "DE803" ...
     ##  $ nuts3_name              : chr  "Rostock, Kreisfreie Stadt" "Rostock, Kreisfreie Stadt" "Rostock, Kreisfreie Stadt" "Rostock, Kreisfreie Stadt" ...
@@ -691,7 +699,7 @@ str(regional_gdp2)
     ##  $ country_abb             : chr  "DE" "DE" "DE" "DE" ...
     ##  $ basin                   : chr  "Bay of Mecklenburg" "Bay of Mecklenburg" "Bay of Mecklenburg" "Bay of Mecklenburg" ...
     ##  $ area_nuts3_in_bhi_buffer: num  1685 1685 1685 1685 1685 ...
-    ##  $ rgn_id                  : int  10 10 10 10 10 10 10 10 10 10 ...
+    ##  $ rgn_id                  : num  10 10 10 10 10 10 10 10 10 10 ...
     ##  $ country                 : chr  "Germany" "Germany" "Germany" "Germany" ...
 
 ``` r
@@ -810,7 +818,7 @@ nuts3_bhi_join2 = nuts3_bhi_join %>%
 nuts3_bhi_join2 %>% select(nuts3, country,pop_nuts3, pop,bhi_pop_prop)%>%distinct()%>%arrange(nuts3)
 ```
 
-    ## Source: local data frame [99 x 5]
+    ## Source: local data frame [102 x 5]
     ## 
     ##    nuts3 country pop_nuts3    pop bhi_pop_prop
     ##    <chr>   <chr>     <int>  <int>        <dbl>
@@ -862,7 +870,7 @@ str(bhi_gdp)
 ```
 
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    490 obs. of  5 variables:
-    ##  $ rgn_id            : int  1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ rgn_id            : num  1 1 1 1 1 1 1 1 1 1 ...
     ##  $ year              : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
     ##  $ bhi_pop           : int  844828 844828 844828 844828 844828 844828 844828 844828 844828 844828 ...
     ##  $ bhi_gdp           : num  56729 54643 56549 60660 62353 ...
@@ -1630,7 +1638,7 @@ head( eco_region)
     ## Source: local data frame [6 x 3]
     ## 
     ##   rgn_id  year rgn_value
-    ##    <int> <int>     <dbl>
+    ##    <dbl> <int>     <dbl>
     ## 1      1  2008  1.189080
     ## 2      2  2008  1.191704
     ## 3      3  2008  1.214566
@@ -1692,7 +1700,7 @@ dim(eco_region) ##210 3
     ## Source: local data frame [6 x 6]
     ## 
     ##   rgn_id  year rgn_value cntry_value      Xeco    status
-    ##    <int> <int>     <dbl>       <dbl>     <dbl>     <dbl>
+    ##    <dbl> <int>     <dbl>       <dbl>     <dbl>     <dbl>
     ## 1      1  2008  1.189080    1.200626 0.9903833 0.9903833
     ## 2      2  2008  1.191704    1.246874 0.9557538 0.9557538
     ## 3      3  2008  1.214566    1.246874 0.9740890 0.9740890
@@ -1778,7 +1786,7 @@ eco_status_calc %>% filter(rgn_id == 13)
 
     ## Source: local data frame [0 x 6]
     ## 
-    ## Variables not shown: rgn_id <int>, year <int>, rgn_value <dbl>,
+    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>,
     ##   cntry_value <dbl>, Xeco <dbl>, status <dbl>.
 
 ``` r
@@ -1787,7 +1795,7 @@ eco_region %>% filter(rgn_id == 13) ## No data for associated German NUTS3 DE80H
 
     ## Source: local data frame [0 x 3]
     ## 
-    ## Variables not shown: rgn_id <int>, year <int>, rgn_value <dbl>.
+    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>.
 
 ``` r
 eco_status_calc %>% filter(rgn_id == 16)
@@ -1795,7 +1803,7 @@ eco_status_calc %>% filter(rgn_id == 16)
 
     ## Source: local data frame [0 x 6]
     ## 
-    ## Variables not shown: rgn_id <int>, year <int>, rgn_value <dbl>,
+    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>,
     ##   cntry_value <dbl>, Xeco <dbl>, status <dbl>.
 
 ``` r
@@ -1804,7 +1812,7 @@ eco_region %>% filter(rgn_id == 16)## no data for associated German NUTS3 DE80F,
 
     ## Source: local data frame [0 x 3]
     ## 
-    ## Variables not shown: rgn_id <int>, year <int>, rgn_value <dbl>.
+    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>.
 
 ``` r
 eco_status_calc %>% filter(rgn_id == 21)
@@ -1812,7 +1820,7 @@ eco_status_calc %>% filter(rgn_id == 21)
 
     ## Source: local data frame [0 x 6]
     ## 
-    ## Variables not shown: rgn_id <int>, year <int>, rgn_value <dbl>,
+    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>,
     ##   cntry_value <dbl>, Xeco <dbl>, status <dbl>.
 
 ``` r
@@ -1821,7 +1829,7 @@ eco_region %>% filter(rgn_id == 21)  ## based on Eurostat nuts3 map (http://ec.e
 
     ## Source: local data frame [0 x 3]
     ## 
-    ## Variables not shown: rgn_id <int>, year <int>, rgn_value <dbl>.
+    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>.
 
 ### 7.3.1 Plot status
 
