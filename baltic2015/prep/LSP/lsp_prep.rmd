@@ -459,7 +459,7 @@ write_csv(trend_data, file.path(dir_lsp, 'cumulative_mpa_area_trend_data.csv'))
 # 
 # print(mpa_area_by_year)
 
-## TRY 1: fill in missing data from 2004-2013. Many countries started with 0 km2 MPA or very low in 2004, and all trends are therefore 1. I don't think this is a good approach for trend... 
+## TRY 1: fill in missing data from 2004-2013. Many countries started with 0 km2 MPA or very low in 2004, and all trends are therefore 1. I don't think this is a good approach for trend. In addition, the general definition of trend used in OHI assessments refer to the change of status score in the next five years. Not the absolute change in  
 
 trend_data_1 = trend_data %>%
   mutate(year = as.integer(year)) %>%
@@ -525,11 +525,12 @@ trend_data_3 = status_per_year_by_country %>%
 r.trend.3 = trend_data_3 %>%
   filter(year > (max(year) - 5)) %>% # most recent 5 years of data (2009- 2013)
   group_by(country) %>%
-  # summarize(dlm = cor(status, year)) %>%
-  do(dlm = lm(status ~ as.integer(year), data = .)) %>%
-  # mutate(score = coef(dlm[['year']]))
-  mutate(score = pmax(-1, pmin(1, coef(dlm[['year']])*5))) ### this last line did not work... not sure why...
+  do(dlm = lm(status ~ year, data = .)) %>%
+  mutate(score = round(pmax(-1, pmin(1, coef(dlm)[['year']]*5/100)), 1)) %>%
+  dplyr::select(country, score) 
 
+write_csv(r.trend.3,  file.path(dir_prep, 'lsp_trend_3.csv'))
+  
 ## Trial #4: compare the management status from the shape file (older) and the status csv file (newer), and using the relative status of the two to represent change: If mgmt_wt_csv > mgmt_wt_shape, trend = 0.2; if equal, trend = 0; if mgmt_wt_csv < mgmt_wt_shape, trend = -0.2. 
 
 ## might be hard to justify using two data sets that dont match.... 
@@ -563,6 +564,6 @@ trend_4 = mpa_mgmt %>%
          # score = ifelse(weight_csv = weight_shape, 0, score))
 
 write_csv(trend_data_4, file.path(dir_lsp, "trend_lsp_4.csv"))
-  
 
 ``` 
+
