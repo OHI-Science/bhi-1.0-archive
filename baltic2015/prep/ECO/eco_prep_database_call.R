@@ -18,7 +18,7 @@ dir_eco    = file.path(dir_prep, 'ECO')
 ##----------------------------------------------------#
 ## DATE OF LAST DATA EXTRACTION FROM DATABASE ##
     ## **update this date when code is run**
-    ## 8 JULY 2016
+    ## 11 JULY 2016
 ##----------------------------------------------------#
 
 
@@ -68,7 +68,7 @@ dir_eco    = file.path(dir_prep, 'ECO')
 
       ## select only 3 Finnish NUTS3
       fi_pop = fi_pop %>%
-               filter(NUTS_ID %in% c("FI186","FI182","FI181"))
+               filter(NUTS_ID %in% c("FI186","FI182","FI181", "FI1A3","FI1A2","FI1A1"))
 
       head(fi_pop)
       tail(fi_pop)

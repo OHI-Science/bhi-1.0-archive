@@ -250,11 +250,13 @@ regional_gdp1 = regional_gdp1 %>%
 
 ```
 
-#### 5.1.5 Correct error with Finnish name change
-This is to assign data to BHI 32 and add one additional assignment to BHI 31.
+#### 5.1.5 Correct error with Finnish name change  
+Finnish name changes to NUTS regions around the Gulf of Finland (minor fraction also Aland Sea) as well as round the Bothnian Sea result in mismatches between names in the GDP data (new names) and the shapefiles (old names).  
+![New Finnish NUTS3 names](new_FI_nuts3.png?raw=TRUE)
+![Old Finnish NUTS3 names](BHI_regions_NUTS3_plot.png?raw=TRUE)
 ```{r fix error with Finnish Name change}
-new_fi_nuts3 = c("FI1C4","FI1B1")
-old_fi_nuts3 = c("FI186","FI182","FI181")
+new_fi_nuts3 = c("FI1C4","FI1B1", "FI1D7","FI1D6","FI1D5")
+old_fi_nuts3 = c("FI186","FI182","FI181", "FI1A3","FI1A2","FI1A1")
 
 ## select the GDP associated with the new NUTS3 names
 gdp_new = regional_gdp1 %>%
@@ -276,12 +278,24 @@ old_pop = old_pop %>%
                         pop = PopTot, 
                         pop_km2 = PopTot_density_in_buffer_per_km2,
                         country_abb = CNTR_CODE,country=rgn_nam, basin= Subbasin,
-                        area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)
+                        area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)%>%
+          mutate(rgn_id = ifelse(rgn_id == 41 & nuts3 == "FI1A3",42,rgn_id),
+                 country = ifelse(country == "Sweden" & nuts3 == "FI1A3", "Finland", country ))%>% ## FI1A3 (old name) miss-assigned to Sweden's BHI 41, fix rgn_id and country
+          group_by(rgn_id,nuts3,country_abb,country,basin)%>%
+          summarise(pop = sum(pop),
+                    pop_km2 = sum(pop_km2),
+                    area_nuts3_in_bhi_buffer = sum(area_nuts3_in_bhi_buffer)) %>%  ## sum because multiple entries for same region due to mis-label
+          ungroup()
+                  
+
 old_pop = old_pop %>%
           mutate(new_nuts3 = ifelse(rgn_id == 32 & nuts3 == "FI181","FI1B1",
                              ifelse(rgn_id == 36 & nuts3 == "FI181","FI1B1",
                              ifelse(rgn_id == 32 & nuts3 == "FI182","FI1B1",
-                             ifelse(rgn_id == 32 & nuts3 == "FI186","FI1C4","")))))%>%
+                             ifelse(rgn_id == 32 & nuts3 == "FI186","FI1C4",
+                             ifelse(rgn_id == 42 & nuts3 == "FI1A1","FI1D5",
+                             ifelse(rgn_id == 42 & nuts3 == "FI1A2","FI1D6",
+                             ifelse(rgn_id == 42 & nuts3 == "FI1A3","FI1D7",""))))))))%>%
           mutate(new_pop = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop),pop),
                  new_pop_km2 = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop_km2),pop_km2),
                  new_area_in_buffer =ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(area_nuts3_in_bhi_buffer),area_nuts3_in_bhi_buffer) )%>% ## need to make a single object associated with 32 and FI1B1 so GDP not assigned in duplicate
