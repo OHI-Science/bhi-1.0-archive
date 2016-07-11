@@ -197,7 +197,7 @@ str(accom_coast1)
 
 accom_coast %>% select(TERRTYPO, TERRTYPO_LABEL)%>% distinct()
 
-
+## figure out which are the NUTS1 abbreviations from the other NUTS level abbreviations, select only NUTS1
 accom_coast2 = accom_coast1 %>%
                mutate(country_abb = substr(nuts,1,2))%>% ## set up country abbreviation
                left_join(., eu_names, by="country_abb")%>% ## join to eu country names
@@ -317,12 +317,13 @@ accom_nuts1 = inner_join(accom1, nuts2_pop_area2,
               dplyr::rename(nuts2 = nuts)
 
 dim(accom1)##11250     8
-dim(nuts2_pop_area2) ## 61 8
-dim(accom_nuts1) ##1425  15
+dim(nuts2_pop_area2) ## 60 8
+dim(accom_nuts1) ##1400  14
 
-str(accom_nuts1)
+str(accom_nuts1) ## this is now missing the Finnish data where there are name discrepancies
 
-## this is now missing the Finnish data where there are name discrepancies
+
+## Get Finnish data renamed so that accommodating and population data match
 fi_accom_newnuts = accom1 %>%
                    filter(nuts %in% c("FI1C","FI1B", "FI1D"))
 fi_accom_newnuts
@@ -419,7 +420,7 @@ accom_coast_nuts = accom_coast2 %>%
 
 
 
-## are there BHI regions missing
+## are there BHI regions missing?
 accom_coast_nuts %>% select(rgn_id)%>% distinct() %>% arrange(rgn_id)
 
 ## 37 regions
@@ -518,7 +519,7 @@ accom_coast_nuts1 = accom_coast_nuts %>%
   
 ```
 
-####4.3.2 Plot proportion coastal NUTS1 
+####4.3.2 Plot proportion coastal NUTS1 accommodation stays
 Very consistent across the three years
 ```{r plot nuts1 proportion coastal }
 ggplot(accom_coast_nuts1)+
@@ -543,7 +544,7 @@ accom_coast_nuts2 = accom_coast_nuts1 %>%
                     summarise(mean_prop_coastal = mean(prop_coastal, na.rm=TRUE))
 ```
 
-#### 4.3.4 Plot Mean proportion coastal for each NUTS1 
+#### 4.3.4 Plot Mean proportion coastal accommodation stays for each NUTS1 
 
 ```{r  Plot Mean proportion coastal for each NUTS1 }
 ggplot(accom_coast_nuts2)+
@@ -616,7 +617,7 @@ nuts2_buffer_pop= accom_nuts5 %>%
 ```
 
 
-#### 4.5.2 Join the total NUTS2 area and population to the per BHI region 
+#### 4.5.2 Join the total NUTS2 area and population to the per BHI region data
 ```{r join total nuts2 area and pop to accom data}
 accom_nuts6  = nuts2_buffer_pop %>%
                   full_join(., accom_nuts5, by="nuts2")
@@ -625,7 +626,7 @@ accom_nuts6  = nuts2_buffer_pop %>%
 ```
 
 
-#### 4.5.3 Calculate the population fraction for each region 
+#### 4.5.3 Calculate the population fraction in a BHI region from a NUTS2 out of the NUTS2 total buffer population
 ```{r calculate nuts2 prop for each region}
 accom_nuts6 = accom_nuts6 %>%
               mutate(bhi_pop_prop = pop / pop_nuts2)
@@ -714,7 +715,8 @@ Use per capita night stays
 ### 5.1 Prepare layer
 ```{r prepare layer for layers}
 tr_layer = accom_nuts7 %>%
-            select(rgn_id,year,bhi_coastal_stays_per_cap)
+            select(rgn_id,year,bhi_coastal_stays_per_cap)%>%
+            arrange(rgn_id,year)
 
 ## check max year
 tr_layer %>% select(rgn_id,year)%>% filter(!is.na(year)) %>% group_by(rgn_id) %>% summarise(max_year= max(year)) %>% ungroup() %>% print(n=42)
@@ -762,12 +764,13 @@ tr_status_score = tr_layer %>%
     ungroup() %>%
     mutate(rgn_value = nights/ref_val) %>% #calculate rgn_value per year, numerator of score function
     select(rgn_id,year,rgn_value)%>%
-    mutate(status = pmin(1,rgn_value)) # status calculated cannot exceed 1
+    mutate(status = pmin(1,rgn_value)) ## if regions have no data, are not included here, final year will be included below
 
  ## select last year of data in timeseries for status
   tr_status = tr_status_score %>%
     group_by(rgn_id) %>%
     summarise_each(funs(last), rgn_id, status) %>%  #this will be all same year because of code above selecting the max year
+    full_join(bhi_rgn, .,by="rgn_id")%>% #all regions now listed, have NA for for status
     mutate(score = status*100,
             dimension = 'status') %>% ##scale to 0 to 100
      select(region_id = rgn_id,score, dimension)
