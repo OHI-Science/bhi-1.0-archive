@@ -1189,7 +1189,7 @@
 "ECO","score",40,
 "ECO","score",41,98.5
 "ECO","score",42,
-"ECO","status",0,97.15
+"ECO","status",0,97.11
 "ECO","status",1,98
 "ECO","status",2,97
 "ECO","status",3,99
@@ -1231,7 +1231,7 @@
 "ECO","status",39,97
 "ECO","status",40,100
 "ECO","status",41,97
-"ECO","status",42,100
+"ECO","status",42,99
 "ECO","trend",1,-0.02
 "ECO","trend",2,-0.03
 "ECO","trend",3,-0.02
@@ -1273,7 +1273,7 @@
 "ECO","trend",39,0.04
 "ECO","trend",40,0
 "ECO","trend",41,0.03
-"ECO","trend",42,0
+"ECO","trend",42,0.05
 "FIS","future",0,99.51
 "FIS","future",1,
 "FIS","future",2,
@@ -2295,7 +2295,7 @@
 "LE","score",40,
 "LE","score",41,49.25
 "LE","score",42,
-"LE","status",0,42.28
+"LE","status",0,42.27
 "LE","status",1,49
 "LE","status",2,48.5
 "LE","status",3,49.5
@@ -2337,7 +2337,7 @@
 "LE","status",39,48.5
 "LE","status",40,50
 "LE","status",41,48.5
-"LE","status",42,50
+"LE","status",42,49.5
 "LE","trend",1,-0.01
 "LE","trend",2,-0.02
 "LE","trend",3,-0.01
@@ -2379,7 +2379,7 @@
 "LE","trend",39,0.02
 "LE","trend",40,0
 "LE","trend",41,0.02
-"LE","trend",42,0
+"LE","trend",42,0.02
 "LIV","future",0,0
 "LIV","future",1,0
 "LIV","future",2,0
