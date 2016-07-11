@@ -19,6 +19,8 @@ dir_eco    = file.path(dir_prep, 'ECO')
 ## DATE OF LAST DATA EXTRACTION FROM DATABASE ##
     ## **update this date when code is run**
     ## 11 JULY 2016
+    ## Note, two data files are not yet in the database, these were manually put as csv files in "eco_data_database"
+      ## File names are: 'demo_gind_1_Data_cleaned.csv' which is national population size & 'naida_10_pe_1_Data_cleaned.csv' which is russia national population size and national employment
 ##----------------------------------------------------#
 
 
