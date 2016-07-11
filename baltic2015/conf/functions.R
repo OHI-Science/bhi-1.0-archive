@@ -417,7 +417,7 @@ AO = function(layers){
 
 
       ## join status and trend
-        ao_stock = full_join(ao_stock_status, ao_stock_trend, by = c('rgn_id','dimension','score')) %>%
+        ao_stock = bind_rows(ao_stock_status, ao_stock_trend)%>%
           dplyr::rename(region_id = rgn_id)
 
 
@@ -438,70 +438,6 @@ AO = function(layers){
 
 } ## END AO function
 
-
-  ## OLD AO function
-  # function(layers,
-  #          year_max,
-  #          year_min=max(min(layers_data$year, na.rm=T), year_max - 10),
-  #          Sustainability=1.0){
-  #
-
-#   ## based off of the HELCOM coastal fish indicator
-#   ## ohi-Fiji used this approach, although they calculated the fish indicator within functions.r. (but conceptually is the same)
-#   ## http://www.sciencedirect.com/science/article/pii/S2212041614001363
-#   ## github.com/OHI-Science/ohi-fiji/blob/master/fiji2013/conf/functions.R
-#
-#
-#   # cast data
-#   layers_data = SelectLayersData(layers, targets='AO')
-#
-#   ry = rename(dcast(layers_data, id_num + year ~ layer, value.var='val_num',
-#                     subset = .(layer %in% c('ao_need'))),
-#               c('id_num'='region_id', 'ao_need'='need')); head(ry); summary(ry)
-#
-#   r = na.omit(rename(dcast(layers_data, id_num ~ layer, value.var='val_num',
-#                            subset = .(layer %in% c('ao_access'))),
-#                      c('id_num'='region_id', 'ao_access'='access'))); head(r); summary(r)
-#
-#   ry = merge(ry, r); head(r); summary(r); dim(r)
-#
-#   # model
-#   ry = within(ry,{
-#     Du = (1.0 - need) * (1.0 - access)
-#     statusData = ((1.0 - Du) * Sustainability)
-#   })
-#
-#   # status
-#   r.status <- ry %>%
-#     filter(year==year_max) %>%
-#     select(region_id, statusData) %>%
-#     mutate(status=statusData*100)
-# summary(r.status); dim(r.status)
-#
-#   # trend
-#   r.trend = ddply(subset(ry, year >= year_min), .(region_id), function(x)
-#     {
-#       if (length(na.omit(x$statusData))>1) {
-#         # use only last valid 5 years worth of status data since year_min
-#         d = data.frame(statusData=x$statusData, year=x$year)[tail(which(!is.na(x$statusData)), 5),]
-#         trend = coef(lm(statusData ~ year, d))[['year']]*5
-#       } else {
-#         trend = NA
-#       }
-#       return(data.frame(trend=trend))
-#     })
-#
-#   # return scores
-#   scores = r.status %>%
-#     select(region_id, score=status) %>%
-#     mutate(dimension='status') %>%
-#     rbind(
-#       r.trend %>%
-#         select(region_id, score=trend) %>%
-#         mutate(dimension='trend')) %>%
-#     mutate(goal='AO') # dlply(scores, .(dimension), summary)
-#   return(scores)
-#}
 
 CS = function(layers){
 
