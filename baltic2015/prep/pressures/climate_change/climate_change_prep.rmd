@@ -55,7 +55,10 @@ create_readme(dir_cc, 'climate_change_prep.rmd')
 ```
 
 ## 1. Background 
-The direct effects of climate change in the abiotic environment will be changes to water temperature and salinity. In the BHI framework, we will include sea surface temperature (SST), surface salinity (SS), and bottom water salinity (BWS) as climate change pressures. Depth of bottom water varies by basin
+The direct effects of climate change in the abiotic environment will be changes to water temperature and salinity. In the BHI framework, we will include sea surface temperature (SST), surface salinity (SS), and bottom water salinity (BWS) as climate change pressures. Depth of bottom water varies by basin.
+
+**Climate Change in the Baltic Sea**  
+[Second Assessment of Climate Change for the Baltic Sea Basin](http://www.springer.com/gp/book/9783319160054)  
 
 ## 2. Data
 
