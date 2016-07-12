@@ -50,7 +50,9 @@ create_readme(dir_tempcc, 'temperature_climatechange_prep.rmd')
 ```
 
 ## 1. Background
+Climate change is resulting in the warming of Baltic Sea surface waters. This poses a direct pressure on biodiversity and food provisioning as well as can indirectly affect water quality through changes in mixing/stratification, nutrient cycling and algal blooms. 
 
+[Second Assessment of Climate Change for the Baltic Sea Basin](http://www.springer.com/gp/book/9783319160054)  
 
 
 ## 2. Data
@@ -59,15 +61,19 @@ Summer (July-Aug) sea surface temperature (SST, 0-5 m) by basin.
 ### 2.1 Data source
 Data are from the [BALTSEM model](http://www.balticnest.org/balticnest/thenestsystem/baltsem.4.3186f824143d05551ad20ea.html), run by Bärbel Müller Karulis from the Baltic Sea Centre at Stockholm University.
 
-### 2.2 Hindcast
+#### 2.1.1 Hindcast
 
 
-### 2.3 Projections
+#### 2.1.2 Projections
 There are two different projection scenarios.  
 
 One set of projection scenarios use BALTSEM results run with forcing from the [ECHAM5](http://www.mpimet.mpg.de/en/science/models/echam/) global climate model for the scenario A1b. Project goes to year 2100.  
 
 The second set of  projection scenarios use BALTSEM results run with forcing from the [HADCM3](http://www.metoffice.gov.uk/research/modelling-systems/unified-model/climate-models/hadcm3) global climate model for the scenario A1b. Projection goes to year 2099.  
+
+### 2.2 Data to use
+Data from all three above datasets have been explored. We have decided *to use the ECHAM5 dataset for all components of the pressure model (past min temperature, current temperature, future max temperature)*. While forecast data often captures past and future trends, specific values may not align with observed data.  However, each of these datasets have different forcing and previous data exploration showed that using both hindcaset and future projection datasets was problematic given that the datasets did not track one anothers specific value.  Included in the data prep are some of these data explorations.  
+
 
 ## 3. Pressure model
 
@@ -121,7 +127,20 @@ ggplot(proj2_sst)+
   ggtitle("Projected A1b SST time series HADCM3")
 
 
+## combine data and plot together
+
+sst_all = bind_rows(
+          mutate(hind_sst, type="hindcast"),
+          mutate(proj_sst, type="echam5"),
+          mutate(proj2_sst, type= "hadcm3"))
+
+ggplot(sst_all)+
+  geom_line(aes(year,sst_jul_aug,colour= type)) + 
+  facet_wrap(~basin_name_holas)+
+  ggtitle("All SST time series")
 ```
+
+
 
 ### 4.3 Clean data
 ```{r clean data}
@@ -146,6 +165,8 @@ proj2_sst = proj2_sst %>%
 
 
 ### 4.3 Current conditions 2010-2014
+
+#### 4.3.1 Using hindcast data
 Five most recent years
 
 ```{r current sst}
@@ -166,18 +187,41 @@ sst_current
 
 ```
 
-### 4.4.1 Plot Current condition
+#### 4.3.2 Using ECHAM5 data
+
+```{r current sst echam5}
+year_range = seq(2010,2014,1)
+
+sst_current_echam5 = hind_sst %>%
+             filter(year %in% year_range)%>%
+              select(basin_name_holas,sst_jul_aug)%>%
+              group_by(basin_name_holas)%>%
+              summarise(current_sst = mean(sst_jul_aug))%>%
+              ungroup()
+              
+
+sst_current_echam5
+
+```
+
+
+### 4.4.1 Plot Current condition - Compare datasets
+Very similar
 ```{r plot current condition}
-ggplot(sst_current)+
-  geom_point(aes(basin_name_holas, current_sst), size=2.5)+
+ggplot(bind_rows(
+      mutate(sst_current, type ="hindcast"),
+      mutate(sst_current_echam5, type="echam5")))+
+  geom_point(aes(basin_name_holas, current_sst, colour = type, shape=type), size=2.5)+
    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
-  ggtitle("Mean SST 2010-2014 from hindcast time series")
+  ggtitle("Mean SST 2010-2014")
 
 ```
 
 
 ### 4.5 Historic Min
+
+#### 4.5.1 From Hindcast data
 From Hindcast data, extract the minimum Jul-Aug SST for each basin between 1960-1990
 ```{r historic min sst}
 
@@ -190,6 +234,32 @@ hist_min = hind_sst %>%
 
 hist_min
 
+```
+
+#### 4.5.2 From ECHAM 5 data
+Extract the minimum Jul-Aug SST for each basin between 1960-1990
+```{r historic min echam5 sst}
+
+hist_min_echam5 = proj_sst %>%
+           filter(year >= 1960 & year <= 1990)%>%
+           select(basin_name_holas,sst_jul_aug)%>%
+           group_by(basin_name_holas)%>%
+           summarise(hist_min = min(sst_jul_aug))%>%
+           ungroup()
+
+hist_min_echam5
+
+```
+
+#### 4.5.3 Plot and Compare Historical Min value
+```{r compare historical min value}
+ggplot(bind_rows(
+      mutate(hist_min, type ="hindcast"),
+      mutate(hist_min_echam5, type="echam5")))+
+  geom_point(aes(basin_name_holas, hist_min, colour = type, shape=type), size=2.5)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Historic Min SST 1960-1990")
 ```
 
 
@@ -217,6 +287,9 @@ future_max2
 
 
 ### 4.7 Plot min, max, and current
+
+#### 4.7.1 Using different datasets
+hindcast for historic min and current, different projections compared for the future
 ```{r plot min, max, current}
 ##join data for plot
 sst_data = full_join(sst_current,hist_min, by="basin_name_holas")%>%
@@ -236,32 +309,74 @@ ggplot(sst_data)+
 
 ```
 
+#### 4.7.2 Using only ECHAM5
+```{r plot min, max, current echam 5}
+sst_current_echam5 = sst_current_echam5 %>% 
+                    dplyr::rename(sst = current_sst)%>%
+                    mutate(type = "current")
+hist_min_echam5 = hist_min_echam5 %>%
+                  dplyr::rename(sst = hist_min)%>%
+                  mutate(type = "min")
+  
+future_max1 = future_max1 %>%
+              dplyr::rename(sst = future_max)%>%
+                  mutate(type = "max")
+
+
+sst_data_echam5 = bind_rows(sst_current_echam5,hist_min_echam5,future_max1)
+
+ggplot(sst_data_echam5)+
+  geom_point(aes(basin_name_holas,sst, colour = type, shape=type), size=2)+
+  scale_shape_manual(values=c(19,17,19))+
+  scale_colour_manual(values = c("black","red","blue"))+
+    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("ECHAM5 Basin Jul-Aug SST Historic Min, Current, Future Max")
+
+```
+**Are some issues that current value is warmer than future (will result in pressure value of 1). However, for consistency, continue using all data from ECHAM5** 
 
 ### 4.8 Rescale data for pressure layer
-Some current temperatures are warmer than the near future max if use the ECHAM5 projection. HADCM3 places current temperatures more in the middle of the range.  
 
-**Use HADCM3 projection**
 ```{r rescale to min and max sst}
- sst_rescale = sst_data%>%
-               spread(.,temp_type,temperature)%>%
-               mutate(sst_rescale = pmin(1,(current_sst - hist_min) / (future_hadcm3 - hist_min)))
+ sst_rescale = sst_data_echam5 %>%
+               spread(type,sst)%>%
+               mutate(sst_normalize =(current - min) / (max - min),
+                      sst_rescale = pmin(1, sst_normalize))
 
  sst_rescale
 ```
 
+#### 4.8.1 Plot Pressure layer by basin
+
+```{r plot temp pressure layer by basin}
+ggplot(sst_rescale)+
+  geom_point(aes(basin_name_holas,sst_rescale),size=2.5)+
+  ylim(0,1)+
+  ylab("Pressure value")+
+  xlab("Basin")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                  hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Surface temperature pressure layer")
+
+
+
+```
 
 ### 4.9 Assign basin values to BHI regions
 
 #### 4.9.1 Read in lookup for BHI regions
 ```{r read in bhi lookup}
-bhi_holas_lookup = read.csv(file.path(dir_cc, 'baltic_rgns_to_bhi_rgns_lookup_holas.csv'), sep=";")%>%
-                   select(rgn_id, basin_name)
+bhi_holas_lookup = read.csv(file.path(dir_cc, 'bhi_basin_country_lookup.csv'), sep=";")%>%
+                    select(BHI_ID, Subbasin)%>%
+                   dplyr::rename(rgn_id = BHI_ID, 
+                                 basin_name= Subbasin)
 
 ```
 
 #### 4.9.2 join lookup for BHI regions to sst_rescale
 ```{r join bhi regions to sst_rescale}
-sst_rescale = sst_rescale %>%
+sst_rescale1 = sst_rescale %>%
               full_join(., bhi_holas_lookup, by=c("basin_name_holas" = "basin_name"))%>%
               select(rgn_id,sst_rescale)%>%
               dplyr::rename(pressure_score = sst_rescale)%>%
@@ -271,7 +386,7 @@ sst_rescale = sst_rescale %>%
 
 #### 4.9.3 Plot rescaled SST by BHI ID
 ```{r plot sst by bhi id}
-ggplot(sst_rescale)+
+ggplot(sst_rescale1)+
   geom_point(aes(rgn_id,pressure_score), size=2.5)+
   ylim(0,1)+
    ggtitle("SST pressure data layer")
