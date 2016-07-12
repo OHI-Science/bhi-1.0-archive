@@ -1,0 +1,82 @@
+---
+title: "atmos_con_prep.rmd"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+
+#Preparation of the Atmospheric Contaminants pressure data layer
+
+## 1. Background
+
+## 2. Data  
+
+## 3. Pressure Model
+
+## 4. Data layer preparation
+
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_atmos_con    = file.path(dir_prep,'pressures/atmos_contaminants')
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_atmos_con, 'atmos_con_prep.rmd') 
+```
+
+### 4.1 Read in and organize data
+
+#### 4.1.1 Read in data
+
+```{r read in data}
+pcb153 = read.csv(file.path( dir_atmos_con, "data_database/pcb153.csv"), stringsAsFactors = FALSE) %>%
+         select(basin_loading, basin_abb, data_type, substance,unit)
+str(pcb153)
+
+pcddf = read.csv(file.path( dir_atmos_con, "data_database/pcddf.csv"), stringsAsFactors = FALSE) %>%
+        select(basin_loading, basin_abb, data_type, substance,unit)
+str(pcddf)
+
+atmos_basin_lookup = read.csv(file.path( dir_atmos_con, "data_database/atmos_loading_basin_lookup.csv"), stringsAsFactors = FALSE)
+str(atmos_basin_lookup)
+
+```
