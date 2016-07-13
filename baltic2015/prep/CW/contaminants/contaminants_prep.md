@@ -29,7 +29,12 @@ contaminants\_prep
         -   [5.6 TEQ concentration for each sub\_sample\_ref](#teq-concentration-for-each-sub_sample_ref)
         -   [5.7 Mean TEQ value by date and location](#mean-teq-value-by-date-and-location)
         -   [5.8 Join Dioxin and dioxin-like PCB obs for same date and location](#join-dioxin-and-dioxin-like-pcb-obs-for-same-date-and-location)
-        -   [TO DO](#to-do)
+        -   [5.9 Join data to HOLAS basins and plot](#join-data-to-holas-basins-and-plot)
+        -   [5.10 Calculate the mean TEQ value by basin 2009-2013](#calculate-the-mean-teq-value-by-basin-2009-2013)
+        -   [5.11 Assign basin means to BHI regions](#assign-basin-means-to-bhi-regions)
+        -   [5.12 Dioxin status value](#dioxin-status-value)
+        -   [5.13 Dioxin trend value](#dioxin-trend-value)
+        -   [5.14 Prepare and save layer for layers](#prepare-and-save-layer-for-layers)
     -   [6. Data Prep - PFOS Indicator](#data-prep---pfos-indicator)
 
 ``` r
@@ -380,6 +385,28 @@ head(pcb2)
     ## 5               CB180_ug/kg  0.30
     ## 6                CB28_ug/kg  0.04
 
+``` r
+## check for missing BHI ID
+pcb2 %>% filter(is.na(bhi_id)) %>% select(station,lat,lon)%>% distinct()
+```
+
+    ##   station      lat      lon
+    ## 1  Lagnoe 59.56520 18.83480
+    ## 2    LL3A 60.38333 26.71667
+
+``` r
+#Lagnoe 59.56520 18.83480  - BHI 29 (stockholm archipelago)
+# LL3A 60.38333 26.71667  - BHI 32 (Gulf of Finland)
+
+pcb2 = pcb2 %>%
+       mutate(bhi_id = ifelse(is.na(bhi_id) & station == "Lagnoe",29,
+                      ifelse(is.na(bhi_id) & station == "LL3A",32, bhi_id)))
+ pcb2 %>% filter(is.na(bhi_id))%>% select(station, lat, lon)%>% distinct()
+```
+
+    ## [1] station lat     lon    
+    ## <0 rows> (or 0-length row.names)
+
 #### 4.1.3 Plot data
 
 Explore raw data. **Why are there unassigned BHI regions?**
@@ -416,67 +443,21 @@ ggplot(pcb3) + geom_point(aes(date,value, colour=congener)) +
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20ices%206-1.png)
 
-#### 4.1.6 Stations with No BHI ID
-
-Why were some data not assigned a BHI ID (through script in BHI database).
-Will check with Marc, might be because very near coast and BHI regions don't extend?
+#### 4.1.6 Join to HOLAS basins and evaluate data coverage
 
 ``` r
-## which stations have no BHI ID assigned
-pcb3 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinct(.)
+pcb4 = full_join(select(lookup_basins, rgn_id, basin),
+                 pcb3, by= c("rgn_id"="bhi_id"))
+head(pcb4)
 ```
 
-    ##   country            station     lat     lon
-    ## 1  Sweden     Gaviksfjaerden 62.8645 18.2412
-    ## 2  Sweden Kinnbaecksfjaerden 65.0568 21.4750
-    ## 3  Sweden  Langvindsfjaerden 61.4554 17.1622
-
-``` r
-##country            station     lat     lon
-##1  Sweden     Gaviksfjaerden 62.8645 18.2412
-##2  Sweden Kinnbaecksfjaerden 65.0568 21.4750
-##3  Sweden  Langvindsfjaerden 61.4554 17.1622
-```
-
-#### 4.1.7 Manually assign BHI to stations missing
-
-``` r
-##Gaviksfjaerden is BHI region 37
-##Kinnbaecksfjaerden is BHI region 41
-##Langvindsfjaerden is BHI region 37
-
-pcb4 = pcb3 %>%
-      mutate(bhi_id = ifelse(station=="Gaviksfjaerden",37,
-                      ifelse(station=="Kinnbaecksfjaerden", 41,
-                      ifelse(station=="Langvindsfjaerden",37,bhi_id))))
-pcb4 %>% filter(is.na(bhi_id)) %>% select(country,station, lat, lon) %>% distinct(.)
-```
-
-    ## [1] country station lat     lon    
-    ## <0 rows> (or 0-length row.names)
-
-``` r
-##plot again
-ggplot(pcb4) + geom_point(aes(date,value, colour=congener)) +
-  facet_wrap(~bhi_id)
-```
-
-![](contaminants_prep_files/figure-markdown_github/assign%20missing%20bhi%20regions-1.png)
-
-#### 4.1.8 Join to HOLAS basins and evaluate data coverage
-
-``` r
-pcb5 = full_join(select(lookup_basins, rgn_id, basin_name), pcb4, by= c("rgn_id"="bhi_id"))
-head(pcb5)
-```
-
-    ##   rgn_id basin_name country monit_program monit_purpose report_institute
-    ## 1      1   Kattegat  Sweden     CEMP~COMB             T             SERI
-    ## 2      1   Kattegat  Sweden     CEMP~COMB             T             SERI
-    ## 3      1   Kattegat  Sweden     CEMP~COMB             T             SERI
-    ## 4      1   Kattegat  Sweden     CEMP~COMB             T             SERI
-    ## 5      1   Kattegat  Sweden     CEMP~COMB             T             SERI
-    ## 6      1   Kattegat  Sweden     CEMP~COMB             T             SERI
+    ##   rgn_id    basin country monit_program monit_purpose report_institute
+    ## 1      1 Kattegat  Sweden     CEMP~COMB             T             SERI
+    ## 2      1 Kattegat  Sweden     CEMP~COMB             T             SERI
+    ## 3      1 Kattegat  Sweden     CEMP~COMB             T             SERI
+    ## 4      1 Kattegat  Sweden     CEMP~COMB             T             SERI
+    ## 5      1 Kattegat  Sweden     CEMP~COMB             T             SERI
+    ## 6      1 Kattegat  Sweden     CEMP~COMB             T             SERI
     ##      station     lat    lon helcom_id helcom_coastal_code ices_area
     ## 1 E/W FLADEN 57.2247 11.828   SEA-001                   0      IIIa
     ## 2 E/W FLADEN 57.2247 11.828   SEA-001                   0      IIIa
@@ -527,14 +508,19 @@ head(pcb5)
     ## 5        4.3        NA         NA                CB28_ug/kg 0.1505
     ## 6        4.0        NA         NA                CB52_ug/kg 0.2345
 
-#### 4.1.9 Plot by basin
+``` r
+pcb4 = pcb4 %>%
+       dplyr::rename(basin_name =basin)
+```
+
+#### 4.1.7 Plot by basin
 
 ``` r
-ggplot(pcb5) + geom_point(aes(date,value, colour=congener)) +
+ggplot(pcb4) + geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~basin_name)
 ```
 
-    ## Warning: Removed 24 rows containing missing values (geom_point).
+    ## Warning: Removed 25 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20by%20basin-1.png)
 
@@ -555,7 +541,7 @@ It appears that *only Swedish sites have this information entered* (see below), 
 Given only Swedish sites have this information recorded, seems difficult to use this information to include or exclude sites.
 
 ``` r
-pcb_sites = pcb5 %>% 
+pcb_sites = pcb4 %>% 
             select(country, station,basin_name,lat,lon,rgn_id) %>%
             filter(!is.na(station)) %>%  ## These are NA because when joined to BHI regions, were no station
             mutate(station2 = tolower(station)) %>% ## station name all lower case to join with station_dictionary
@@ -582,19 +568,19 @@ pcb_sites
     ## 16  Poland                LWLA  Eastern Gotland Basin 54.91667 18.66667
     ## 17  Sweden           Byxelkrok  Western Gotland Basin 57.31670 17.50000
     ## 18  Latvia        Gulf of Riga           Gulf of Riga 57.41667 23.76667
-    ## 19  Sweden            Landsort Northern Baltic Proper 58.69360 18.00430
-    ## 20 Finland                     Northern Baltic Proper 59.54750 22.60533
-    ## 21 Finland                LL12 Northern Baltic Proper 59.46667 22.25000
-    ## 22 Finland                LL12 Northern Baltic Proper 59.58333 22.30000
-    ## 23 Finland                LL11        Gulf of Finland 59.71667 23.33333
-    ## 24 Finland                LL11        Gulf of Finland 59.63333 23.75000
-    ## 25 Finland                LL11        Gulf of Finland 59.76667 23.86667
-    ## 26 Finland                LL3A        Gulf of Finland 60.33333 26.15000
-    ## 27 Finland                LL3A        Gulf of Finland 60.36667 26.81667
-    ## 28 Finland                LL3A        Gulf of Finland 60.38333 26.71667
-    ## 29 Finland                LL3A        Gulf of Finland 60.35000 26.75000
-    ## 30 Finland                LL3A        Gulf of Finland 60.51867 27.13833
-    ## 31  Sweden              Lagnoe              Aland Sea 59.56520 18.83480
+    ## 19  Sweden              Lagnoe Northern Baltic Proper 59.56520 18.83480
+    ## 20  Sweden            Landsort Northern Baltic Proper 58.69360 18.00430
+    ## 21 Finland                     Northern Baltic Proper 59.54750 22.60533
+    ## 22 Finland                LL12 Northern Baltic Proper 59.46667 22.25000
+    ## 23 Finland                LL12 Northern Baltic Proper 59.58333 22.30000
+    ## 24 Finland                LL11        Gulf of Finland 59.71667 23.33333
+    ## 25 Finland                LL11        Gulf of Finland 59.63333 23.75000
+    ## 26 Finland                LL11        Gulf of Finland 59.76667 23.86667
+    ## 27 Finland                LL3A        Gulf of Finland 60.33333 26.15000
+    ## 28 Finland                LL3A        Gulf of Finland 60.36667 26.81667
+    ## 29 Finland                LL3A        Gulf of Finland 60.38333 26.71667
+    ## 30 Finland                LL3A        Gulf of Finland 60.35000 26.75000
+    ## 31 Finland                LL3A        Gulf of Finland 60.51867 27.13833
     ## 32 Finland                                  Aland Sea 59.87983 19.95800
     ## 33 Finland                 F64              Aland Sea 60.18333 19.46667
     ## 34 Finland                 F67              Aland Sea 59.95000 20.11667
@@ -638,19 +624,19 @@ pcb_sites
     ## 16     21                lwla
     ## 17     26           byxelkrok
     ## 18     27        gulf of riga
-    ## 19     29            landsort
-    ## 20     30                    
-    ## 21     30                ll12
+    ## 19     29              lagnoe
+    ## 20     29            landsort
+    ## 21     30                    
     ## 22     30                ll12
-    ## 23     32                ll11
+    ## 23     30                ll12
     ## 24     32                ll11
     ## 25     32                ll11
-    ## 26     32                ll3a
+    ## 26     32                ll11
     ## 27     32                ll3a
     ## 28     32                ll3a
     ## 29     32                ll3a
     ## 30     32                ll3a
-    ## 31     35              lagnoe
+    ## 31     32                ll3a
     ## 32     36                    
     ## 33     36                 f64
     ## 34     36                 f67
@@ -718,8 +704,8 @@ pcb_sites %>% select(country, station, basin_name, lat, lon, rgn_id,MSTAT,All_Bi
     ## 9  Germany             FOE-BMP           Arkona Basin 54.68467 13.94917
     ## 10  Sweden           Utlaengan         Bornholm Basin 55.94910 15.78100
     ## 11 Germany             FOE-B11         Bornholm Basin 55.00733 17.43333
-    ## 12  Sweden            Landsort Northern Baltic Proper 58.69360 18.00430
-    ## 13  Sweden              Lagnoe              Aland Sea 59.56520 18.83480
+    ## 12  Sweden              Lagnoe Northern Baltic Proper 59.56520 18.83480
+    ## 13  Sweden            Landsort Northern Baltic Proper 58.69360 18.00430
     ## 14  Sweden     Aengskaersklubb           Bothnian Sea 60.53260 18.16240
     ## 15  Sweden      Gaviksfjaerden           Bothnian Sea 62.86450 18.24120
     ## 16  Sweden   Langvindsfjaerden           Bothnian Sea 61.45540 17.16220
@@ -775,7 +761,7 @@ pcb_sites %>% select(country, station, basin_name, lat, lon, rgn_id,MSTAT,All_Bi
     ## 10     14    RH          FALSE                            TRUE         1
     ## 11     17    RH          FALSE                            TRUE         1
     ## 12     29    RH          FALSE                            TRUE         1
-    ## 13     35    RH          FALSE                            TRUE         1
+    ## 13     29    RH          FALSE                            TRUE         1
     ## 14     37    RH          FALSE                            TRUE         1
     ## 15     37    RH          FALSE                            TRUE         1
     ## 16     37    RH          FALSE                            TRUE         1
@@ -905,7 +891,7 @@ No information is given for what **&lt;** implies when is it is used alone (e.g.
 
 ``` r
 ## what qflags are present
-pcb5 %>% select(qflag) %>% distinct(.) 
+pcb4 %>% select(qflag) %>% distinct(.) 
 ```
 
     ##   qflag
@@ -928,7 +914,7 @@ pcb5 %>% select(qflag) %>% distinct(.)
 ## "~"  separates multiple flags
 
 ## which entries use '<'
-pcb5 %>% 
+pcb4%>% 
   filter(.,grepl('<', qflag)) %>% select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% head()
 ```
 
@@ -951,7 +937,7 @@ pcb5 %>%
 ## appears to be variable usage of '<', values are not always provided for detect_lim when used, values of detect_lim are in original units so are not always comparable to the value column
 
 ## which entries use "D"
-pcb5 %>% 
+pcb4 %>% 
   filter(.,grepl('D', qflag)) %>%
 select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% head()
 ```
@@ -976,7 +962,7 @@ select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% he
 Create second qflag column with "yes" if any symbol used to flag the data, and "no" if not
 
 ``` r
-pcb6 = pcb5 %>%
+pcb5 = pcb4 %>%
       mutate(qflag = as.character(qflag))%>%
       mutate(qflag2 = ifelse(qflag == "", "no",
                       ifelse(qflag== "D", "yes",
@@ -984,7 +970,7 @@ pcb6 = pcb5 %>%
                       ifelse(qflag== "Q", "yes",
                       ifelse(qflag=="<~D", "yes", "")))))) %>%
       mutate(qflag2 = replace(qflag2, is.na(qflag2),"no"))
-head(pcb6)
+head(pcb5)
 ```
 
     ##   rgn_id basin_name country monit_program monit_purpose report_institute
@@ -1045,7 +1031,7 @@ head(pcb6)
     ## 6        4.0        NA         NA                CB52_ug/kg 0.2345     no
 
 ``` r
-pcb6 %>% filter(qflag2 == "yes") %>% select(qflag,qflag2) %>% distinct(.)
+pcb5 %>% filter(qflag2 == "yes") %>% select(qflag,qflag2) %>% distinct(.)
 ```
 
     ##   qflag qflag2
@@ -1055,7 +1041,7 @@ pcb6 %>% filter(qflag2 == "yes") %>% select(qflag,qflag2) %>% distinct(.)
     ## 4   <~D    yes
 
 ``` r
-pcb6 %>% filter(qflag2 == "no") %>% select(qflag,qflag2) %>% distinct(.)
+pcb5 %>% filter(qflag2 == "no") %>% select(qflag,qflag2) %>% distinct(.)
 ```
 
     ##   qflag qflag2
@@ -1063,14 +1049,14 @@ pcb6 %>% filter(qflag2 == "no") %>% select(qflag,qflag2) %>% distinct(.)
     ## 2  <NA>     no
 
 ``` r
-pcb6 %>% filter(qflag2 == "") %>% select(qflag,qflag2) %>% distinct(.)
+pcb5 %>% filter(qflag2 == "") %>% select(qflag,qflag2) %>% distinct(.)
 ```
 
     ## [1] qflag  qflag2
     ## <0 rows> (or 0-length row.names)
 
 ``` r
-pcb6 %>% filter(is.na(qflag)) %>% select(qflag,qflag2) %>% distinct(.)
+pcb5 %>% filter(is.na(qflag)) %>% select(qflag,qflag2) %>% distinct(.)
 ```
 
     ##   qflag qflag2
@@ -1089,7 +1075,7 @@ Plot each congener separately. CB 52, and CB 28 in particular have many flagged 
 # 5  CB28_ug/kg
 # 6  CB52_ug/kg
 
-ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
+ggplot(filter(pcb5, congener =="CB101_ug/kg")) +
   geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
   facet_wrap(~basin_name) +
   scale_shape_manual(values=c(1,2))+
@@ -1099,7 +1085,7 @@ ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
 ``` r
-ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
+ggplot(filter(pcb5, congener =="CB138_ug/kg")) +
   geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
   facet_wrap(~basin_name) +
   scale_shape_manual(values=c(1,2))+
@@ -1109,7 +1095,7 @@ ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 ``` r
-ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
+ggplot(filter(pcb5, congener =="CB153_ug/kg")) +
   geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
   facet_wrap(~basin_name) +
   scale_shape_manual(values=c(1,2))+
@@ -1119,7 +1105,7 @@ ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-3.png)
 
 ``` r
-ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
+ggplot(filter(pcb5, congener =="CB180_ug/kg")) +
   geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
   facet_wrap(~basin_name) +
   scale_shape_manual(values=c(1,2))+
@@ -1129,7 +1115,7 @@ ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-4.png)
 
 ``` r
-ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
+ggplot(filter(pcb5, congener =="CB28_ug/kg")) +
   geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
   facet_wrap(~basin_name) +
   scale_shape_manual(values=c(1,2))+
@@ -1139,7 +1125,7 @@ ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-1-5.png)
 
 ``` r
-ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
+ggplot(filter(pcb5, congener =="CB52_ug/kg")) +
   geom_point(aes(date,value,shape=qflag2, colour= qflag2)) + 
   facet_wrap(~basin_name) +
   scale_shape_manual(values=c(1,2))+
@@ -1155,7 +1141,7 @@ ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
 ``` r
 ## number of C153 observations
 ## including qflag observations
-pcb6 %>% filter(congener=="CB153_ug/kg")%>%nrow()
+pcb5 %>% filter(congener=="CB153_ug/kg")%>%nrow()
 ```
 
     ## [1] 2199
@@ -1164,7 +1150,7 @@ pcb6 %>% filter(congener=="CB153_ug/kg")%>%nrow()
 ##2199
 
 ## w/o qflag observatons
-pcb6 %>% filter(congener=="CB153_ug/kg" & qflag2 =="no")%>%nrow()
+pcb5 %>% filter(congener=="CB153_ug/kg" & qflag2 =="no")%>%nrow()
 ```
 
     ## [1] 2129
@@ -1175,7 +1161,7 @@ pcb6 %>% filter(congener=="CB153_ug/kg" & qflag2 =="no")%>%nrow()
 
 
 ## number of observations with all ICES 6
-ices6_obs = pcb6 %>% 
+ices6_obs = pcb5 %>% 
   select(rgn_id:bulk_id,congener,value) %>%
   filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
   group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, report_institute,station,
@@ -1192,7 +1178,7 @@ ices6_obs %>% nrow() #2123
 
 ``` r
 ## Number of observations without qflagged data
-ices6_obs_noq = pcb6 %>% 
+ices6_obs_noq = pcb5 %>% 
   select(rgn_id:bulk_id,qflag2,congener,value) %>%
   filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
   filter(qflag2 == "no") %>%  ## filter for only data not flagged
@@ -1215,7 +1201,7 @@ ices6_obs_noq = pcb6 %>%
 If the data have any qflag, apply LOD/2. However, LOD (eg. detect\_lim column) value is not always provided and values are in original units. Instead, apply transformation to the reported data value.
 
 ``` r
- pcb7 = pcb6 %>%
+ pcb6 = pcb5 %>%
         mutate(value2= ifelse(qflag2=="yes", value/2, value))
 ```
 
@@ -1228,7 +1214,7 @@ Plot 1. First both raw values (red) and adjusted (black).
 Plot 2 .Second, only adjusted values where blue trianges are those where LOD/2 applied.
 
 ``` r
-ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
@@ -1238,7 +1224,7 @@ ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB101-1.png)
 
 ``` r
-ggplot(filter(pcb7, congener =="CB101_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
@@ -1252,7 +1238,7 @@ Plot 1.First both raw values (red) and adjusted (black).
 Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.
 
 ``` r
-ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
@@ -1262,7 +1248,7 @@ ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB138-1.png)
 
 ``` r
-ggplot(filter(pcb7, congener =="CB138_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
@@ -1276,7 +1262,7 @@ Plot 1.First both raw values (red) and adjusted (black).
 Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.
 
 ``` r
-ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
@@ -1286,7 +1272,7 @@ ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB153-1.png)
 
 ``` r
-ggplot(filter(pcb7, congener =="CB153_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
@@ -1300,7 +1286,7 @@ Plot 1.First both raw values (red) and adjusted (black).
 Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.
 
 ``` r
-ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
@@ -1310,7 +1296,7 @@ ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB180-1.png)
 
 ``` r
-ggplot(filter(pcb7, congener =="CB180_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
@@ -1324,7 +1310,7 @@ Plot 1. First both raw values (red) and adjusted (black).
 Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied.
 
 ``` r
-ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
@@ -1334,7 +1320,7 @@ ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB28-1.png)
 
 ``` r
-ggplot(filter(pcb7, congener =="CB28_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
@@ -1348,7 +1334,7 @@ Plot 1. First both raw values (red) and adjusted (black).
 Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied.
 
 ``` r
-ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
@@ -1358,7 +1344,7 @@ ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
 ![](contaminants_prep_files/figure-markdown_github/plot%20adjusted%20values%20CB52-1.png)
 
 ``` r
-ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
+ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
@@ -1376,7 +1362,7 @@ ggplot(filter(pcb7, congener =="CB52_ug/kg")) +
 3.  Sum2 = sum only observation with no qflag values
 
 ``` r
-ices6_1 =pcb7 %>%
+ices6_1 =pcb6 %>%
         select(rgn_id:bulk_id,congener,value2) %>%
         filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
         group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, 
@@ -1395,7 +1381,7 @@ dim(ices6_1) #[1] 2123   31
     ## [1] 2123   31
 
 ``` r
-ices6_2 =pcb7 %>%
+ices6_2 =pcb6 %>%
         select(rgn_id:bulk_id,qflag2,congener,value2) %>%
         filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
         filter(qflag2 == "no") %>%  ## filter for only data not flagged
@@ -1603,8 +1589,8 @@ ices6_1datemean %>% arrange(year) %>%group_by(basin_name) %>% summarise(last(yea
     ## Source: local data frame [11 x 2]
     ## 
     ##                basin_name last(year)
-    ##                    <fctr>      <int>
-    ## 1               Aland Sea       2013
+    ##                     <chr>      <int>
+    ## 1               Aland Sea       2008
     ## 2            Arkona Basin       2013
     ## 3          Bornholm Basin       2014
     ## 4            Bothnian Bay       2013
@@ -1619,7 +1605,7 @@ ices6_1datemean %>% arrange(year) %>%group_by(basin_name) %>% summarise(last(yea
 ``` r
 #                basin_name last(year)
 #                    (fctr)      (int)
-# 1               Aland Sea       2013
+# 1               Aland Sea       2008
 # 2            Arkona Basin       2013
 # 3          Bornholm Basin       2014
 # 4            Bothnian Bay       2013
@@ -1637,8 +1623,8 @@ ices6_2datemean %>% arrange(year) %>% group_by(basin_name) %>% summarise(last(ye
     ## Source: local data frame [10 x 2]
     ## 
     ##                basin_name last(year)
-    ##                    <fctr>      <int>
-    ## 1               Aland Sea       2011
+    ##                     <chr>      <int>
+    ## 1               Aland Sea       2008
     ## 2            Arkona Basin       2013
     ## 3          Bornholm Basin       2013
     ## 4            Bothnian Bay       2013
@@ -1652,7 +1638,7 @@ ices6_2datemean %>% arrange(year) %>% group_by(basin_name) %>% summarise(last(ye
 ``` r
 #                basin_name last(year)
 #                    (fctr)      (int)
-# 1               Aland Sea       2011
+# 1               Aland Sea       2008
 # 2            Arkona Basin       2013
 # 3          Bornholm Basin       2013
 # 4            Bothnian Bay       2013
@@ -1722,25 +1708,24 @@ ices6_mean_basin  = ices6_mean_basin %>%
 ices6_mean_basin
 ```
 
-    ## Source: local data frame [10 x 4]
+    ## Source: local data frame [9 x 4]
     ## 
-    ##                basin_name ices6_mean_ug_kg num_obs num_loc
-    ##                    <fctr>            <dbl>   <int>   <int>
-    ## 1               Aland Sea             9.71       5       1
-    ## 2            Arkona Basin             9.18       7       4
-    ## 3          Bornholm Basin             5.98      21       4
-    ## 4            Bothnian Bay             2.89      19       4
-    ## 5            Bothnian Sea             6.18      22       4
-    ## 6   Eastern Gotland Basin             5.77       5       1
-    ## 7                Kattegat             4.27       8       2
-    ## 8  Northern Baltic Proper             3.61      10       2
-    ## 9               The Quark             3.37       5       1
-    ## 10  Western Gotland Basin             7.51       5       1
+    ##               basin_name ices6_mean_ug_kg num_obs num_loc
+    ##                    <chr>            <dbl>   <int>   <int>
+    ## 1           Arkona Basin             9.18       7       4
+    ## 2         Bornholm Basin             5.98      21       4
+    ## 3           Bothnian Bay             2.89      19       4
+    ## 4           Bothnian Sea             6.18      22       4
+    ## 5  Eastern Gotland Basin             5.77       5       1
+    ## 6               Kattegat             4.27       8       2
+    ## 7 Northern Baltic Proper             5.64      15       3
+    ## 8              The Quark             3.37       5       1
+    ## 9  Western Gotland Basin             7.51       5       1
 
 ``` r
 ## assign basin values to BHI regions
 ices6_mean_basin_rgn = ices6_mean_basin %>%
-                         full_join(., select(lookup_basins,rgn_id,basin_name),by="basin_name")%>%
+                         full_join(., select(lookup_basins,rgn_id,basin),by=c("basin_name"="basin"))%>%
                           mutate(mean_type="basin")
 ices6_mean_basin_rgn
 ```
@@ -1748,17 +1733,17 @@ ices6_mean_basin_rgn
     ## Source: local data frame [42 x 6]
     ## 
     ##        basin_name ices6_mean_ug_kg num_obs num_loc rgn_id mean_type
-    ##            <fctr>            <dbl>   <int>   <int>  <int>     <chr>
-    ## 1       Aland Sea             9.71       5       1     35     basin
-    ## 2       Aland Sea             9.71       5       1     36     basin
-    ## 3    Arkona Basin             9.18       7       4     11     basin
-    ## 4    Arkona Basin             9.18       7       4     12     basin
-    ## 5    Arkona Basin             9.18       7       4     13     basin
-    ## 6  Bornholm Basin             5.98      21       4     14     basin
-    ## 7  Bornholm Basin             5.98      21       4     15     basin
-    ## 8  Bornholm Basin             5.98      21       4     16     basin
-    ## 9  Bornholm Basin             5.98      21       4     17     basin
-    ## 10   Bothnian Bay             2.89      19       4     41     basin
+    ##             <chr>            <dbl>   <int>   <int>  <int>     <chr>
+    ## 1    Arkona Basin             9.18       7       4     11     basin
+    ## 2    Arkona Basin             9.18       7       4     12     basin
+    ## 3    Arkona Basin             9.18       7       4     13     basin
+    ## 4  Bornholm Basin             5.98      21       4     14     basin
+    ## 5  Bornholm Basin             5.98      21       4     15     basin
+    ## 6  Bornholm Basin             5.98      21       4     16     basin
+    ## 7  Bornholm Basin             5.98      21       4     17     basin
+    ## 8    Bothnian Bay             2.89      19       4     41     basin
+    ## 9    Bothnian Bay             2.89      19       4     42     basin
+    ## 10   Bothnian Sea             6.18      22       4     37     basin
     ## ..            ...              ...     ...     ...    ...       ...
 
 ##### 4.5.1.1 Plot Mean Basin
@@ -1773,7 +1758,7 @@ ggplot(ices6_mean_basin_rgn) +
     ggtitle("Mean ICES6 conc calculated by basin 2009-2013")
 ```
 
-    ## Warning: Removed 15 rows containing missing values (geom_point).
+    ## Warning: Removed 17 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20mean%20basin-1.png)
 
@@ -1811,7 +1796,7 @@ ices6_mean_region  = ices6_mean_region %>%
 ices6_mean_region
 ```
 
-    ## Source: local data frame [15 x 4]
+    ## Source: local data frame [14 x 4]
     ## 
     ##    rgn_id ices6_mean_ug_kg num_obs num_loc
     ##     <dbl>            <dbl>   <int>   <int>
@@ -1822,14 +1807,13 @@ ices6_mean_region
     ## 5      17             5.16       6       2
     ## 6      21             5.77       5       1
     ## 7      26             7.51       5       1
-    ## 8      29             4.07       5       1
+    ## 8      29             6.89      10       2
     ## 9      30             3.14       5       1
-    ## 10     35             9.71       5       1
-    ## 11     37             7.09      18       3
-    ## 12     38             2.07       4       1
-    ## 13     39             3.37       5       1
-    ## 14     41             3.22      15       3
-    ## 15     42             1.67       4       1
+    ## 10     37             7.09      18       3
+    ## 11     38             2.07       4       1
+    ## 12     39             3.37       5       1
+    ## 13     41             3.22      15       3
+    ## 14     42             1.67       4       1
 
 ``` r
 ## join with lookup_basins so have rgns with NA
@@ -1850,7 +1834,7 @@ ggplot(ices6_mean_region) +
     ggtitle("Mean ICES6 conc calculated by BHI Region 2009-2013")
 ```
 
-    ## Warning: Removed 27 rows containing missing values (geom_point).
+    ## Warning: Removed 28 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20mean%20region-1.png)
 
@@ -1874,7 +1858,7 @@ ggplot(ices6_mean) +
     ggtitle("Mean ICES6 conc calculated by basin or BHI region")
 ```
 
-    ## Warning: Removed 42 rows containing missing values (geom_point).
+    ## Warning: Removed 45 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-1.png)
 
@@ -1885,7 +1869,7 @@ ggplot(ices6_mean) +
     ggtitle("Mean ICES6 conc calculated by basin or BHI region")
 ```
 
-    ## Warning: Removed 42 rows containing missing values (geom_point).
+    ## Warning: Removed 45 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/compare%20mean%20calculations-2.png)
 
@@ -1899,9 +1883,32 @@ Scale between 0 and 1. If value is below 75, score = 1
 health_threshold = 75
 
 ices6_mean = ices6_mean %>%
-              mutate(ices6_status = pmin(1,1/(ices6_mean_ug_kg/health_threshold))) ## status calculation, scaled between 0-1
+              mutate(health_threshold = health_threshold,
+              ices6_ratio = ices6_mean_ug_kg/health_threshold,
+              ices6_status = 1/ ices6_ratio,
+              ices6_status_adj = pmin(1,ices6_status)) ## status calculation, scaled between 0-1
 
 ## because no values exceed the human health threshold, status score is 1.      
+
+head(select(ices6_mean, rgn_id, ices6_mean_ug_kg,health_threshold,ices6_ratio,ices6_status, ices6_status_adj))
+```
+
+    ## Source: local data frame [6 x 6]
+    ## 
+    ##   rgn_id ices6_mean_ug_kg health_threshold ices6_ratio ices6_status
+    ##    <dbl>            <dbl>            <dbl>       <dbl>        <dbl>
+    ## 1      1             4.27               75  0.05693333    17.564403
+    ## 2     11             8.41               75  0.11213333     8.917955
+    ## 3     13            10.21               75  0.13613333     7.345739
+    ## 4     14             6.31               75  0.08413333    11.885895
+    ## 5     17             5.16               75  0.06880000    14.534884
+    ## 6     21             5.77               75  0.07693333    12.998267
+    ## Variables not shown: ices6_status_adj <dbl>.
+
+``` r
+ices6_mean = ices6_mean %>%
+             select(-ices6_ratio,-ices6_status) %>%
+             dplyr:: rename(ices6_status = ices6_status_adj)
 ```
 
 #### 4.5.5 Plot status
@@ -1914,7 +1921,7 @@ ggplot(ices6_mean)+
   ggtitle("ICE6 Status based on 2009-2013, calculated for basin or region")
 ```
 
-    ## Warning: Removed 42 rows containing missing values (geom_point).
+    ## Warning: Removed 45 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20status-1.png)
 
@@ -2065,7 +2072,7 @@ status_ices6 = ices6_mean %>%
 ## TREND
 ## Trend calculated iin 4.5.6
 trend_ices6 = ices6_basin_trend_alt2 %>%
-              full_join(.,select(lookup_basins, rgn_id,basin_name), by= "basin_name")%>%
+              full_join(.,select(lookup_basins, rgn_id,basin), by= c("basin_name"="basin"))%>%
               select(rgn_id, trend_score)%>%
               rename(score = trend_score) %>%
               mutate(dimension = "trend",
@@ -2096,7 +2103,7 @@ dioxin1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_d
 dim(dioxin1)
 ```
 
-    ## [1] 3208   31
+    ## [1] 3208   38
 
 ``` r
 ## read in PCB data (same as read in for ICES6 indicator)
@@ -2108,7 +2115,11 @@ dim(pcb1)
 
 ``` r
 ## Read in lookup - BHI region to HOLAS basins
-lookup_basins = read.csv(file.path(dir_con,'baltic_rgns_to_bhi_rgns_lookup_holas.csv'))
+lookup_basins = read.csv(file.path(dir_con,'bhi_basin_country_lookup.csv'), sep=";", stringsAsFactors = FALSE) %>%
+  select(BHI_ID, rgn_nam, Subbasin)%>%
+  dplyr::rename(rgn_id = BHI_ID, 
+                country = rgn_nam,
+                basin = Subbasin)
 
 ## Read in TEF conversions
 lookup_tef = read.csv(file.path(dir_con,'tef_conversion_lookup.csv'),sep=';')
@@ -2126,15 +2137,15 @@ Remove and rename columns, change column data types
 str(dioxin1)
 ```
 
-    ## 'data.frame':    3208 obs. of  31 variables:
+    ## 'data.frame':    3208 obs. of  38 variables:
     ##  $ country                             : Factor w/ 1 level "Sweden": 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ monit_program                       : Factor w/ 2 levels "CEMP~COMB","COMB": 2 2 2 2 2 2 2 2 2 2 ...
-    ##  $ monit_purpose                       : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+    ##  $ monit_purpose                       : int  0 0 0 0 0 0 0 0 0 0 ...
     ##  $ report_institute                    : Factor w/ 1 level "SERI": 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ station                             : Factor w/ 15 levels "Abbekas","Aengskaersklubb",..: 1 1 1 1 1 1 1 1 1 1 ...
-    ##  $ latitude                            : num  55.3 55.3 55.3 55.3 55.3 ...
-    ##  $ longitude                           : num  13.6 13.6 13.6 13.6 13.6 ...
-    ##  $ date                                : Factor w/ 97 levels "2001-09-10","2001-09-13",..: 20 20 20 20 20 20 20 20 20 20 ...
+    ##  $ Latitude                            : num  55.3 55.3 55.3 55.3 55.3 ...
+    ##  $ Longitude                           : num  13.6 13.6 13.6 13.6 13.6 ...
+    ##  $ Date                                : Factor w/ 97 levels "2001-09-10","2001-09-13",..: 20 20 20 20 20 20 20 20 20 20 ...
     ##  $ monit_year                          : int  2009 2009 2009 2009 2009 2009 2009 2009 2009 2009 ...
     ##  $ date_ices                           : Factor w/ 97 levels "01/09/2011","01/10/2010",..: 97 97 97 97 97 97 97 97 97 97 ...
     ##  $ year                                : int  2009 2009 2009 2009 2009 2009 2009 2009 2009 2009 ...
@@ -2158,21 +2169,91 @@ str(dioxin1)
     ##  $ method_uncert                       : Factor w/ 2 levels "","U2": 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ congener                            : Factor w/ 16 levels "CDD1N_pg/g","CDD4X_pg/g",..: 1 2 3 4 5 6 7 8 9 10 ...
     ##  $ value                               : num  0.1688 0.0377 0.0745 0.1192 0.0169 ...
+    ##  $ Month                               : int  11 11 11 11 11 11 11 11 11 11 ...
+    ##  $ Day                                 : int  30 30 30 30 30 30 30 30 30 30 ...
+    ##  $ DoY                                 : int  334 334 334 334 334 334 334 334 334 334 ...
+    ##  $ BHI_ID                              : int  11 11 11 11 11 11 11 11 11 11 ...
+    ##  $ HELCOM_ID                           : Factor w/ 9 levels "SEA-001","SEA-006",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ HELCOM_COASTAL_CODE                 : int  0 0 0 0 0 0 0 0 0 0 ...
+    ##  $ ICES_AREA                           : Factor w/ 6 levels "24","25","27",..: 1 1 1 1 1 1 1 1 1 1 ...
 
 ``` r
 dioxin2 = dioxin1 %>%
-          dplyr::rename(date=date, lat=latitude, lon= longitude, 
-                    #month=Month, day=Day, doy=DoY,##add when Marc has in database
-                    #bhi_id = BHI_ID, helcom_id=HELCOM_ID, ##add when Marc has in database
-                    #helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,##add when Marc has in database
+          dplyr::rename(date=Date, lat=Latitude, lon= Longitude, 
+                    month=Month, day=Day, doy=DoY,
+                    bhi_id = BHI_ID, helcom_id=HELCOM_ID,
+                    helcom_coastal_code=HELCOM_COASTAL_CODE, ices_area = ICES_AREA,
                     agmea_y=AGMEA_y,
                     drywt_percent = DRYWT._., exlip_percent = EXLIP._.,
                     lnmea_cm=LNMEA_cm, wtmea_g=WTMEA_g) %>% # rename columns
       select(-date_ices) %>% #remove columns not needed
       mutate(date =as.Date(date,"%Y-%m-%d"),
              sub_samp_id= as.character(sub_samp_id)) %>%
-      select(country:lon,date:year,species:value)## reorder columns  ## will need to add columns if have additional database added columns (see those commented out above)
+      select(country:lon,bhi_id:ices_area,date:year,month:doy,species:value)
+##reorder columns  ## will need to add columns if have additional database added columns (see those commented out above)
+str(dioxin2)
+```
 
+    ## 'data.frame':    3208 obs. of  37 variables:
+    ##  $ country                             : Factor w/ 1 level "Sweden": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ monit_program                       : Factor w/ 2 levels "CEMP~COMB","COMB": 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ monit_purpose                       : int  0 0 0 0 0 0 0 0 0 0 ...
+    ##  $ report_institute                    : Factor w/ 1 level "SERI": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ station                             : Factor w/ 15 levels "Abbekas","Aengskaersklubb",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ lat                                 : num  55.3 55.3 55.3 55.3 55.3 ...
+    ##  $ lon                                 : num  13.6 13.6 13.6 13.6 13.6 ...
+    ##  $ bhi_id                              : int  11 11 11 11 11 11 11 11 11 11 ...
+    ##  $ helcom_id                           : Factor w/ 9 levels "SEA-001","SEA-006",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ helcom_coastal_code                 : int  0 0 0 0 0 0 0 0 0 0 ...
+    ##  $ ices_area                           : Factor w/ 6 levels "24","25","27",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ date                                : Date, format: "2009-11-30" "2009-11-30" ...
+    ##  $ monit_year                          : int  2009 2009 2009 2009 2009 2009 2009 2009 2009 2009 ...
+    ##  $ year                                : int  2009 2009 2009 2009 2009 2009 2009 2009 2009 2009 ...
+    ##  $ month                               : int  11 11 11 11 11 11 11 11 11 11 ...
+    ##  $ day                                 : int  30 30 30 30 30 30 30 30 30 30 ...
+    ##  $ doy                                 : int  334 334 334 334 334 334 334 334 334 334 ...
+    ##  $ species                             : Factor w/ 1 level "Clupea harengus": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ sub_samp_ref                        : int  3686935 3686935 3686935 3686935 3686935 3686935 3686935 3686935 3686935 3686935 ...
+    ##  $ sub_samp_id                         : chr  "912409135" "912409135" "912409135" "912409135" ...
+    ##  $ samp_id                             : int  1841609 1841609 1841609 1841609 1841609 1841609 1841609 1841609 1841609 1841609 ...
+    ##  $ num_indiv_subsample                 : int  12 12 12 12 12 12 12 12 12 12 ...
+    ##  $ bulk_id                             : logi  NA NA NA NA NA NA ...
+    ##  $ basis_determination_originalcongener: Factor w/ 2 levels "lipid weight",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ basis_determination_converted       : Factor w/ 1 level "wet weight": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ agmea_y                             : int  4 4 4 4 4 4 4 4 4 4 ...
+    ##  $ drywt_percent                       : num  30 30 30 30 30 30 30 30 30 30 ...
+    ##  $ exlip_percent                       : num  9.93 9.93 9.93 9.93 9.93 9.93 9.93 9.93 9.93 9.93 ...
+    ##  $ lnmea_cm                            : num  23.4 23.4 23.4 23.4 23.4 23.4 23.4 23.4 23.4 23.4 ...
+    ##  $ wtmea_g                             : num  95.7 95.7 95.7 95.7 95.7 95.7 95.7 95.7 95.7 95.7 ...
+    ##  $ qflag                               : Factor w/ 2 levels "","D": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ detect_lim                          : num  0.1688 0.0377 0.0745 0.1192 0.0169 ...
+    ##  $ quant_lim                           : logi  NA NA NA NA NA NA ...
+    ##  $ uncert_val                          : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ method_uncert                       : Factor w/ 2 levels "","U2": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ congener                            : Factor w/ 16 levels "CDD1N_pg/g","CDD4X_pg/g",..: 1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ value                               : num  0.1688 0.0377 0.0745 0.1192 0.0169 ...
+
+``` r
+##Check for missing BHI_ID
+dioxin2 %>% filter(is.na(bhi_id)) %>% select(station, lat, lon) %>% distinct()
+```
+
+    ##   station     lat     lon
+    ## 1  Lagnoe 59.5652 18.8348
+
+``` r
+## this station is in the Stockholm archipelago - BHI region 29
+## manually add
+dioxin2 = dioxin2 %>%
+          mutate(bhi_id = ifelse(is.na(bhi_id) & station == "Lagnoe", 29, bhi_id))  
+
+dioxin2 %>% filter(is.na(bhi_id)) %>% select(station, lat, lon) %>% distinct()
+```
+
+    ## [1] station lat     lon    
+    ## <0 rows> (or 0-length row.names)
+
+``` r
 ## Organize PCB data same as in 4.1.2
 str(pcb1)
 ```
@@ -2303,6 +2384,29 @@ head(pcb2)
     ## 5               CB180_ug/kg  0.30
     ## 6                CB28_ug/kg  0.04
 
+``` r
+## check for missing BHI_ID
+pcb2 %>% filter(is.na(bhi_id))%>% select(station, lat, lon)%>% distinct()
+```
+
+    ##   station      lat      lon
+    ## 1  Lagnoe 59.56520 18.83480
+    ## 2    LL3A 60.38333 26.71667
+
+``` r
+## two missing
+#1  Lagnoe 59.56520 18.83480  - this station is in the Stockholm archipelago - BHI region 29
+#2    LL3A 60.38333 26.71667 - this station is in the Gulf of Finland - BHI region 32
+
+pcb2 = pcb2 %>%
+       mutate(bhi_id = ifelse(is.na(bhi_id) & station == "Lagnoe",29,
+                      ifelse(is.na(bhi_id) & station == "LL3A",32, bhi_id)))
+ pcb2 %>% filter(is.na(bhi_id))%>% select(station, lat, lon)%>% distinct()
+```
+
+    ## [1] station lat     lon    
+    ## <0 rows> (or 0-length row.names)
+
 #### 5.1.3 Filter for only Dioxin-like PCBs
 
 Use lookup\_tef to filter for PCB congeners that are dioxin-like
@@ -2407,6 +2511,14 @@ ggplot(pcb4) +
 
 ![](contaminants_prep_files/figure-markdown_github/convert%20pcb%20units-1.png)
 
+#### 5.1.5 Create a rgn\_id lookup for lat and lon
+
+``` r
+bhi_rgn_lookup = dioxin2%>%
+                 select(country,lat,lon,bhi_id)%>%
+                 distinct()
+```
+
 ### 5.2 Filter data for year
 
 Constrain data to between 2004-2013 (PCBs only in poland with questionable values in 2014). Dioxin-data is only from Sweden
@@ -2418,12 +2530,13 @@ dioxin3 = dioxin2 %>%
 dim(dioxin2);dim(dioxin3)
 ```
 
-    ## [1] 3208   30
+    ## [1] 3208   37
 
-    ## [1] 2672   30
+    ## [1] 2672   37
 
 ``` r
 pcb5 = pcb4 %>%
+        arrange(year)%>%
         filter(year>=2004 & year <=2013)
 
 dim(pcb4);dim(pcb5)
@@ -2551,9 +2664,9 @@ dioxin5 = dioxin4 %>%
 dim(dioxin4); dim(dioxin5)  ## same number of rows, all dioxins have a TEF conversion
 ```
 
-    ## [1] 2672   31
+    ## [1] 2672   38
 
-    ## [1] 2672   32
+    ## [1] 2672   39
 
 ``` r
 ## convert to TEQ
@@ -2809,35 +2922,37 @@ dioxin6long = dioxin6 %>%
                      -basis_determination_converted,-agmea_y,-drywt_percent,-exlip_percent,
                      -lnmea_cm,-wtmea_g, -qflag,-detect_lim,-quant_lim,-uncert_val,-method_uncert,
                      -value,-value_adj,-TEF_2005)%>%
-               group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+               group_by(country, monit_program,monit_purpose,station,lat,lon, bhi_id, helcom_id,helcom_coastal_code,ices_area,date,monit_year,year,
                          species,sub_samp_ref) %>%
                spread(congener,value_TEQ) %>%
                ungroup()
-dim(dioxin6long) ## 182  29  ## there are also 182 unique sub_sample ref
+dim(dioxin6long) ## 182  36  ## there are also 182 unique sub_sample ref
 ```
 
-    ## [1] 182  29
+    ## [1] 182  36
 
 ``` r
 dioxin_sumteq1 = dioxin6 %>%
                  select(-sub_samp_id,-samp_id,-bulk_id,-basis_determination_originalcongener,
                      -basis_determination_converted,-agmea_y,-drywt_percent,-exlip_percent,
-                     -lnmea_cm,-wtmea_g, -qflag,-detect_lim,-quant_lim,-uncert_val,-method_uncert,
-                     -value,-value_adj,-TEF_2005)%>%   ## deselect extra columns
-                 group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
-                         species,sub_samp_ref) %>% ## group by location and date indentifiers
+                     -lnmea_cm,-wtmea_g,-qflag,-detect_lim,-quant_lim,-uncert_val,
+                     -method_uncert,-value,-value_adj,-TEF_2005,-helcom_id,
+                     -helcom_coastal_code,-ices_area)%>%   ## deselect extra columns
+                 group_by(country, monit_program,monit_purpose,station,lat,lon, bhi_id,
+                          date,monit_year,year,species,sub_samp_ref) %>% ## group by location and date indentifiers
                  summarise(sum_teq = sum(value_TEQ, na.rm=TRUE)) %>% ## sum all TEQ values for each subsample ref
                  ungroup()
 str(dioxin_sumteq1)  ## sum_teq column is in pg/g
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    182 obs. of  12 variables:
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    182 obs. of  13 variables:
     ##  $ country      : Factor w/ 1 level "Sweden": 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ monit_program: Factor w/ 2 levels "CEMP~COMB","COMB": 1 1 1 1 1 1 1 1 1 1 ...
-    ##  $ monit_purpose: logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+    ##  $ monit_purpose: int  0 0 0 0 0 0 0 0 0 0 ...
     ##  $ station      : Factor w/ 15 levels "Abbekas","Aengskaersklubb",..: 4 4 4 4 4 4 4 4 4 4 ...
     ##  $ lat          : num  57.2 57.2 57.2 57.2 57.2 ...
     ##  $ lon          : num  11.8 11.8 11.8 11.8 11.8 ...
+    ##  $ bhi_id       : num  1 1 1 1 1 1 1 1 1 1 ...
     ##  $ date         : Date, format: "2004-09-13" "2004-09-13" ...
     ##  $ monit_year   : int  2004 2004 2004 2004 2004 2004 2004 2004 2009 2009 ...
     ##  $ year         : int  2004 2004 2004 2004 2004 2004 2004 2004 2009 2009 ...
@@ -2915,23 +3030,24 @@ Count the number of congeners included in that sum
 
 ``` r
 pcb_sumteq1 = pcb7 %>%
-                 select(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                 select(country, monit_program,monit_purpose,station,lat,lon,bhi_id,date,monit_year,year,
                          species,sub_samp_ref,value_TEQ) %>%
                 arrange(sub_samp_ref)%>%
-                group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                group_by(country, monit_program,monit_purpose,station,lat,lon,bhi_id,date,monit_year,year,
                          species,sub_samp_ref)%>%## group by location and date indentifiers
                  summarise(sum_teq = sum(value_TEQ, na.rm=TRUE)) %>% ## sum all TEQ values for each subsample ref
                  ungroup()
 str(pcb_sumteq1)  ## sum_teq column is in pg/g
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    1717 obs. of  12 variables:
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    1717 obs. of  13 variables:
     ##  $ country      : Factor w/ 5 levels "Finland","Germany",..: 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ monit_program: Factor w/ 3 levels "CEMP~COMB","COMB",..: 2 2 2 2 2 2 2 2 2 2 ...
     ##  $ monit_purpose: Factor w/ 5 levels "","B~T~S","H",..: 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ station      : Factor w/ 31 levels "","Abbekas","Aengskaersklubb",..: 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ lat          : num  59.5 59.5 59.5 59.5 59.5 ...
     ##  $ lon          : num  22.6 22.6 22.6 22.6 22.6 ...
+    ##  $ bhi_id       : num  30 30 30 30 30 30 30 30 30 30 ...
     ##  $ date         : Date, format: "2008-10-07" "2008-10-07" ...
     ##  $ monit_year   : int  2008 2008 2008 2008 2008 2008 2008 2008 2009 2009 ...
     ##  $ year         : int  2008 2008 2008 2008 2008 2008 2008 2008 2009 2009 ...
@@ -3011,7 +3127,7 @@ Mean TEQ by date and location. For observations averaged, track the mean, min, a
 dioxin_sumteq2 = dioxin_sumteq1%>%
                  select(-sub_samp_ref) %>%
                  arrange(station,year,date)%>%
-                 group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                 group_by(country, monit_program,monit_purpose,station,lat,lon,bhi_id,date,monit_year,year,
                          species)%>%
                  summarise(mean_sumteq = sum(sum_teq),
                           mean_cong_count=mean(n),
@@ -3056,7 +3172,7 @@ Mean TEQ by date and location. For observations averaged, track the mean, min, a
 pcb_sumteq2 = pcb_sumteq1%>%
                  select(-sub_samp_ref) %>%
                  arrange(station,year,date)%>%
-                 group_by(country, monit_program,monit_purpose,station,lat,lon,date,monit_year,year,
+                 group_by(country, monit_program,monit_purpose,station,lat,lon,bhi_id,date,monit_year,year,
                          species)%>%
                  summarise(mean_sumteq = sum(sum_teq),
                           mean_cong_count=mean(n),
@@ -3120,7 +3236,7 @@ n_obs_pcb = n_obs) %>%
 join_teq = inner_join(dioxin_sumteq3,pcb_sumteq3)
 ```
 
-    ## Joining, by = c("country", "station", "lat", "lon", "date", "year", "species")
+    ## Joining, by = c("country", "station", "lat", "lon", "bhi_id", "date", "year", "species")
 
     ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
     ## factors with different levels, coercing to character vector
@@ -3136,6 +3252,7 @@ Red triangles are the dioxins and black-filled circles are the dioxion-like PCBs
 ggplot(join_teq)+
   geom_point(aes(date,mean_sumteq_diox), shape=2, colour="red")+
    geom_point(aes(date,mean_sumteq_pcb), shape=19)+
+  ylab("TEQ pg/g")+
   ggtitle("Mean total TEQ pg/g")
 ```
 
@@ -3146,6 +3263,7 @@ ggplot(join_teq)+
   geom_point(aes(date,mean_sumteq_diox), shape=2, colour="red")+
    geom_point(aes(date,mean_sumteq_pcb), shape=19)+
   facet_wrap(~station)+
+   ylab("TEQ pg/g")+
   ggtitle("Mean total TEQ pg/g")
 ```
 
@@ -3169,17 +3287,352 @@ ggplot(join_teq)+
   geom_point(aes(date,tot_teq))+
   geom_line(aes(date,teq_threshold_pg_g))+
   facet_wrap(~station, scales="free_y")+
+   ylab("TEQ pg/g")+
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
-  ggtitle("Total TEQ pg/g")
+  ggtitle("Sum Dioxin and dioxin-like PCB TEQ pg/g")
 ```
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20total%20TEQ-1.png)
 
-### TO DO
+### 5.9 Join data to HOLAS basins and plot
 
-1.  assign points to sub-basins. these data are not yet in the database so do not have a way to assign to basin (was previously done by assigning BHI ID which was linked to basin)
-2.  Dioxin status for sub-basins?? take a mean TEQ value across 2009-2013. Track number of observations contributing and how many dates and locations these observations represent.
+#### 5.9.1 Join data to the basin lookup
+
+``` r
+join_teq_basins = full_join(join_teq, lookup_basins,
+                            by=c("country", "bhi_id" = "rgn_id"))
+
+colnames(join_teq_basins)
+```
+
+    ##  [1] "country"              "station"              "lat"                 
+    ##  [4] "lon"                  "bhi_id"               "date"                
+    ##  [7] "year"                 "species"              "mean_sumteq_diox"    
+    ## [10] "mean_cong_count_diox" "max_cong_count_diox"  "min_cong_count_diox" 
+    ## [13] "n_obs_diox"           "mean_sumteq_pcb"      "mean_cong_count_pcb" 
+    ## [16] "max_cong_count_pcb"   "min_cong_count_pcb"   "n_obs_pcb"           
+    ## [19] "tot_teq"              "teq_threshold_pg_g"   "basin"
+
+``` r
+dim(join_teq);dim(join_teq_basins) 
+```
+
+    ## [1] 85 20
+
+    ## [1] 119  21
+
+``` r
+### any missing basins
+join_teq_basins %>% filter(is.na(basin))
+```
+
+    ## Source: local data frame [0 x 21]
+    ## 
+    ## Variables not shown: country <chr>, station <chr>, lat <dbl>, lon <dbl>,
+    ##   bhi_id <dbl>, date <date>, year <int>, species <fctr>, mean_sumteq_diox
+    ##   <dbl>, mean_cong_count_diox <dbl>, max_cong_count_diox <int>,
+    ##   min_cong_count_diox <int>, n_obs_diox <int>, mean_sumteq_pcb <dbl>,
+    ##   mean_cong_count_pcb <dbl>, max_cong_count_pcb <int>, min_cong_count_pcb
+    ##   <int>, n_obs_pcb <int>, tot_teq <dbl>, teq_threshold_pg_g <dbl>, basin
+    ##   <chr>.
+
+#### 5.9.2 Plot observation by basin
+
+``` r
+ggplot(join_teq_basins)+
+  geom_point(aes(year, tot_teq))+
+  facet_wrap(~basin)+
+ ylab("TEQ pg/g")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Sum Dioxin and dioxin-like PCB TEQ pg/g")
+```
+
+    ## Warning: Removed 34 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20total%20teq%20observations%20by%20basins-1.png)
+
+#### 5.9.3 Plot observations by BHI region
+
+``` r
+ggplot(join_teq_basins)+
+  geom_point(aes(year, tot_teq))+
+  facet_wrap(~bhi_id)+
+ ylab("TEQ pg/g")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Sum Dioxin and dioxin-like PCB TEQ pg/g")
+```
+
+    ## Warning: Removed 34 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20total%20teq%20observations%20by%20bhi%20regions-1.png)
+
+### 5.10 Calculate the mean TEQ value by basin 2009-2013
+
+#### 5.10.1 Restrict years 2009-2013
+
+``` r
+teq_basin_mean = join_teq_basins %>%
+                 filter(year >= 2009 & year < 2014)
+```
+
+#### 5.10.2 Mean value by by basin
+
+``` r
+teq_basin_mean = teq_basin_mean %>%
+                 select(basin, tot_teq) %>%
+                 group_by(basin)%>%
+                 summarize(basin_mean_teq = mean(tot_teq,na.rm=TRUE))%>%
+                 ungroup()
+
+## add threshold back in
+
+teq_basin_mean = teq_basin_mean  %>%
+                 mutate(teq_threshold_pg_g = 6.5)
+```
+
+#### 5.10.3 Plot mean values by basin
+
+``` r
+## without threshold
+ggplot(teq_basin_mean)+
+  geom_point(aes(basin, basin_mean_teq), size = 2.5)+
+  ylab("TEQ pg/g")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Basin mean Dioxin and dioxin-like PCB TEQ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20teq%20values%20by%20basin-1.png)
+
+``` r
+## with threshold
+ggplot(teq_basin_mean)+
+  geom_point(aes(basin, basin_mean_teq), size = 2.5)+
+  geom_hline(aes(yintercept = teq_threshold_pg_g))+
+  ylab("TEQ pg/g")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Basin mean Dioxin and dioxin-like PCB TEQ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20teq%20values%20by%20basin-2.png)
+
+### 5.11 Assign basin means to BHI regions
+
+#### 5.11.1 Join basin mean with bhi\_regions
+
+``` r
+rgn_teq_basin_mean = teq_basin_mean %>%
+                     full_join(.,lookup_basins, by="basin") %>%
+                     select(-country,-basin)%>%
+                     select(rgn_id, basin_mean_teq,teq_threshold_pg_g )%>%
+                     arrange(rgn_id)
+```
+
+#### 5.11.2 Plot mean values by BHI region
+
+``` r
+## without threshold
+ggplot(rgn_teq_basin_mean)+
+  geom_point(aes(rgn_id, basin_mean_teq), size = 2.5)+
+  ylab("TEQ pg/g")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Basin mean TEQ by BHI region")
+```
+
+    ## Warning: Removed 23 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20teq%20values%20by%20bhi%20region-1.png)
+
+``` r
+## with threshold
+ggplot(rgn_teq_basin_mean)+
+  geom_point(aes(rgn_id, basin_mean_teq), size = 2.5)+
+  geom_hline(aes(yintercept = teq_threshold_pg_g))+
+  ylab("TEQ pg/g")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Basin mean TEQ by BHI region")
+```
+
+    ## Warning: Removed 23 rows containing missing values (geom_point).
+
+    ## Warning: Removed 23 rows containing missing values (geom_hline).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20teq%20values%20by%20bhi%20region-2.png)
+
+### 5.12 Dioxin status value
+
+#### 5.12.1 Calculate status
+
+Xteq\_status = 1 / (dioxin + dioxin-like pcb teq value / teq threshold )
+
+``` r
+dioxin_teq_status = rgn_teq_basin_mean %>%
+                    mutate(teq_ratio = basin_mean_teq/ teq_threshold_pg_g,
+                           teq_status = 1 / teq_ratio,
+                           teq_status_adj = pmin (1, teq_status)) ## value cannot exceed 1
+dioxin_teq_status
+```
+
+    ## Source: local data frame [42 x 6]
+    ## 
+    ##    rgn_id basin_mean_teq teq_threshold_pg_g teq_ratio teq_status
+    ##     <int>          <dbl>              <dbl>     <dbl>      <dbl>
+    ## 1       1       0.903283                6.5 0.1389666   7.195973
+    ## 2       2       0.903283                6.5 0.1389666   7.195973
+    ## 3       3             NA                 NA        NA         NA
+    ## 4       4             NA                 NA        NA         NA
+    ## 5       5             NA                 NA        NA         NA
+    ## 6       6             NA                 NA        NA         NA
+    ## 7       7             NA                 NA        NA         NA
+    ## 8       8             NA                 NA        NA         NA
+    ## 9       9             NA                 NA        NA         NA
+    ## 10     10             NA                 NA        NA         NA
+    ## ..    ...            ...                ...       ...        ...
+    ## Variables not shown: teq_status_adj <dbl>.
+
+``` r
+## select final object
+dioxin_teq_status = dioxin_teq_status%>%
+                    select(-basin_mean_teq, -teq_threshold_pg_g, -teq_ratio, -teq_status)%>%
+                    dplyr::rename(teq_status = teq_status_adj)
+```
+
+#### 5.12.2 Plot dioxin status
+
+``` r
+ggplot(dioxin_teq_status)+
+  geom_point(aes(rgn_id,teq_status), size = 2.5)+
+  ylab("Status score")+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Dioxin + dioxin-like PCB status ")
+```
+
+    ## Warning: Removed 23 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20dioxin%20status-1.png)
+
+### 5.13 Dioxin trend value
+
+Calculate, by taking the observations between 2009-2013 (those averaged for the status value),transform to a status value, and take the trend of the status on the basin scale
+
+This is consistent with the ICES6 approach.
+
+#### 5.13.1 Prepare data for trend calculation
+
+``` r
+teq_trend_data =join_teq_basins %>%
+                 filter(year >= 2009 & year < 2014)
+
+teq_trend_data = teq_trend_data %>%
+                 select(basin,year, tot_teq, teq_threshold_pg_g)%>%
+                 mutate(teq_raw_status = pmin(1, 1/ (tot_teq/teq_threshold_pg_g)))
+```
+
+#### 5.13.2 Plot data for trend transformed to status
+
+``` r
+ggplot(teq_trend_data ) + 
+geom_point(aes(year, teq_raw_status))+
+  facet_wrap(~basin)+
+  ylab("status")+
+  ggtitle("Status values for trend")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20dioxin%20teq%20data%20for%20trend%20transformed%20to%20status-1.png)
+
+#### 5.13.3 Fit trend
+
+``` r
+lag_win = 5  ## number of years for future status
+
+teq_trend =  teq_trend_data %>% 
+            group_by(basin) %>% 
+              do(trend_mdl = lm(teq_raw_status~year, data=.)) %>%  ## regression model to get trend from raw observations
+               summarize(basin=basin,
+                              trend_score = coef(trend_mdl)['year']*lag_win) %>%  ## lag_win defined above, numbe of years in the future for future status
+                    ungroup()
+
+teq_trend
+```
+
+    ## Source: local data frame [8 x 2]
+    ## 
+    ##                    basin  trend_score
+    ##                    <chr>        <dbl>
+    ## 1           Arkona Basin 4.965068e-16
+    ## 2         Bornholm Basin 2.866584e-16
+    ## 3           Bothnian Bay 2.866584e-16
+    ## 4           Bothnian Sea 2.009569e-02
+    ## 5               Kattegat 0.000000e+00
+    ## 6 Northern Baltic Proper 0.000000e+00
+    ## 7              The Quark 4.965068e-16
+    ## 8  Western Gotland Basin 4.965068e-16
+
+#### 5.13.4 Plot teq trend by basin
+
+``` r
+ggplot(teq_trend)+
+  geom_point(aes(basin,trend_score), size = 2.5)+
+  ylab("trend score")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Dioxin + dioxin-like PCB trend score by basin ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20teq%20trend%20by%20basin-1.png)
+
+#### 5.13.5 Apply basin trend values to BHI regions
+
+``` r
+rgn_teq_trend = teq_trend %>%
+                full_join(., lookup_basins, by = "basin") %>%
+                select(-basin, -country)%>%
+                select(rgn_id, trend_score)%>%
+                arrange(rgn_id)
+```
+
+#### 5.13.4 Plot teq trend by BHI region
+
+``` r
+ggplot(rgn_teq_trend)+
+  geom_point(aes(rgn_id,trend_score), size = 2.5)+
+  ylab("trend score")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("Dioxin + dioxin-like PCB trend score by BHI regions")
+```
+
+    ## Warning: Removed 23 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20teq%20trend%20by%20bhi%20rgn-1.png)
+
+### 5.14 Prepare and save layer for layers
+
+#### 5.14.1 Prepare layers
+
+``` r
+dioxin_status_layer = dioxin_teq_status %>%
+                      dplyr::rename(score = teq_status)
+
+dioxin_trend_layer = rgn_teq_trend %>%
+                     dplyr::rename(score = trend_score)
+```
+
+#### 5.14.2 Write to csv
+
+``` r
+write.csv(dioxin_status_layer, file.path(dir_layers, 'cw_con_dioxin_status_bhi2015.csv'), row.names=FALSE)
+
+write.csv(dioxin_trend_layer, file.path(dir_layers, 'cw_con_dioxin_trend_bhi2015.csv'), row.names=FALSE)
+```
 
 6. Data Prep - PFOS Indicator
 -----------------------------
