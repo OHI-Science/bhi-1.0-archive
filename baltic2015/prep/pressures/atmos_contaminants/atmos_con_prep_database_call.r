@@ -17,7 +17,7 @@ dir_atmos_con    = file.path(dir_prep, 'pressures/atmos_contaminants')
 ##----------------------------------------------------#
 ## DATE OF LAST DATA EXTRACTION FROM DATABASE ##
 ## **update this date when code is run**
-## 12 JULY 2016
+## 13 JULY 2016
 #----------------------------------------------------#
 
 
@@ -75,6 +75,15 @@ dbClearResult(t) # clears selection (IMPORTANT!)
 dbDisconnect(con) # closes connection (IMPORTANT!)
 
 ##----------------------------------------------------#
+
+
+##----------------------------------------------------#
+## CORRECT data objects
+
+## currently database typo in object pcb153 in column substance (all entries should be pcb153)
+pcb153 = pcb153  %>%
+         mutate(substance = "PCB 153")
+
 
 
 ##----------------------------------------------------#
