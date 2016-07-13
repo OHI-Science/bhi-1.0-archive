@@ -428,6 +428,7 @@ Data sources:
 - Halpern, B.S., Walbridge S., Selkoe, K.A., Kappel, C.V., Micheli, F., D'Agrosa, C., Bruno, J.F., Casey, K.S., Ebert, C., Fox, H.E., Fujita, R., Heinemann, D., Lenihan, H.S., Madin, E.M.P., Perry, M.T., Selig, E.R., Spalding, M., Steneck, R., Watson, R. (2008) **A global map of human impact on marine ecosystems**. _Science_, 3199(5865): 948-952. [doi:10.1126/science.1149345](http://dx.doi.org/10.1126/science.1149345)
 
 ",pressure_score,pressure score,po_chemicals_gl2014.csv,raster,spatial data was extracted for each region. ,po_chemicals,~/github/ohi-global/eez2014/layers/po_chemicals.csv,global,rgn_id,,,,pressure_score,,TRUE,,,"0,0194018","0,231829",TRUE,,,,42,FALSE
+pressures CW,po_inverse_secchi,Water clarity / transparency pressure,Inverse of NUT status obtained using secchi data.,pressure_score,pressure score,po_inverse_secchi_bhi2015.csv,,,,,,rgn_id,,,,,,,,,,,,,,,,
 pressures,po_pload,Phosphorus pollution,phosphorus load including atmospheric and land-based sources from HELCOM data normalized to ceilings set by HELCOM for each of the seven major basins,pressure_score,pressure score,po_pload_bhi2015.csv,,spatial data was extracted for each region. ,po_pload,~/github/ohi-global/eez2014/layers/pload.csv,global,rgn_id,,,,pressure_score,,TRUE,,,0,"0,6545371844",TRUE,,,,42,FALSE
 pressures CW,po_pathogens,Access to improved sanitation as a proxy for pathogen pollution,"Percent of population with access to improved sanitation facilities.
 
