@@ -1,8 +1,8 @@
 ## atmos_con_prep_database_call.r
 
-## This file calls the data from the database and saves as a cvs in eco_data_database
+## This file calls the data from the database and saves as a cvs in data_database
 
-## This file should be run prior to eco_prep.Rmd if data are updated in the database
+## This file should be run prior to atmos_con_prep.Rmd if data are updated in the database
 
 
 ##----------------------------------------------------#
