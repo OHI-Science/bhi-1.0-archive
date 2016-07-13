@@ -233,7 +233,7 @@ wgi_baltic_pressure = wgi_baltic %>%
 ```
 
 #### 4.4.2 Plot pressure score
-```{r Plot and Compare Rescaling options}
+```{r Plot and Compare Rescaling options with Pressure score}
 ggplot(wgi_baltic_pressure) + 
   geom_point(aes(year, pressure_score, colour = country ))+
    geom_line(aes(year, pressure_score, colour = country ))+
