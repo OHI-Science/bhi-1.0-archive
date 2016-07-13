@@ -98,7 +98,7 @@ Data sources:
 
 
 
-- [Eurostat database lfst_r_lfe2emprt](http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=lfst_r_lfe2emprt)  ",employ_pop_bhi,number people employed,liv_regional_employ_bhi2015.csv,,,,,,rgn_id,,,year,employ_pop_bhi,,TRUE,2000,2014,"4255,938","1679498,956",FALSE,,,,42,FALSE
+- [Eurostat database lfst_r_lfe2emprt](http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=lfst_r_lfe2emprt)  ",employ_pop_bhi,number people employed,liv_regional_employ_bhi2015.csv,,,,,,rgn_id,,,year,employ_pop_bhi,,TRUE,2000,2014,4255938,1679498956,FALSE,,,,42,FALSE
 LIV,liv_national_employ,Number of people employed nationally based on national employment rates,"Employment percentage by NUTS0 region from Eurostat.
 
 
@@ -108,7 +108,7 @@ Data sources:
 
 
 - [Eurostat database lfst_r_lfe2emprt](http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=lfst_r_lfe2emprt)  ",employ_pop,number people employed,liv_national_employ_bhi2015.csv,,,,,,rgn_id,,,year,employ_pop,,TRUE,2000,2014,"823463,1",70965000,FALSE,,,,42,FALSE
-LE,le_wage_sector_year,Wages,gapfilled,value,2010 USD,le_wage_sector_year_gl2014.csv,equal,global wages were applied equally to each region. ,le_wage_sector_year,~/github/ohi-global/eez2014/layers/le_wage_sector_year.csv,global,rgn_id,,sector,year,value,,TRUE,1993,2008,"307,699",238506,FALSE,,,,42,FALSE
+LE,le_wage_sector_year,Wages,gapfilled,value,2010 USD,le_wage_sector_year_gl2014.csv,equal,global wages were applied equally to each region. ,le_wage_sector_year,~/github/ohi-global/eez2014/layers/le_wage_sector_year.csv,global,rgn_id,,sector,year,value,,TRUE,1993,2008,307699,238506,FALSE,,,,42,FALSE
 LE,le_workforcesize_adj,Modeled Livelihoods & Economies data,adjusted workforce size,jobs,jobs,le_workforcesize_adj_sc2014-popn-inland25km.csv,population_inland25km,global workforce data were applied to each region after weighting by each region's coastal population.,le_workforcesize_adj,~/github/ohi-global/eez2014/layers/le_workforcesize_adj.csv,global,rgn_id,,,year,jobs,,TRUE,1990,2012,"12598,3",14542100,FALSE,,,,42,FALSE
 LE pressures,le_sector_weight,Jobs weighting,Jobs weighting by sector (defaulting to 1),weight,value,le_sector_weight_gl2014.csv,equal,,le_sector_weight,~/github/ohi-global/eez2014/layers/le_sector_weight.csv,global,rgn_id,,sector,,weight,,TRUE,,,1,1,TRUE,,,,42,FALSE
 LIV ECO,le_popn,Total population by subregion,Population data from The World Bank,count,count,le_popn_gl2014.csv,equal,,le_popn,~/github/ohi-global/eez2014/layers/le_popn.csv,global,rgn_id,,,year,count,,TRUE,1960,2012,1215650,148689000,FALSE,,,,42,FALSE
@@ -415,8 +415,8 @@ Data sources:
 - [Worldwide Governance Indicators (WGI)](http://info.worldbank.org/governance/wgi/index.asp)",score,pressure score,ss_wgi_gl2014.csv,equal,global pressures data were applied equally to all regions.,ss_wgi,~/github/ohi-global/eez2014/layers/ss_wgi.csv,global,rgn_id,,,,score,,TRUE,,,"0,126633","0,646772",TRUE,,,,42,FALSE
 pressures CP,cp_habitat_extent_rank,"Habitat extent * rank, per Coastal Protection habitats","Habitat extent * habitat rank for Coastal Protection habitats: coral, mangrove offshore 1km, mangrove inland 1km, saltmarsh, seaice_shoreline and seagrass",extent_rank,rank,cp_habitat_extent_rank_gl2014.csv,equal,global pressures data were applied equally to all regions.,cp_habitat_extent_rank,~/github/ohi-global/eez2014/layers/cp_habitat_extent_rank.csv,global,rgn_id,,habitat,,extent_rank,,TRUE,,,"2,46",1840750,FALSE,,,,42,FALSE
 pressures CS,cs_habitat_extent,"Habitat extent * rank, per Carbon Storage habitats","Habitat extent * habitat rank for Carbon Storage habitats: mangrove, saltmarsh and seagrass",km2,km^2,cs_habitat_extent_gl2014.csv,area_offshore_3nm,global habitat extent was applied to each region after weighting by each region's offshore area to 3nm. ,cs_habitat_extent,~/github/ohi-global/eez2014/layers/cs_habitat_extent.csv,global,rgn_id,,habitat,,km2,,TRUE,,,"0,82","2729,73",FALSE,,,,42,FALSE
-pressures CW,po_atmos_pcb153,Atmospheric deposition of PCB 153 to the Baltic Sea,Atmospheric deposition of PCB-153 on the Baltic Sea .    Data sources:    - [HELCOM provides EMEP/MSC data for Baltic Sea basins](http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcb-153-on-the-baltic-sea/),pressure_score,pressure score,po_atmos_pcb153_bhi2015.csv,,,,,,rgn_id,,,,,,,,,,,,,,,,
-pressures CW,po_atmos_pcddf,Atmospheric deposition of PCDD/Fs to the Baltic Sea,Atmospheric deposition of PCDD/Fs on the Baltic Sea using scenarios with adjusted emissions.    Data sources:    - [HELCOM provides EMEP/MSC data for Baltic Sea basins](http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcdd-fs-on-the-baltic-sea/),pressure_score,pressure score,po_atmos_pcddf_bhi153.csv,,,,,,rgn_id,,,,,,,,,,,,,,,,
+pressures,po_atmos_pcb153,Atmospheric deposition of PCB 153 to the Baltic Sea,Atmospheric deposition of PCB-153 on the Baltic Sea .    Data sources:    - [HELCOM provides EMEP/MSC data for Baltic Sea basins](http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcb-153-on-the-baltic-sea/),pressure_score,pressure score,po_atmos_pcb153_bhi2015.csv,,,,,,rgn_id,,,,,,,,,,,,,,,,
+pressures,po_atmos_pcddf,Atmospheric deposition of PCDD/Fs to the Baltic Sea,Atmospheric deposition of PCDD/Fs on the Baltic Sea using scenarios with adjusted emissions.    Data sources:    - [HELCOM provides EMEP/MSC data for Baltic Sea basins](http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcdd-fs-on-the-baltic-sea/),pressure_score,pressure score,po_atmos_pcddf_bhi153.csv,,,,,,rgn_id,,,,,,,,,,,,,,,,
 pressures CW,po_chemicals,Ocean-based chemical pollution,"Modeled ocean-based chemical pollution from commercial shipping traffic and ports and harbors (Halpern et al. 2008).
 
 
@@ -428,7 +428,7 @@ Data sources:
 - Halpern, B.S., Walbridge S., Selkoe, K.A., Kappel, C.V., Micheli, F., D'Agrosa, C., Bruno, J.F., Casey, K.S., Ebert, C., Fox, H.E., Fujita, R., Heinemann, D., Lenihan, H.S., Madin, E.M.P., Perry, M.T., Selig, E.R., Spalding, M., Steneck, R., Watson, R. (2008) **A global map of human impact on marine ecosystems**. _Science_, 3199(5865): 948-952. [doi:10.1126/science.1149345](http://dx.doi.org/10.1126/science.1149345)
 
 ",pressure_score,pressure score,po_chemicals_gl2014.csv,raster,spatial data was extracted for each region. ,po_chemicals,~/github/ohi-global/eez2014/layers/po_chemicals.csv,global,rgn_id,,,,pressure_score,,TRUE,,,"0,0194018","0,231829",TRUE,,,,42,FALSE
-pressures CW,po_pload,Phosphorus pollution,phosphorus load including atmospheric and land-based sources from HELCOM data normalized to ceilings set by HELCOM for each of the seven major basins,pressure_score,pressure score,po_pload_bhi2015.csv,,spatial data was extracted for each region. ,po_pload,~/github/ohi-global/eez2014/layers/pload.csv,global,rgn_id,,,,pressure_score,,TRUE,,,0,"0,6545371844",TRUE,,,,42,FALSE
+pressures,po_pload,Phosphorus pollution,phosphorus load including atmospheric and land-based sources from HELCOM data normalized to ceilings set by HELCOM for each of the seven major basins,pressure_score,pressure score,po_pload_bhi2015.csv,,spatial data was extracted for each region. ,po_pload,~/github/ohi-global/eez2014/layers/pload.csv,global,rgn_id,,,,pressure_score,,TRUE,,,0,"0,6545371844",TRUE,,,,42,FALSE
 pressures CW,po_pathogens,Access to improved sanitation as a proxy for pathogen pollution,"Percent of population with access to improved sanitation facilities.
 
 
@@ -586,7 +586,7 @@ Data sources:
 
 - [Convention on Biological Diversity (CBD)](http://www.cbd.int/reports/search/default.shtml)
 
-",resilience score,resilience score,mariculture_gl2014.csv,equal,global resilience data were applied equally to all regions.,mariculture,~/github/ohi-global/eez2014/layers/mariculture.csv,global,rgn_id,,,,resilience.score,,TRUE,,,"0,625","0,958333",TRUE,,,,42,FALSE
+",resilience score,resilience score,mariculture_gl2014.csv,equal,global resilience data were applied equally to all regions.,mariculture,~/github/ohi-global/eez2014/layers/mariculture.csv,global,rgn_id,,,,resilience.score,,TRUE,,,625,"0,958333",TRUE,,,,42,FALSE
 resilience,g_msi_gov, MSI sustainability and regulations,"Mariculture practice assessment criteria from the Mariculture Sustainability Index (MSI).
 
 
