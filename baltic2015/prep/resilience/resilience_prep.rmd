@@ -44,6 +44,8 @@ dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'l
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_res    = file.path(dir_prep, 'resilience')
 
+dir_wgi    = file.path(dir_prep,'pressures/wgi_social') ## to source wgi data
+
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
 create_readme(dir_res, 'resilience_prep.rmd') 
 ```
@@ -533,4 +535,209 @@ ggplot(country_G_compare)+
 2. Prepare final data layers (scores for country applied to BHI regions)
 
 
+
+
 ## 2. Social
+The [Worldwide Governance Indicators (WGI) project](http://info.worldbank.org/governance/wgi/index.aspx#home) reports aggregate and individual governance indicators for 215 economies over the period 1996–2014, for six dimensions of governance: 
+
+Voice and Accountability  
+Political Stability and Absence of Violence/Terrorism  
+Government Effectiveness  
+Regulatory Quality  
+Rule of Law  
+Control of Corruption  
+
+### 2.1 Data  
+OHI has already extracted these data by country.  For BHI, we obtained these data on 13 July 
+2016 from [the file 'wgi_combined_scores_by_country.csv' on the OHI github site](https://github.com/OHI-Science/ohiprep/tree/master/globalprep/worldbank_wgi/intermediate).
+
+#### 2.1.1 Data attributes  
+Colname names in 'wgi_combined_scores_by_country.csv'
+    "country": reporting country
+    "year": reporting year
+    "score_wgi_scale": mean score of six indicators:
+        Voice and Accountability
+        Political Stability and Absence of Violence/Terrorism
+        Government Effectiveness
+        Regulatory Quality
+        Rule of Law
+        Control of Corruption
+    "score_ohi_scale": score_wgi_scale rescaled between 0 and 1 (score_wgi_scale range was -
+2.5 and 2.5)
+
+
+### 2.2 Resilience layer 
+The rescaled value of the WGI score is a resilience data layer (eg. higher WGI, greater resilience).
+
+#### 2.2.1 Current value
+The value for each country in 2013  
+
+#### 2.2.2 Rescaling
+The WGI scores have a range -2.5 to 2.5. They need to be rescaled to between 0 and 1. Use minimum and maximum value in the dataset.  We compare the pressure layer difference if all countries are included in the dataset when selecting min and max to rescale or if only Baltic region values are used obtain min and max values to rescale.    
+
+### 2.3 Prepare Data layer
+
+#### 2.3.1 Read in and organize data
+
+##### 2.3.1.1 Read in data
+Data are in the folder 'pressures' under 'wgi_social/data_database'
+```{r read in data}
+## read in data
+wgi_global = read.csv(file.path(dir_wgi, 'data_database/wgi_combined_scores_by_country.csv'), sep=";", stringsAsFactors = FALSE)
+str(wgi_global)
+
+bhi_lookup = read.csv(file.path(dir_wgi, 'bhi_basin_country_lookup.csv'), sep=";", stringsAsFactors = FALSE) %>%
+            select(BHI_ID, rgn_nam) %>%
+            dplyr::rename(rgn_id=BHI_ID,
+                          country=rgn_nam)
+
+
+```
+
+##### 2.3.1.2 Select Baltic Sea countries
+```{r select baltic countries}
+
+wgi_baltic = wgi_global %>%
+            filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia",country))
+
+wgi_baltic %>% select(country) %>% distinct()
+```
+
+
+####  2.3.2 Plot WGI scores
+
+#####  2.3.2.1  Plot WGI scores (WGI scale)
+```{r Plot raw Baltic WGI scores}
+ggplot(wgi_baltic) + 
+  geom_point(aes(year, score_wgi_scale, colour = country ))+
+   geom_line(aes(year, score_wgi_scale, colour = country ))+
+  ylab("WGI Score")+
+  ylim(-2.5,2.5)+
+  ggtitle("WGI Scores (WGI scale")
+
+```
+
+
+#####  2.3.2.2  Plot WGI scores  - OHI global rescale
+```{r Plot Baltic WGI ohi global rescale scores}
+ggplot(wgi_baltic) + 
+  geom_point(aes(year, score_ohi_scale, colour = country ))+
+   geom_line(aes(year, score_ohi_scale, colour = country ))+
+  ylab("Score")+
+  ylim(0,1)+
+  ggtitle("WGI Scores (OHI global rescale")
+
+```
+
+
+#### 2.3.3 Rescale to the Baltic region
+
+##### 2.3.3.1 Select Min and Max
+```{r select min and max from the Baltic}
+## min
+baltic_min = wgi_baltic %>%
+             select(score_wgi_scale)%>%
+             min()%>%
+             as.numeric()
+baltic_min
+
+## country and year of min
+filter(wgi_baltic, score_wgi_scale == baltic_min)
+#         country year score_wgi_scale score_ohi_scale
+# Russian Federation 2000      -0.8633578       0.3273284
+
+
+##max
+baltic_max = wgi_baltic %>%
+             select(score_wgi_scale)%>%
+             max()%>%
+             as.numeric()
+
+## country and year of max
+filter(wgi_baltic, score_wgi_scale == baltic_max)
+
+# country year score_wgi_scale score_ohi_scale
+#Finland 2004        1.985394       0.8970788
+
+```
+
+##### 2.3.3.2 Rescale Baltic
+```{r rescale baltic}
+wgi_baltic = wgi_baltic %>%
+             mutate(min = baltic_min,
+                    max=baltic_max,
+             score_bhi_scale = (score_wgi_scale - baltic_min)/(baltic_max - baltic_min))%>%
+             select(-min,-max)
+
+
+```
+
+
+##### 2.3.3.3 Plot rescaled to Baltic Region
+```{r plot rescaled to baltic }
+ggplot(wgi_baltic) + 
+  geom_point(aes(year, score_bhi_scale, colour = country ))+
+   geom_line(aes(year, score_bhi_scale, colour = country ))+
+  ylab("Score")+
+  ylim(0,1)+
+  ggtitle("WGI Scores (BHI region rescale")
+
+
+```
+
+
+##### 2.3.3.4 Plot and Compare Rescaling options
+Using the BHI region rescaling penalizes Russia. Does also spread the scores somewhat.  
+
+```{r Plot and Compare Rescaling options}
+ggplot(gather(wgi_baltic, score_type, score, -country,-year) %>% filter(score_type != "score_wgi_scale")) + 
+  geom_point(aes(year, score, colour = country ))+
+   geom_line(aes(year, score, colour = country ))+
+  facet_wrap(~score_type)+
+  ylab("Score")+
+  ylim(0,1)+
+  ggtitle("Rescale comparison WGI Scores")
+
+```
+
+#### 2.3.4 Assign country scores to BHI regions
+
+##### 2.3.4.1 Join BHI region lookup to country scores
+```{r join BHI region lookup to country scores}
+wgi_rgn = wgi_baltic %>%
+          select(-score_wgi_scale)%>%
+          gather(., score_type, resilience_score, -country,-year)%>%
+          mutate(country = ifelse(country == "Russian Federation", "Russia", country))%>%
+          full_join(., bhi_lookup, by = "country")
+
+```
+
+
+#### 2.3.5 Prepare and save Objects
+Select global rescaling so that Russia is not so heavily penalized.  
+
+##### 2.3.5.1 Prepare object
+```{r prepare object}
+
+wgi_all = wgi_rgn %>%
+         filter(score_type == "score_ohi_scale")%>%
+         select(-score_type, -country)%>%
+         group_by(rgn_id) %>%
+         filter(year == max(year))%>%
+         ungroup() %>%
+         select(rgn_id, year, resilience_score) %>%
+         arrange(rgn_id)
+
+wgi_all = wgi_all %>%
+        select(-year)
+        
+
+```
+
+#### 5.2 Save object
+```{r save object}
+
+write.csv(wgi_all, file.path(dir_layers, 'wgi_all_bhi2015.csv'), row.names=FALSE)
+```
+
+
