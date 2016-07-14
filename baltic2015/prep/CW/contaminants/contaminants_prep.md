@@ -2075,8 +2075,7 @@ trend_ices6 = ices6_basin_trend_alt2 %>%
               full_join(.,select(lookup_basins, rgn_id,basin), by= c("basin_name"="basin"))%>%
               select(rgn_id, trend_score)%>%
               rename(score = trend_score) %>%
-              mutate(dimension = "trend",
-                     score = round(score,2))%>%
+              mutate(dimension = "trend")%>%
               select(rgn_id,dimension,score)%>%
               arrange(rgn_id)
               
@@ -3620,10 +3619,16 @@ ggplot(rgn_teq_trend)+
 
 ``` r
 dioxin_status_layer = dioxin_teq_status %>%
-                      dplyr::rename(score = teq_status)
+                      dplyr::rename(score = teq_status)%>%
+                      mutate(dimension = "status")%>%
+                      select(rgn_id,dimension,score)%>%
+                      arrange(rgn_id)
 
 dioxin_trend_layer = rgn_teq_trend %>%
-                     dplyr::rename(score = trend_score)
+                     dplyr::rename(score = trend_score)%>%
+                     mutate(dimension = "trend")%>%
+                     select(rgn_id,dimension,score)%>%
+                      arrange(rgn_id)
 ```
 
 #### 5.14.2 Write to csv
