@@ -274,28 +274,55 @@ str(coastal_fish_loc)
 
 ``` r
 #bhi region and HOLAS basin look up
- basin_lookup = readr::read_csv(file.path(
-  dir_ao,"baltic_rgns_to_bhi_rgns_lookup_holas.csv"))
-basin_lookup=basin_lookup %>% select(bhi_id = rgn_id, basin_name)%>%
-  mutate(basin_name = str_replace_all(basin_name,"_"," ")) 
+ basin_lookup = read.csv(file.path(
+  dir_ao,"bhi_basin_country_lookup.csv"), sep=";", stringsAsFactors = FALSE)
+basin_lookup=basin_lookup %>% select(bhi_id=BHI_ID,basin_name=Subbasin)
 basin_lookup
 ```
 
-    ## Source: local data frame [42 x 2]
-    ## 
-    ##    bhi_id         basin_name
-    ##     <int>              <chr>
-    ## 1       1           Kattegat
-    ## 2       2           Kattegat
-    ## 3       3         Great Belt
-    ## 4       4         Great Belt
-    ## 5       5          The Sound
-    ## 6       6          The Sound
-    ## 7       7           Kiel Bay
-    ## 8       8           Kiel Bay
-    ## 9       9 Bay of Mecklenburg
-    ## 10     10 Bay of Mecklenburg
-    ## ..    ...                ...
+    ##    bhi_id             basin_name
+    ## 1       1               Kattegat
+    ## 2       2               Kattegat
+    ## 3       3             Great Belt
+    ## 4       4             Great Belt
+    ## 5       5              The Sound
+    ## 6       6              The Sound
+    ## 7       7               Kiel Bay
+    ## 8       8               Kiel Bay
+    ## 9       9     Bay of Mecklenburg
+    ## 10     10     Bay of Mecklenburg
+    ## 11     11           Arkona Basin
+    ## 12     12           Arkona Basin
+    ## 13     13           Arkona Basin
+    ## 14     14         Bornholm Basin
+    ## 15     15         Bornholm Basin
+    ## 16     16         Bornholm Basin
+    ## 17     17         Bornholm Basin
+    ## 18     18           Gdansk Basin
+    ## 19     19           Gdansk Basin
+    ## 20     20  Eastern Gotland Basin
+    ## 21     21  Eastern Gotland Basin
+    ## 22     22  Eastern Gotland Basin
+    ## 23     23  Eastern Gotland Basin
+    ## 24     24  Eastern Gotland Basin
+    ## 25     25  Eastern Gotland Basin
+    ## 26     26  Western Gotland Basin
+    ## 27     27           Gulf of Riga
+    ## 28     28           Gulf of Riga
+    ## 29     29 Northern Baltic Proper
+    ## 30     30 Northern Baltic Proper
+    ## 31     31 Northern Baltic Proper
+    ## 32     32        Gulf of Finland
+    ## 33     33        Gulf of Finland
+    ## 34     34        Gulf of Finland
+    ## 35     35              Aland Sea
+    ## 36     36              Aland Sea
+    ## 37     37           Bothnian Sea
+    ## 38     38           Bothnian Sea
+    ## 39     39              The Quark
+    ## 40     40              The Quark
+    ## 41     41           Bothnian Bay
+    ## 42     42           Bothnian Bay
 
 ### 3.2 Assign scores to GES status
 
