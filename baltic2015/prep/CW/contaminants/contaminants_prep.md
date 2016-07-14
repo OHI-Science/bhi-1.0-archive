@@ -3620,7 +3620,8 @@ ggplot(rgn_teq_trend)+
 ``` r
 dioxin_status_layer = dioxin_teq_status %>%
                       dplyr::rename(score = teq_status)%>%
-                      mutate(dimension = "status")%>%
+                      mutate(score = score*100,
+                             dimension = "status")%>%
                       select(rgn_id,dimension,score)%>%
                       arrange(rgn_id)
 
