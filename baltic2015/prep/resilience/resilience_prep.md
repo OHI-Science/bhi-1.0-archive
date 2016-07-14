@@ -712,13 +712,13 @@ map_indirect_direct_long = map_indirect_direct %>%
 head(map_indirect_direct_long)
 ```
 
-    ##   goal regulation  map
-    ## 1   AO        WFD  WFD
-    ## 2   AO       MSFD MSFD
-    ## 3   AO       BSAP BSAP
-    ## 4   AO        CFP  CFP
-    ## 5  CON        WFD  WFD
-    ## 6  CON       MSFD MSFD
+    ##   goal regulation   map
+    ## 1   AO        WFD   WFD
+    ## 2   AO       MSFD  MSFD
+    ## 3   AO       BSAP  BSAP
+    ## 4   AO        CFP   CFP
+    ## 5   AO      COP21 COP21
+    ## 6  CON        WFD   WFD
 
 ``` r
 ## clean weights_importance object
