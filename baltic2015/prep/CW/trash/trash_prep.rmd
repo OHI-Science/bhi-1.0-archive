@@ -291,9 +291,9 @@ ggplot(baltic_explore)+
 
 
 ## assign to BHI regions ----
-lookup_bhi = read.csv('~/github/bhi/baltic2015/prep/CW/trash/baltic_rgns_to_bhi_rgns_lookup_holas.csv') %>%
-  select(rgn_id,
-         country = cntry_name) %>%
+lookup_bhi = read.csv('~/github/bhi/baltic2015/prep/CW/trash/bhi_basin_country_lookup.csv',sep=";", stringsAsFactors = FALSE) %>%
+  select(rgn_id =BHI_ID,
+         country = rgn_nam) %>%
   mutate(country = as.character(country))
 
 ## join baltic_explore (baltic countries) to bhi regions, repeating the trash score for each baltic region.
