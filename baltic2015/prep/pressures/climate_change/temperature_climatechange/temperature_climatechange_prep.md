@@ -667,5 +667,5 @@ ggplot(sst_rescale1)+
 ### 4.10 Write to layers
 
 ``` r
-write.csv(sst_rescale, file.path(dir_layers, 'cc_sst_bhi2015.csv' ), row.names=FALSE)
+write.csv(sst_rescale1, file.path(dir_layers, 'cc_sst_bhi2015.csv' ), row.names=FALSE)
 ```

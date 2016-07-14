@@ -398,10 +398,12 @@ AO = function(layers){
     ## read in layers
 
       ao_stock_status = SelectLayersData(layers, layers='ao_stock_status') %>%
-        dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+        dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
+        mutate(dimension = as.character(dimension))
 
       ao_stock_slope = SelectLayersData(layers, layers='ao_stock_slope') %>%
-        dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+        dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+        mutate(dimension = as.character(dimension))
 
 
       ## status value if NA for status
@@ -441,37 +443,31 @@ AO = function(layers){
 
 CS = function(layers){
 
-  # layers
-  lyrs = list('rk' = c('hab_health' = 'health',
-                       'hab_extent' = 'extent',
-                       'hab_trend'  = 'trend'))
-  lyr_names = sub('^\\w*\\.','', names(unlist(lyrs)))
+  ### TO DO......Add layers when finalized
 
-  # cast data
-  D = SelectLayersData(layers, layers=lyr_names)
-  rk = rename(dcast(D, id_num + category ~ layer, value.var='val_num', subset = .(layer %in% names(lyrs[['rk']]))),
-              c('id_num'='region_id', 'category'='habitat', lyrs[['rk']]))
+  ## Select Layers
 
-  # limit to CS habitats
-  rk = subset(rk, habitat %in% c('seagrass'))
+  ## Status
 
-  # assign extent of 0 as NA
-  rk$extent[rk$extent==0] = NA
+  ## Trend
 
-  # status
-  r.status = ddply(na.omit(rk[,c('region_id','habitat','extent','health')]), .(region_id), summarize,
-                   goal = 'CS',
-                   dimension = 'status',
-                   score = min(1, sum(extent * health) / sum(extent)) * 100)
 
-  # trend
-  r.trend = ddply(na.omit(rk[,c('region_id','habitat','extent','trend')]), .(region_id), summarize,
-                  goal = 'CS',
-                  dimension = 'trend',
-                  score = sum(extent * trend) / sum(extent) )
+
+  ## proxy scores
+
+  scores = bind_rows(data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("status",42)),
+                                score = rep (100, 42)),
+                     data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("trend",42)),
+                                score = rep (0, 42))
+  ) %>%
+    mutate(goal = 'CS')
+
 
   # return scores
-  scores = cbind(rbind(r.status, r.trend))
+
+
   return(scores)
 }
 
@@ -870,68 +866,34 @@ ICO = function(layers){
 
 }
 
-LSP = function(layers, ref_pct_cmpa=30, ref_pct_cp=30, status_year, trend_years){
+LSP = function(layers){
 
-lyrs = list('r'  = c('rgn_area_inland1km'   = 'area_inland1km',
-                       'rgn_area_offshore3nm' = 'area_offshore3nm'),
-              'ry' = c('lsp_prot_area_offshore3nm' = 'cmpa',
-                        'lsp_prot_area_inland1km'   = 'cp'))
-  lyr_names = sub('^\\w*\\.','', names(unlist(lyrs)))
+  ## TO DO......Add layers when finalized
 
-  # cast data ----
-  d = SelectLayersData(layers, layers=lyr_names)
-  r  = rename(dcast(d, id_num ~ layer, value.var='val_num', subset = .(layer %in% names(lyrs[['r']]))),
-              c('id_num'='region_id', lyrs[['r']]))
-  ry = rename(dcast(d, id_num + year ~ layer, value.var='val_num', subset = .(layer %in% names(lyrs[['ry']]))),
-              c('id_num'='region_id', lyrs[['ry']]))
+  ## Select Layers
 
-  # fill in time series from first year specific region_id up to max year for all regions and generate cumulative sum
-  yr.max = max(max(ry$year), status_year)
-  r.yrs = ddply(ry, .(region_id), function(x){
-    data.frame(region_id=x$region_id[1],
-               year=min(x$year):yr.max)
-    })
-  r.yrs = merge(r.yrs, ry, all.x=T)
-  r.yrs$cp[is.na(r.yrs$cp)]     = 0
-  r.yrs$cmpa[is.na(r.yrs$cmpa)] = 0
-  r.yrs = within(r.yrs, {
-    cp_cumsum    = ave(cp  , region_id, FUN=cumsum)
-    cmpa_cumsum  = ave(cmpa, region_id, FUN=cumsum)
-    pa_cumsum    = cp_cumsum + cmpa_cumsum
-  })
+    ## Status
 
-  # get percent of total area that is protected for inland1km (cp) and offshore3nm (cmpa) per year
-  # and calculate status score
-  r.yrs = merge(r.yrs, r, all.x=T); head(r.yrs)
-  r.yrs = within(r.yrs,{
-    pct_cp    = pmin(cp_cumsum   / area_inland1km   * 100, 100)
-    pct_cmpa  = pmin(cmpa_cumsum / area_offshore3nm * 100, 100)
-    prop_protected    = ( pmin(pct_cp / ref_pct_cp, 1) + pmin(pct_cmpa / ref_pct_cmpa, 1) ) / 2
-  })
+    ## Trend
 
-  # extract status based on specified year
-  r.status = r.yrs %>%
-    filter(year==status_year) %>%
-    select(region_id, status=prop_protected) %>%
-    mutate(status=status*100)
-head(r.status)
 
-  # calculate trend
-  r.trend = ddply(subset(r.yrs, year %in% trend_years), .(region_id), function(x){
-    data.frame(
-      trend = min(1, max(0, 5 * coef(lm(prop_protected ~ year, data=x))[['year']])))})
+
+    ## proxy scores
+
+        scores = bind_rows(data.frame(region_id = seq(1,42,1),
+                          dimension = as.character(rep("status",42)),
+                          score = rep (100, 42)),
+                          data.frame(region_id = seq(1,42,1),
+                                     dimension = as.character(rep("trend",42)),
+                                     score = rep (0, 42))
+                            ) %>%
+                  mutate(goal = 'LSP')
+
 
   # return scores
-  scores = rbind.fill(
-    within(r.status, {
-      goal      = 'LSP'
-      dimension = 'status'
-      score     = status}),
-    within(r.trend, {
-      goal      = 'LSP'
-      dimension = 'trend'
-      score     = trend}))
-  return(scores[,c('region_id','goal','dimension','score')])
+
+
+    return(scores)
 }
 
 SP = function(scores){
@@ -958,10 +920,24 @@ CW = function(layers){
           ## only have 1 status point for CON, TRA (therefore can not take a CW status as geometric mean with many points over time)
           ## Calculate geometric mean of 1 status for current status
           ## calculate arithmetic mean of NUT and CON trend for the CW trend (because have 0, NA, and neg. values in trend, cannot use geometric mean)
+  ## UPDATE 14 JULY 2016 - Jennifer Griffiths
+          ## CON dioxin indicator added
+          ## function mean_NAall added so that NA not NaN produced from arithmetic mean of a vector of NA
+
 
   ##TODO
       ## add other CON components
 
+
+
+  ## Function to deal with cases where want to take the arithmetic mean of a vector of NA values, will return NA instead of NaN
+
+  mean_NAall = function(x){
+
+    if(sum(is.na(x))==length(x)){mean_val = NA
+    }else{mean_val =mean(x,na.rm=TRUE) }
+    return(mean_val)
+  }
 
   #################################
   #####----------------------######
@@ -981,10 +957,12 @@ CW = function(layers){
 
 
    cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
+                  mutate(dimension = as.character(dimension))
 
     cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+      mutate(dimension = as.character(dimension))
 
 
     # join NUT status and trend to one dataframe
@@ -1016,7 +994,8 @@ CW = function(layers){
             dplyr::rename(region_id = rgn_id) %>%
             mutate(dimension= "status",
                    subcom = 'TRA') %>%  ##Label subcompoent with TRA so can average later
-            arrange(dimension,region_id)
+            arrange(dimension,region_id)%>%
+            mutate(dimension = as.character(dimension))
 
   #################################
   #####----------------------######
@@ -1032,10 +1011,12 @@ CW = function(layers){
       #cw_con_ices6_trend= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
 
     cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
-      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+      mutate(dimension = as.character(dimension))
 
     cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
-      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+      mutate(dimension = as.character(dimension))
 
        ##Join ICES6
           cw_con_ices6 = full_join(cw_con_ices6_status,cw_con_ices6_trend, by = c('rgn_id','dimension','score')) %>%
@@ -1044,7 +1025,19 @@ CW = function(layers){
 
 
     ##Dioxin
-      ## TO DO...
+          cw_con_dioxin_status   = SelectLayersData(layers, layers='cw_con_dioxin_status') %>%
+            dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+            mutate(dimension = as.character(dimension))
+
+          cw_con_dioxin_trend  = SelectLayersData(layers, layers='cw_con_dioxin_trend') %>%
+            dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+            mutate(dimension = as.character(dimension))
+
+          ##Join dioxin
+          cw_con_dioxin = full_join(cw_con_dioxin_status,cw_con_dioxin_trend, by = c('rgn_id','dimension','score')) %>%
+            dplyr::rename(region_id = rgn_id)%>%
+            mutate(indicator = "dioxin")
+
 
     ##PFOS
       ## TO DO...
@@ -1054,16 +1047,16 @@ CW = function(layers){
 
 
     ##Join all indicators
-        #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
+        cw_con = bind_rows(cw_con_ices6, cw_con_dioxin)  #, cw_con_pfos)
 
-        cw_con = cw_con_ices6
+
 
       ## Average CON indicators for Status and Trend
 
       cw_con = cw_con %>%
               select(-indicator) %>%
               group_by(region_id,dimension)%>%
-              summarise(score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
+              summarise(score = mean_NAall(score))%>% ## If there is an NA, skip over now, if all are NA, NA not NaN returned
               ungroup() %>%
               mutate(subcom = 'CON')%>%
               arrange(dimension,region_id)
@@ -1082,7 +1075,7 @@ CW = function(layers){
                arrange(dimension,region_id)%>%
                group_by(region_id,dimension) %>%
                mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
-                                    mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
+                                    mean_NAall(score)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
                ungroup()%>%
                distinct()%>%
                mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals

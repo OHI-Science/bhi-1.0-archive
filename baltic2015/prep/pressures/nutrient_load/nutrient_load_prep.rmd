@@ -116,9 +116,10 @@ mai = mai %>%
              variable = as.character(variable))
 
 ## Read in lookup table for basins to bhi_regions
-basin_lookup = read.csv(file.path(dir_nutprep, 'baltic_rgns_to_bhi_rgns_lookup_holas_load_basins.csv'))
+basin_lookup = read.csv(file.path(dir_nutprep, 'bhi_basin_country_lookup_load_basins.csv'), sep=";", stringsAsFactors = FALSE)
 basin_lookup = basin_lookup %>% 
-               select(rgn_id, cntry_name, basin_name_holas,basin_name_loads)%>%
+               select(rgn_id=BHI_ID, cntry_name=rgn_nam,
+                      basin_name_holas=Subbasin,basin_name_loads)%>%
                mutate(cntry_name = as.character(cntry_name),
                       basin_name_holas = as.character(basin_name_holas),
                       basin_name_loads= as.character(basin_name_loads))

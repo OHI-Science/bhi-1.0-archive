@@ -1155,7 +1155,7 @@ basin_summary = summer %>% group_by(basin_name,year,month)%>%
 basin_summary
 ```
 
-    ## Source: local data frame [645 x 4]
+    ## Source: local data frame [631 x 4]
     ## Groups: basin_name, year [?]
     ## 
     ##    basin_name  year month loc_count
@@ -1197,14 +1197,14 @@ head(mean_months)
 
     ## Source: local data frame [6 x 4]
     ## 
-    ##    year month     basin_name mean_secchi
-    ##   <int> <int>         <fctr>       <dbl>
-    ## 1  2000     6      Aland Sea         5.5
-    ## 2  2000     6   Arkona Basin         7.8
-    ## 3  2000     6 Bornholm Basin         6.8
-    ## 4  2000     6    Bothian Sea         2.2
-    ## 5  2000     6   Bothnian Bay         5.4
-    ## 6  2000     6   Bothnian Sea         6.8
+    ##    year month            basin_name mean_secchi
+    ##   <int> <int>                <fctr>       <dbl>
+    ## 1  2000     6             Aland Sea         5.5
+    ## 2  2000     6          Arkona Basin         7.8
+    ## 3  2000     6        Bornholm Basin         6.8
+    ## 4  2000     6          Bothnian Bay         5.4
+    ## 5  2000     6          Bothnian Sea         5.3
+    ## 6  2000     6 Eastern Gotland Basin         7.9
 
 ### 3.9.2 Plot mean monthly value by basin
 
@@ -1271,8 +1271,8 @@ head(secchi_target)
     ## 2  2000       Arkona Basin         8.0           7.2
     ## 3  2000 Bay of Mecklenburg         6.7           7.1
     ## 4  2000     Bornholm Basin         7.0           7.1
-    ## 5  2000        Bothian Sea         1.3            NA
-    ## 6  2000       Bothnian Bay         2.5           5.8
+    ## 5  2000       Bothnian Bay         2.5           5.8
+    ## 6  2000       Bothnian Sea         2.8           6.8
 
 ``` r
 ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
@@ -1319,7 +1319,7 @@ last_year = secchi_target%>%
             print(n=15)
 ```
 
-    ## Source: local data frame [17 x 2]
+    ## Source: local data frame [16 x 2]
     ## 
     ##                basin_name last_year
     ##                     <chr>     <int>
@@ -1327,17 +1327,17 @@ last_year = secchi_target%>%
     ## 2            Arkona Basin      2013
     ## 3      Bay of Mecklenburg      2013
     ## 4          Bornholm Basin      2013
-    ## 5             Bothian Sea      2011
-    ## 6            Bothnian Bay      2013
-    ## 7            Bothnian Sea      2013
-    ## 8   Eastern Gotland Basin      2013
-    ## 9            Gdansk Basin      2013
-    ## 10             Great Belt      2009
-    ## 11        Gulf of Finland      2012
-    ## 12           Gulf of Riga      2012
-    ## 13               Kattegat      2013
-    ## 14               Kiel Bay      2013
-    ## 15 Northern Baltic Proper      2013
+    ## 5            Bothnian Bay      2013
+    ## 6            Bothnian Sea      2013
+    ## 7   Eastern Gotland Basin      2013
+    ## 8            Gdansk Basin      2013
+    ## 9              Great Belt      2009
+    ## 10        Gulf of Finland      2012
+    ## 11           Gulf of Riga      2012
+    ## 12               Kattegat      2013
+    ## 13               Kiel Bay      2013
+    ## 14 Northern Baltic Proper      2013
+    ## 15              The Quark      2012
     ## ..                    ...       ...
 
 ``` r
@@ -1345,16 +1345,15 @@ last_year = secchi_target%>%
 last_year %>% filter(last_year < 2013)
 ```
 
-    ## Source: local data frame [6 x 2]
+    ## Source: local data frame [5 x 2]
     ## 
     ##        basin_name last_year
     ##             <chr>     <int>
     ## 1       Aland Sea      2012
-    ## 2     Bothian Sea      2011
-    ## 3      Great Belt      2009
-    ## 4 Gulf of Finland      2012
-    ## 5    Gulf of Riga      2012
-    ## 6       The Quark      2012
+    ## 2      Great Belt      2009
+    ## 3 Gulf of Finland      2012
+    ## 4    Gulf of Riga      2012
+    ## 5       The Quark      2012
 
 ### 4.3 Calculate status
 
@@ -1376,7 +1375,7 @@ Status must be calculated in data prep because calculation for a basin and then 
   secchi_target
 ```
 
-    ## Source: local data frame [226 x 4]
+    ## Source: local data frame [214 x 4]
     ## 
     ##     year            basin_name mean_secchi target_secchi
     ##    <int>                 <chr>       <dbl>         <dbl>
@@ -1384,12 +1383,12 @@ Status must be calculated in data prep because calculation for a basin and then 
     ## 2   2000          Arkona Basin         8.0           7.2
     ## 3   2000    Bay of Mecklenburg         6.7           7.1
     ## 4   2000        Bornholm Basin         7.0           7.1
-    ## 5   2000           Bothian Sea         1.3            NA
-    ## 6   2000          Bothnian Bay         2.5           5.8
-    ## 7   2000          Bothnian Sea         6.8           6.8
-    ## 8   2000 Eastern Gotland Basin         6.6           7.6
-    ## 9   2000          Gdansk Basin         6.7           6.5
-    ## 10  2000            Great Belt         6.9           8.5
+    ## 5   2000          Bothnian Bay         2.5           5.8
+    ## 6   2000          Bothnian Sea         2.8           6.8
+    ## 7   2000 Eastern Gotland Basin         6.6           7.6
+    ## 8   2000          Gdansk Basin         6.7           6.5
+    ## 9   2000            Great Belt         6.9           8.5
+    ## 10  2000       Gulf of Finland         4.8           5.5
     ## ..   ...                   ...         ...           ...
 
 ``` r
@@ -1448,8 +1447,6 @@ ggplot(basin_status) + geom_point((aes(year,status)))+
                                     hjust=.5, vjust=.5, face = "plain"))
 ```
 
-    ## Warning: Removed 12 rows containing missing values (geom_point).
-
 ![](secchi_prep_files/figure-markdown_github/plot%20basin%20status-1.png)
 
 ### 4.5 Plot BHI region status and trend values
@@ -1464,7 +1461,7 @@ ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + ge
   xlab("BHI region")
 ```
 
-    ## Warning: Removed 6 rows containing missing values (geom_point).
+    ## Warning: Removed 4 rows containing missing values (geom_point).
 
 ![](secchi_prep_files/figure-markdown_github/bhi%20status%20and%20trend%20plot-1.png)
 

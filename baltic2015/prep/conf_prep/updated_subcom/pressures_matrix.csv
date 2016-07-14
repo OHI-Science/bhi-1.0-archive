@@ -1,0 +1,14 @@
+goal,element,element_name,sp_invasives,cc_sal_surf,cc_sal_deep,cc_sst,fp_over_harvest,hab_anoxia,hab_illegal_oil,hab_coastal_pop,hab_bottom_trawl,po_nload,po_atmos_pcb153,po_atmos_pcddf,po_pload,po_inverse_secchi,po_trash,ss_wgi
+AO,,,,2,,2,3,,,2,,2,2,2,2,,2,1
+CS,,,,2,2,2,,,,,,2,1,1,2,,,1
+CW,CON,,,,,,,,2,,,,3,3,,,,1
+CW,NUT,,,,,, ,3,,,,3,,,3,,,1
+CW,TRA,,,,,,,,,,,,,,,,3,1
+ECO,,,,,,,2,,,,,,,,,,1,1
+FIS,,,,2,2,2,3,2,2,,,2,2,2,2,,2,1
+ICO,,,2,2,2,2,2,?,2,2,,,2,2,,,,1
+LIV,,,,,,,2,,,,,,,,,,2,1
+LSP,,,,,,,,,2,,,,,,,2,2,1
+MAR,,,,2,2,2,,,1,,,1,2,2,1,,,1
+BD,,,2,2,2,2,2,2,,2,3,3,2,2,3,,2,
+TR,,,,,,2,,,,,,,,,,2,3,
