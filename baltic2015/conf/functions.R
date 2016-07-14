@@ -958,10 +958,24 @@ CW = function(layers){
           ## only have 1 status point for CON, TRA (therefore can not take a CW status as geometric mean with many points over time)
           ## Calculate geometric mean of 1 status for current status
           ## calculate arithmetic mean of NUT and CON trend for the CW trend (because have 0, NA, and neg. values in trend, cannot use geometric mean)
+  ## UPDATE 14 JULY 2016 - Jennifer Griffiths
+          ## CON dioxin indicator added
+          ## function mean_NAall added so that NA not NaN produced from arithmetic mean of a vector of NA
+
 
   ##TODO
       ## add other CON components
 
+
+
+  ## Function to deal with cases where want to take the arithmetic mean of a vector of NA values, will return NA instead of NaN
+
+  mean_NAall = function(x){
+
+    if(sum(is.na(x))==length(x)){mean_val = NA
+    }else{mean_val =mean(x,na.rm=TRUE) }
+    return(mean_val)
+  }
 
   #################################
   #####----------------------######
@@ -1044,7 +1058,17 @@ CW = function(layers){
 
 
     ##Dioxin
-      ## TO DO...
+          cw_con_dioxin_status   = SelectLayersData(layers, layers='cw_con_dioxin_status') %>%
+            dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+          cw_con_dioxin_trend  = SelectLayersData(layers, layers='cw_con_dioxin_trend') %>%
+            dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+          ##Join dioxin
+          cw_con_dioxin = full_join(cw_con_dioxin_status,cw_con_dioxin_trend, by = c('rgn_id','dimension','score')) %>%
+            dplyr::rename(region_id = rgn_id)%>%
+            mutate(indicator = "dioxin")
+
 
     ##PFOS
       ## TO DO...
@@ -1054,16 +1078,16 @@ CW = function(layers){
 
 
     ##Join all indicators
-        #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
+        cw_con = bind_rows(cw_con_ices6, cw_con_dioxin)  #, cw_con_pfos)
 
-        cw_con = cw_con_ices6
+
 
       ## Average CON indicators for Status and Trend
 
       cw_con = cw_con %>%
               select(-indicator) %>%
               group_by(region_id,dimension)%>%
-              summarise(score = mean(score, na.rm =TRUE))%>% ## If there is an NA, skip over now
+              summarise(score = mean_NAall(score))%>% ## If there is an NA, skip over now, if all are NA, NA not NaN returned
               ungroup() %>%
               mutate(subcom = 'CON')%>%
               arrange(dimension,region_id)
@@ -1082,7 +1106,7 @@ CW = function(layers){
                arrange(dimension,region_id)%>%
                group_by(region_id,dimension) %>%
                mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
-                                    mean(score,na.rm=TRUE)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
+                                    mean_NAall(score)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
                ungroup()%>%
                distinct()%>%
                mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
