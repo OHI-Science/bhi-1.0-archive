@@ -649,8 +649,93 @@ TO DO..........Ning can you calculate status as described in Section 3.1.3
 2. Plot status components separately by country  
 2. Plot status by country  
 
+``` {r status calcuation alternative 3}
+
+mgmt_weight_3 = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
+                          weight = c(0, 0.6, 1, 1) )
+                          
+mpa_mgmt_with_wt_2 = full_join( mgmt_weight, mpa_mgmt, 
+                              by = 'mgmt_status') 
+
+### the reference point: 10% total eez per country - the same eez_data as in alternative 1 (4.1)
+  
+### calculating cumulative mpa_area*weight, per country per year:
+### cumulative_sum (weight * mpa_area_km2)
+
+cum_mpa_area_wt_3 = mpa_mgmt_with_wt_2 %>%
+                 dplyr::select(BSPA_ID, BHI_ID, weight, country, mpa_area_km2, year = date_est) %>%
+                 filter(!is.na(year), 
+                        !duplicated(BSPA_ID)) %>% # the same MPA could exist in different BHI_IDs 
+                 group_by(country, year) %>%
+                 dplyr::summarize(sum_mpa_wt = sum(mpa_area_km2*weight)) %>%
+                 arrange(year) %>%
+                 mutate(cum_mpa_wt = cumsum(sum_mpa_wt)) %>%
+                 ungroup()
+
+### caculating status per country per year: 
+### cumulative_sum (weight * mpa_area_km2) / ref_point
+
+status_per_year_by_country_3 = full_join(cum_mpa_area_wt_3, eez_data, by = 'country') %>% 
+  group_by(country, year) %>%
+  summarize(status = round(max( -1, min(1, cum_mpa_wt/ref_eez_km2)) * 100, 1)) %>%
+  ungroup() %>%
+  arrange(country, year)
+
+## Calculate: Xlsp_country_mpa_area_score = pmin(1,MPA_area_country / area_10percent_eez_country)
+ 
+Xlsp_country_mpa_area_score = mpa_mgmt_with_wt %>%
+   dplyr::select(BSPA_ID, BHI_ID, country, mpa_area_km2, year = date_est) %>%
+   filter(!is.na(year), 
+          !duplicated(BSPA_ID)) %>% 
+   group_by(country, year) %>%
+   dplyr::summarize(sum_mpa = sum(mpa_area_km2)) %>%
+   arrange(year) %>%
+   mutate(cum_mpa = cumsum(sum_mpa)) %>%  # calculate cumulative mpa area per year in each country
+   ungroup() %>% 
+   full_join(eez_data, # join with eez area data
+            by = 'country') %>%
+   mutate(country_mpa_area_score = pmin(1, cum_mpa/ref_eez_km2 ))
+
+# Calculate: Xlsp_country_status = geometric_mean (Xlsp_country_mpa_area_score + Xlsp_country_mpa_management_score)
+# Xlsp_country_mpa_management_score -> the same as status in status_per_year_by_country in alternative 1 (4.1)
+
+##install.packages('psych')
+library(psych)
+
+Xlsp_country_status =  Xlsp_country_mpa_area_score %>%
+  dplyr::select(country, 
+                year,
+                country_mpa_area_score) %>%
+  full_join(status_per_year_by_country_3, 
+            by = c('country', 'year')) %>%
+  rename(mpa_mgmt_score = status) %>%
+  mutate(status = round((country_mpa_area_score * (mpa_mgmt_score/100))^(1/2) * 100, 1)) %>%
+  group_by(country) %>%
+  filter(year == max(year))
+
+write_csv(Xlsp_country_status, file.path(dir_lsp, 'lsp_status_by_country_year_alt_3.csv'))
+```
+
+#### 4.3.2 Plot status by country
+
+```{r plot status by country 3, ECHO = FALSE, message = FALSE}
+
+status_by_country_plot_3 <- ggplot(Xlsp_country_status , aes(x = country, y = status)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'LSP status by country - Alternative 3',
+      x = 'Country', 
+      y = 'LSP status')
+
+print(status_by_country_plot_3)
+
+```
+
+
+
 ### 4.4 Compartive plot of Status Calculation Alternatives
 TO DO ..............Ning can you plot the three alternative status scores together for each country  
+
 
 
 ## 5.  Trend calculation
