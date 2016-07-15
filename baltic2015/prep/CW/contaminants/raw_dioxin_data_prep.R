@@ -2,7 +2,7 @@
 ## FILE:  raw_dioxin_data_prep.r
 ##----------------------------------------##
 
-## This file is to prep raw PCB data from ICES and IVL so there will be consistent data for the database at level 1
+## This file is to prep raw dioxin data from ICES so there will be consistent data for the database at level 1
 
 ##----------------------------------------##
 ## LIBRARIES
