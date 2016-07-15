@@ -913,21 +913,104 @@ SP = function(scores){
 }
 
 
-CW = function(layers){
+NUT = function(layers){
+  #####----------------------######
+  ## NUT Status - Secchi data
+  #####----------------------######
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
-  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep, TRA status included
-  ## UPDATE 15June 2016 - Jennifer Griffiths - update CW status and trend calculation for CW
-          ## only have 1 status point for CON, TRA (therefore can not take a CW status as geometric mean with many points over time)
-          ## Calculate geometric mean of 1 status for current status
-          ## calculate arithmetic mean of NUT and CON trend for the CW trend (because have 0, NA, and neg. values in trend, cannot use geometric mean)
-  ## UPDATE 14 JULY 2016 - Jennifer Griffiths
-          ## CON dioxin indicator added
-          ## function mean_NAall added so that NA not NaN produced from arithmetic mean of a vector of NA
+
+  ## NUT status and trend calculated in prep file because calculated for HOLAS basins
+  ## Basin status and trend are then assigned to BHI regions
+  ## Status is calculated for more recent year (prior to 2014). This is 2013 for most regions
+  ## but not for all (some 2012,2011)
+  ## Trend is calculated over a 10 year period with a minimum of 5 years of data
+  ## expect slow response time in secchi observation so use longer time window for trend
+
+  ## Read in from csv to test
+  #cw_nu_status= read.csv('~github/bhi/baltic2015/layers/cw_nu_status_bhi2015.csv')
+  #cw_nu_trend= read.csv('~github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
 
 
+  cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+  cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+
+  # rbind NUT status and trend to one dataframe
+  scores = cw_nu_status %>%
+    rbind(cw_nu_trend) %>%
+    mutate(goal = 'NUT') %>%
+    dplyr::select(goal,
+                  dimension,
+                  region_id = rgn_id,
+                  score) %>%
+    arrange(dimension,region_id)
+
+  return(scores)
+  #####----------------------######
+
+}
+
+TRA = function(layers){
+  #####----------------------######
+  ## Trash
+  #####----------------------######
+
+  ## UDPATE 11May2016 - Jennifer Griffiths - TRA status included
+
+  ## TO DO
+  ## Solve how to deal with no TRA trend for TRA future status and for overall CW trend
+
+  ## Status calcuated in prep file
+  ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
+
+  ## Read in csv to test
+  #cw_tra_score = read.csv('~github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
+
+  cw_tra_score = SelectLayersData(layers, layers='po_trash') %>%
+    dplyr::select(rgn_id = id_num, score = val_num)
+
+  cw_tra_status = cw_tra_score %>%
+    mutate(score = round((1 - score)*100)) ## status is 1 - pressure, status is 0-100
+
+  ## no TRA trend
+  ## this is a problem - need to solve. 7 July 2016
+  ##If is NA, no future status is calculated. If is zero, is problematic for overal CW trend.
+
+
+  ## create scores variable
+  scores = cw_tra_status %>%
+    mutate(dimension= "status",
+           goal = 'TRA') %>%
+    dplyr::select(goal,
+                  dimension,
+                  region_id = rgn_id,
+                  score) %>%
+    arrange(dimension,region_id)
+
+  #debug JSL, temporary
+  # scores = scores %>%
+  #   rbind(cw_tra_status %>%
+  #   mutate(dimension= "status",
+  #          goal = 'TRA') %>%
+  #   dplyr::select(goal,
+  #                 dimension,
+  #                 region_id = rgn_id,
+  #                 score) %>%
+  #   arrange(dimension,region_id))
+
+  return(scores)
+}
+
+CON = function(layers){
+  #####----------------------######
+  ## Contaminants
+  #####----------------------######
+  ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep,
   ##TODO
-      ## add other CON components
-
+  ## add other CON components
 
 
   ## Function to deal with cases where want to take the arithmetic mean of a vector of NA values, will return NA instead of NaN
@@ -939,155 +1022,138 @@ CW = function(layers){
     return(mean_val)
   }
 
-  #################################
-  #####----------------------######
-  ## NUT Status - Secchi data
-  #####----------------------######
 
-  ## NUT status and trend calculated in prep file because calculated for HOLAS basins
-  ## Basin status and trend are then assigned to BHI regions
-  ## Status is calculated for more recent year (prior to 2014). This is 2013 for most regions
-    ## but not for all (some 2012,2011)
-  ## Trend is calculated over a 10 year period with a minimum of 5 years of data
-      ## expect slow response time in secchi observation so use longer time window for trend
+  ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
 
-    ## Read in from csv to test
-      #cw_nu_status= read.csv('~github/bhi/baltic2015/layers/cw_nu_status_bhi2015.csv')
-      #cw_nu_trend= read.csv('~github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
+  ## 3 indicators will be averaged (arithmetic mean) for status and trend (if trend for more than ICES6)
 
+  ## ICES6
+  ## read in csv to test
+  #cw_con_ices6_status= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
+  #cw_con_ices6_trend= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
 
-   cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
-                  mutate(dimension = as.character(dimension))
+  cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
 
-    cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-      mutate(dimension = as.character(dimension))
+  cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+
+  ##Join ICES6
+  cw_con_ices6 = cw_con_ices6_status %>%
+    rbind(cw_con_ices6_trend) %>%
+    mutate(indicator = "ices6")
 
 
-    # join NUT status and trend to one dataframe
-    cw_nu = full_join(cw_nu_status, cw_nu_trend, by = c('rgn_id','dimension','score')) %>%
-            dplyr::rename(region_id = rgn_id) %>%
-            mutate(subcom = 'NUT') %>%  ##Label subcompoent with nut so can average later
-            arrange(dimension,region_id)
-    #####----------------------######
+  ##Dioxin
+  ## TO DO...
 
-  #################################
-  #####----------------------######
-  ## Trash
-  #####----------------------######
-    ## Status calcuated in prep file
-    ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
-
-    ## Read in csv to test
-       #cw_tra_score = read.csv('~github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
-
-    cw_tra_score = SelectLayersData(layers, layers='po_trash') %>%
-      dplyr::select(rgn_id = id_num, score = val_num)
-
-    cw_tra_status = cw_tra_score %>%
-                    mutate(score = round((1 - score)*100)) ## status is 1 - pressure, status is 0-100
-
-    ## no TRA trend
-
-    cw_tra = cw_tra_status %>%
-            dplyr::rename(region_id = rgn_id) %>%
-            mutate(dimension= "status",
-                   subcom = 'TRA') %>%  ##Label subcompoent with TRA so can average later
-            arrange(dimension,region_id)%>%
-            mutate(dimension = as.character(dimension))
-
-  #################################
-  #####----------------------######
-  ## Contaminents
-  #####----------------------######
-    ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
-
-    ## 3 indicators will be averaged (arithmetic mean) for status and trend (if trend for more than ICES6)
-
-    ## ICES6
-    ## read in csv to test
-      #cw_con_ices6_status= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_status_bhi2015.csv')
-      #cw_con_ices6_trend= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
-
-    cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
-      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-      mutate(dimension = as.character(dimension))
-
-    cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
-      dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-      mutate(dimension = as.character(dimension))
-
-       ##Join ICES6
-          cw_con_ices6 = full_join(cw_con_ices6_status,cw_con_ices6_trend, by = c('rgn_id','dimension','score')) %>%
-                         dplyr::rename(region_id = rgn_id)%>%
-                         mutate(indicator = "ices6")
+  ##PFOS
+  ## TO DO...
 
 
-    ##Dioxin
-          cw_con_dioxin_status   = SelectLayersData(layers, layers='cw_con_dioxin_status') %>%
-            dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-            mutate(dimension = as.character(dimension))
-
-          cw_con_dioxin_trend  = SelectLayersData(layers, layers='cw_con_dioxin_trend') %>%
-            dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-            mutate(dimension = as.character(dimension))
-
-          ##Join dioxin
-          cw_con_dioxin = full_join(cw_con_dioxin_status,cw_con_dioxin_trend, by = c('rgn_id','dimension','score')) %>%
-            dplyr::rename(region_id = rgn_id)%>%
-            mutate(indicator = "dioxin")
+  ## TODO.....DECIDE IF KEEP NA or TRANSFORM TO ZERO
 
 
-    ##PFOS
-      ## TO DO...
+  ##Join all indicators
+  #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
+  cw_con = cw_con_ices6 # temporary
 
 
-    ## TODO.....DECIDE IF KEEP NA or TRANSFORM TO ZERO
+  ## Average CON indicators for Status and Trend
+
+  # will likely involve:
+  # cw_con = cw_con %>%
+  #   select(-indicator) %>%
+  #   group_by(region_id,dimension)%>%
+  #   summarise(score =mean_NAall(score))%>% ## If there is an NA, skip over; if all values are NA, return NA,not NaN
+  #   ungroup()
 
 
-    ##Join all indicators
-        cw_con = bind_rows(cw_con_ices6, cw_con_dioxin)  #, cw_con_pfos)
+  ## create scores variable
+  scores = cw_con %>%
+    mutate(goal = 'CON') %>%
+    dplyr::select(goal,
+                  dimension,
+                  region_id = rgn_id,
+                  score) %>%
+    arrange(dimension,region_id)
 
+  #debug JSL, temporary
+  # scores = scores %>%
+  #   rbind(cw_con %>%
+  #   mutate(goal = 'CON') %>%
+  #   dplyr::select(goal,
+  #                 dimension,
+  #                 region_id = rgn_id,
+  #                 score) %>%
+  #   arrange(dimension,region_id))
 
+  return(scores)
 
-      ## Average CON indicators for Status and Trend
+}
 
-      cw_con = cw_con %>%
-              select(-indicator) %>%
-              group_by(region_id,dimension)%>%
-              summarise(score = mean_NAall(score))%>% ## If there is an NA, skip over now, if all are NA, NA not NaN returned
-              ungroup() %>%
-              mutate(subcom = 'CON')%>%
-              arrange(dimension,region_id)
-
-
+CW = function(scores){
   #####----------------------######
   ## CW status & CW Trend
 
-      ## Status is the geometric mean of NUT, CON, TRA status for most recent year
-      ## Trend is the geometric mean of NUT, CON trend - consequences is if one trend value is 0, geometric mean is zero
-
-      ##
-      scores = full_join(cw_nu, cw_con, by= c("region_id", "dimension", "score", "subcom"))%>%
-               full_join(.,cw_tra, by= c("region_id", "dimension", "score", "subcom")) %>%
-               select(-subcom)%>%
-               arrange(dimension,region_id)%>%
-               group_by(region_id,dimension) %>%
-               mutate(score = ifelse(dimension == "status",exp(mean(log(score),na.rm=TRUE)),
-                                    mean_NAall(score)))%>%## Geometric mean for status (if there is an NA, ignore); arithmetic mean for trend, ignore NA
-               ungroup()%>%
-               distinct()%>%
-               mutate(score = ifelse(dimension=="status", round(score),round(score,2))) ## round score for status with no decimals, score for trend 2 decimals
+  ## UPDATE 15June 2016 - Jennifer Griffiths - update CW status and trend calculation for CW
+  ## only have 1 status point for CON, TRA (therefore can not take a CW status as geometric mean with many points over time)
+  ## Calculate geometric mean of 1 status for current status
+  ## calculate arithmetic mean of NUT and CON trend for the CW trend (because have 0, NA, and neg. values in trend, cannot use geometric mean)
 
 
+  ## Status is the geometric mean of NUT, CON, TRA status for most recent year
+  ## trend in the arithmetic mean of NUT, CON, TRA trend because can not deal with 0 values in geometric mean
 
-      # return scores
-        scores = scores %>%
-                  mutate(goal   = 'CW')
+  ### function to calculate geometric mean:
+  geometric.mean2 <- function (x, na.rm = TRUE) {
+    if (is.null(nrow(x))) {
+      exp(mean(log(x), na.rm = TRUE))
+    }
+    else {
+      exp(apply(log(x), 2, mean, na.rm = na.rm))
+    }
+  }
 
-      return(scores)
+  ## Function to deal with cases where want to take the arithmetic mean of a vector of NA values, will return NA instead of NaN
+  mean_NAall = function(x){
+
+    if(sum(is.na(x))==length(x)){mean_val = NA
+    }else{mean_val =mean(x,na.rm=TRUE) }
+    return(mean_val)
+  }
+
+  ## subset CW subgoals
+  scores_cw <- scores %>%
+    filter(goal %in% c('NUT', 'TRA', 'CON')) %>%
+    arrange(dimension,region_id)
+
+  ## Calculate geometric mean for status, arithmetic mean for trend (ignore NAs)
+  ## NOTE to @jennifergriffiths: there are still several 'NaN's, perhaps because of TRA?
+  ## 7 July 2016 - Think have fixed the NaN problem with the function mean_NAall()
+  ## also, rounding score doesn't seem to work here; ends up with .00 precision. maybe round later?
+  s <- rbind(
+    scores_cw %>%
+      filter(dimension %in% 'status') %>%
+      group_by(region_id) %>%
+      summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
+      ungroup() %>%
+      mutate(dimension = 'status'),
+    scores_cw %>%
+      filter(dimension %in% 'trend') %>%
+      group_by(region_id) %>%
+      summarize(score = round(mean_NAall(score),2)) %>% # round trend to 2 decimals #if all values are NA, NA not NaN returned; if only some values are NA, exclude
+      ungroup() %>%
+      mutate(dimension = 'trend')) %>%
+    arrange(region_id) %>%
+    mutate(goal = "CW") %>%
+    select(region_id, goal, dimension, score) %>%
+    data.frame()
+
+  ## return all scores
+  return(rbind(scores, s))
 }
+
 
 
 BD = function(layers){
