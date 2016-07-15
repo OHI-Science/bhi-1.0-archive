@@ -1011,6 +1011,9 @@ CON = function(layers){
   ## UDPATE 11May2016 - Jennifer Griffiths - CON ICES6 added from contaminants_prep,
   ##TODO
   ## add other CON components
+  ## UPDATE 14 JULY 2016 - Jennifer Griffiths
+  ## CON dioxin indicator added
+  ## function mean_NAall added so that NA not NaN produced from arithmetic mean of a vector of NA
 
 
   ## Function to deal with cases where want to take the arithmetic mean of a vector of NA values, will return NA instead of NaN
@@ -1043,9 +1046,19 @@ CON = function(layers){
     rbind(cw_con_ices6_trend) %>%
     mutate(indicator = "ices6")
 
-
   ##Dioxin
-  ## TO DO...
+  cw_con_dioxin_status   = SelectLayersData(layers, layers='cw_con_dioxin_status') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+    mutate(dimension = as.character(dimension))
+
+  cw_con_dioxin_trend  = SelectLayersData(layers, layers='cw_con_dioxin_trend') %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+    mutate(dimension = as.character(dimension))
+
+  ##Join dioxin
+  cw_con_dioxin = full_join(cw_con_dioxin_status,cw_con_dioxin_trend, by = c('rgn_id','dimension','score')) %>%
+    dplyr::rename(region_id = rgn_id)%>%
+    mutate(indicator = "dioxin")
 
   ##PFOS
   ## TO DO...
@@ -1055,8 +1068,7 @@ CON = function(layers){
 
 
   ##Join all indicators
-  #cw_con = full_join(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
-  cw_con = cw_con_ices6 # temporary
+  cw_con = bind_rows(cw_con_ices6, cw_con_dioxin)  #, cw_con_pfos)
 
 
   ## Average CON indicators for Status and Trend
