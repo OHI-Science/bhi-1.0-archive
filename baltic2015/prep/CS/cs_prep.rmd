@@ -10,49 +10,6 @@ params:
 
 # Carbon Storage (CS) Data prep
 
-```{r setup}
-
-## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-library(stringr) # install.packages("stringr")
-
-# source
-source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-
-dir_cs   = file.path(dir_prep, 'CS')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_cs, 'cs_prep.rmd') 
-```
-
 ## 1. Background on Zostera data
 
 ### 1.1 Why Zostera data
@@ -90,13 +47,50 @@ This is based upon ["During the last 50 years the distribution of the Zostera ma
 
 
 ### 3.2 Trend
-Consider using the trend of NUT subcomponent for CW goal (e.g. secchi status trend).  
+Use the trend of NUT subcomponent for CW goal (e.g. secchi status trend).  
+
+Read the file in from 'layers' and resave as the CS trend for layers.  
 
 
 
-## Layer prep
+## 4. Layer prep
 
-```{r TODO, echo=FALSE, message=FALSE}
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+library(stringr) # install.packages("stringr")
+
+# source
+source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+
+dir_cs   = file.path(dir_prep, 'CS')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_cs, 'cs_prep.rmd') 
+```
+
+
+### 4.1 Read in data
+```{r read in data}
 
 ## directory setup
 
@@ -114,6 +108,11 @@ dir_shp <- file.path(dir_M, 'git-annex/Baltic')
 cs_data <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bostera_meadows')),
                           layer = 'Zostera meadows')  
 
+
+```
+
+### 4.2 Explore and plot data
+```{r explore data}
 # explore data
 plot(cs_data, col = cs_data@data$coverage )
 
@@ -130,6 +129,12 @@ plot(bhi_transform, col = 'light blue', border = "grey", main = "BHI regions and
 
 # system.time({cs_bhi_intersect <- raster::intersect(cs_data, bhi_transform)})
 
+
+```
+
+### 4.3  Intersect the BHI shapefiles and zostera data
+
+```{r intersect and save csv}
 cs_bhi_intersect = sp::over(cs_data, bhi_transform)
 head(cs_bhi_intersect)
 plot(cs_bhi_intersect)
@@ -140,5 +145,5 @@ cs_bhi_data = cbind(cs_bhi_intersect, cs_data@data) %>%
   
 # save data as csv
 # write_csv(cs_bhi_data, file.path(dir_cs, 'cs_bhi_data.csv'))
-
 ```
+
