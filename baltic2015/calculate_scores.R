@@ -21,9 +21,13 @@ write.csv(scores, 'scores.csv', na='', row.names=F)
 source('PrepSpatial.r')  # until added to ohicore
 source('PlotMap.r')      # until added to ohicore
 source('PlotMapMulti.r') # until added to ohicore
+source('PlotFlowerMulti.r') # until added to ohicore
 PlotMapMulti(scores       = scores,
              spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'), # can be .geojson or .shp
              path_figures = 'reports/figures')
+PlotFlowerMulti(scores,
+                rgns_to_plot = unique(scores$region_id),
+                rgn_names    = read.csv('layers/rgn_global_gl2014.csv'))
 
 
 ## Display app locally.
