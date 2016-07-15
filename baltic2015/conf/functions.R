@@ -1036,10 +1036,12 @@ CON = function(layers){
   #cw_con_ices6_trend= read.csv('~github/bhi/baltic2015/layers/cw_con_ices6_trend_bhi2015.csv')
 
   cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
+    mutate(dimension = as.character(dimension))
 
   cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
+    mutate(dimension = as.character(dimension))
 
   ##Join ICES6
   cw_con_ices6 = cw_con_ices6_status %>%
@@ -1073,6 +1075,17 @@ CON = function(layers){
 
   ## Average CON indicators for Status and Trend
 
+  cw_con = cw_con %>%
+    select(-indicator) %>%
+    group_by(region_id,dimension)%>%
+    summarise(score = mean_NAall(score))%>% ## If there is an NA, skip over now, if all are NA, NA not NaN returned
+    ungroup() %>%
+    mutate(subcom = 'CON')%>%
+    arrange(dimension,region_id)
+
+
+  ## Average CON indicators for Status and Trend
+
   # will likely involve:
   # cw_con = cw_con %>%
   #   select(-indicator) %>%
@@ -1086,7 +1099,7 @@ CON = function(layers){
     mutate(goal = 'CON') %>%
     dplyr::select(goal,
                   dimension,
-                  region_id = rgn_id,
+                  region_id,
                   score) %>%
     arrange(dimension,region_id)
 
