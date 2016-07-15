@@ -52,7 +52,7 @@ Data sources:
 
 
 
-- [Eurostat database lfst_r_lfe2emprt](http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=lfst_r_lfe2emprt)  ",employ_pop_bhi,number people employed,liv_regional_employ_bhi2015.csv,,,,,,rgn_id,,,year,employ_pop_bhi,,TRUE,2000,2014,4255938,1679498956,FALSE,,,,42,FALSE
+- [Eurostat database lfst_r_lfe2emprt](http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=lfst_r_lfe2emprt)  ",employ_pop_bhi,number people employed,liv_regional_employ_bhi2015.csv,,,,,,rgn_id,,,year,employ_pop_bhi,,TRUE,2000,2014,"4255,938","1679498,956",FALSE,,,,42,FALSE
 LIV,liv_national_employ,Number of people employed nationally based on national employment rates,"Employment percentage by NUTS0 region from Eurostat.
 
 
@@ -103,7 +103,7 @@ resilience,res_reg_cbd,Convention on Biodiversity,Convention on Biodiversity,res
 resilience,res_reg_cfp,"Regulation 1380/2013/EU of the European Parliament and of the Council of 11 December 2013 on the Common Fisheries Policy, amending Council Regulations (EC) No 1954/2003 and (EC) No 1224/2009 and repealing Council Regulations (EC) No 2371/2002 and (EC) No ","Regulation 1380/2013/EU of the European Parliament and of the Council of 11 December 2013 on the Common Fisheries Policy, amending Council Regulations (EC) No 1954/2003 and (EC) No 1224/2009 and repealing Council Regulations (EC) No 2371/2002 and (EC) No ",resilience_score,resilience score,res_reg_cfp_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,1,1,TRUE,,,,42,FALSE
 resilience,res_reg_cites,Convention on International Trade in Endangered Species of Wild Fauna and Flora,Convention on International Trade in Endangered Species of Wild Fauna and Flora,resilience_score,resilience score,res_reg_cites_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,"0,25",1,TRUE,,,,42,FALSE
 resilience,res_reg_cop21,Paris Climate Agreement,Paris Climate Agreement,resilience_score,resilience score,res_reg_cop21_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,"0,25","0,25",TRUE,,,,42,FALSE
-resilience,res_reg_hd,Directive 1992/43/EC of 21 May 1992 on the conservation of natural habitats and of wild fauna and flora,Directive 1992/43/EC of 21 May 1992 on the conservation of natural habitats and of wild fauna and flora,resilience_score,resilience score,res_reg_hd_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,875,875,TRUE,,,,42,FALSE
+resilience,res_reg_hd,Directive 1992/43/EC of 21 May 1992 on the conservation of natural habitats and of wild fauna and flora,Directive 1992/43/EC of 21 May 1992 on the conservation of natural habitats and of wild fauna and flora,resilience_score,resilience score,res_reg_hd_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,"0,875","0,875",TRUE,,,,42,FALSE
 resilience,res_reg_helcom,Convention on the Protection of the Marine Environment of the Baltic Sea Area 1992,Convention on the Protection of the Marine Environment of the Baltic Sea Area 1992,resilience_score,resilience score,res_reg_helcom_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,1,1,TRUE,,,,42,FALSE
 resilience,res_reg_ied,Directive 2010/75/EU of the European Parliament and of the Council of 24 November 2010 on industrial emissions (integrated pollution prevention and control),Directive 2010/75/EU of the European Parliament and of the Council of 24 November 2010 on industrial emissions (integrated pollution prevention and control),resilience_score,resilience score,res_reg_ied_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,"0,25","0,25",TRUE,,,,42,FALSE
 resilience,res_reg_msfd,Directive 2008/56/EC of the European Parliament and of the Council of 17 June 2008 establishing a framework for community action in the field of marine environmental policy,Directive 2008/56/EC of the European Parliament and of the Council of 17 June 2008 establishing a framework for community action in the field of marine environmental policy,resilience_score,resilience score,res_reg_msfd_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,"0,25","0,9444444444",TRUE,,,,42,FALSE
@@ -170,10 +170,19 @@ Data sources:
 ",georgn_id,georegion id,rgn_georegions_gl2014.csv,raster,spatial data was extracted for each region.,rgn_georegions,~/github/ohi-global/eez2014/layers/rgn_georegions.csv,global,rgn_id,,level,,georgn_id,,TRUE,,,1,154,FALSE,,,,42,FALSE
 spatial,rgn_global,"regions used in global analysis for Nature 2012, subset of regions_labels by type=eez and not deleted or disputed ","Regions used in global analysis for Nature 2012, subset of regions_labels by type=eez and not deleted or disputed. ",label,label,rgn_global_gl2014.csv,raster,spatial data was extracted for each region.,rgn_global,~/github/ohi-global/eez2014/layers/rgn_global.csv,global,rgn_id,,,,,label,TRUE,,,,,FALSE,,,,42,
 spatial,rgn_labels,"regions by type (eez, subocean, unclaimed) and label","Ocean Health Index regions by type (eez, subocean, unclaimed) and label",label,label,rgn_labels.csv,raster,spatial data was extracted for each region.,rgn_labels,~/github/ohi-global/eez2014/layers/rgn_labels.csv,global,rgn_id,,type,,,label,TRUE,,,,,FALSE,,,,42,
-pressures,hab_anoxia,proxy_layer,,pressure_score,pressure score,hab_anoxia_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,,,,,,,,,,,
-pressures,hab_illegal_oil,proxy_layer,,pressure_score,pressure score,hab_illegal_oil_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,,,,,,,,,,,
-pressures,hab_coastal_pop,proxy_layer,,pressure_score,pressure score,hab_coastal_pop_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,,,,,,,,,,,
-pressures,hab_bottom_trawl,proxy_layer,,pressure_score,pressure score,hab_bottom_trawl_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,,,,,,,,,,,
-pressures,fp_over_harvest,proxy_layer,,pressure_score,pressure score,fp_over_harvest_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,,,,,,,,,,,
-pressures,sp_invasives,proxy_layer,,pressure_score,pressure score,sp_invasives_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,,,,,,,,,,,
-resilience,res_biodiversity,proxy_layer,,resilience_score,resilience score,res_biodiversity_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,,,,,,,,,,,
+pressures,hab_anoxia,proxy_layer,,pressure_score,pressure score,hab_anoxia_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,TRUE,,,0,0,TRUE,,,,42,FALSE
+pressures,hab_illegal_oil,proxy_layer,,pressure_score,pressure score,hab_illegal_oil_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,TRUE,,,0,0,TRUE,,,,42,FALSE
+pressures,hab_coastal_pop,proxy_layer,,pressure_score,pressure score,hab_coastal_pop_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,TRUE,,,0,0,TRUE,,,,42,FALSE
+pressures,hab_bottom_trawl,proxy_layer,,pressure_score,pressure score,hab_bottom_trawl_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,TRUE,,,0,0,TRUE,,,,42,FALSE
+pressures,fp_over_harvest,proxy_layer,,pressure_score,pressure score,fp_over_harvest_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,TRUE,,,0,0,TRUE,,,,42,FALSE
+pressures,sp_invasives,proxy_layer,,pressure_score,pressure score,sp_invasives_bhi2015.csv,,,,,,rgn_id,,,,pressure_score,,TRUE,,,0,0,TRUE,,,,42,FALSE
+resilience,res_biodiversity,proxy_layer,,resilience_score,resilience score,res_biodiversity_bhi2015.csv,,,,,,rgn_id,,,,resilience_score,,TRUE,,,0,0,TRUE,,,,42,FALSE
+FP,fp_wildcaught_weight,Fisheries weighting factor,"Proportion of wild caught fisheries yield to mariculture yield, based on FAO fisheries statistics.
+
+
+
+Data sources:
+
+
+
+- [FAO fisheries statistics](http://www.fao.org/fishery/statistics/global-capture-production/en)",w_fis,value,fp_wildcaught_weight_gl2014.csv,equal,global weights were applied equally to all regions. ,fp_wildcaught_weight,~/github/ohi-global/eez2014/layers/fp_wildcaught_weight.csv,global,rgn_id,,,,w_fis,,TRUE,,,"0,345668",1,TRUE,,,,42,FALSE
