@@ -25,7 +25,7 @@ dir_con    = file.path(dir_prep, 'CW/contaminants')
 
 
 ##-------------------------------------------##
-## Extract ICES pcb herring data from database
+## Extract CON data from database
 
 
 ## library(RMySQL) # required
@@ -55,6 +55,9 @@ ices_herring_dioxin <-fetch(t,n=-1)
 head(ices_herring_dioxin)
 tail(ices_herring_dixon)
 
+
+## Fetch ICES herring pfos data
+## these data are not yet in the database, added to contaminants_data_database manually on 15 JULY 2016
 
 
 dbDisconnect(con) # closes connection (IMPORTANT!)
