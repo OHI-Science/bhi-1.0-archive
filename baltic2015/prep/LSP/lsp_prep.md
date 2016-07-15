@@ -151,7 +151,7 @@ Trend = Future\_year \* m ; future\_year = 5
 
 Following the general definition of OHI trend (ie. percent change of status scores over the next five years), we calculated a linear trend of the status of the past five years and multiplied that by 5.
 
-Percent\_status\_score\_change = m \* year\_y + b; m = slope
+status\_scores = m \* year\_y + b; m = slope
 
 Trend = Future\_year \* m; Future\_ear = 5
 
