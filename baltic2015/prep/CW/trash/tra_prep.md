@@ -233,12 +233,130 @@ It made sense to downweight Kaliningrad and St Petersburg by coastal population 
 
 Then find ref point as the max of Europe, but compare 2010 v. 2025 to determine whether it's worth trying to interpolate/model to find a reference point in ~2015. Conclusion, probably not worth it, so we could just pick either 2010 or 2025 since those data are already modeled/reported by Jambeck et al.
 
+``` r
+## havea another look at the data
+# baltic = read.csv('~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
+# summary(baltic) 
+# summary(data_clean)
+
+
+## select desired columns
+data_clean_select = data_clean %>%
+  select(country, coastal_pop, modeled_waste_2010, modeled_waste_2025)
+
+## read in lookup table for European countries
+lookup = read.csv('~/github/bhi/baltic2015/prep/EUcountrynames.csv', sep=';') %>%
+  mutate(country_abb = as.character(country_abb),
+         country     = as.character(country)); # head(lookup)
+
+## join lookup table to trash data; remove inland NAs and Kosovo, Macedonia, Serbia (no trash data)
+europe = lookup %>%
+  left_join(data_clean_select, by = 'country') %>%
+  filter(!is.na(coastal_pop)) %>%
+  select(-country_abb); # head(europe)
+
+## downweight russia **very hacky for now**
+#  4597600 # St Petersbergy: from Wikipedia https://en.wikipedia.org/wiki/Demographics_of_Saint_Petersburg
+#  431902  # Kaliningrad https://en.wikipedia.org/wiki/Kaliningrad
+rus_trash_pop = data_clean_select %>%
+  filter(country == 'Russia') %>%
+  select(coastal_pop)
+
+rus_coastal_pop_proportion = as.numeric((4597600+431902) / rus_trash_pop); rus_coastal_pop_proportion
+```
+
     ## [1] 0.4651547
+
+``` r
+rus = data_clean_select %>%
+  filter(country == 'Russia') %>%
+  mutate(modeled_waste_2010 = modeled_waste_2010 * rus_coastal_pop_proportion, 
+         modeled_waste_2025 = modeled_waste_2025 * rus_coastal_pop_proportion); # rus
+  
+## consider also downweighting Germany, Denmark, Sweden?
+
+
+## create dataframe of europe + russia
+eur_rus = rbind(
+  europe,
+  rus) %>%
+  arrange(desc(modeled_waste_2010)); # eur_rus # view high to low 
+
+
+## set min and max reference points ----
+## rescale to reference point -- whole European
+
+ref_point_min = 0
+
+##2010
+ref_point_max_2010 = eur_rus %>%
+  filter(modeled_waste_2010 == max(modeled_waste_2010))
+sprintf('max trash for 2010 is %s (%s)', 
+        round(ref_point_max_2010$modeled_waste_2010),
+        ref_point_max_2010$country)
+```
 
     ## [1] "max trash for 2010 is 67549 (United Kingdom)"
 
+``` r
+ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
+
+## 2025
+ref_point_max_2025 = eur_rus %>%
+  filter(modeled_waste_2025 == max(modeled_waste_2025))
+sprintf('max trash for 2025 is %s (%s)', 
+        round(ref_point_max_2025$modeled_waste_2025),
+        ref_point_max_2025$country)
+```
+
     ## [1] "max trash for 2025 is 94165 (United Kingdom)"
+
+``` r
+ref_point_max_2025 = ref_point_max_2025$modeled_waste_2025
+
+
+## calculate ref point
+## to normalize data: normalized = (x-min(x))/(max(x)-min(x))
+baltic_explore = eur_rus %>%
+  filter(country %in% baltic$country) %>%
+  mutate(
+    trash_score_2010   = (
+      (modeled_waste_2010 - ref_point_min) /
+      (ref_point_max_2010 - ref_point_min)),
+    trash_score_2025   = (
+      (modeled_waste_2025 - ref_point_min) /
+      (ref_point_max_2025 - ref_point_min))); # baltic_explore; summary(baltic_explore)
+```
 
 ### 4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025
 
+``` r
+#compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
+ggplot(baltic_explore)+
+  geom_point(aes(country,trash_score_2010, colour="red"))+
+  geom_point(aes(country,trash_score_2025))+
+  ggtitle('Country Trash Score')
+```
+
 ![](tra_prep_files/figure-markdown_github/plot%20and%20save%20layer-1.png)
+
+``` r
+## assign to BHI regions ----
+lookup_bhi = read.csv('~/github/bhi/baltic2015/prep/CW/trash/bhi_basin_country_lookup.csv',sep=";", stringsAsFactors = FALSE) %>%
+  select(rgn_id =BHI_ID,
+         country = rgn_nam) %>%
+  mutate(country = as.character(country))
+
+## join baltic_explore (baltic countries) to bhi regions, repeating the trash score for each baltic region.
+baltic_layer = lookup_bhi %>%
+  left_join(baltic_explore, 
+            by = 'country') %>%
+  select(rgn_id, 
+         score = trash_score_2010); # baltic_layer
+  
+## save layer to layers folder, and register layer in layers.csv by hand
+write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
+
+  
+## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?
+```

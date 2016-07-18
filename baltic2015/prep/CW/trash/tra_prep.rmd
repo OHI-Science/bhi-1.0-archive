@@ -195,7 +195,7 @@ It made sense to downweight Kaliningrad and St Petersburg by coastal population 
 
 Then find ref point as the max of Europe, but compare 2010 v. 2025 to determine whether it's worth trying to interpolate/model to find a reference point in ~2015. Conclusion, probably not worth it, so we could just pick either 2010 or 2025 since those data are already modeled/reported by Jambeck et al. 
 
-```{r data explore and prep, echo = FALSE, message = FALSE, warning = FALSE}
+```{r data explore and prep}
 
 ## havea another look at the data
 # baltic = read.csv('~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
@@ -280,7 +280,7 @@ baltic_explore = eur_rus %>%
 
 ### 4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025
 
-```{r plot and save layer, echo = FALSE, message = FALSE, warning = FALSE}
+```{r plot and save layer}
 
 
 #compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
