@@ -72,6 +72,7 @@ Data were downloaded for all nine Baltic countries. The Baltic sea falls within 
 Sustainability Coefficient 
 The SMI is the average of the three subindices traditionally used in the OHI framework. Trujillo's study included 13 subindices in total but only 3 of them are relevant for assessing the sustainability of mariculture : waster water treatment, usage of fishmeal and hatchery vs wild origin of seeds. Since Rainbow trout SMI is only included for Sweden. The mean value 5.3 was rescaled between 0-1 to 0.53. This value is then applied to Denmark and Finland.
 
+Trujillo, P., (2008). Using a mariculture sustainability index to rank countries’ performance. Pp. 28-56 In: Alder, J. and D. Pauly (eds.). 2008.  A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries’ Exclusive Economic Zones.’ Fisheries Centre Research Reports. Fisheries Centre, University of British Columbia
 
 ### 2.2 Production regions and BHI assignments
 BHI regions were assigned to the country production reporting regions by Ginnette visually linking the two for Sweden, Denmark, and Finland. 
