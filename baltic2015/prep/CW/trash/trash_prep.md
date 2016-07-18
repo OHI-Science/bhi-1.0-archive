@@ -1,4 +1,4 @@
-trash\_prep.rmd
+tra\_prep.rmd
 ================
 
 -   [Preparation of TRA (trash) data layer](#preparation-of-tra-trash-data-layer)
