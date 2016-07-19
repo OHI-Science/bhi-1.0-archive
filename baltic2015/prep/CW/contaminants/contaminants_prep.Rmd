@@ -2069,7 +2069,7 @@ ggplot(dioxin_teq_status)+
 
 
 ### 5.13 Dioxin trend value
-Calculate, by taking the observations between 2009-2013 (those averaged for the status value),transform to a status value, and take the trend of the status on the basin scale
+Calculate, by taking the observations between 2004-2013 (those averaged for the status value),transform to a status value, and take the trend of the status on the basin scale
 
 This is consistent with the ICES6 approach.  
 
@@ -2077,7 +2077,7 @@ This is consistent with the ICES6 approach.
 ```{r  Prepare dioxin teq data for trend calculation}
 
 teq_trend_data =join_teq_basins %>%
-                 filter(year >= 2009 & year < 2014)
+                 filter(year >= 2004 & year < 2014)
 
 teq_trend_data = teq_trend_data %>%
                  select(basin,year, tot_teq, teq_threshold_pg_g)%>%

@@ -140,11 +140,17 @@ TEQ values from the [World Health Organization 2005](http://www.who.int/ipcs/ass
 
 ### 1.4 (3) PFOS indicator
 
-[HELCOM PFOS core indicator document](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
+"GES boundary is set to 9.1 μg/kg wet weight (or 9.1 ng/g ww) with the protection goal of human health"" according to [HELCOM PFOS core indicator document, p.3](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf).
+
+"The GES boundary is an environmental quality standard (EQS), derived at EU level as a substance included on the list of priority substances under the Water Framework Directive (European Commission 2000, 2013). GES, in accordance with the MSFD is defined as 'concentrations of contaminants at levels not giving rise to pollution effects'. EQS are derived from ecotoxicological studies to protect freshwater and marine ecosystems from potential adverse effects of chemicals, as well as adverse effects on human health via drinking water and food from aquatic environments. Quality Standards (QS) are derived for different protection goals, i.e.: pelagic and benthic communities, top-predators in these ecosystems, and human health. The most stringent of these QS is the basis for the EQS. The EQS boundary for PFOS is based on the QS set for biota to protect human health (9.1 μg/ kg fish ww), defined for edible parts in fish. For harmonization purposes the EC Guidance Document No. 32 on biota monitoring (the implementation of EQS biota) under the WFD was developed (European Commission 2014). This guidance document recommends that the results from the monitoring should be standardized to represent fish at a trophic level of 4, which is an estimate of the general trophic level in commercial fish in Europe. The recommendation to obtain PFOS data in fish at a trophic level of 4 is to adjust the values from monitoring in accordance with trophic magnification factors and trophic level."[HELCOM PFOS core indicator document, p.8](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf)
+
+**HELCOM core indicator report uses liver PFOS concentrations converted to muscle equivalent values** as in [Faxneld et al. 2014b](https://www.diva-portal.org/smash/get/diva2:767385/FULLTEXT01.pdf).
 
 ### 1.5 Additional references
 
-[Faxneld et al. 2014](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators
+[Faxneld et al. 2014a](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators
+
+[Faxneld et al. 2014b](https://www.diva-portal.org/smash/get/diva2:767385/FULLTEXT01.pdf)Distribution of PFAS in liver and muscle of herring, perch, cod, eelpout, arctic char, and pike from limnic and marine environments in Sweden.
 
 [Bignert, A., Nyberg, E., Sundqvist, K.L., Wiberg, K., 2007. Spatial variation in concentrations and patterns of the PCDD/F and dioxin-like PCB content in herring from the northern Baltic Sea. J. Environ. Monit. 9, 550–556.](http://pubs.rsc.org/en/Content/ArticleLanding/2007/EM/b700667e#!divAbstract)
 
@@ -3520,7 +3526,7 @@ ggplot(dioxin_teq_status)+
 
 ### 5.13 Dioxin trend value
 
-Calculate, by taking the observations between 2009-2013 (those averaged for the status value),transform to a status value, and take the trend of the status on the basin scale
+Calculate, by taking the observations between 2004-2013 (those averaged for the status value),transform to a status value, and take the trend of the status on the basin scale
 
 This is consistent with the ICES6 approach.
 
@@ -3528,7 +3534,7 @@ This is consistent with the ICES6 approach.
 
 ``` r
 teq_trend_data =join_teq_basins %>%
-                 filter(year >= 2009 & year < 2014)
+                 filter(year >= 2004 & year < 2014)
 
 teq_trend_data = teq_trend_data %>%
                  select(basin,year, tot_teq, teq_threshold_pg_g)%>%
@@ -3564,16 +3570,16 @@ teq_trend
 
     ## Source: local data frame [8 x 2]
     ## 
-    ##                    basin  trend_score
-    ##                    <chr>        <dbl>
-    ## 1           Arkona Basin 4.965068e-16
-    ## 2         Bornholm Basin 2.866584e-16
-    ## 3           Bothnian Bay 2.866584e-16
-    ## 4           Bothnian Sea 2.009569e-02
-    ## 5               Kattegat 0.000000e+00
-    ## 6 Northern Baltic Proper 0.000000e+00
-    ## 7              The Quark 4.965068e-16
-    ## 8  Western Gotland Basin 4.965068e-16
+    ##                    basin   trend_score
+    ##                    <chr>         <dbl>
+    ## 1           Arkona Basin  4.965068e-16
+    ## 2         Bornholm Basin  2.866584e-16
+    ## 3           Bothnian Bay  0.000000e+00
+    ## 4           Bothnian Sea  2.009569e-02
+    ## 5               Kattegat -3.630331e-16
+    ## 6 Northern Baltic Proper  0.000000e+00
+    ## 7              The Quark  4.965068e-16
+    ## 8  Western Gotland Basin  4.965068e-16
 
 #### 5.13.4 Plot teq trend by basin
 
