@@ -54,6 +54,30 @@ create_readme(dir_res, 'resilience_prep.rmd')
 ## 1.1 Biological Integrity
 The biodiversity data layer will be used to represent biological integrity.  
 
+### 1.1.1 Prepare biological integrity data layer
+
+#### 1.1.1.1 Read in SPP status
+```{r read in spp status}
+spp_status = read.csv(file.path(dir_layers, 'bd_spp_status_bhi2015.csv'), stringsAsFactors = FALSE)
+
+```
+
+#### 1.1.1.2 update object to resilience layer
+```{r update spp status to resilience layer}
+
+res_biodiversity = spp_status %>%
+                   select(rgn_id, score)%>%
+                   dplyr::rename(resilience_score = score)
+
+```
+
+##### 1.1.1.3 Save biological integrity data layer
+```{r Save biological integrity data layer}
+write.csv(res_biodiversity, file.path(dir_layers,'res_biodiversity_bhi2015.csv'),row.names = FALSE)
+```
+
+
+
 
 
 ## 1.2 Goal-specific Regulations
