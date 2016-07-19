@@ -188,7 +188,7 @@ FIS = function(layers, status_year){
     mutate(goal='FIS')
   return(scores)
 
-}
+} ## End FIS function
 
 
 MAR = function(layers){
@@ -217,14 +217,6 @@ MAR = function(layers){
     select(rgn_id = id_num,
            species = category,
            sust_coeff = val_num)
-
-
-  ## TEMP read in
-  #  library(dplyr)
-  #  library (tidyr)
-  # harvest_tonnes = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_tonnes_bhi2015.csv'); head(harvest_tonnes)
-  # harvest_species = read.csv('~/github/bhi/baltic2015/layers/mar_harvest_species_bhi2015.csv'); head(harvest_species)
-  # sustainability_score = read.csv('~/github/bhi/baltic2015/layers/mar_sustainability_score_bhi2015.csv'); head(sustainability_score)
 
 
   ## SETTING CONSTANTS
@@ -323,7 +315,7 @@ MAR = function(layers){
   return(scores)
 
 
-} #end mar function
+} #end MAR function
 
 FP = function(layers, scores){
 
@@ -375,7 +367,7 @@ FP = function(layers, scores){
 
   ## return all scores
   return(rbind(scores, s))
-}
+} ## End FP Function
 
 
 AO = function(layers){
@@ -469,7 +461,9 @@ CS = function(layers){
 
 
   return(scores)
-}
+}## End CS function
+
+
 
 TR = function(layers){
   ## updated 11 July 2016 by Jennifer Griffiths
@@ -667,7 +661,8 @@ LIV = function(layers){
 
 
   return(scores)
-}
+} ## End LIV function
+
 
 ECO = function(layers){
 
@@ -768,7 +763,7 @@ ECO = function(layers){
 
    return(scores)
 
-}
+} ## End ECO function
 
 
 LE = function(scores, layers){
@@ -787,7 +782,7 @@ LE = function(scores, layers){
 
   # return scores
   return(scores)
-}
+} ## End LE function
 
 
 ICO = function(layers){
@@ -823,48 +818,8 @@ ICO = function(layers){
   return(scores)
 
 
+} ## end ICO function
 
-  ## OLD ICO code
-
-  #
-  # lyrs = c('ico_spp_extinction_status' = 'risk_category',
-  #          'ico_spp_popn_trend'        = 'popn_trend')
-  #
-  # # cast data ----
-  # layers_data = SelectLayersData(layers, layers=names(lyrs))
-  # rk = rename(dcast(layers_data, id_num + category ~ layer, value.var='val_chr'),
-  #             c('id_num'='region_id', 'category'='sciname', lyrs))
-  #
-  # # lookup for weights status
-  # w.risk_category = c('LC' = 0,
-  #                     'NT' = 0.2,
-  #                     'VU' = 0.4,
-  #                     'EN' = 0.6,
-  #                     'CR' = 0.8,
-  #                     'EX' = 1)
-  #
-  # # lookup for population trend
-  # w.popn_trend = c('Decreasing' = -0.5,
-  #                  'Stable'     =  0,
-  #                  'Increasing' =  0.5)
-  #
-  # # status
-  # r.status = rename(ddply(rk, .(region_id), function(x){
-  #   mean(1 - w.risk_category[x$risk_category], na.rm=T) * 100 }),
-  #                   c('V1'='score'))
-  #
-  # # trend
-  # r.trend = rename(ddply(rk, .(region_id), function(x){
-  #   mean(w.popn_trend[x$popn_trend], na.rm=T) }),
-  #                  c('V1'='score'))
-  #
-  # # return scores
-  # s.status = cbind(r.status, data.frame('dimension'='status'))
-  # s.trend  = cbind(r.trend , data.frame('dimension'='trend' ))
-  # scores = cbind(rbind(s.status, s.trend), data.frame('goal'='ICO'))
-  # return(scores)
-
-}
 
 LSP = function(layers){
 
@@ -894,7 +849,8 @@ LSP = function(layers){
 
 
     return(scores)
-}
+} ## End LSP function
+
 
 SP = function(scores){
 
@@ -910,7 +866,7 @@ SP = function(scores){
 
   # return all scores
   return(rbind(scores, d[,c('region_id','goal','dimension','score')]))
-}
+} ## End SP function
 
 
 NUT = function(layers){
@@ -951,7 +907,7 @@ NUT = function(layers){
   return(scores)
   #####----------------------######
 
-}
+} ## End NUT Function
 
 TRA = function(layers){
   #####----------------------######
@@ -1002,7 +958,7 @@ TRA = function(layers){
   #   arrange(dimension,region_id))
 
   return(scores)
-}
+} ## END TRA function
 
 CON = function(layers){
   #####----------------------######
@@ -1115,7 +1071,7 @@ CON = function(layers){
 
   return(scores)
 
-}
+}  ## END CON Function
 
 CW = function(scores){
   #####----------------------######
@@ -1177,7 +1133,7 @@ CW = function(scores){
 
   ## return all scores
   return(rbind(scores, s))
-}
+} ## End CW function
 
 
 
@@ -1186,6 +1142,7 @@ BD = function(layers){
   ## Updated by Jennifer Griffiths 7 July 2016
   ## BD status calculated in spp_prep file because calculated by basin and then applied to BHI regions
       ## Status is the geometric mean of each taxa group status by basin
+      ## No Trend, have NA as placeholder
 
 
   ## Call Layers
@@ -1205,8 +1162,8 @@ BD = function(layers){
             mutate(score = round(score*100))
 
 
-         ## place holder for trend
-      trend = data.frame(region_id = seq(1,42,1), score = rep(0,42), dimension =rep("trend",42))
+    ## place holder for trend
+      trend = data.frame(region_id = seq(1,42,1), score = rep(NA,42), dimension =rep("trend",42))
 
 
     ######################################################
@@ -1217,7 +1174,8 @@ BD = function(layers){
            mutate(goal = 'BD')
 
       return(scores)
-}
+} ## End BD Function
+
 
 FinalizeScores = function(layers, conf, scores){
 
