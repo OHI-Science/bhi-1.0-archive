@@ -176,7 +176,7 @@ Data sources:
 "pressures","hab_bottom_trawl","proxy_layer","","pressure_score","pressure score","hab_bottom_trawl_bhi2015.csv","","","","","","rgn_id",,,,"pressure_score",,TRUE,,,0,0,TRUE,,,,42,FALSE
 "pressures","fp_over_harvest","proxy_layer","","pressure_score","pressure score","fp_over_harvest_bhi2015.csv","","","","","","rgn_id",,,,"pressure_score",,TRUE,,,0,0,TRUE,,,,42,FALSE
 "pressures","sp_invasives","proxy_layer","","pressure_score","pressure score","sp_invasives_bhi2015.csv","","","","","","rgn_id",,,,"pressure_score",,TRUE,,,0,0,TRUE,,,,42,FALSE
-"resilience","res_biodiversity","proxy_layer","","resilience_score","resilience score","res_biodiversity_bhi2015.csv","","","","","","rgn_id",,,,"resilience_score",,TRUE,,,0,0,TRUE,,,,42,FALSE
+"resilience","res_biodiversity","proxy_layer","","resilience_score","resilience score","res_biodiversity_bhi2015.csv","","","","","","rgn_id",,,,"resilience_score",,TRUE,,,0.690799271833965,0.820930586862128,TRUE,,,,42,FALSE
 "FP","fp_wildcaught_weight","Fisheries weighting factor","Proportion of wild caught fisheries yield to mariculture yield, based on FAO fisheries statistics.
 
 
