@@ -53,6 +53,22 @@ Missing data indicated by colon (:)
 
 ## 3. Goal Model 
 
+### 3.1 Status Calculation
+
+Xtr = a_r / a_ref_r  
+a_r =  number of nights spent in coastal accommodations in BHI region r  
+a_ref_r = a_r - 5  
+
+r = BHI region  
+a_r = (proportion population in 25km buffer in nuts2 association with r) x a_c  
+n = NUTS2 region  
+a_c = coastal accommodation stays in NUTS2 region n  
+a_c = a_n x c_n1  
+a_n = accomodation stays in NUTS2 region_n  
+c_n1 = mean proportion of accommodations stays that are coastal at the NUTS1 level  
+
+### 3.2 Trend calculation
+Linear regression fit to the most recent 5 status years.  
 
 
 ## 4. Data Layer Preparation 

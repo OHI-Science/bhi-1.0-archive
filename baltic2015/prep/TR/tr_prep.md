@@ -7,6 +7,8 @@ tr\_prep.rmd
         -   [2.1 Regional Accommodation Stays Data](#regional-accommodation-stays-data)
         -   [2.1 Regional Accommodation Stays Coastal/Non-Coastal Data](#regional-accommodation-stays-coastalnon-coastal-data)
     -   [3. Goal Model](#goal-model)
+        -   [3.1 Status Calculation](#status-calculation)
+        -   [3.2 Trend calculation](#trend-calculation)
     -   [4. Data Layer Preparation](#data-layer-preparation)
         -   [4.1 Data clean and organize](#data-clean-and-organize)
         -   [4.2 Join datasets](#join-datasets)
@@ -71,6 +73,24 @@ Missing data indicated by colon (:)
 
 3. Goal Model
 -------------
+
+### 3.1 Status Calculation
+
+Xtr = a\_r / a\_ref\_r
+a\_r = number of nights spent in coastal accommodations in BHI region r
+a\_ref\_r = a\_r - 5
+
+r = BHI region
+a\_r = (proportion population in 25km buffer in nuts2 association with r) x a\_c
+n = NUTS2 region
+a\_c = coastal accommodation stays in NUTS2 region n
+a\_c = a\_n x c\_n1
+a\_n = accomodation stays in NUTS2 region\_n
+c\_n1 = mean proportion of accommodations stays that are coastal at the NUTS1 level
+
+### 3.2 Trend calculation
+
+Linear regression fit to the most recent 5 status years.
 
 4. Data Layer Preparation
 -------------------------
