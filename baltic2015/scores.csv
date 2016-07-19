@@ -1237,8 +1237,8 @@
 "CW","status",41,91
 "CW","status",42,90
 "CW","status",,100
-"CW","trend",1,0
-"CW","trend",2,0
+"CW","trend",1,-0.01
+"CW","trend",2,-0.01
 "CW","trend",3,-0.07
 "CW","trend",4,-0.07
 "CW","trend",5,
