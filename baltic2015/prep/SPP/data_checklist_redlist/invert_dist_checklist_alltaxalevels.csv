@@ -218,8 +218,8 @@ Gastropoda;Animalia;Mollusca;Gastropoda;Allogastropoda;Valvatidae;Borysthenia;;n
 Plathelminthes;Animalia;Platyhelminthes;Rhabditophora;Seriata;Otoplanidae;Bothriomolus;;balticus;;Bothriomolus balticus;;;;;;X;;;X;;;X;;;;;;X;;;;;;;;;;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Bothrioneurum;;vejdovskyanum;;Bothrioneurum vejdovskyanum;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X
 Plathelminthes;Animalia;Platyhelminthes;Rhabditophora;Neorhabdocoela;Typhloplanidae;Bothromesostoma;;personatum;;Bothromesostoma personatum;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X
-Ascidiacea;Animalia;Chordata;Ascidiacea;;Styelidae;Botrylloides;;leachii;;Botrylloides leachii ;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Ascidiacea;Animalia;Chordata;Ascidiacea;;Styelidae;Botryllus;;schlosseri;;Botryllus schlosseri ;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Ascidiacea;Animalia;Chordata;Ascidiacea;;Styelidae;Botrylloides;;leachii;;Botrylloides leachii;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Ascidiacea;Animalia;Chordata;Ascidiacea;;Styelidae;Botryllus;;schlosseri;;Botryllus schlosseri;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Hydrozoa;Animalia;Cnidaria;Hydrozoa;Anthoathecata;Bougainvilliidae;Bougainvillia;;britannica;;Bougainvillia britannica;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Hydrozoa;Animalia;Cnidaria;Hydrozoa;Anthoathecata;Bougainvilliidae;Bougainvillia;;muscus;;Bougainvillia muscus;;X;X;;;X;X;X;;;;;;;;;;;;;;;;;;;;;;;;;
 Bryozoa;Animalia;Bryozoa;Gymnolaemata;Ctenostomatida;Vesiculariidae;Bowerbankia;;gracilis;;Bowerbankia gracilis;;X;X;;X;X;X;;;;;;;;;;;;;;;;;;X;;;;;;;;
@@ -370,7 +370,7 @@ Bivalvia;Animalia;Mollusca;Bivalvia;Euheterodonta incertae sedis;Corbulidae;Corb
 Odonata;Animalia;Arthropoda;Insecta;Odonata;Corduliidae;Cordulia;;aenea;;Cordulia aenea;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;X
 Hydrozoa;Animalia;Cnidaria;Hydrozoa;Anthoathecata;Cordylophoridae;Cordylophora;;caspia;;Cordylophora caspia;;;X;;;;X;X;X;X;X;X;X;X;X;X;X;X;;X;X;X;X;X;;X;;X;X;X;X;X;X
 Ascidiacea;Animalia;Chordata;Ascidiacea;Enterogona;Corellidae;Corella;;parallellogramma;;Corella parallelogramma;;X;X;X;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Corophiidae;Corophium;;acherusicum;;Corophium acherusicum ;;;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Corophiidae;Corophium;;acherusicum;;Corophium acherusicum;;;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Corophiidae;Corophium;;arenarium;;Corophium arenarium;;X;;;X;;X;;;;;;;;;;;;;;;;;;;;;;;;;;
 Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Corophiidae;Corophium;;multisetosum;;Corophium multisetosum;;;;X;X;;;X;X;;;;;;;;;;X;;;X;;;;;;;X;X;X;X;
 Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Corophiidae;Corophium;;volutator;;Corophium volutator;;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X
@@ -390,7 +390,7 @@ Bivalvia;Animalia;Mollusca;Bivalvia;Mytiloida;Mytilidae;Crenella;;decussata;;Cre
 Gastropoda;Animalia;Mollusca;Gastropoda;Hypsogastropoda;Calyptraeidae;Crepidula;;fornicata;;Crepidula fornicata;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bryozoa;Animalia;Bryozoa;Gymnolaemata;Cheilostomatida;Cribrilinidae;Cribrilina;;cryptooecium;;Cribrilina cryptooecium;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bryozoa;Animalia;Bryozoa;Gymnolaemata;Cheilostomatida;Cribrilinidae;Cribrilina;;punctata;;Cribrilina punctata;;;X;;;X;X;;;;;;;;;;;;;;;;;X;X;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cricotopus;;albiforceps;;Cricotopus albiforceps ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cricotopus;;albiforceps;;Cricotopus albiforceps;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cricotopus;;algarum;;Cricotopus algarum;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cricotopus;;bicinctus;;Cricotopus bicinctus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;X;X;X;X;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cricotopus;;festivellus;;Cricotopus festivellus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
@@ -419,7 +419,7 @@ Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cryptochironomus;;obrep
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cryptochironomus;;redekei;;Cryptochironomus redekei;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cryptochironomus;;rolli;;Cryptochironomus rolli;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cryptochironomus;;supplicans;;Cryptochironomus supplicans;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cryptochironomus;;tshernovskii;;Cryptochironomus tshernovskii ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cryptochironomus;;tshernovskii;;Cryptochironomus tshernovskii;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Cryptochironomus;;ussouriensis;;Cryptochironomus ussouriensis;;;;;;;;;;;;;;;X;;;X;;;;;;;;;;;;;;;
 Gastropoda;Animalia;Mollusca;Gastropoda;Hypsogastropoda;Naticidae;Cryptonatica;;affinis;;Cryptonatica affinis;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bryozoa;Animalia;Bryozoa;Gymnolaemata;Cheilostomatida;Cryptosulidae;Cryptosula;;pallasiana;;Cryptosula pallasiana;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -552,9 +552,9 @@ Bivalvia;Animalia;Mollusca;Bivalvia;[unassigned] Euheterodonta;Pharidae;Ensis;;s
 Bryozoa;Animalia;Bryozoa;Stenolaemata;Cyclostomatida;Diaperoeciidae;Entalophoroecia;;deflexa;;Entalophoroecia deflexa;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Ephemeridae;Ephemera;;danica;;Ephemera danica;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;;
 Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Ephemeridae;Ephemera;;vulgata;;Ephemera vulgata;;;;;;;;;;;;;;;;;;;;;;;;;;;;X;;;;;X
-Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Ephemerellidae ;Ephemerella ;;mucronata ;;Ephemerella mucronata ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Ephemerellidae ;Ephemerella ;;mucronata ;;Ephemerella mucronata;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Sphaerodoridae;Ephesiella;;abyssorum;;Ephesiella abyssorum;;;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Polymitarcyidae;Ephoron;;virgo ;;Ephoron virgo ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Polymitarcyidae;Ephoron;;virgo ;;Ephoron virgo;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Porifera;Animalia;Porifera;Demospongiae;Haplosclerida;Spongillidae;Ephydatia;;fluviatilis;;Ephydatia fluviatilis;;;;;;;;;X;;;X;;;;;X;;;;X;;X;;;;;X;X;X;X;;X
 Porifera;Animalia;Porifera;Demospongiae;Haplosclerida;Spongillidae;Ephydatia;;muelleri;;Ephydatia muelleri;;;;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Ephydridae;Ephydra;;riparia;;Ephydra riparia;;;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -585,7 +585,7 @@ Bryozoa;Animalia;Bryozoa;Gymnolaemata;Cheilostomatida;Escharinidae;Escharina;;vu
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Eteone;;barbata;;Eteone barbata;;X;X;X;X;X;X;X;;;;;;;;;;;;;;;;;;;X;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Eteone;;flava;;Eteone flava;;X;X;X;;X;X;X;;;;;;;;;;;;;;;;X;X;;X;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Eteone;;foliosa;;Eteone foliosa;;;X;X;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;
-Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Eteone;;lactea;;Eteone lactea ;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Eteone;;lactea;;Eteone lactea;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Eteone;;longa;;Eteone longa;;X;X;X;X;X;X;X;X;;;;;;;;;;;;X;X;X;X;X;;X;;;;X;X;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Eteone;;pusilla;;Eteone pusilla;;;;;;;;;;;;;;;;;;;;;;;;X;;;;;;;;;
 Decapoda;Animalia;Arthropoda;Malacostraca;Decapoda;Hippolytidae;Eualus;;cranchii;;Eualus cranchii;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -740,7 +740,7 @@ Anthozoa;Animalia;Cnidaria;Anthozoa;Actiniaria;Halcampoididae;Halcampoides;;abys
 Hydrozoa;Animalia;Cnidaria;Hydrozoa;Leptothecata;Haleciidae;Halecium;;halecium;;Halecium halecium;;X;X;;;X;X;X;;;;;;;;;;;;;;;;;;;;;;;;;
 Hydrozoa;Animalia;Cnidaria;Hydrozoa;Leptothecata;Haleciidae;Halecium;;labrosum;;Halecium labrosum;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Hydrozoa;Animalia;Cnidaria;Hydrozoa;Leptothecata;Haleciidae;Halecium;;tenellum;;Halecium tenellum;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Porifera;Animalia;Porifera;Demospongiae;Halichondrida;Halichondriidae;Halichondria;Halichondria;bowerbanki;;Halichondria (Halichondria) bowerbanki ;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Porifera;Animalia;Porifera;Demospongiae;Halichondrida;Halichondriidae;Halichondria;Halichondria;bowerbanki;;Halichondria (Halichondria) bowerbanki;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Porifera;Animalia;Porifera;Demospongiae;Halichondrida;Halichondriidae;Halichondria;Halichondria;panicea;;Halichondria (Halichondria) panicea;;X;X;X;X;X;X;X;X;;;;;;;;;;;;;X;;X;X;X;X;;;;;;
 Porifera;Animalia;Porifera;Demospongiae;Haplosclerida;Chalinidae;Haliclona;Haliclona;oculata;;Haliclona (Haliclona) oculata;;;;;X;X;X;X;;;;;;;;;;;;;;;;;X;;;;;;;;
 Porifera;Animalia;Porifera;Demospongiae;Haplosclerida;Chalinidae;Haliclona;Haliclona;urceolus;;Haliclona (Haliclona) urceolus;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -893,7 +893,7 @@ Hydrozoa;Animalia;Cnidaria;Hydrozoa;Leptothecata;Lafoeidae;Lafoea;;dumosa;;Lafoe
 Hydrozoa;Animalia;Cnidaria;Hydrozoa;Leptothecata;Campanulinidae;Lafoeina;;tenuis;;Lafoeina tenuis;;;;;;X;X;X;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Terebellida;Pectinariidae;Lagis;;koreni;;Lagis koreni;;X;X;X;X;X;X;X;;;;;;;;;;;;;;X;X;X;X;X;X;;;;;;
 Gastropoda;Animalia;Mollusca;Gastropoda;Hypsogastropoda;Lamellariidae;Lamellaria;;perspicua;;Lamellaria perspicua;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Lamprodrilus;; isoporus ;;Lamprodrilus isoporus ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Lamprodrilus;; isoporus ;;Lamprodrilus isoporus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Cumacea;Animalia;Arthropoda;Malacostraca;Cumacea;Lampropidae;Lamprops;;fasciatus;;Lamprops fasciatus;;;X;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Terebellida;Terebellidae;Lanassa;;venusta;;Lanassa venusta;;X;X;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Terebellida;Terebellidae;Lanice;;conchilega;;Lanice conchilega;;X;X;X;X;X;X;;;;;;;;;;;;;;;;;X;;;;;;;;;
@@ -962,7 +962,7 @@ Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;g
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;lunatus;;Limnephilus lunatus;;;;;;;;;;;;;X;X;X;;;X;;;;;;;;;;;;;;;
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;luridus;;Limnephilus luridus;;;;;;;;;;;;;X;X;;;;X;;;;;;;;;;;;;;;
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;marmoratus;;Limnephilus marmoratus;;;;;;;;;;;;;X;X;;;;X;;;;;;;;;;;;;;;
-Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;politus;;Limnephilus politus ;;;;;;;;;;;;;X;X;X;;X;X;;;;;;;;;;;;;;;
+Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;politus;;Limnephilus politus;;;;;;;;;;;;;X;X;X;;X;X;;;;;;;;;;;;;;;
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;rhombicus;;Limnephilus rhombicus;;;;;;;;;;;;;X;X;X;;X;X;;;X;;;;;;;;;;;;
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;sparsus;;Limnephilus sparsus;;;;;;;;;;;;;X;X;;;X;X;;X;;;;;;;;;;;;;
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Limnephilidae;Limnephilus;;stigma;;Limnephilus stigma;;;;;;;;;;;;;;X;;;X;X;;;;;;;;;;;;;;;X
@@ -1013,7 +1013,7 @@ Polychaeta;Animalia;Annelida;Polychaeta;Terebellida;Terebellidae;Lysilla;;loveni
 Polychaeta;Animalia;Annelida;Polychaeta;Terebellida;Ampharetidae;Lysippe;;labiata;;Lysippe labiata;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Euheterodonta incertae sedis;Tellinidae;Macoma;;balthica;;Macoma balthica;;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X;X
 Bivalvia;Animalia;Mollusca;Bivalvia;Euheterodonta incertae sedis;Tellinidae;Macoma;;calcarea;;Macoma calcarea;;X;X;X;X;X;X;X;X;X;;;;;;;;;;;;X;;;X;;X;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Macropelopia;;nebulosa;;Macropelopia nebulosa ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Macropelopia;;nebulosa;;Macropelopia nebulosa;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Decapoda;Animalia;Arthropoda;Malacostraca;Decapoda;Polybiidae;Macropipus;;tuberculatus;;Macropipus tuberculatus;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Coleoptera;Animalia;Arthropoda;Insecta;Coleoptera;Chrysomelidae;Macroplea;;mutica;;Macroplea mutica;;;;;X;;;X;;;;;;;;;;X;;;;;;;;;;;;;;;
 Coleoptera;Animalia;Arthropoda;Insecta;Coleoptera;Chrysomelidae;Macroplea;;pubipennis;;Macroplea pubipennis;;;;;;;;;;;;;;X;X;X;X;X;;;;;;;;;;;;;;;
@@ -1037,7 +1037,7 @@ Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Polynoidae;Malmgreniella;;a
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Polynoidae;Malmgreniella;;glabra;;Malmgreniella glabra;;X;X;;;X;X;;;;;;;;;;;;;;;;;;X;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Polynoidae;Malmgreniella;;ljungmani;;Malmgreniella ljungmani;;X;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Polynoidae;Malmgreniella;;lunulata;;Malmgreniella lunulata;;X;X;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Polynoidae;Malmgreniella;;mcintoshi;;Malmgreniella mcintoshi ;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Polynoidae;Malmgreniella;;mcintoshi;;Malmgreniella mcintoshi;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Sabellida;Sabellidae;Manayunkia;;aestuarina;;Manayunkia aestuarina;;;;;X;;X;X;X;;;X;X;X;X;;;X;X;X;X;X;X;;;X;;X;X;X;X;X;
 Gastropoda;Animalia;Mollusca;Gastropoda;Neogastropoda;Conidae;Mangelia;;attenuata;;Mangelia attenuata;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Gastropoda;Animalia;Mollusca;Gastropoda;Neogastropoda;Conidae;Mangelia;;costata;;Mangelia costata;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1201,7 +1201,7 @@ Polychaeta;Animalia;Annelida;Polychaeta;Capitellida;Maldanidae;Nicomache;Nicomac
 Polychaeta;Animalia;Annelida;Polychaeta;Capitellida;Maldanidae;Nicomache;;lumbricalis;;Nicomache lumbricalis;;X;X;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Capitellida;Maldanidae;Nicomache;;personata;;Nicomache personata;;;;;;X;;;;;;;;;;;;;;;;;;;X;;;;;;;;
 Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Baetidae;Nigrobaetis ;;niger;;Nigrobaetis niger;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Nemertea;Animalia;Nemertea;;Hoplonemertea;Cratenemertidae;Nipponnemertes;;pulchra;;Nipponnemertes pulchra ;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Nemertea;Animalia;Nemertea;;Hoplonemertea;Cratenemertidae;Nipponnemertes;;pulchra;;Nipponnemertes pulchra;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bryozoa;Animalia;Bryozoa;Gymnolaemata;Ctenostomatida;Nolellidae;Nolella;;dilatata;;Nolella dilatata;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Coleoptera;Animalia;Arthropoda;Insecta;Coleoptera;Noteridae;Noterus;;clavicornis;;Noterus clavicornis;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;X
 Coleoptera;Animalia;Arthropoda;Insecta;Coleoptera;Noteridae;Noterus;;crassicornis;;Noterus crassicornis;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;X
@@ -1307,7 +1307,7 @@ Echinodermata;Animalia;Echinodermata;Holothuroidea;Dendrochirotida;Cucumariidae;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Acoetidae;Panthalis;;oerstedi;;Panthalis oerstedi;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Parachironomus;;arcuatus;;Parachironomus arcuatus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;X;;;;X
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Parachironomus;;biannulatus;;Parachironomus biannulatus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Parachironomus;;gracilior;;Parachironomus gracilior ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Parachironomus;;gracilior;;Parachironomus gracilior;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Parachironomus;;pararostratus;;Parachironomus pararostratus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;X;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Parachironomus;;vitiosus;;Parachironomus vitiosus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paracladopelma;;camptolabis ;;Paracladopelma camptolabis;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
@@ -1338,7 +1338,7 @@ Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paratanytarsus;;grimmii
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paratanytarsus;;inopertus;;Paratanytarsus inopertus;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X;X;X;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paratanytarsus;;lauterborni;;Paratanytarsus lauterborni;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X;;;;X
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paratanytarsus;;natvigi;;Paratanytarsus natvigi;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paratanytarsus ;;quintuplex ;;Paratanytarsus quintuplex ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paratanytarsus ;;quintuplex ;;Paratanytarsus quintuplex;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Paratendipes;;albimanus;;Paratendipes albimanus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;X
 Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Pariambidae;Pariambus;;typicus;;Pariambus typicus;;X;X;X;X;X;X;;;;;;;;;;;;;;;;;;X;;X;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Parorthocladius;;nudipennis;;Parorthocladius nudipennis;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
@@ -1398,7 +1398,7 @@ Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Photidae;Photis;;longicauda
 Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Photidae;Photis;;reinhardi;;Photis reinhardi;;X;X;;X;;;X;;;;;;;;;;;;;;;;;;;;;;;;;
 Pycnogonida;Animalia;Arthropoda;Pycnogonida;Pantopoda;Phoxichilidiidae;Phoxichilidium;;femoratum;;Phoxichilidium femoratum;;X;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Phoxocephalidae;Phoxocephalus;;holbolli;;Phoxocephalus holbolli;;;X;X;X;X;X;X;X;;;;;;;;;;;;;X;;X;X;;X;;;;;;
-Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Phryganeidae;Phryganea;;bipunctata;;Phryganea bipunctata ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Phryganeidae;Phryganea;;bipunctata;;Phryganea bipunctata;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Phryganeidae;Phryganea;;grandis;;Phryganea grandis;;;;;;;;;;;;;X;X;X;;X;X;;X;;;;;;;;;;;;;X
 Amphipoda;Animalia;Arthropoda;Malacostraca;Amphipoda;Caprellidae;Phtisica;;marina;;Phtisica marina;;X;X;X;X;X;X;X;;;;;;;;;;;;;;;;X;X;;X;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Phyllodoce;Anaitides;groenlandica;;Phyllodoce (Anaitides) groenlandica;;X;X;X;X;X;X;X;;;;;;;;;;;;;;;;;X;;X;;;;;;
@@ -1411,7 +1411,7 @@ Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Phyllodoce;;m
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Phyllodocidae;Phyllodoce;;rosea;;Phyllodoce rosea;;X;X;X;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Polychaeta;Animalia;Annelida;Polychaeta;;Orbiniidae;Phylo;;norvegicus;;Phylo norvegicus;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Gastropoda;Animalia;Mollusca;Gastropoda;Basommatophora;Physidae;Physa;;fontinalis;;Physa fontinalis;;;;;;;;;;;X;X;;X;X;X;X;X;;X;X;;;;;X;;X;X;X;;X;X
-Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Naididae;Piguetiella;; blanci;;Piguetiella blanci ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Naididae;Piguetiella;; blanci;;Piguetiella blanci;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Decapoda;Animalia;Arthropoda;Malacostraca;Decapoda;Pinnotheridae;Pinnotheres;;pisum;;Pinnotheres pisum;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Hirudinea;Animalia;Annelida;Clitellata;Rhynchobdellida;Piscicolidae;Piscicola;;annae;;Piscicola annae;;;;;;;;X;;;;;;;;;;;;;;;;;;;;;X;;;X;
 Hirudinea;Animalia;Annelida;Clitellata;Rhynchobdellida;Piscicolidae;Piscicola;;borowieci;;Piscicola borowieci;;;;;;;;X;;;;;;;;;;;;;;;;;;;;;;;;X;
@@ -1529,7 +1529,7 @@ Polychaeta;Animalia;Annelida;Polychaeta;Spionida;Spionidae;Prionospio;;fallax;;P
 Polychaeta;Animalia;Annelida;Polychaeta;Spionida;Spionidae;Prionospio;;malmgreni;;Prionospio malmgreni;;X;X;X;X;X;;;;;;;;;;;;;;;;;;;;;X;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Naididae;Pristina;;aequiseta;;Pristina aequiseta;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Naididae;Pristina;;bilobata;;Pristinella bilobata;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Naididae;Pristina;;foreli;;Pristina foreli ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Naididae;Pristina;;foreli;;Pristina foreli;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Pristina;;longiseta;;Pristina longiseta;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Naididae;Pristina;;rosea;;Pristinella rosea;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Isopoda;Animalia;Arthropoda;Malacostraca;Isopoda;Asellidae;Proasellus;;coxalis;;Proasellus coxalis;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X;;;;
@@ -1543,7 +1543,7 @@ Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Procladius;Holotanypus;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Procladius;Psilotanypus; imicola;;Procladius (Psilotanypus) imicola;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Procladius;;choreus;;Procladius choreus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;X;;;;X
 Ephemeroptera;Animalia;Arthropoda;Insecta;Ephemeroptera;Baetidae;Procloeon;;bifidum;;Procloeon bifidum;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Prodiamesa;;olivacea;;Prodiamesa olivacea ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Prodiamesa;;olivacea;;Prodiamesa olivacea;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Enchytraeidae;Propappus;;glandulosus;;Propappus glandulosus;;;;;;;;;;;;;;;;;;;;;;;X;;X;;;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Propappidae;Propappus;;volki;;Propappus volki;;;;;;;;;;;;;;;;;;X;;;;;;X;;;;;;;;;
 Gastropoda;Animalia;Mollusca;Gastropoda;Neogastropoda;Conidae;Propebela;;turricula;;Propebela turricula;;X;X;;;X;X;;;;;;;;;;;;;;;;;;X;;;;;;;;
@@ -1558,7 +1558,7 @@ Polychaeta;Animalia;Annelida;Polychaeta;;Psammodrilidae;Psammodrilus;;balanoglos
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Psammoryctides;;albicola;;Psammoryctides albicola;;;;;;;;;;;;;;;;;;X;;X;;;;;;;;;X;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Psammoryctides;;barbatus;;Psammoryctides barbatus;;;;;;;;;;;;;;X;X;X;X;X;;X;;;;;;;;;X;;;X;X
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Psectrocladius;;barbimanus;;Psectrocladius barbimanus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;X;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Psectrocladius;;bisetus;;Psectrocladius bisetus ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Psectrocladius;;bisetus;;Psectrocladius bisetus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Psectrocladius;;limbatellus;;Psectrocladius limbatellus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Psectrocladius;;obvius;;Psectrocladius obvius;;;;;;;;;;;;;;;;X;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Psectrocladius;;psilopterus;;Psectrocladius psilopterus;;;;;;;;;;;;;;;;X;;X;;;;;;;;;;;;;;;X
@@ -1728,7 +1728,7 @@ Polychaeta;Animalia;Annelida;Polychaeta;Spionida;Spionidae;Streblospio;;shrubsol
 Polychaeta;Animalia;Annelida;Polychaeta;Phyllodocida;Syllidae;Streptosyllis;;websteri;;Streptosyllis websteri;;X;X;X;X;X;X;X;X;X;;;;;;;;;;;;;;X;X;;X;;;;;;
 Echinodermata;Animalia;Echinodermata;Echinoidea;Echinoida;Strongylocentrotidae;Strongylocentrotus;;droebachiensis;;Strongylocentrotus droebachiensis;;X;X;X;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Ascidiacea;Animalia;Chordata;Ascidiacea;;Styelidae;Styela;;coriacea;;Styela coriacea;;X;X;X;;X;X;X;;X;;;;;;;;;;;;;;;X;;X;;;;;;
-Ascidiacea;Animalia;Chordata;Ascidiacea;;Styelidae;Styela;;rustica;;Styela rustica ;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Ascidiacea;Animalia;Chordata;Ascidiacea;;Styelidae;Styela;;rustica;;Styela rustica;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Stylaria;;fossularis;;Stylaria fossularis;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X
 Oligochaeta;Animalia;Annelida;Clitellata;Haplotaxida;Tubificidae;Stylaria;;lacustris;;Stylaria lacustris;;;;;;;X;;;;;;;X;X;X;X;X;X;X;X;;;;;X;;;X;X;X;X;X
 Plathelminthes;Animalia;Platyhelminthes;Rhabditophora;Polycladida;Stylochoplanidae;Stylochoplana;;maculata;;Stylochoplana maculata;;;;;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1764,14 +1764,14 @@ Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;brundini;;T
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;chinyensis;;Tanytarsus chinyensis;;;;;;;;;;;;;;;X;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;eminulus;;Tanytarsus eminulus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;excavatus ;;Tanytarsus excavatus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;lestagei ;;Tanytarsus gr. lestagei ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;lestagei ;;Tanytarsus gr. lestagei;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;gregarius;;Tanytarsus gregarius;;;;;;;;;;;;;;;;;;;;;;;;;;;;;X;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;inaequalis;;Tanytarsus inaequalis;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;mancus;;Tanytarsus mancus;;;;;;;;;;;;;;X;;;X;X;;;;;;;;;;X;X;;;;X
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;medius;;Tanytarsus medius;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;mendax;;Tanytarsus mendax;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;occultus;;Tanytarsus occultus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;pallidicornis;;Tanytarsus pallidicornis ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;pallidicornis;;Tanytarsus pallidicornis;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;smolandicus;;Tanytarsus smolandicus;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;usmaensis;;Tanytarsus usmaensis;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Tanytarsus;;verralli;;Tanytarsus verralli;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
@@ -1805,7 +1805,7 @@ Decapoda;Animalia;Arthropoda;Malacostraca;Decapoda;Thiidae;Thia;;scutellata;;Thi
 Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Thienemannimyia;;pseudocarnea;;Thienemannimyia pseudocarnea;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Anomalodesmata;Thraciidae;Thracia;;convexa;;Thracia convexa;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Anomalodesmata;Thraciidae;Thracia;;papyracea;;Thracia papyracea;;X;X;;X;X;X;;;;;;;;;;;;;;;;;;;;X;;;;;;
-Bivalvia;Animalia;Mollusca;Bivalvia;Anomalodesmata;Thraciidae;Thracia;;phaseolina;;Thracia phaseolina ;;X;X;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Bivalvia;Animalia;Mollusca;Bivalvia;Anomalodesmata;Thraciidae;Thracia;;phaseolina;;Thracia phaseolina;;X;X;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Anomalodesmata;Thraciidae;Thracia;;pubescens;;Thracia pubescens;;;;;X;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Anomalodesmata;Thraciidae;Thracia;;villosiuscula;;Thracia villosiuscula;;;;;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Euheterodonta incertae sedis;Thyasiridae;Thyasira;;equalis;;Thyasira equalis;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1895,5 +1895,5 @@ Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Xenochironomus;;xenolab
 Xenoturbellida;Animalia;Xenoturbellida;;;Xenoturbellidae;Xenoturbella;;bocki;;Xenoturbella bocki;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Trichoptera;Animalia;Arthropoda;Insecta;Trichoptera;Leptoceridae;Ylodes;;reuteri;;Ylodes reuteri;;;;;;;;;;;;;X;X;X;;X;X;;X;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Nuculanoida;Yoldiidae;Yoldiella;;lucida;;Yoldiella lucida;;X;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Zalutschia;;mucronata;;Zalutschia mucronata ;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
+Diptera;Animalia;Arthropoda;Insecta;Diptera;Chironomidae;Zalutschia;;mucronata;;Zalutschia mucronata;;;;;;;;;;;;;;;;;;X;;;;;;;;;;;;;;;
 Bivalvia;Animalia;Mollusca;Bivalvia;Euheterodonta incertae sedis;Pholadidae;Zirfaea;;crispata;;Zirfaea crispata;;;X;;;X;X;;;;;;;;;;;;;;;;;X;;;;;;;;;
