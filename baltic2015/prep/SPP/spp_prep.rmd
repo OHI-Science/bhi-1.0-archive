@@ -40,14 +40,8 @@ Not Evaluated (NE)
 
 ## 2. Data
 Two different data sources and goal calculation approaches are explored. 
-**Option 1**  
-HELCOM has spatial occurrence data layers for species and species are given an IUCN threat category.  
-*Pros for using these data:*  
-Data are spatially explicit, can score presence absence for each BHI region.  
-*Cons for using these data:*  
-These represent a very limited number of species in the Baltic (125 total) with the selection criteria being those with a spatial data layer in HELCOM. Many more species have been assessed using the IUCN criteria by HELCOM.  
 
-**Option 2**
+**Option 1** *See preparation in Section 4*  
 HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria.  
 *Pros for using these data:*  
 Much more representative set of species included for Baltic Sea biodiversity.  
@@ -55,15 +49,47 @@ Much more representative set of species included for Baltic Sea biodiversity.
 Distribution is provided for most taxa groups at the basin scale - coaser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.  
 
 
-### 2.1 Data sources and information for HELCOM spatial data
+**Option 2** *See preparation in Section 5*
+HELCOM has spatial occurrence data layers for species and species are given an IUCN threat category.  
+*Pros for using these data:*  
+Data are spatially explicit, can score presence absence for each BHI region.  
+*Cons for using these data:*  
+These represent a very limited number of species in the Baltic (125 total) with the selection criteria being those with a spatial data layer in HELCOM. Many more species have been assessed using the IUCN criteria by HELCOM.  
+
+### 2.1 Data sources and information for checklist data
+
+#### 2.1.1 Data sources
+[HELCOM species checklists](http://helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) (see bottom right of page for links to excel sheets) were downloaded on 14 June 2016
+
+Joni Kaitaranta (HELCOM) emailed the complete list of species assessed using IUCN red list criteria on 14 June 2016.
+
+#### 2.1.2 Data folder
+These data are in the folder 'SPP/data_checklist_redlist'  
+
+#### 2.1.3 Data treatment for presence/absence  
+Difference taxa groups had different levels and categorization of presence/absence.  This is what is included as presence for BHI from the checklist.  
+*Breeding birds* presence = 'breeding'
+*Fish* presence = 'regular reproduction' or 'regular occurence, no reproduction'  
+*Macrophyte* presence = 'X'  
+*Mammal* presence = 'X'  
+*Invert* presence = 'X'  
+
+#### 2.1.4 Other notes  
+1. Breeding birds list noted species that used to be present but are extinct in a separate category - identified as 0
+2. Fish are all occurrences since 1800 - so could have many temporary or extinct sp, Extinction not noted, exclude those labeled temporary.  
+3. Macrophytes, Mammals, Inverts only have either X or blank.  
+4. Macrophytes spp have many synonym names, manually combined so only the main latin name has all presence/absence occurences for all synonyms.  
+
+
+### 2.2 Data sources and information for HELCOM spatial data
 Data extraction and prep was done by Melanie Frazer
 
-#### 2.1.1 Data Sources
+#### 2.2.1 Data Sources
 Species coverage and threat level data were obtained from the [HELCOM Biodiversity Map Service](http://maps.helcom.fi/website/Biodiversity/index.html) under 'Biodiversity' and then under 'Red List'.  
 
 Data were download in March 2016.  
 
-#### 2.1.2 Data extraction
+#### 2.2.2 Data extraction
 Different taxa groups have different file types (grid files, polygons). Each species has a threat level assigned. Melanie worked to align taxa and species to BHI regions and assign the vulnerability code.
 
 Folders associated with these data are:  
@@ -81,8 +107,8 @@ Scripts associated with these data are:
 
 Melanie's notes on the data extraction process are below. 
 
-#### 2.1.3 Notes
-#####  2.1.3.1 General Notes
+#### 2.2.3 Notes
+##### 2.2.3.1 General Notes
 **SPP data**
 For groups on the HELCOM grid (benthos): there is a key (prep/spatial/helcom_to_rgn_bhi_sea.csv) that translates the grid cells into
 baltic regions. The key was created using this script: prep/spatial/HELCOM_2_baltic.R.
@@ -102,7 +128,7 @@ To calculate the SPP score, the IUCN codes will be converted to numeric scores a
 To calculate the ICO score, the species will be subset based on what is considered an iconic species and then the IUCN codes will be 
 converted to numeric scores, and than averaged within each region.
 
-#####  2.1.3.2 Benthic data
+##### 2.2.3.2 Benthic data
 
 Weird thing: you can download a map for each species, but all the species are included in each file.  The
 only difference is that there is a unique html downloaded from IUCN for the species in question.
@@ -128,7 +154,7 @@ The script used to open each bird file and associate the polygons with BHI regio
 
 The extracted bird data is here: intermediate/birds.csv
 
-#####  2.1.3.4 Mammal data
+##### 2.2.3.4 Mammal data
 There is a combined file for mammals.  The ranges are described using polygons that relate to subbasins.
 
 Some species have multiple IUCN categories (probably due to subspecies)
@@ -143,38 +169,13 @@ The script used to extract the data was: mammal_extract.R
 The extracted mammal data are here: intermediate/mammals.R
 
 
-#####  2.1.3.5 Fish data
+##### 2.2.3.5 Fish data
 There is a combined file for fish.  The range data are polygons that correspond to subbasins.
 
 
-#####  2.1.3.6 Macrophyte data
+##### 2.2.3.6 Macrophyte data
 N=17 datapoints fell outside the water.  This could probably be corrected by extracting the CELLCODES that land inland with some buffer.  
 Don't know if this is worth the effort...
-
-
-### 2.2 Data sources and information for checklist data
-
-#### 2.2.1 Data sources
-[HELCOM species checklists](http://helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) (see bottom right of page for links to excel sheets) were downloaded on 14 June 2016
-
-Joni Kaitaranta (HELCOM) emailed the complete list of species assessed using IUCN red list criteria on 14 June 2016.
-
-#### 2.2.2 Data folder
-These data are in the folder 'SPP/data_checklist_redlist'  
-
-#### 2.2.3 Data treatment for presence/absence  
-Difference taxa groups had different levels and categorization of presence/absence.  This is what is included as presence for BHI from the checklist.  
-*Breeding birds* presence = 'breeding'
-*Fish* presence = 'regular reproduction' or 'regular occurence, no reproduction'  
-*Macrophyte* presence = 'X'  
-*Mammal* presence = 'X'  
-*Invert* presence = 'X'  
-
-#### 2.2.4 Other notes  
-1. Breeding birds list noted species that used to be present but are extinct in a separate category - identified as 0
-2. Fish are all occurrences since 1800 - so could have many temporary or extinct sp, Extinction not noted, exclude those labeled temporary.  
-3. Macrophytes, Mammals, Inverts only have either X or blank.  
-4. Macrophytes spp have many synonym names, manually combined so only the main latin name has all presence/absence occurences for all synonyms.  
 
 
 
@@ -183,6 +184,34 @@ Difference taxa groups had different levels and categorization of presence/absen
 BD goal will only be based on the SPP sub-component
 
 ### 3.1 Goal status
+
+#### 3.1.1 Checklist/redlist data goal model
+
+Xspp_b = geometric_mean (Xspp_b,t)
+
+Xpp_b,t = 1- (sum[wi_t,b]/R_t,b)
+
+*b* = basin 
+*t* = taxa group  
+*wi_t,b* = threat weights for each species *i* in taxa group *t* in basin *b*  
+R_t,b = Ref point = Total number of species in basin *b* for taxa group *t* (eg. score equals 1 when all species i have wi of LC)  
+
+Scale min value = score is 0 when 75% of species are extinct.*  
+*From Halpern et al 2012, SI. "We scaled the lower end of the biodiversity goal to be
+0 when 75% species are extinct, a level comparable to the five documented mass extinctions"  
+
+wi from Halpern et al 2012, SI
+EX = 1.0  
+CR = 0.8  
+EN = 0.6  
+VU = 0.4  
+NT = 0.2  
+LC = 0
+DD = not included, "We did not include the Data Deficient classification as assessed species following previously published guidelines for a mid-point approach"  
+
+
+
+#### 3.1.2 Spatial data goal model
 Xspp_r = 1- sum[wi]/R  
 
 wi = threat weights for each species i, R = total number of species in BHI region r  
@@ -255,220 +284,13 @@ create_readme(dir_spp, 'spp_prep.rmd')
 
 ```
 
-## 4. Spatial data data layer preparation
+
+
+## 4. Data layer preparation with checklist distribution data
 
 ### 4.1 Data organization
 
-#### 4.1.1 Read in species data
-```{r read in species data}
-## read in data...
-data = read.csv(file.path(dir_spp, 'data/species_IUCN.csv'))
-dim(data)
-str(data)
-```
-
-#### 4.1.2 Set up vulnerability code
-```{r vulnerability codes}
-
-vuln_lookup = data %>%
-              select(IUCN)%>%
-              distinct(.) %>% ## unique vulnerability codes
-              mutate(IUCN_numeric = ifelse(IUCN == 'EX',1,
-                                    ifelse(IUCN == 'CR',0.8,
-                                    ifelse(IUCN == 'EN', 0.6,
-                                    ifelse(IUCN == 'VU', 0.4,
-                                    ifelse(IUCN == 'NT', 0.2,
-                                    ifelse(IUCN == 'LC',0,NA))))))) ## DD will receive NA
-vuln_lookup ## note, no species with EX
-
-```
-
-#### 4.1.3 Join numeric vulnerability code to species
-```{r join numeric vulnerability}
-
-data2 = data %>%
-        left_join(.,vuln_lookup, by= "IUCN")
-head(data2)
-
-```
-
-#### 4.1.4 Plot by region
-```{r plot raw by region}
-ggplot(data2)+
-  geom_point(aes(rgn_id, species_name),size=1)+
-  facet_wrap(~IUCN)+
-  theme(axis.text.y = element_text(colour="grey20", size=2, angle=0, 
-                                    hjust=.5, vjust=.5, face = "plain"))+
-  ggtitle ("Species presence and vulnerability by region")
-
-
-ggplot(data2)+
-  geom_point(aes(rgn_id, species_name, colour=taxa),size=1)+
-  facet_wrap(~IUCN)+
-  theme(axis.text.y = element_text(colour="grey20", size=2, angle=0, 
-                                    hjust=.5, vjust=.5, face = "plain"))+
-  ggtitle ("Species presence and vulnerability by region")
-
-```
-
-#### 4.1.5 Distribution in IUCN categories
-Benthos & macrophytes have many more DD
-```{r distribution in IUCN categories}
-## how many in each category from each taxa group?
-percent_vuln = data2 %>% 
-  select(-rgn_id)%>%
-  distinct()%>%
-  select(IUCN,taxa) %>% 
-  count(taxa,IUCN) %>%
-  group_by(taxa)%>%
-  mutate(n_tot = sum(n))%>%
-  ungroup()%>%
-  mutate(percent = round(n/n_tot,2)*100)%>%
-  print(n=24)
-
-ggplot(percent_vuln, aes(x=taxa, y=percent, fill=IUCN))+
-  geom_bar(stat="identity")+
-  ggtitle("Percent of species in each IUCN category")
-
-```
-
-#### 4.1.6 Total number of species in each taxa group by IUCN categroy
-```{r number of species in each taxa group}
-
-ggplot(percent_vuln, aes(x=taxa, y=n, fill=IUCN))+
-  geom_bar(stat="identity")+
-  ggtitle("Number of species in each IUCN category")
-
-
-
-ggplot(filter(percent_vuln, IUCN != "DD"), aes(x=taxa, y=n, fill=IUCN))+
-  geom_bar(stat="identity")+
-  ggtitle("Number of species in each IUCN category without DD")
-
-
-```
-
-
-#### 4.1.7 Remove DD species
-Species given DD are not included. See methods above and in Halpern et al. 2012  
-
-Benthos has a much larger number of species in DD category
-```{r remove DD}
-
-data3 = data2 %>%
-        filter(IUCN != "DD")
-dim(data3);dim(data2)
-
-```
-
-#### 4.1.8 Check for duplicates
-```{r check for duplicates}
-data3 %>% nrow() #2205
-data3 %>% distinct() %>% nrow() #2096
-
-## appears to be duplicates
-
-##remove duplicates by selecting the distinct columns
-data3 = data3 %>% 
-        arrange(rgn_id,species_name) %>%
-        distinct()
-        
-dim(data3) #2096
-
-```
-
-#### 4.1.7 Export Species list 
-Export species list to be check to see if sufficient coverage
-```{r export species list}
-species_list = data3 %>%
-              select(species_name,taxa)%>%
-              distinct(.)
-dim(species_list) #125  1
-
-write.csv(species_list, file.path(dir_spp,'species_list_included.csv'), row.names=FALSE)
-
-
-```
-
-
-### 4.2 Data layer for functions.r 
-If this data set is used, the data layer can be exported here.  
-```{r data layer for functions.r}
-data3 = data3 %>%
-        select(rgn_id, species_name, IUCN_numeric) %>%
-        dplyr::rename(weights = IUCN_numeric)
-##write.csv(data3, file.path(dir_layers, 'spp_div_vuln_bhi2015.csv'), row.names=FALSE)
-
-```
-
-### 4.3 Status calcalculation
-
-#### 4.3.1 Calculate status
-```{r status calculation}
-##sum the weights for each BHI region
-sum_wi = data3 %>%
-         group_by(rgn_id)%>%
-         summarise(sum_wi =sum(weights))%>%
-         ungroup()
-dim(sum_wi)
-
-## count the number of species in each BHI region
-sum_spp = data3 %>%
-          select(rgn_id, species_name)%>%
-          dplyr::count(rgn_id)
-dim(sum_spp)
-
-
-data3%>% filter(rgn_id== 1) %>% nrow() ## check to make sure works
-head(sum_spp)
-
-spp_status = full_join(sum_wi,sum_spp, by="rgn_id") %>%
-             mutate(wi_spp = sum_wi/n,
-                    status = 1 - wi_spp)
-               
-
-```
-
-#### 4.3.2 Scale lower end to zero if 75% extinct
-Currently, no species labeled extinct but will set up code in case used in the future
-
-```{r scale for 75 percent extinct}
-## calculate percent extinct in each region
-spp_ex = data3 %>% 
-         filter(weights == 1)
-spp_ex
-## No species extinct
-## IF spp are extinct, find % extinct out of total number of species for each region; join to the status calculation; set regions with 75% or more extinct to a score of 0
-
-```
-
-#### 4.3.3 Plot status
-```{r plot spp status}
-## Plot status
-ggplot(spp_status)+
-  geom_point(aes(rgn_id,round(status*100)),size=3)+
-  ylim(0,100)+
-  ylab("Status") + 
-  xlab("BHI region")+
-  ggtitle("SPP status by BHI region")
-
-## Size points to number of species in a region
-ggplot(spp_status)+
-  geom_point(aes(rgn_id,round(status*100), size=n))+
-  ylim(0,100)+
-  ylab("Status") + 
-  xlab("BHI region")+
-  ggtitle("SPP status by BHI region, n= species richness")
-
-```
-
-
-
-## 5. Data layer preparation with checklist distribution data
-
-### 5.1 Data organization
-
-#### 5.1.1 Read in data
+#### 4.1.1 Read in data
 
 ```{r read in checklist and redlist}
 
@@ -478,6 +300,8 @@ fish = read.csv(file.path(dir_spp,'data_checklist_redlist/fish_dist_checklist.cs
 
 invert = read.csv(file.path(dir_spp,'data_checklist_redlist/invert_dist_checklist.csv'), sep= ";", stringsAsFactors = FALSE)
 
+invert_taxa_all = read.csv(file.path(dir_spp,'data_checklist_redlist/invert_dist_checklist_alltaxalevels.csv'), sep= ";", stringsAsFactors = FALSE) ## this is the same distribution data as in the "invert" object but all taxa levels are included in the csv so can be modified for insects
+
 macrophytes = read.csv(file.path(dir_spp,'data_checklist_redlist/macrophytes_dist_checklist.csv'), sep= ";", stringsAsFactors = FALSE)
 
 mammals = read.csv(file.path(dir_spp,'data_checklist_redlist/mammals_dist_checklist.csv'), sep= ";", stringsAsFactors = FALSE)
@@ -486,26 +310,28 @@ mammals = read.csv(file.path(dir_spp,'data_checklist_redlist/mammals_dist_checkl
 redlist = read.csv(file.path(dir_spp,'data_checklist_redlist/helcom_redlist_allspecies.csv'), sep= ";", stringsAsFactors = FALSE)
 
 
+
 ```
 
-#### 5.1.2 Data structure
+#### 4.1.2 Data structure
 
 ```{r data structure}
 str(bbirds)
 str(fish)
 str(invert)
+str(invert_taxa_all)
 str(macrophytes)
 str(mammals)
 
 str(redlist)
 ```
 
-#### 5.1.3 Translate code to presence/absence
+#### 4.1.3 Translate code to presence/absence
 Objective is to get a data layer of current species occurence.  
 
 Each taxa group has a different code for noting distribution in different regions. Translate to a 1 or 0 for presence absence then gather to long format
 
-##### 5.1.3.1 Breeding birds
+##### 4.1.3.1 Breeding birds
 X = breeding  
 (X) = sporadic breeding (only occasional breeding records)  
 0 = 	extinct (breeding in the past, but no actual breeding records)  
@@ -525,7 +351,7 @@ bbirds_long = bbirds %>%
 ```
 
 
-##### 5.1.3.2 Fish and Lamprey
+##### 4.1.3.2 Fish and Lamprey
 R =	regular reproduction  
 X	 = regular occurrrence, no reproduction  
 T	= temporary occurrence  
@@ -543,11 +369,15 @@ fish_long = fish %>%
   
 ```
 
-##### 5.1.3.3 Invertebrates
+##### 4.1.3.3 Invertebrates
 X	= ocurrance  
 'blank' =	no occurance  
 
 **For BHI:** *X = 1* and *blank = 0* 
+
+Invertebrates pose a problem that some Insecta are indentified to *Genus species* in some regions (eg Gulf of Finland) but likely not assessed by monitoring programs everywhere with such high spatial resolution.
+
+Originally, we coded the status to use all species level data (eg. use the invert_long object below). Now the code will be updated. Insecta will only be considered at the Family level.  Because the redlist is only assessed at the species level, we will extract information for all Insecta species. The species with a the highest threat (most vulnerable species) in a family will be used as the threat level for the entire family. 
 
 ```{r clean invert}
       
@@ -557,9 +387,27 @@ invert_long = invert %>%
               mutate(presence = ifelse(presence == "X", 1, 0))%>% 
               mutate(taxa_group = "invert")
 
+
+## clean invert taxa all
+invert_taxa_all_long = invert_taxa_all %>%
+                       select(-group,-kingdom,-phylum,-subgenus,-species,-subspecies)%>%
+                       gather(location, presence, -class, -order,-family,-genus,-latin_name,-common_name)%>%
+                       mutate(presence = ifelse(presence == "X", 1, 0))%>% 
+                       mutate(taxa_group = "invert")
+
+invert_taxa_all_long_noinsect = invert_taxa_all_long %>%
+                                filter(class != "Insecta")%>%
+                                select(latin_name,common_name,location,presence, taxa_group)
+                        
+dim(invert_taxa_all_long_noinsect);dim(invert_taxa_all_long)
+
+
+invert_taxa_all_long_insect = invert_taxa_all_long %>%
+                                filter(class == "Insecta")%>%
+                                select(family,latin_name,common_name,location,presence, taxa_group)
 ```
 
-##### 5.1.3.4 Macrophytes
+##### 4.1.3.4 Macrophytes
 1 = 	occurance
 0 = no occurance
 uncertain = had a note in checklist about checking the distribution  
@@ -574,7 +422,7 @@ macrophytes_long = macrophytes %>%
 
 ```
 
-##### 5.1.3.5 Mammals
+##### 4.1.3.5 Mammals
 X	= ocurrance  
 'blank' = no occurance  
 
@@ -590,15 +438,16 @@ mammals_long = mammals %>%
 
 ```
 
-### 5.2 Data attributes
+### 4.2 Data attributes
 
-#### 5.2.1 Get number of species by taxa group
+#### 4.2.1 Get number of species by taxa group
 2731 total unique latin names  
+Join the inverts excluding the class insecta
 ```{r species and taxa group checklist}
 
 species_checklist = bind_rows(select(bbirds_long,latin_name,taxa_group),
                          select(fish_long,latin_name,taxa_group),
-                         select(invert_long,latin_name,taxa_group),
+                         select(invert_taxa_all_long_noinsect,latin_name,taxa_group),
                          select(macrophytes_long,latin_name,taxa_group),
                          select(mammals_long,latin_name,taxa_group))%>%
                          distinct()
@@ -609,19 +458,32 @@ species_checklist_n = species_checklist %>%
 ggplot(species_checklist, aes(x=taxa_group))+
    geom_bar(stat="count")+
   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
-  ggtitle("Number of species in the checklist")
+  ggtitle("Number of species in the checklist (excludes Insecta)")
 
-## number of unique latin names
-species_checklist %>% select(latin_name)%>%distinct()%>%nrow() #2731
+## plot number of insect species and insect families
+insecta_checklist_n = invert_taxa_all_long_insect %>%
+                      select(family,latin_name)%>%
+                      distinct()%>%
+                      count(family)
+ggplot(insecta_checklist_n, aes(family,n))+
+  geom_bar(stat="identity")+
+  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+  ggtitle("Number of species per family in the checklist Insecta")
+
+
+## number of unique latin names (does not include insect)
+species_checklist %>% select(latin_name)%>%distinct()%>%nrow() #2363
 
 ##add list_type
 species_checklist = species_checklist%>%
                     mutate(list_type = "checklist")
 
+
+
 ```
 
 
-#### 5.2.2 Get number of species by taxa group on the red list
+#### 4.2.2 Get number of species by taxa group on the red list
 2772 on redlist  
 Need to see how many are assessed. 
 ```{r number species redlist}
@@ -643,21 +505,22 @@ redlist = redlist %>%
 ```
 
 
-#### 5.2.3 Get a species list that is all those present on the red list and check list
+#### 4.2.3 Get a species list that is all those present on the red list and check list
 1. First join and retain all species to see if spelling causes any mismatches.  
 2. Retain only species on both lists, join by taxa group and latin name.
+3. Do this for Insecta separately
 
 **What is not present**
 *Not on Redlist*
 343 species on checklist not on redlist.  
 1. No wintering birds in the checklist.  
 
-##### 5.2.3.1 Full species list
+##### 4.2.3.1 Full species list
 ```{r full species list}
 full_species = full_join(species_checklist,redlist, by=c("latin_name","taxa_group"))%>%
                   select(-iucn_criteria)%>%
                   mutate(helcom_category = as.character(helcom_category))
-dim(full_species) #3152   6
+dim(full_species) #2818   6
 
 ##which species are not on both lists?
 
@@ -665,14 +528,15 @@ dim(full_species) #3152   6
 
             
 ```
-##### 5.2.3.2 on checklist not redlist
+##### 4.2.3.2 on checklist not redlist
+9 species not on redlist
 Ringed seal latin name differs - correct in redlist to *Pusa hispida*  
 4 breeding birds not on redlist --spelling differences, correct on redlist  
-310 macrophytes not on redlist  
-28 invertebreates not on redlist  
+3 macrophytes not on redlist  (2 are spelling error, corrected)
+1 invertebreate not on redlist  (insecta not assessed here)
 ```{r species on checklist not redlist }
 # which are in checklist but not redlist
-      full_species %>% filter(is.na(list_type.y)) %>%nrow()  ##343
+      full_species %>% filter(is.na(list_type.y)) %>%nrow()  ##9
       full_species %>% filter(is.na(list_type.y)) %>%select(taxa_group)%>%distinct()  ## breeding birds, invert, macrophytes mammals
 
 ## check mammals
@@ -693,20 +557,40 @@ Ringed seal latin name differs - correct in redlist to *Pusa hispida*
           
           
 ## Check macrophytes
-           full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="macrophytes") ##310 species
+           full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="macrophytes") ##3 species
+            
+           #Ranunculus trichophyllus subsp. Eradicatus 
+           redlist %>% filter(grepl("Ranunculus",latin_name)) #Ranunculus trichophyllus subsp. eradicatus
            
+           #Porphyridium aerugineum 3
+           redlist %>% filter(grepl("Porphyridium",latin_name))  #Porphyridium aerugineum
+           
+           #Polygonum foliosum
+            redlist %>% filter(grepl("Polygonum",latin_name))  ## not on list
+           
+            
+            
 ## check inverts
-            full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="invert") ##28 species
+            full_species %>% filter(is.na(list_type.y)) %>% filter(taxa_group =="invert") ##1 species (excludes insects)
+            redlist %>% filter(grepl("Euspira",latin_name)) # not there
 
 
             
 #### UPDATE NAMES ON REDLIST
 redlist = redlist %>%
       mutate(latin_name = ifelse(latin_name=="Phoca hispida botnica","Pusa hispida",latin_name),
-      latin_name = ifelse(latin_name== "Actitis hypoleucos (Linnaeus, 1758)","Actitis hypoleucos",latin_name),
-       latin_name = ifelse(latin_name == "Larus minutus", "Larus minutus (Hydrocoloeus minutus)", latin_name),
-             latin_name = ifelse(latin_name == "Larus ridibundus","Larus ridibundus (Chroicocephalus ridibundus)",latin_name),
-             latin_name = ifelse(latin_name =="Mergellus albellus" ,"Mergus albellus (Mergellus albellus)",latin_name))
+             latin_name = ifelse(latin_name== "Actitis hypoleucos (Linnaeus, 1758)",
+                                 "Actitis hypoleucos",latin_name),
+             latin_name = ifelse(latin_name == "Larus minutus",
+                                 "Larus minutus (Hydrocoloeus minutus)", latin_name),
+             latin_name = ifelse(latin_name == "Larus ridibundus",
+                                 "Larus ridibundus (Chroicocephalus ridibundus)",latin_name),
+             latin_name = ifelse(latin_name =="Mergellus albellus" ,
+                                 "Mergus albellus (Mergellus albellus)",latin_name),
+             latin_name = ifelse(latin_name == "Ranunculus trichophyllus subsp. eradicatus",
+                                 "Ranunculus trichophyllus subsp. Eradicatus",latin_name),
+             latin_name = ifelse(latin_name == "Porphyridium aerugineum",
+                                 "Porphyridium aerugineum 3",latin_name))
 
 
   
@@ -715,19 +599,21 @@ redlist = redlist %>%
 full_species = full_join(species_checklist,redlist, by=c("latin_name","taxa_group"))%>%
                   select(-iucn_criteria)%>%
                   mutate(helcom_category = as.character(helcom_category))
-dim(full_species) #3147   6
+dim(full_species) #2811   6
               
 ```
 
-##### 5.2.3.3 on redlist not on checklist  
-**410 species on redlist not on checklist **
+##### 4.2.3.3 on redlist not on checklist  
+**442 species on redlist not on checklist **
 1. 63 species of wintering birds. There is no wintering birds checklist so just use breeding birds and the threat level assigned to species in breeding birds (even if a species is listed on redlist in both breeding and wintering)  
 2. 9 species of fish. Not found - but perhaps smelt is simply incorrect on redlist (*Osmerus eperlanomarinus*) and should be changed to *Osmerus eperlanus* which is on the checklist?  
+3. 1 macrophyte not found  
+4. 369 are invertebrate species, but 367 are insecta and have not integrated insecta into the list yet. The two others were not found under genus on the species_checklist
 
 ```{r redlist not on checklist}
 ## Species on redlist not on checklist
-         full_species %>% filter(is.na(list_type.x)) %>%nrow()  ##   410
-         full_species %>% filter(is.na(list_type.x)) %>%select(taxa_group)%>%distinct()  ## macrophytes, invert, wintering birds, fish
+         full_species %>% filter(is.na(list_type.x)) %>%nrow()  ##442
+         full_species %>% filter(is.na(list_type.x)) %>%select(taxa_group)%>%distinct()  ## invert, macrophytes, wintering birds, fish
 
 ## check wintering birds - 63 wintering birds.  There is no checklist for wintering birs. Will use the breeding birds and their associated threat level.
    full_species %>% filter(is.na(list_type.x)) %>% filter(taxa_group =="wintering birds")
@@ -749,10 +635,41 @@ dim(full_species) #3147   6
    species_checklist %>% filter(grepl("Sphyrna", latin_name)) ## Sphyrna zygaena 
     
    
+   ## check macrophytes
+   full_species %>% filter(is.na(list_type.x)) %>% filter(taxa_group =="macrophytes") ## 1 species
+      ##Persicaria foliosa macrophytes
+      species_checklist %>% filter(grepl("Persicaria", latin_name)) ## not on list
+   
+   ## check invertebrates
+   full_species %>% filter(is.na(list_type.x)) %>% filter(taxa_group =="invert") #369
+    ## how many are from Insecta
+    invert_not_checklist = full_species %>% filter(is.na(list_type.x)) %>% filter(taxa_group =="invert") 
+   
+   check_insect = invert_taxa_all_long_insect %>%
+                  select(family,latin_name)%>%
+                  distinct()%>%
+                  inner_join(., invert_not_checklist,
+                             by="latin_name") ## do inner join to see which are there
+    
+    dim(check_insect)   ## 367 of 369 found in insecta
+    
+    ## which are not in insect
+    check_insect_spp = check_insect %>% select(latin_name)
+    check_insect_spp = check_insect_spp[,1]
+    invert_not_checklist %>% filter(!latin_name %in% check_insect_spp)
+    
+    # Tribelos intextum     invert        <NA>         Species              LC     redlist
+     species_checklist %>% filter(grepl("Tribelos", latin_name)) ##not found
+    
+     # Lunatia pallida     invert        <NA>         Species              VU     redlist
+    species_checklist %>% filter(grepl("Lunatia", latin_name)) #not found
+    
+
 ```
 
-#### 5.2.4 shared species object
-2393 unique species shared between the species checklist and the red list
+#### 4.2.4 shared species object
+2367 unique species shared between the species checklist and the red list
+Does not include insecta
 ```{r shared species object}
 #
 ## object of only species shared betweent the lists  
@@ -760,12 +677,12 @@ shared_species = full_species %>%
                   filter(!is.na(list_type.x) & !is.na(list_type.y))
 dim(shared_species)
 
-shared_species %>% select(latin_name)%>%distinct() %>% nrow()##2393
+shared_species %>% select(latin_name)%>%distinct() %>% nrow()##2361
 
 ```
 
 
-##### 5.2.4.1 Duplicates in shared_species
+##### 4.2.4.1 Duplicates in shared_species
 Cod are assessed at the species level, and by subpopulation. Harbor porpoise and Harbor seal also have assessments by subpopulation.  Invert Malacoceros fuliginosus has 2 threat assessments at the species level.
 
 ** For Cod - there is a species level assessment and so use this -  VU**
@@ -774,9 +691,9 @@ Cod are assessed at the species level, and by subpopulation. Harbor porpoise and
 ```{r duplicates in shared_species}
 ## are there species with more than one helcom_cateogry threat?
 shared_species %>% select(latin_name,helcom_category)%>%distinct()%>%nrow()
-##[1] 2298
+##[1] 2366
 shared_species %>% select(latin_name)%>%distinct()%>%nrow()
-##2393
+##2361
 
 ##YES
 
@@ -801,7 +718,112 @@ shared_species %>% select(latin_name,helcom_category)%>%distinct()%>%nrow();shar
 ```
 
 
-#### 5.2.5 Plot the shared_species list by threat category
+#### 4.2.5 Assess insecta by species and class, add into shared list
+
+##### 4.2.5.1 Join Insecta checklist species to redlist
+```{r Join Insecta checklist species to redlist}
+
+full_species_insects = invert_taxa_all_long_insect %>%
+                  select(family,latin_name,taxa_group)%>%
+                  distinct()%>%
+                  mutate(list_type = "checklist") %>%
+                  left_join(.,redlist,
+                            by=c("latin_name","taxa_group")) ## do not do full join because don't want all redlist inverts
+
+invert_taxa_all_long_insect %>% select(family,latin_name,taxa_group)%>% distinct()%>% dim() #368
+
+dim(full_species_insects)   ## 368
+
+```
+
+##### 4.2.5.2 Which insect species not on redlist
+## only species from the checklist not on the redlist *Tribelos intextus* there is *Tribelos intextum* in redlist, not sure if this is a typo?  Not including now
+```{r Which insect species not on redlist}
+
+full_species_insects %>% filter(is.na(list_type.y)) ## 1
+
+redlist %>% filter(grepl("Tribelos",latin_name))
+
+```
+
+##### 4.2.5.3 Select insecta species to include
+```{r Select insecta species to include}
+shared_species_insects = full_species_insects %>%
+                         filter(!is.na(list_type.x) & !is.na(list_type.y))
+  
+
+
+```
+
+##### 4.2.5.4 Summarize to a family level
+```{r Summarize to a family level}
+
+## unqiue threat levels 
+shared_species_insects %>% select(helcom_category) %>% distinct()
+##LC, NE, DD
+
+
+shared_family_insects = shared_species_insects %>%
+                        mutate(helcom_cat_fam_score = ifelse(is.na(helcom_category),0,
+                                                   ifelse(helcom_category== "LC",3,
+                                                   ifelse(helcom_category == "DD",2,
+                                                   ifelse(helcom_category == "NE",1,NA)))))%>%
+                        select(family,helcom_cat_fam_score)%>%
+                        group_by(family) %>%
+                        summarise(helcom_cat_fam_score = max(helcom_cat_fam_score)) %>%
+                        ungroup()%>%
+                        mutate(helcom_cat_fam = ifelse(helcom_cat_fam_score == 3, "LC",
+                                                ifelse(helcom_cat_fam_score == 2, "DD",
+                                                ifelse(helcom_cat_fam_score == 1, "NE",
+                                                ifelse(helcom_cat_fam_score == 0, NA,"")))))
+                    
+
+```
+
+##### 4.2.5.5 Plot Insecta family assigned threat
+```{r Plot Insecta family assigned threat}
+shared_family_insects_n = shared_family_insects %>%
+                         count(helcom_cat_fam)
+          
+
+ggplot(shared_family_insects_n, aes(x=as.factor(helcom_cat_fam), y=n))+
+   geom_bar(stat="identity")+
+   xlab("HELCOM threat level assigned to Family")+
+  ylab("Count")+
+  ggtitle("Insecta Families assigned to most vulnerable species category")
+
+
+```
+
+
+##### 4.2.5.6 Join Insecta families to shared_species list
+2421 unique species/families in shared species list
+```{r Join Insecta families to shared_species list}
+
+shared_family_insects1 = shared_family_insects  %>%
+                         select(-helcom_cat_fam_score)%>%
+                         dplyr::rename(latin_name = family,
+                                        helcom_category = helcom_cat_fam) %>%
+                         mutate(taxa_group = "invert",
+                                list_type.x = "checklist",
+                                list_type.y = "redlist")%>%
+                         select(latin_name,taxa_group,list_type.x,helcom_category,list_type.y)
+
+dim(shared_family_insects1) ## 60  5
+
+dim(shared_species) #2361
+
+
+## bind rows
+shared_species = bind_rows(shared_species,
+                           shared_family_insects1)
+
+dim(shared_species) #2421
+```
+
+
+
+#### 4.2.6 Plot the shared_species list by threat category
 ```{r plot shared_species by threat}
 
 shared_species_threat_n = shared_species %>%
@@ -814,8 +836,8 @@ ggplot(shared_species_threat_n, aes(x=taxa_group, y=n, fill=helcom_category))+
 
 ```
 
-### 5.3 Select data for analysis
-#### 5.3.1 Exclude taxa that are:
+### 4.3 Select data for analysis
+#### 4.3.1 Exclude taxa that are:
 1. Data decificient (DD)
 2. Not Evaluated  (NE)
 ```{r exclude DD and NE from shared_species}
@@ -823,7 +845,7 @@ ggplot(shared_species_threat_n, aes(x=taxa_group, y=n, fill=helcom_category))+
 shared_species_dd_ne = bind_rows(filter(shared_species,helcom_category == 'DD'),
                                  filter(shared_species,helcom_category == 'NE'))
 str(shared_species_dd_ne)
-dim(shared_species_dd_ne)# 729 5
+dim(shared_species_dd_ne)# 757 5
 
 ## plot excluded
 shared_species_dd_ne_threat_n = shared_species_dd_ne %>%
@@ -845,7 +867,7 @@ shared_species2 = bind_rows(filter(shared_species,helcom_category == 'NT'),
                             filter(shared_species,helcom_category == 'NA'))
                             
                                  
-dim(shared_species2); dim(shared_species) # 1474,2393 
+dim(shared_species2); dim(shared_species) # 1456,2421 
 
 
 ## recreate object without DD and NE
@@ -861,8 +883,8 @@ ggplot(shared_species_threat_n, aes(x=taxa_group, y=n, fill=helcom_category))+
 ```
 
 
-### 5.4 Score threat level
-#### 5.4.1 Repeat making the vuln_lookup
+### 4.4 Score threat level
+#### 4.4.1 Repeat making the vuln_lookup
 Add category Regionally Extinct, and score same as Extinct
 ```{r repeat vuln_lookup}
 
@@ -885,7 +907,7 @@ vuln_lookup ## note, no species with EX
 
 ```
 
-#### 5.4.2 Join the vulnerability score to the shared species list
+#### 4.4.2 Join the vulnerability score to the shared species list
 
 ```{r  join vuln to shared_species2}
 
@@ -895,21 +917,21 @@ shared_species3 = shared_species2 %>%
 ```
 
 
-### 5.5 Species distributions
+### 4.5 Species distributions
 
-#### 5.5.1 Basin names used for distribution
+#### 4.5.1 Basin names used for distribution
 Major basin are the same but smaller regions also included, these differ in number
 ```{r basin names used for distribution}
 
 fish_loc = fish_long %>% select(location)%>%arrange()%>%distinct() %>%
   mutate(location = ifelse(location == "Åland.Sea", "Aland.Sea",location))##21
-invert_loc = invert_long %>% select(location)%>%arrange()%>%distinct() ##32
+invert_loc = invert_taxa_all_long %>% select(location)%>%arrange()%>%distinct() ##32
 macrophytes_loc = macrophytes_long %>% select(location)%>%arrange()%>%distinct() ##17
 mammals_loc = mammals_long %>% select(location)%>%arrange()%>%distinct()%>%
               mutate(location = ifelse(location == "Åland.Sea", "Aland.Sea",location))##19
 ```
 
-#### 5.5.2 Location name object
+#### 4.5.2 Location name object
 ```{r basin name object}
 dist_loc = bind_rows(fish_loc,invert_loc,macrophytes_loc,mammals_loc)%>%
             arrange()%>%
@@ -918,7 +940,7 @@ dist_loc = bind_rows(fish_loc,invert_loc,macrophytes_loc,mammals_loc)%>%
 #write.csv(dist_loc, file.path(dir_spp,'distribution_locations.csv'), row.names=FALSE)
 
 ## Read in csv with HOLAS basin names added to the distribution locations
-dist_loc = read.csv(file.path(dir_spp,'distribution_locations.csv'),sep=";")
+dist_loc = read.csv(file.path(dir_spp,'distribution_locations.csv'),sep=";", stringsAsFactors = FALSE)
 
 ##number of basin
 dist_loc %>% select(basin)%>%distinct()%>%nrow() #17 ## These match HOLAS basins
@@ -926,25 +948,66 @@ dist_loc %>% select(basin)%>%distinct()%>%nrow() #17 ## These match HOLAS basins
 
 ```
 
-#### 5.5.3 Join dist_loct to taxa checklists  
+#### 4.5.3 Join dist_loct to taxa checklists  
 This excludes birds because distribution given by country.  
+Do insecta separately
 ```{r  checklist_distribution}
-
+### species (not insected)
 species_dist = bind_rows(fish_long,
-                         invert_long,
+                         invert_taxa_all_long_noinsect,
                          macrophytes_long,
-                         mammals_long)%>%
+                         mammals_long)
+species_dist = species_dist%>%
               full_join(., dist_loc, by="location")
 
 str(species_dist)
+
+
+### species insecta to families
+
+insect_sp_dist = invert_taxa_all_long_insect %>%
+                 full_join(.,dist_loc, by="location")
+        str(insect_sp_dist)
+
+##inner join insect_sp_dit to shared_family_insects
+insect_fam_dist = insect_sp_dist %>%
+                  inner_join(., select(shared_family_insects1,latin_name),
+                             by=c("family"="latin_name"))
+  
+dim(insect_fam_dist);dim(insect_sp_dist)    
+insect_fam_dist %>% select(family) %>% distinct()
+
+##prepare insect_fam_dist to join with species dies
+insect_fam_dist = insect_fam_dist %>%
+                  select(family,common_name,location,presence,taxa_group,basin)%>%
+                  dplyr::rename(latin_name = family)
+
+
+
+
+## JOIN the species dist with the insecta family dist
+dim(species_dist) #63672     6
+species_dist = bind_rows(species_dist,
+                         insect_fam_dist)
+
+dim(species_dist) #75448     6
+
+## basins NA ?
+species_dist %>% filter(is.na(basin)) %>% select(taxa_group,basin,location)%>% distinct() #  invert  <NA> Eckernförde.Bay
+
+species_dist = species_dist %>%
+               mutate(basin = ifelse(is.na(basin) & location == "Eckernförde.Bay", "Kiel Bay", basin))
+
+
+species_dist %>% filter(is.na(basin)) 
 ```
 
 
-### 5.6 Species distributions + Threat score
+### 4.6 Species distributions + Threat score
 ```{r join species_dist to shared_species3 }
 
 ## number of species that should be on final list is
-shared_species3 %>% nrow() ## 1474 species should be on the final list
+shared_species3 %>% nrow() ## 1456 species should be on the final list
 
 
 ## join shared_species3 to species_dist
@@ -956,12 +1019,12 @@ shared_species_dist = left_join(shared_species3, species_dist,
                       arrange(taxa_group, latin_name)
 
 
-dim(shared_species_dist)
-shared_species_dist %>% select(latin_name)%>% distinct() %>% nrow() #1474
+dim(shared_species_dist) ##25467
+shared_species_dist %>% select(latin_name)%>% distinct() %>% nrow() #1456
 
 ```
 
-### 5.6.1 Plot IUCN category by taxa and basin
+### 4.6.1 Plot IUCN category by taxa and basin
 Breeding birds were distributed by country so no basin assignment currently.  
 ```{r}
 
@@ -1033,7 +1096,7 @@ ggplot(filter(shared_species_dist_n, taxa_group=="mammals"))+
 
 ```
 
-### 5.6.2 Export shared_species_dist object
+### 4.6.2 Export shared_species_dist object
 For use in ICO status calculation
 ```{r export for use in ICO calculation}
 ## write to two location - SPP folder and ICO folder
@@ -1044,15 +1107,15 @@ write.csv(shared_species_dist, file.path(dir_prep,'ICO/data_database/checklist_r
 ```
 
 
-### 5.7 Status calculation by basin
+### 4.7 Status calculation by basin
 Data are on the HOLAS basin scale. Calculate biodiversity status by basin and then apply to BHI regions.  
 *Note, this will mean that the data layer sent to layers and what is registered in layers.csv is very different than what is done if use the spatial data layers from HELCOM where status is directly calculated for BHI regions and this is done formally in functions.r*  
 
-### 5.7.1 Calulate SPP status using checklist and redlist data with all species weighted equally
+### 4.7.1 Calulate SPP status using checklist and redlist data with all species weighted equally
 **Exclude birds for now**  
 Do a single calculation including all species. Will compare this result to doing this calculation first for each taxa group and then taking the geometric mean (See Section 5.7.2)
 
-##### 5.7.1.1 Calculate status
+##### 4.7.1.1 Calculate status
 ```{r status calculation for checklist and redlist data}
 ##sum the threat weights for each basin
 sum_wi_basin =shared_species_dist %>%
@@ -1083,7 +1146,7 @@ spp_status_basin = full_join(sum_wi_basin,sum_spp_basin, by="basin") %>%
 
 ```
 
-##### 5.7.1.2 Scale lower end to zero if 75% extinct
+##### 4.7.1.2 Scale lower end to zero if 75% extinct
 Currently, species are labled regionally extinct 
 
 ```{r scale for 75 percent extinct for basin}
@@ -1119,7 +1182,7 @@ spp_status_basin = spp_status_basin %>%
 
 ```
 
-##### 5.7.1.3 Plot status by basin
+##### 4.7.1.3 Plot status by basin
 ```{r plot basin status}
 ## Plot status
 ggplot(spp_status_basin)+
@@ -1144,11 +1207,11 @@ ggplot(spp_status_basin)+
 
 ```
 
-### 5.7.2 Calulate SPP status using checklist and redlist data by taxa group and geometric mean
+### 4.7.2 Calulate SPP status using checklist and redlist data by taxa group and geometric mean
 **Exclude birds for now**  
 Calculation status by taxa group by basin and then taking the geometric mean for each basin.
 
-##### 5.7.2.1 Calculate status by taxa group
+##### 4.7.2.1 Calculate status by taxa group
 ```{r taxa group status calculation for checklist and redlist data}
 ##sum the threat weights for each basin by taxa group
 sum_wi_basin_taxa_group =shared_species_dist %>%
@@ -1177,7 +1240,7 @@ spp_status_basin_taxa_group = full_join(sum_wi_basin_taxa_group,
 
 ```
 
-##### 5.7.2.2 Plot status by taxa group
+##### 4.7.2.2 Plot status by taxa group
 ```{r plot taxa_group Status}
 ggplot(spp_status_basin_taxa_group)+
   geom_point(aes(taxa_group,status_taxa,size=n))+
@@ -1190,7 +1253,7 @@ ggplot(spp_status_basin_taxa_group)+
 ```
 
 
-##### 5.7.2.3 For each taxa group - Scale lower end to zero if 75% extinct
+##### 4.7.2.3 For each taxa group - Scale lower end to zero if 75% extinct
 Currently, species are labled regionally extinct 
 
 ```{r scale for each taxa group if 75 percent extinct for basin}
@@ -1228,7 +1291,7 @@ spp_status_basin_taxa_group  = spp_status_basin_taxa_group  %>%
 
 ```
 
-##### 5.7.2.4 Plot again status by taxa group
+##### 4.7.2.4 Plot again status by taxa group
 ```{r plot taxa_group Status again}
 ggplot(spp_status_basin_taxa_group)+
   geom_point(aes(taxa_group,status_taxa,size=n))+
@@ -1241,7 +1304,7 @@ ggplot(spp_status_basin_taxa_group)+
 ```
 
 
-##### 5.7.2.5 Calculate Geometric Mean for Basin status
+##### 4.7.2.5 Calculate Geometric Mean for Basin status
 ```{r geometric mean for basin status}
 spp_status_basin_geo = spp_status_basin_taxa_group %>%
                         select(basin, status_taxa) %>%
@@ -1251,7 +1314,7 @@ spp_status_basin_geo = spp_status_basin_taxa_group %>%
 
 ```
 
-##### 5.7.2.4 Plot Geometric Mean for Basin status
+##### 4.7.2.4 Plot Geometric Mean for Basin status
 ```{r plot basin Status from geometric mean}
 ggplot(spp_status_basin_geo)+
   geom_point(aes(basin, status_basin),size=2)+
@@ -1262,7 +1325,7 @@ ggplot(spp_status_basin_geo)+
 
 ```
 
-#### 5.7.3 Compare alternative approaches to Basin level SPP status calculation
+#### 4.7.3 Compare alternative approaches to Basin level SPP status calculation
 
 ```{r comparsion of basin level spp status}
 spp_status_basin = spp_status_basin %>%
@@ -1285,9 +1348,9 @@ ggplot(basin_status_compare)+
 ```
 
 
-### 5.8 Apply basin status to BHI regions
+### 4.8 Apply basin status to BHI regions
 
-#### 5.8.1 Read in basin to BHI ID lookup
+#### 4.8.1 Read in basin to BHI ID lookup
 ```{r read in basin bhi id lookup}
 
 basin_lookup = read.csv(
@@ -1300,7 +1363,7 @@ basin_lookup = basin_lookup %>%
 str(basin_lookup)
 ```
 
-#### 5.8.2 Join basin lookup to spp_status_basin_geo
+#### 4.8.2 Join basin lookup to spp_status_basin_geo
 ```{r join basin lookup to spp status calculated with taxa group geometric mean}
 
 spp_status_rgn_geo = full_join(spp_status_basin_geo, basin_lookup, by="basin") %>%
@@ -1310,7 +1373,7 @@ str(spp_status_rgn_geo)
 
 ```
 
-#### 5.8.3 Plot status (geometric taxa group mean) by BHI region
+#### 4.8.3 Plot status (geometric taxa group mean) by BHI region
 ```{r plot status from geometric mean by bhi region}
 
 ggplot(spp_status_rgn_geo)+
@@ -1321,7 +1384,8 @@ ggplot(spp_status_rgn_geo)+
 ```
 
 
-#### 5.8.4 Prepare data for layers
+#### 4.8.4 Prepare data for layers
+Saved as csv in Section 6
 ```{r prepare data for layers status from geometric taxa mean}
 
 spp_status_rgn_geo = spp_status_rgn_geo %>%
@@ -1333,8 +1397,220 @@ head(spp_status_rgn_geo)
 ```
 
 
+
+## 5. Spatial data data layer preparation
+This is to show the outcome of using these data. These data are currently not saved as a layer and used for status calculations. The data prepared in section 4 is used.
+
+### 5.1 Data organization
+
+#### 5.1.1 Read in species data
+```{r read in species data}
+## read in data...
+data = read.csv(file.path(dir_spp, 'spatial_data_prep/data/species_IUCN.csv'))
+dim(data)
+str(data)
+```
+
+#### 5.1.2 Set up vulnerability code
+```{r vulnerability codes}
+
+vuln_lookup = data %>%
+              select(IUCN)%>%
+              distinct(.) %>% ## unique vulnerability codes
+              mutate(IUCN_numeric = ifelse(IUCN == 'EX',1,
+                                    ifelse(IUCN == 'CR',0.8,
+                                    ifelse(IUCN == 'EN', 0.6,
+                                    ifelse(IUCN == 'VU', 0.4,
+                                    ifelse(IUCN == 'NT', 0.2,
+                                    ifelse(IUCN == 'LC',0,NA))))))) ## DD will receive NA
+vuln_lookup ## note, no species with EX
+
+```
+
+#### 5.1.3 Join numeric vulnerability code to species
+```{r join numeric vulnerability}
+
+data2 = data %>%
+        left_join(.,vuln_lookup, by= "IUCN")
+head(data2)
+
+```
+
+#### 5.1.4 Plot by region
+```{r plot raw by region}
+ggplot(data2)+
+  geom_point(aes(rgn_id, species_name),size=1)+
+  facet_wrap(~IUCN)+
+  theme(axis.text.y = element_text(colour="grey20", size=2, angle=0, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle ("Species presence and vulnerability by region")
+
+
+ggplot(data2)+
+  geom_point(aes(rgn_id, species_name, colour=taxa),size=1)+
+  facet_wrap(~IUCN)+
+  theme(axis.text.y = element_text(colour="grey20", size=2, angle=0, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle ("Species presence and vulnerability by region")
+
+```
+
+#### 5.1.5 Distribution in IUCN categories
+Benthos & macrophytes have many more DD
+```{r distribution in IUCN categories}
+## how many in each category from each taxa group?
+percent_vuln = data2 %>% 
+  select(-rgn_id)%>%
+  distinct()%>%
+  select(IUCN,taxa) %>% 
+  count(taxa,IUCN) %>%
+  group_by(taxa)%>%
+  mutate(n_tot = sum(n))%>%
+  ungroup()%>%
+  mutate(percent = round(n/n_tot,2)*100)%>%
+  print(n=24)
+
+ggplot(percent_vuln, aes(x=taxa, y=percent, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Percent of species in each IUCN category")
+
+```
+
+#### 5.1.6 Total number of species in each taxa group by IUCN categroy
+```{r number of species in each taxa group}
+
+ggplot(percent_vuln, aes(x=taxa, y=n, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Number of species in each IUCN category")
+
+
+
+ggplot(filter(percent_vuln, IUCN != "DD"), aes(x=taxa, y=n, fill=IUCN))+
+  geom_bar(stat="identity")+
+  ggtitle("Number of species in each IUCN category without DD")
+
+
+```
+
+
+#### 5.1.7 Remove DD species
+Species given DD are not included. See methods above and in Halpern et al. 2012  
+
+Benthos has a much larger number of species in DD category
+```{r remove DD}
+
+data3 = data2 %>%
+        filter(IUCN != "DD")
+dim(data3);dim(data2)
+
+```
+
+#### 5.1.8 Check for duplicates
+```{r check for duplicates}
+data3 %>% nrow() #2205
+data3 %>% distinct() %>% nrow() #2096
+
+## appears to be duplicates
+
+##remove duplicates by selecting the distinct columns
+data3 = data3 %>% 
+        arrange(rgn_id,species_name) %>%
+        distinct()
+        
+dim(data3) #2096
+
+```
+
+#### 5.1.7 Export Species list 
+Export species list to be check to see if sufficient coverage
+```{r export species list}
+species_list = data3 %>%
+              select(species_name,taxa)%>%
+              distinct(.)
+dim(species_list) #125  1
+
+write.csv(species_list, file.path(dir_spp,'species_list_included.csv'), row.names=FALSE)
+
+
+```
+
+
+### 5.2 Data layer for functions.r 
+If this data set is used, the data layer can be exported here.  
+```{r data layer for functions.r}
+data3 = data3 %>%
+        select(rgn_id, species_name, IUCN_numeric) %>%
+        dplyr::rename(weights = IUCN_numeric)
+##write.csv(data3, file.path(dir_layers, 'spp_div_vuln_bhi2015.csv'), row.names=FALSE)
+
+```
+
+### 5.3 Status calcalculation
+
+#### 5.3.1 Calculate status
+```{r status calculation}
+##sum the weights for each BHI region
+sum_wi = data3 %>%
+         group_by(rgn_id)%>%
+         summarise(sum_wi =sum(weights))%>%
+         ungroup()
+dim(sum_wi)
+
+## count the number of species in each BHI region
+sum_spp = data3 %>%
+          select(rgn_id, species_name)%>%
+          dplyr::count(rgn_id)
+dim(sum_spp)
+
+
+data3%>% filter(rgn_id== 1) %>% nrow() ## check to make sure works
+head(sum_spp)
+
+spp_status = full_join(sum_wi,sum_spp, by="rgn_id") %>%
+             mutate(wi_spp = sum_wi/n,
+                    status = 1 - wi_spp)
+               
+
+```
+
+#### 5.3.2 Scale lower end to zero if 75% extinct
+Currently, no species labeled extinct but will set up code in case used in the future
+
+```{r scale for 75 percent extinct}
+## calculate percent extinct in each region
+spp_ex = data3 %>% 
+         filter(weights == 1)
+spp_ex
+## No species extinct
+## IF spp are extinct, find % extinct out of total number of species for each region; join to the status calculation; set regions with 75% or more extinct to a score of 0
+
+```
+
+#### 5.3.3 Plot status
+```{r plot spp status}
+## Plot status
+ggplot(spp_status)+
+  geom_point(aes(rgn_id,round(status*100)),size=3)+
+  ylim(0,100)+
+  ylab("Status") + 
+  xlab("BHI region")+
+  ggtitle("SPP status by BHI region")
+
+## Size points to number of species in a region
+ggplot(spp_status)+
+  geom_point(aes(rgn_id,round(status*100), size=n))+
+  ylim(0,100)+
+  ylab("Status") + 
+  xlab("BHI region")+
+  ggtitle("SPP status by BHI region, n= species richness")
+
+```
+
+
+
+
 ### 6. Send data layer to layers
-Using calculations done in Section 5 (data from Checklists and Redlist). Status is the geometric mean of the taxa group status calculations.  
+Using calculations done in Section 4 (data from Checklists and Redlist). Status is the geometric mean of the taxa group status calculations.  
 
 #### 6.1 Write status layers
 ```{r write status layer to csv}
@@ -1346,7 +1622,7 @@ write.csv(spp_status_rgn_geo, file.path(dir_layers,'bd_spp_status_bhi2015.csv'),
 ## 7. Data layer considerations / concerns 
 
 ### 7.1 Aquatic insects
-Aquatic insects included by species which results in a very high species richnessness in the Bothnian Bay, Sea, and Gulf of Finland.  Jonne says that in some parts of the Baltic Sea insect larvae only indentified to family while others to species (we only have those identified to species in the checklist species distribtuion).  Therefore, the species richness gradient we see is not correct (not strong enough differences between saline and not saline).  A solution would be to use only orders for insect groups (given highest threat) and use species level for other invertebrate taxa.  
+Aquatic insects included by species which results in a very high species richnessness in the Bothnian Bay, Sea, and Gulf of Finland.  Jonne says that in some parts of the Baltic Sea insect larvae only indentified to family while others to species (we only have those identified to species in the checklist species distribtuion). **We have modified the approach so that the Class Insecta is only now identified to Family level.  The family HELCOM Redlist category is assigned by the species in that category with the highest level of concern**  
 
 
 ## TO DO
