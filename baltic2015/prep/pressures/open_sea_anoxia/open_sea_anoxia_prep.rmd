@@ -140,6 +140,15 @@ Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.
 
 ```{r anoxia rescaling, echo = FALSE}
 
+# isolate Baltif Proper and Gulf of Finland
+## inspect BHI regions ----
+bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
+                      layer = 'BHI_MCG_11052016') 
+
+GoF = bhi %>%
+  subset(Subbasin == "Gulf of Finland")
+bhi_no_gof = bhi%>%subset(!Subbasin == "Gulf of Finland")%>%spTransform(CRS("+init=epsg:32634 +proj=utm +zone=34 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 "))
+
 # create bathymetry mask: remove cells with depth higher than -70 m
 
 halocline_70 = bathymetry # to not overwrite the original data
@@ -149,6 +158,9 @@ t1 = projectRaster( t, halocline_70) # change t projection to laea
 halocline_70 = projectRaster(halocline_70, t) # transform to the same projection as O2 data
 plot(halocline_70)
 
+#Mask
+#not sure this mask is needed - JA
+#m <- mask(halocline_70,bhi_no_gof)
 
 # Loop for each O2_bottom tif file
 
@@ -167,12 +179,25 @@ O2_below_0 = O2_bottom
 O2_below_0[O2_below_0 >= 0] = NA
 plot(O2_below_0)
 
-O2_below_70 = mask(O2_below_0, halocline_70) 
+O2_below_70 = mask(O2_below_0, halocline_70)
 plot(O2_below_70)
 
+## Calcualte the total area within each non-GoG BHI region
+
+# since we know cell resolution of O2_below_70 is 1000 x 1000 m, we can just count number of cells per region and sum
+
+rgn_ras <- bhi%>%
+            spTransform(CRS("+init=epsg:32634 +proj=utm +zone=34 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 "))%>%
+              rasterize(O2_bottom,progress='text', field = 'BHI_ID')
+
+# use zonal to get statistics per 'zone' - in this case we have rasterized our BHI polygon to 1000x1000m cells, with BHI_ID as cell values. This acts as a zone layer
+# that can be used to extract different information (mean, max, min, count, sum) for rasters of the same res and crs.
+area_rgn <- zonal(O2_below_70, rgn_ras, fun='count')
+
+
+#### additional options: 
 # raster::area? 
 #### raster of regions, crosstab 
-
 # if polygon, use raster::extract -> 
 ## 1. raster extract O2 against polygon using the same projection (laea), count number of cells of hypoxia (casey's tutorial on vector, take the list and turn it into data frame)
 
@@ -181,7 +206,6 @@ plot(O2_below_70)
 ## --> list from first step and third step, which should have same num of list elements, one for each region. 
 
 # O2_below_70 = crop(O2_below_0, halocline_70) 
-
 
 
 }
