@@ -1725,8 +1725,8 @@ ggplot(pcb_sumteq1)+
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle("Total Dioxin TEQ pg/g")
 
-
 ```
+
 
 ### 5.7 Mean TEQ value by date and location
 
@@ -1774,6 +1774,24 @@ ggplot(dioxin_sumteq2)+
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle("Mean Total Dioxin TEQ pg/g")
 
+
+## Plot unique Dioxin and dioxin-like pcb sampling locations
+## get the map
+library('ggmap')
+  map = get_map(location = c(8.5, 53, 32, 67.5))
+
+    map_data1 = dioxin_sumteq2 %>%
+                select(lat,lon)%>%
+                distinct()
+
+    ##set up the plot
+    plot_map1 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour="black"), data=map_data1,size = 2.5)
+
+    ##plot the map
+    plot_map1  +
+      ggtitle('Sampling locations shared for herring dioxin and dioxin-like PCB concentrations') +
+      theme(title = element_text(size = 9))
 
 
 ```
@@ -2183,4 +2201,315 @@ write.csv(dioxin_trend_layer, file.path(dir_layers, 'cw_con_dioxin_trend_bhi2015
 
 ## 6. Data Prep - PFOS Indicator
 
+### 6.1 Read in and organize data
+
+#### 6.1.1 Read in PFOS data
+```{r read in pfos data}
+## Read in PFOS data
+pfos = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_pfos.csv'), stringsAsFactors = FALSE)
+str(pfos)
+dim(pfos)
+
+## Read in lookup - BHI region to HOLAS basins
+lookup_basins = read.csv(file.path(dir_con,'bhi_basin_country_lookup.csv'), sep=";", stringsAsFactors = FALSE) %>%
+  select(BHI_ID, rgn_nam, Subbasin)%>%
+  dplyr::rename(rgn_id = BHI_ID, 
+                country = rgn_nam,
+                basin = Subbasin)
+
+```
+
+#### 6.1.2 Organize PFOS data
+```{r Organize PFOS data}
+## these columns may change if data are added to database and then read into data folder first
+
+pfos1 = pfos %>%
+        dplyr::rename(lat = latitude, lon = longitude, bhi_id  = BHI_ID ,
+                      agmea_y = `AGMEA_whole.organism_y`,drywt_liver= `DRYWT._liver_.` ,
+                      drywt_muscle = `DRYWT._muscle_.`, exlip_liver = `EXLIP._liver_.`,
+                      exlip_muscle  = `EXLIP._muscle_.`,lipidwt_muscle = `LIPIDWT._muscle_.`,
+                      lnmea_cm  = `LNMEA_whole.organism_cm`  , wtmea_g  = `WTMEA_whole.organism_g`) %>%
+      select(-date_ices) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"))
+
+str(pfos1)
+
+## check for locations missing BHI ID assignment
+pfos1 %>% filter(is.na(bhi_id))  ## none missing
+
+## check for unique unit/variable
+pfos1 %>% select(variable) %>% distinct()
+
+
+## Join to HOLAS basins by BHI ID
+pfos2 = pfos1 %>%
+        full_join(., lookup_basins,
+                  by=c("bhi_id"="rgn_id", "country"))
+
+```
+
+#### 6.1.3 Plot PFOS data
+```{r initial PFOS data plot}
+ggplot(filter(pfos2, !is.na(value)))+
+  geom_point(aes(year,value, colour = pfos_tissue_original_type, shape = country))+
+  facet_wrap(~basin)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("PFOS concentration, converted to muscle equivalent")
+
+
+ggplot(filter(pfos2, !is.na(value)))+
+  geom_boxplot(aes(factor(year),value))+
+  facet_wrap(~basin)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("PFOS concentration, converted to muscle equivalent")
+
+```
+
+
+#### 6.1.4 Create rgn look up for lat and lon and sample info lookup
+```{r pfos lat lon bhi rgn lookup}
+
+pfos_bhi_rgn_lookup = pfos2 %>%
+                      select(country,lat,lon,bhi_id)%>%
+                      filter(!is.na(bhi_id)) %>%
+                      distinct()
+
+pfos_sample_lookup = pfos2 ## all data associated with a sample
+
+```
+
+#### 6.1.5 Plot PFOS sampling locations
+```{r}
+## get the map
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
+
+    map_data1 = pfos_bhi_rgn_lookup
+
+    ##set up the plot
+    plot_map1 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=map_data1,size = 2.5)
+
+    ##plot the map
+    plot_map1  +
+      ggtitle('PFOS herring sampling locations') +
+      theme(title = element_text(size = 12))
+
+```
+
+#### 6.1.6 Assess unqiueness of IDs
+```{r Assess unqiueness of IDs pfos}
+pfos2 %>% select(sub_samp_ref) %>% distinct()%>%nrow() #238
+pfos2 %>% select(sub_samp_id) %>% distinct()%>%nrow()  #224
+pfos2 %>% select(samp_id) %>% distinct()%>%nrow()  #114
+pfos2 %>% select(bulk_id) %>% distinct()%>%nrow()  #1
+
+
+
+```
+
+#### 6.1.7 How much variation in the number of individuals sampled for a subsample?
+```{r How much variation in the number of individuals sampled for a pfos subsample}
+## How many individuals in a subsample
+pfos2 %>% select(country,num_indiv_subsample) %>% filter(!is.na(num_indiv_subsample))%>%distinct()
+## Sweden                  12
+## Sweden                  10
+## Sweden                  15
+## Sweden                  11
+## Poland                   1
+
+
+```
+
+
+### 6.2 Filter for data years
+```{r pfos data filter data years}
+pfos2 %>% select(year) %>% min(na.rm=TRUE) ## 2005
+pfos2 %>% select(year) %>% max(na.rm=TRUE) ## 2014
+
+pfos2 %>% filter(year == 2014) %>% select(country) %>% distinct()
+
+```
+
+### 6.3 Assess qflagged data
+There is no qflagged data
+```{r ass qflagged PFOS data}
+pfos2 %>% filter(!is.na(qflag))
+
+pfos3 = pfos2 %>%
+        select(country,station, lat, lon, bhi_id, basin, date, year, sub_samp_ref,pfos_tissue_original_type,
+               variable,value) %>%
+        filter(!is.na(value))
+
+```
+
+### 6.4 Evaluate number of samples by date and location, take mean
+
+#### 6.4.1 Number of samples by data and location
+```{r Number of pfos samples by data and location}
+pfos_sample_count_date_location = pfos3 %>%
+                                  select(station,date)%>%
+                                  count(station,date)
+
+```
+
+#### 6.4.2 Plot Number of samples by data and location
+```{r Plot Number of pfos samples by data and location}
+ggplot(pfos_sample_count_date_location)+
+    geom_point(aes(date,n))+
+    facet_wrap(~station)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Sample size by date and location")
+
+
+
+```
+
+
+#### 6.4.3 Mean PFOS concentration by date and sampling location
+```{r mean PFOS concentation by data and sampling loc}
+pfos4 = pfos3 %>%
+        select(-sub_samp_ref)%>%
+        group_by(country,station,lat,lon,bhi_id,basin,date,year,pfos_tissue_original_type, variable)%>%
+        summarise(mean_date_loc = mean(value, na.rm =TRUE))%>%
+        ungroup()
+
+## join with sample size
+
+pfos4 = pfos4 %>%
+        full_join(.,pfos_sample_count_date_location,
+                  by=c("station","date"))%>%
+        dplyr::rename(n_obs = n)
+
+```
+
+#### 6.4.4 Plot mean PFOS value by date and location
+```{r Plot mean PFOS value by date and location}
+## by station
+ggplot(pfos4)+
+  geom_point(aes(date,mean_date_loc, size=n_obs))+
+  facet_wrap(~station)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean PFOS concentration by date and location")
+
+## by basin
+ggplot(pfos4)+
+  geom_point(aes(date,mean_date_loc, size=n_obs))+
+  facet_wrap(~basin)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean PFOS concentration by date and location")
+
+## by BHI region
+ggplot(pfos4)+
+  geom_point(aes(date,mean_date_loc, size=n_obs))+
+  facet_wrap(~bhi_id)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean PFOS concentration by date and location")
+
+```
+
+
+### 6.5 Basin means and status calculation
+
+#### 6.5.1 Restrict data to most recent 5 years 2010-2014
+```{r pfos Restrict data to most recent 5 years}
+pfos5 = pfos4 %>%
+        filter(year > 2009 & year < 2015)
+
+```
+
+
+#### 6.5.2 Calculate mean basin value for 5 year period and sample size
+```{r pfos Calculate mean basin value for 5 year period and sample size}
+
+## mean basin value
+
+pfos6 = pfos5 %>%
+        select(country,bhi_id,basin,variable,mean_date_loc) %>%
+        group_by(country,bhi_id,basin,variable)%>%
+        summarise(mean_basin = mean(mean_date_loc, na.rm=TRUE))%>%
+        ungroup()
+
+pfos_basin_mean_sample_size = pfos5 %>%
+                              select(basin)%>%
+                              count(basin)%>%
+                              dplyr::rename(n_obs_basin = n)
+
+### join sample size to basin mean
+pfos6 = pfos6 %>%
+        full_join(., pfos_basin_mean_sample_size,
+                  by="basin")
+
+
+```
+
+#### 6.5.3 Plot mean basin value for 5 year period and sample size
+
+```{r Plot mean basin value for 5 year period and sample size}
+
+##
+ggplot(pfos6)+
+  geom_point(aes(basin,mean_basin, size=n_obs_basin))+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean Basin PFOS concentration")
+
+
+## Plot the variation in the data
+
+ggplot(pfos5)+
+  geom_boxplot(aes(factor(basin),mean_date_loc))+
+  ylab("Date& location mean of pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6),
+        axis.title.y = element_text (size=7))+
+  ggtitle("PFOS concentration Basin variation")
+
+```
+
+
+#### 6.5.4 Assign threshold value
+9.1 μg/kg wet weight 
+```{r pfos assign threshold to basin mean}
+
+
+pfos7 = pfos6 %>%
+        mutate(pfos_threshold = 9.1)
+```
+
+#### 6.5.5 Plot with threshold
+```{r plot pfos basin mean with the threshold}
+
+## 
+ggplot(pfos7)+
+  geom_point(aes(basin,mean_basin, size=n_obs_basin))+
+  geom_hline(aes(yintercept = pfos_threshold))+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean Basin PFOS concentration with threshold")
+
+
+```
 
