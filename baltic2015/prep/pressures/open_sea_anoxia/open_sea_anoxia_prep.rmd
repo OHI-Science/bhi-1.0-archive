@@ -109,7 +109,7 @@ In "baltic_rgns_to_bhi_rgns_lookup_holas_basins.csv" in "~\github\bhi\baltic2015
 anox_file_list = list.files(path= file.path(dir_shp, 'anoxia'),
                             pattern="CodRVmap_")
 
-  bal_proj = CRS("+init=epsg:32634")
+  bal_proj = CRS("+init=epsg:32634 +proj=utm +zone=34 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 ")
   bal_res = 1000
   dir_temp = make_path('baltic2015/prep/pressures/open_sea_anoxia/O2_bottom_files')
 
@@ -141,29 +141,27 @@ Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.
 bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
                       layer = 'BHI_MCG_11052016') 
 
-## subset Baltic Proper (BP) and Gulf of Finland (GoF)
-GoF = bhi %>%
-  subset(Subbasin == "Gulf of Finland")
+## subset Baltic Proper (BP) and Gulf of Finland (GoF) regions, and rasterize them to the same coor system and resolution as O2_bottom files. 
 
-## create BP mask
-## TODO: change O2_bottom
+O2_raster = raster::raster(file.path(dir_anox, 'O2_bottom_files', 'CodRVmap_2014.tif'))
+
+GoF = bhi %>%
+   subset(Subbasin == "Gulf of Finland") %>%
+  spTransform(bal_proj) %>%
+  rasterize(O2_raster, progress='text', field = 'BHI_ID') #plot(GoF)
+
 BP = bhi %>% 
   subset(!Subbasin == "Gulf of Finland") %>%
   spTransform(bal_proj) %>%
-  rasterize(O2_bottom, progress='text', field = 'BHI_ID')
-
+  rasterize(O2_raster, progress='text', field = 'BHI_ID') #plot(BP)
 
 # create bathymetry mask: remove cells with depth higher than -70 m
 
-halocline_70 = bathymetry # to not overwrite the original data
+halocline_70 = bathymetry 
 halocline_70[halocline_70 > -70] = NA
 
-halocline_70 = projectRaster(halocline_70, t) # transform to the same projection as O2 data
+halocline_70 = projectRaster(halocline_70, O2_raster) # transform to the same projection as O2 data
 plot(halocline_70)
-
-# Mask
-# not sure this mask is needed - JA
-# m <- mask(halocline_70, bhi_no_gof)
 
 # Loop for each O2_bottom tif file, mask with halocline_70
 
@@ -173,7 +171,6 @@ O2_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
 for (i in O2_file_list){
 
 ## read in file 
-## test: i = 'CodRVmap_1906.tif'
 ## test: i = 'CodRVmap_2014.tif'
 O2_bottom = raster::raster(file.path(dir_anox, 'O2_bottom_files', i))
 
@@ -220,12 +217,58 @@ Gulf of Finland:
 
 ``` {r Gulf of Finland Anoxia rescaling, ECHO = FALSE, message = FALSE }
 
+O2_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
+                          pattern ="CodRVmap_[0-9]+\\.tif")
+
+for (i in O2_file_list){
+
+## read in O2 file 
+## test: i = 'CodRVmap_1906.tif'
+O2_bottom = raster::raster(file.path(dir_anox, 'O2_bottom_files', i))
+
+## select area with O2<0 
+O2_below_0 = O2_bottom
+O2_below_0[O2_below_0 >= 0] = NA
+# plot(O2_below_0)
+
+#### for 1906 and 1955, file coord system are different from the rest of the O2 files. To change them to the same coor system:  
+if (i == 'CodRVmap_1906.tif' | i =='CodRVmap_1955.tif' ) {
+  
+  O2_below_0 = O2_below_0 %>% projectRaster(O2_raster)
+  #plot(O2_below_0)
+}
+
+## mask with GoF
+O2_below_0_GoF = mask(O2_below_0, GoF) 
+# plot(O2_below_0_GoF)
+
+## Calcualte the total area within each BP BHI region
+# since we know cell resolution of O2_below_70 is 1000 x 1000 m, we can just count number of cells per region and sum. 
+# use zonal to get statistics per 'zone' - in this case we have rasterized our BHI polygon to 1000x1000m cells, with BHI_ID as cell values. This acts as a zone layer
+# that can be used to extract different information (mean, max, min, count, sum) for rasters of the same res and crs.
+
+area_rgn <- zonal(O2_below_0_GoF, GoF, fun='count') %>%
+  data.frame(.) %>%
+  dplyr::select(BHI_ID = zone, 
+         area_km2 = count) %>%
+  mutate(year = substr(i, 10, 13)) # add year
+
+write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i), '_GoF.csv')))
+
+}
+
+
+```
+
+Combine Gulf of Finland and Baltic Proper data
+
+``` {r combine GoF and BP data, ECHO = FALSE, message = FALSE}
+
 
 
 
 
 ```
-
 ### 4.1 Current value  
     - Baltic Proper BHI regions =  of the area >= 70m deep the area with O2 <0 mg⋅L−1  
         - Use the mean area for the most recent 3 years (2012-2014)  
