@@ -93,7 +93,7 @@ Reference_pt_country = 10% of the area in a country's EEZ is designated as an MP
 
 
 #### 3.1.3 Alternative 3 
-Xlsp_country = geometric_mean(Xlsp_country_mpa_area_score + Xlsp_country_mpa_management_score)
+Xlsp_country = geometric_mean(Xlsp_country_mpa_area_score, Xlsp_country_mpa_management_score)
 
 Xlsp_country_mpa_area_score = pmin(1,MPA_area_country / area_10percent_eez_country))
 
@@ -530,7 +530,7 @@ print(mpa_per_country_plot)
 ## plot number of MPAs per country by mgmt levels 
 
 mgmt_weight_alt = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed"),
-                          weight = c(0.3, 0.6, 1) ) # ignore "managed" category 
+                          weight = c(0.3, 0.6, 1) ) 
 
 num_mpa_per_country_mgmt = mpa_mgmt_with_wt %>%
                            group_by(country, weight) %>%
@@ -553,6 +553,36 @@ print(num_country_mgmt_plot)
 
 ```
 
+#### 4.1.5 Plot the area of MPA by management level 
+
+Even when a country has many MPAs that are just designated but not managed, it can still achieve a score of 100, is it because the area of MPAs that are "managed" (ie. higher weight) is relatively larger compared to that of the "designated"" (ie. lower weight), and thus have a higher _weight*area_ score?  
+
+
+```{r MPA area vs management level}
+
+area_vs_mgmt_lvl = mpa_mgmt_with_wt %>%
+  dplyr::select(BSPA_ID, country, mpa_area_km2, date_est, mgmt_status) %>%
+  filter(!is.na(date_est), 
+         !duplicated(BSPA_ID)) %>%  # the same MPA could exist in different BHI_IDs
+  mutate(mgmt_status = str_replace_all(mgmt_status, 'Managed', 'Designated_and_managed')) %>% # treat Managed and Desig_and_managed as the same status
+  group_by(country, mgmt_status)  %>%
+  summarize(total_mpa_area = sum(mpa_area_km2)) 
+
+area_vs_mgmt_lvl_plot <- ggplot(area_vs_mgmt_lvl, aes(x = country, y = total_mpa_area, fill = mgmt_status)) +
+ geom_bar(stat = 'identity') +
+ # geom_text(aes(label = sprintf('n = %s', count), y = count), 
+ #           size = 2, 
+ #           angle = 90, hjust = 0, color = 'grey30') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'MPA area of each management level per country',
+      x = 'Country', 
+      y = 'MPA area (km2)',
+      fill = 'Management Level')
+
+print(area_vs_mgmt_lvl_plot)
+
+```
+
 ### 4.2 Status Calculation Alternative 2  
 
 Status was calculated as described in Section 3.1.2
@@ -564,7 +594,7 @@ Status was calculated as described in Section 3.1.2
 mgmt_weight_2 = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
                           weight = c(0.1, 0.6, 1, 1) )
                           
-mpa_mgmt_with_wt_2 = full_join( mgmt_weight, mpa_mgmt, 
+mpa_mgmt_with_wt_2 = full_join( mgmt_weight_2, mpa_mgmt, 
                               by = 'mgmt_status') 
 
 ### the reference point: 10% total eez per country - the same eez_data as in alternative 1 (4.1)
@@ -604,7 +634,7 @@ r.status_2 = mpa_mgmt_with_wt_2 %>%
            filter(!duplicated(BHI_ID)) %>%
            dplyr::select(rgn_id = BHI_ID, 
                   country) %>%
-           full_join(status_by_country, 
+           full_join(status_by_country_2, 
                      by = 'country') %>% 
            dplyr::select(rgn_id, 
                          score = status) %>%
@@ -778,6 +808,7 @@ print(comparative_status_plot)
 
 ```
 
+
 ## 5.  Trend calculation
 
 ### 5.1 Alternative 1: Linear trend of cumulative MPA area
@@ -915,3 +946,12 @@ r.trend.3 = mpa_mgmt %>%
 
 
 ## 6. Prepare and write csv to layers  
+
+TODO: plot area of mpa per country, number of MPA, and mgmt levels -> why still achieving 100 even when there are many mpas that are not managed? 
+
+TODO: bottom trawling. see Jen's prep file. rescaling: might not have a good ref point, the max could be the most recent year's value. data: hours of efforts, calculate hours/km2 use as spatial max -> 1.2 x Max
+
+TODO: illegal oil spill (check: layers.csv)
+
+html tag: 
+
