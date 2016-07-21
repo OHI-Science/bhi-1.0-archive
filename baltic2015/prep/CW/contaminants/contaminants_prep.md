@@ -202,7 +202,18 @@ Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
 
 #### 2.1.3 PFOS
 
-#### Other sources
+Download from [ICES DOME database](http://dome.ices.dk/views/ContaminantsBiota.aspx) on 15 July 2016 by Jennifer Griffiths.
+
+Database selections:
+Year: 2005- 2014
+Purpose of Monitoring: All
+Monitoring Program: All
+Parameter group = Organofluorines
+Reporting Laboratory = All
+Analytical laboratory = All
+Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
+
+#### Other sources - Data not used
 
 IVL (Svenska Miljönstitutet / Swedish Environmental Research Institute)
 [IVL database](http://dvsb.ivl.se/)
