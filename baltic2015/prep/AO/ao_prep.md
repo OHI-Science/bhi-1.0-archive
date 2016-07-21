@@ -324,6 +324,18 @@ basin_lookup
     ## 41     41           Bothnian Bay
     ## 42     42           Bothnian Bay
 
+``` r
+## THIS IS FOR VISUALIZATION OF THE FINAL PRODUCT ##
+## save location for summary visualizaton
+ao_space_data = coastal_fish_loc %>% 
+  select(lat,lon)%>%
+  distinct()%>%
+  mutate(data_descrip = "coastal fish",
+         goal = 'AO')
+
+write.csv(ao_space_data,file.path(dir_baltic, 'visualize/ao_space_data.csv'),row.names=FALSE)
+```
+
 ### 3.2 Assign scores to GES status
 
 Explore the consequences of different scoring schemes.
@@ -386,6 +398,23 @@ coastal_fish_scores
     ## Variables not shown: coastal_water_type <chr>, core_indicator <chr>, taxa
     ##   <chr>, assessment_method <chr>, status <chr>, status_comment <chr>,
     ##   score1 <dbl>, score2 <dbl>, score3 <dbl>.
+
+``` r
+## THIS IS FOR VISUALIZATION OF THE FINAL PRODUCT ##
+### save raw scores (score type 2) for visualization
+ao_value_data = coastal_fish_scores %>%
+               select(location = Basin_HOLAS,
+                      core_indicator,
+                      taxa,
+                      value=score2)%>%
+              mutate(variable = paste(core_indicator,"_",taxa,sep=""),
+                     bhi_goal = "AO",
+                     unit ="Good environmental status score",
+                     data_descrip = "coastal fish cpue")%>%
+              select(-core_indicator,-taxa)
+
+write.csv(ao_value_data,file.path(dir_baltic, 'visualize/ao_value_data.csv'),row.names=FALSE)
+```
 
 #### 3.2.2 Plot alternative scores by location
 
