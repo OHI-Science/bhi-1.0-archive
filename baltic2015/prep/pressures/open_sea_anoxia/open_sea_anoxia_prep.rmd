@@ -7,9 +7,24 @@ output:
 params: 
     datasource: csv
 ---
-```{r setup, echo = FALSE, message = FALSE }
 
-knitr::opts_chunk$set(message = FALSE, echo = FALSE)
+## 1. Background on open sea anoxia data  
+
+### 1.1 Why anoxia?
+
+
+## 2. Anoxia data  
+
+### 2.1 Data source 
+#### 2.1.1 Anoxia data layer
+These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Jacob Carstensen provided dbf files containing O2 (mg⋅L−1) for a series of years for the Baltic Proper and the Gulf of Finland.  
+
+Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
+
+
+```{r setup, message = FALSE, echo = FALSE }
+
+# knitr::opts_chunk$set(message = FALSE, echo = FALSE)
 
 ## Libraries
 library(readr)
@@ -50,22 +65,11 @@ dir_anox   = file.path(dir_prep, 'pressures/open_sea_anoxia')
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
 create_readme(dir_anox, 'open_sea_anoxia_prep.rmd') 
+
 ```
 
-## 1. Background on open sea anoxia data  
+``` {r anoxia data setup, warning = FALSE}
 
-### 1.1 Why anoxia?
-
-
-## 2. Anoxia data  
-
-### 2.1 Data source 
-#### 2.1.1 Anoxia data layer
-These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Jacob Carstensen provided dbf files containing O2 (mg⋅L−1) for a series of years for the Baltic Proper and the Gulf of Finland.  
-
-Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
-
-``` {r anoxia data setup, echo = FALSE, message = FALSE  }
 ## directory setup
 dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
            'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
@@ -89,7 +93,7 @@ library(rgeos)  # install.packages('rgeos')
 #### 2.1.2 Bathymetry
 Downloaded from [HELCOM](http://maps.helcom.fi/website/mapservice/index.html) 28 April 2016 by Thorsten Blenckner
 
-``` {r read in bathymetry data, echo = FALSE, message = FALSE}
+``` {r read in bathymetry data}
 
 ## read in bathymetry raster data
 bathymetry = raster::raster(file.path(dir_M, 'git-annex/Baltic/anoxia/Baltic_Sea_Bathymetry_Database_v091.tif'))
@@ -103,7 +107,7 @@ We will work on the BHI region scale. O2 rasters and Batlic bathymetry will be o
 
 In "baltic_rgns_to_bhi_rgns_lookup_holas_basins.csv" in "~\github\bhi\baltic2015\prep\pressures\open_sea_anoxia" the BHI regions associated with the Baltic Proper and Gulf of Finland are listed.
 
-``` {r read in anoxia data, echo = FALSE, message = FALSE}
+``` {r read in anoxia data, warning = FALSE, message = FALSE}
 
 
   # install.packages('foreign')
@@ -130,15 +134,16 @@ for (anox_file in anox_file_list) {
   
 }
 
-
 ```
 
 ## 4. Open sea anoxia data rescaling
 Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.  In the Baltic Proper there is a strong halocline at 70m and it is the anoxic area below the halocline that is of interest (therefore we focus on areas with depths >= 70).  In the Gulf of Finland, there a less strong halocline and thermal stratification is important so we may have to think differently about which areas to focus on.  
 
-```{r anoxia rescaling, echo = FALSE, message = FALSE }
+### 4.1 Balic Proper rescaling 
 
-# isolate Baltif Proper and Gulf of Finland
+```{r anoxia rescaling, warning = FALSE, message = FALSE}
+
+# isolate Baltic Proper and Gulf of Finland
 
 ## inspect BHI regions ----
 bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
@@ -164,7 +169,7 @@ halocline_70 = bathymetry
 halocline_70[halocline_70 > -70] = NA
 
 halocline_70 = projectRaster(halocline_70, O2_raster) # transform to the same projection as O2 data
-plot(halocline_70)
+plot(halocline_70, main = "area with depth of 70m or greater")
 
 # Loop for each O2_bottom tif file, mask with halocline_70
 
@@ -212,9 +217,9 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 ```
 
-Gulf of Finland: 
+### 4.2 Gulf of Finland rescaling: 
 
-``` {r Gulf of Finland Anoxia rescaling, echo = FALSE, message = FALSE,  }
+``` {r Gulf of Finland Anoxia rescaling, warning = FALSE}
 
 O2_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
                           pattern ="CodRVmap_[0-9]+\\.tif")
@@ -261,7 +266,7 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 Combine anoxia data in all years for Gulf of Finland and Baltic Proper 
 
-``` {r combine GoF and BP data, echo = FALSE, message = FALSE,  }
+``` {r combine GoF and BP data }
 
 ## Baltif Proper anoxia data in all years
 
@@ -305,7 +310,7 @@ setwd(file.path('~/github/bhi'))
     - Gulf of Finland BHI regions = of the total surface area in each BHI region, the area with O2 <0 mg⋅L−1  
         - Use the mean area for the most recent 3 years (2012-2014)  
         
-``` {r Current value, echo = FALSE, message = FALSE,  }
+``` {r Current value }
 
 BP_current_anoxic_area = BP_anoxia_all_yr %>%
   filter(year == 2012:2014) %>%
