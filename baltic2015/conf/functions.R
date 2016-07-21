@@ -1099,23 +1099,24 @@ CW = function(scores){
   ## NOTE to @jennifergriffiths: there are still several 'NaN's, perhaps because of TRA?
   ## 7 July 2016 - Think have fixed the NaN problem with the function mean_NAall()
   ## also, rounding score doesn't seem to work here; ends up with .00 precision. maybe round later?
-  s <- rbind(
-    scores_cw %>%
-      filter(dimension %in% 'status') %>%
-      group_by(region_id) %>%
-      summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
-      ungroup() %>%
-      mutate(dimension = 'status'),
-    scores_cw %>%
-      filter(dimension %in% 'trend') %>%
-      group_by(region_id) %>%
-      summarize(score = round(mean_NAall(score),2)) %>% # round trend to 2 decimals #if all values are NA, NA not NaN returned; if only some values are NA, exclude
-      ungroup() %>%
-      mutate(dimension = 'trend')) %>%
+  s <- scores_cw %>%
+    filter(dimension %in% c('status', 'future', 'score')) %>% # from NUT, TRA, CON. those should have all. Not trend, too weird in geometric mean. Doesn't scale, so doesn't calculate
+    group_by(region_id, dimension) %>%
+    summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
+    ungroup() %>%
+    # mutate(dimension = 'status'),
+    # scores_cw %>% get rid of this too so only status
+    #   filter(dimension %in% 'trend') %>%
+    #   group_by(region_id) %>%
+    #   summarize(score = round(mean_NAall(score),2)) %>% # round trend to 2 decimals #if all values are NA, NA not NaN returned; if only some values are NA, exclude
+    #   ungroup() %>%
+    #   mutate(dimension = 'trend')) %>%
     arrange(region_id) %>%
     mutate(goal = "CW") %>%
     select(region_id, goal, dimension, score) %>%
     data.frame()
+
+  # group_by(rgn_id, dimension)
 
   ## return all scores
   return(rbind(scores, s))
