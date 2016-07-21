@@ -7,7 +7,9 @@ output:
 params: 
     datasource: csv
 ---
-```{r setup}
+```{r setup, echo = FALSE, message = FALSE }
+
+knitr::opts_chunk$set(message = FALSE, echo = FALSE)
 
 ## Libraries
 library(readr)
@@ -19,6 +21,7 @@ library(stringr)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
 library(raster)
+library(DT)
 
 # source
 source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
@@ -62,7 +65,7 @@ These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/
 
 Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
 
-``` {r anoxia data setup, echo = FALSE, message = FALSE}
+``` {r anoxia data setup, echo = FALSE, message = FALSE  }
 ## directory setup
 dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
            'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
@@ -86,7 +89,7 @@ library(rgeos)  # install.packages('rgeos')
 #### 2.1.2 Bathymetry
 Downloaded from [HELCOM](http://maps.helcom.fi/website/mapservice/index.html) 28 April 2016 by Thorsten Blenckner
 
-``` {r read in bathymetry data, echo = FALSE}
+``` {r read in bathymetry data, echo = FALSE, message = FALSE}
 
 ## read in bathymetry raster data
 bathymetry = raster::raster(file.path(dir_M, 'git-annex/Baltic/anoxia/Baltic_Sea_Bathymetry_Database_v091.tif'))
@@ -100,7 +103,7 @@ We will work on the BHI region scale. O2 rasters and Batlic bathymetry will be o
 
 In "baltic_rgns_to_bhi_rgns_lookup_holas_basins.csv" in "~\github\bhi\baltic2015\prep\pressures\open_sea_anoxia" the BHI regions associated with the Baltic Proper and Gulf of Finland are listed.
 
-``` {r read in anoxia data, echo = FALSE}
+``` {r read in anoxia data, echo = FALSE, message = FALSE}
 
 
   # install.packages('foreign')
@@ -133,7 +136,7 @@ for (anox_file in anox_file_list) {
 ## 4. Open sea anoxia data rescaling
 Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.  In the Baltic Proper there is a strong halocline at 70m and it is the anoxic area below the halocline that is of interest (therefore we focus on areas with depths >= 70).  In the Gulf of Finland, there a less strong halocline and thermal stratification is important so we may have to think differently about which areas to focus on.  
 
-```{r anoxia rescaling, echo = FALSE}
+```{r anoxia rescaling, echo = FALSE, message = FALSE }
 
 # isolate Baltif Proper and Gulf of Finland
 
@@ -148,12 +151,12 @@ O2_raster = raster::raster(file.path(dir_anox, 'O2_bottom_files', 'CodRVmap_2014
 GoF = bhi %>%
    subset(Subbasin == "Gulf of Finland") %>%
   spTransform(bal_proj) %>%
-  rasterize(O2_raster, progress='text', field = 'BHI_ID') #plot(GoF)
+  rasterize(O2_raster, field = 'BHI_ID') #plot(GoF)
 
 BP = bhi %>% 
   subset(!Subbasin == "Gulf of Finland") %>%
   spTransform(bal_proj) %>%
-  rasterize(O2_raster, progress='text', field = 'BHI_ID') #plot(BP)
+  rasterize(O2_raster, field = 'BHI_ID') #plot(BP)
 
 # create bathymetry mask: remove cells with depth higher than -70 m
 
@@ -195,10 +198,6 @@ O2_below_70 = mask(O2_below_0, halocline_70) %>%
 ## Calcualte the total area within each BP BHI region
 # since we know cell resolution of O2_below_70 is 1000 x 1000 m, we can just count number of cells per region and sum
 
-# rgn_ras <- bhi%>%
-#             spTransform(bal_proj) %>% 
-#               rasterize(O2_bottom, progress='text', field = 'BHI_ID') # to the same resolution as O2_bottom
-
 # use zonal to get statistics per 'zone' - in this case we have rasterized our BHI polygon to 1000x1000m cells, with BHI_ID as cell values. This acts as a zone layer
 # that can be used to extract different information (mean, max, min, count, sum) for rasters of the same res and crs.
 area_rgn <- zonal(O2_below_70, BP, fun='count') %>%
@@ -215,7 +214,7 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 Gulf of Finland: 
 
-``` {r Gulf of Finland Anoxia rescaling, ECHO = FALSE, message = FALSE }
+``` {r Gulf of Finland Anoxia rescaling, echo = FALSE, message = FALSE,  }
 
 O2_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
                           pattern ="CodRVmap_[0-9]+\\.tif")
@@ -260,13 +259,44 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 ```
 
-Combine Gulf of Finland and Baltic Proper data
+Combine anoxia data in all years for Gulf of Finland and Baltic Proper 
 
-``` {r combine GoF and BP data, ECHO = FALSE, message = FALSE}
+``` {r combine GoF and BP data, echo = FALSE, message = FALSE,  }
 
+## Baltif Proper anoxia data in all years
 
+BP_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
+                          pattern ="CodRVmap_.+[BP].csv")
 
+setwd(file.path(dir_anox, 'O2_bottom_files'))
 
+dat = read_csv(BP_file_list [1])
+
+for (i in 2:length(BP_file_list )) {
+ d = read_csv(BP_file_list[i]) 
+ dat = rbind(dat, d) 
+
+}
+
+BP_anoxia_all_yr = dat
+
+## Gulf of Finland anoxia data in all years
+
+GoF_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
+                          pattern ="CodRVmap_.+[GoF].csv")
+
+dat = read_csv(GoF_file_list[1])
+
+for (i in 2:length(GoF_file_list)) {
+ d = read_csv(GoF_file_list[i]) 
+ dat = rbind(dat, d) 
+
+}
+
+GoF_anoxia_all_yr = dat
+
+## reset working directory
+setwd(file.path('~/github/bhi'))
 
 ```
 ### 4.1 Current value  
@@ -275,25 +305,90 @@ Combine Gulf of Finland and Baltic Proper data
     - Gulf of Finland BHI regions = of the total surface area in each BHI region, the area with O2 <0 mg⋅L−1  
         - Use the mean area for the most recent 3 years (2012-2014)  
         
-``` {r Current value, ECHO= FALSE, message = FALSE}
+``` {r Current value, echo = FALSE, message = FALSE,  }
 
+BP_current_anoxic_area = BP_anoxia_all_yr %>%
+  filter(year == 2012:2014) %>%
+  group_by(BHI_ID) %>%
+  summarize(mean_area = mean(area_km2)) %>%
+  ungroup()
 
-
+GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
+    filter(year == 2012:2014) %>%
+  group_by(BHI_ID) %>%
+  summarize(mean_area = mean(area_km2)) %>%
+  ungroup()
 
 ```
 
 ### 4.2 Max value
     - Baltic Proper BHI regions =  of area >= 70m depth, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
     - Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
+    
+``` {r Max value, echo = FALSE, message = FALSE,  }
+
+BP_max_anoxic_area = BP_anoxia_all_yr %>%
+  filter(year == 2005:2014) %>%
+  group_by(BHI_ID) %>%
+  summarize(max_area = max(area_km2)) %>%
+  ungroup()
+
+GoF_max_anoxic_area = GoF_anoxia_all_yr %>%
+    filter(year == 2005:2014) %>%
+  group_by(BHI_ID) %>%
+  summarize(max_area = max(area_km2)) %>%
+  ungroup()
+
+```
 
 ### 4.3 Min value
      - Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  in 1906  
      - Gulf of Finland BHI regions = total surface area, the area with O2 <0 mg⋅L−1  in 1906
 
+``` {r Min value, echo = FALSE, message = FALSE,  }
+
+BP_min_anoxic_area = BP_anoxia_all_yr %>%
+  filter(year == 1906) %>%
+  group_by(BHI_ID) %>%
+  summarize(min_area = min(area_km2)) %>%
+  ungroup()
+
+GoF_min_anoxic_area = GoF_anoxia_all_yr %>%
+    filter(year == 1906) %>%
+  group_by(BHI_ID) %>%
+  summarize(min_area = min(area_km2)) %>%
+  ungroup()
+
+```
+
+### 4.5 Combining Mean, Max, and Min values 
+
+``` {r Combine value, echo = FALSE, message = FALSE,  }
+
+# Baltic Proper
+
+BP_anoxic_area = full_join(BP_current_anoxic_area, BP_max_anoxic_area, 
+                           by = 'BHI_ID') %>%
+  full_join(BP_min_anoxic_area, 
+            by = 'BHI_ID')
+  
+DT::datatable(BP_anoxic_area)
+
+# Gulf of Finland
+
+GoF_anoxic_area = full_join(GoF_current_anoxic_area, GoF_max_anoxic_area, 
+                           by = 'BHI_ID') %>%
+  full_join(GoF_min_anoxic_area, 
+            by = 'BHI_ID')
+
+DT::datatable(GoF_anoxic_area)
+
+
+```
 
 ## 5. Open Sea Anoxia layer prep
 
-```{r TODO, echo=FALSE, message=FALSE}
+```{r TODO, echo = FALSE, message = FALSE,  }
 ## read in data...
 
 ## plot data...
