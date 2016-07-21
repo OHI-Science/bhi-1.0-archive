@@ -999,6 +999,7 @@ CON = function(layers){
   ##Join ICES6
   cw_con_ices6 = cw_con_ices6_status %>%
     rbind(cw_con_ices6_trend) %>%
+    dplyr::rename(region_id = rgn_id)%>%
     mutate(indicator = "ices6")
 
   ##Dioxin
