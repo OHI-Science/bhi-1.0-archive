@@ -2290,7 +2290,8 @@ pfos_sample_lookup = pfos2 ## all data associated with a sample
 library('ggmap')
 map = get_map(location = c(8.5, 53, 32, 67.5))
 
-    map_data1 = pfos_bhi_rgn_lookup
+    map_data1 = pfos_bhi_rgn_lookup %>%
+                filter(!is.na(lat))
 
     ##set up the plot
     plot_map1 = ggmap(map) +
@@ -2298,7 +2299,7 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
 
     ##plot the map
     plot_map1  +
-      ggtitle('PFOS herring sampling locations') +
+      ggtitle('PFOS herring sampling locations 2005-2014') +
       theme(title = element_text(size = 12))
 
 ```
@@ -2343,7 +2344,7 @@ There is no qflagged data
 pfos2 %>% filter(!is.na(qflag))
 
 pfos3 = pfos2 %>%
-        select(country,station, lat, lon, bhi_id, basin, date, year, sub_samp_ref,pfos_tissue_original_type,
+        select(country,station, lat, lon,basin, date, year, sub_samp_ref,pfos_tissue_original_type,
                variable,value) %>%
         filter(!is.na(value))
 
@@ -2378,7 +2379,7 @@ ggplot(pfos_sample_count_date_location)+
 ```{r mean PFOS concentation by data and sampling loc}
 pfos4 = pfos3 %>%
         select(-sub_samp_ref)%>%
-        group_by(country,station,lat,lon,bhi_id,basin,date,year,pfos_tissue_original_type, variable)%>%
+        group_by(country,station,lat,lon,basin,date,year,pfos_tissue_original_type, variable)%>%
         summarise(mean_date_loc = mean(value, na.rm =TRUE))%>%
         ungroup()
 
@@ -2413,20 +2414,10 @@ ggplot(pfos4)+
        axis.text.y = element_text(size=6 ))+
   ggtitle("Mean PFOS concentration by date and location")
 
-## by BHI region
-ggplot(pfos4)+
-  geom_point(aes(date,mean_date_loc, size=n_obs))+
-  facet_wrap(~bhi_id)+
-  ylab("pfos_ug_kg_muscle_equiv_con")+
-  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
-                                    hjust=.5, vjust=.5, face = "plain"),
-       axis.text.y = element_text(size=6 ))+
-  ggtitle("Mean PFOS concentration by date and location")
-
 ```
 
 
-### 6.5 Basin means and status calculation
+### 6.5 Basin means
 
 #### 6.5.1 Restrict data to most recent 5 years 2010-2014
 ```{r pfos Restrict data to most recent 5 years}
@@ -2442,8 +2433,8 @@ pfos5 = pfos4 %>%
 ## mean basin value
 
 pfos6 = pfos5 %>%
-        select(country,bhi_id,basin,variable,mean_date_loc) %>%
-        group_by(country,bhi_id,basin,variable)%>%
+        select(basin,variable,mean_date_loc) %>%
+        group_by(basin,variable)%>%
         summarise(mean_basin = mean(mean_date_loc, na.rm=TRUE))%>%
         ungroup()
 
@@ -2513,3 +2504,320 @@ ggplot(pfos7)+
 
 ```
 
+
+### 6.6 PFOS Status calculation
+Xpfos_status = 1 / (pfos value/ pfos threshold )
+
+#### 6.6.1 Calculate PFOS status by basin
+```{r Calculate PFOS status by basin}
+
+pfos_status_basin = pfos7 %>%
+                    mutate(pfos_ratio = mean_basin /pfos_threshold,
+                           pfos_status = 1 / pfos_ratio,
+                           pfos_status_adj = pmin(1,pfos_status)) ## value cannot exceed 1
+
+pfos_status_basin %>% select(basin, mean_basin,n_obs_basin,pfos_threshold,pfos_ratio,pfos_status,pfos_status_adj)
+
+### final status object
+pfos_status_basin = pfos_status_basin %>%
+                    select(basin,pfos_status_adj)%>%
+                    dplyr::rename(pfos_status = pfos_status_adj)
+
+
+```
+
+#### 6.6.2 Plot PFOS status by basin
+```{r Plot PFOS status by basin}
+
+
+ggplot(pfos_status_basin)+
+  geom_point(aes(basin,pfos_status), size = 2.5)+
+  ylab("Status score")+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS Basin status ")
+
+```
+
+
+#### 6.6.3 Join PFOS Basin status to rgn_id 
+```{r Join PFOS Basin status to rgn_id }
+
+pfos_status_rgn = pfos_status_basin %>%
+                  full_join(., lookup_basins,
+                            by="basin") %>%
+                  select(-basin,country)%>%
+                  select(rgn_id, pfos_status)%>%
+                  arrange(rgn_id)
+
+```
+
+#### 6.6.4 Plot PFOS status by rgn_id
+```{r Plot PFOS status by rgn_id}
+
+## with 0-1 values
+ggplot(pfos_status_rgn)+
+  geom_point(aes(rgn_id,pfos_status), size = 2.5)+
+  ylab("Status score")+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS BHI Region status ")
+
+## with 0-100 values
+ggplot(pfos_status_rgn)+
+  geom_point(aes(rgn_id,pfos_status*100), size = 2.5)+
+  ylab("Status score")+
+  ylim(0,100)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS BHI Region status (status range 0-100) ")
+
+
+```
+
+### 6.7 PFOS trend
+Calculate the trend over data period 2005-2014 using unique date/location observations (mean of site samples) transformed to status values.  Trend calculated per basin.
+
+Status_basin_obs ~ slope x year + intercept
+
+Trend = slope x 5
+
+#### 6.7.1 Prepare PFOS data for trend
+```{r  Prepare PFOS data for trend}
+head(pfos4)
+
+pfos_trend_data = pfos4 %>%
+                  select(basin,year, mean_date_loc)%>%
+                  mutate(pfos_threshold = 9.1,
+                         pfos_ratio = mean_date_loc/pfos_threshold,
+                         pfos_obs_status = pmin(1, 1/pfos_ratio))
+
+
+```
+
+#### 6.7.2 Plot PFOS obs transformed for trend
+```{r Plot PFOS obs transformed for trend}
+ggplot(pfos_trend_data)+
+  geom_point(aes(year, pfos_obs_status))+
+  facet_wrap(~basin)+
+  ylim(0,1)+
+  ylab("Observation status")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS Observations for Trend calculation ")
+
+  
+
+
+```
+
+
+#### 6.7.3 Fit trend to PFOS basin observations
+```{r Fit trend to PFOS basin observations}
+
+
+lag_win = 5  ## number of years for future status
+
+pfos_trend_basin =pfos_trend_data %>% 
+            group_by(basin) %>% 
+              do(trend_mdl = lm(pfos_obs_status~year, data=.)) %>%  ## regression model to get trend from raw observations
+               summarize(basin=basin,
+                              trend_score = coef(trend_mdl)['year']*lag_win) %>%  ## lag_win defined above, numbe of years in the future for future status
+                    ungroup()
+
+pfos_trend_basin
+
+
+
+
+```
+
+#### 6.7.4 Plot PFOS basin trends
+NA for Eastern Gotland basin because only one year of observations
+```{r Plot PFOS basin trends}
+ggplot(pfos_trend_basin)+
+  geom_point(aes(basin, trend_score), size=2.5)+
+  ylim(-1,1)+
+  ylab("Trend score")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS Basin Trend score ")
+
+```
+
+
+#### 6.7.5 Apply basin trend to BHI regions
+```{r Apply basin trend to BHI regions}
+pfos_trend_rgn = pfos_trend_basin %>%
+                 full_join(., lookup_basins,
+                           by="basin")%>%
+                  select(rgn_id,trend_score)%>%
+                  arrange(rgn_id)
+
+```
+
+#### 6.7.6 Plot PFOS BHI region trends
+
+```{r Plot PFOS rgn trends}
+ggplot(pfos_trend_rgn)+
+  geom_point(aes(rgn_id, trend_score), size=2.5)+
+  ylim(-1,1)+
+  ylab("Trend score")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS BHI region Trend score ")
+
+```
+
+
+### 6.8 Prepare and save PFOS layer for layers
+
+#### 6.8.1 Prepare PFOS layers
+```{r prepare dioxin layers}
+pfos_status_layer =   pfos_status_rgn %>%
+                      dplyr::rename(score = pfos_status)%>%
+                      mutate(score = score*100,
+                             dimension = "status")%>%
+                      select(rgn_id,dimension,score)%>%
+                      arrange(rgn_id)
+str(pfos_status_layer)
+
+pfos_trend_layer = pfos_trend_rgn %>%
+                     dplyr::rename(score = trend_score)%>%
+                     mutate(dimension = "trend")%>%
+                     select(rgn_id,dimension,score)%>%
+                      arrange(rgn_id)
+
+str(pfos_trend_layer)
+```
+
+
+#### 6.8.2 Write PFOS layer to csv
+```{r write pfos layer to csv}
+
+write.csv(pfos_status_layer, file.path(dir_layers, 'cw_con_pfos_status_bhi2015.csv'), row.names=FALSE)
+
+write.csv(pfos_trend_layer, file.path(dir_layers, 'cw_con_pfos_trend_bhi2015.csv'), row.names=FALSE)
+```
+
+
+
+
+## 7. Compare Contaminant Indicator Status
+
+### 7.1 Read in CON indicators from layers
+```{r Read in CON indicators from layers}
+con_stat_pcb = read.csv(file.path(dir_layers, 'cw_con_ices6_status_bhi2015.csv'),stringsAsFactors = FALSE)
+con_stat_diox = read.csv(file.path(dir_layers, 'cw_con_dioxin_status_bhi2015.csv'),stringsAsFactors = FALSE) 
+con_stat_pfos =read.csv(file.path(dir_layers, 'cw_con_pfos_status_bhi2015.csv'),stringsAsFactors = FALSE)
+
+
+con_trend_pcb = read.csv(file.path(dir_layers, 'cw_con_ices6_trend_bhi2015.csv'),stringsAsFactors = FALSE)
+con_trend_diox = read.csv(file.path(dir_layers, 'cw_con_dioxin_trend_bhi2015.csv'),stringsAsFactors = FALSE)
+con_trend_pfos =read.csv(file.path(dir_layers, 'cw_con_pfos_trend_bhi2015.csv'),stringsAsFactors = FALSE)
+
+
+```
+
+### 7.2 Join into single object
+```{r join con indicators into single object}
+#STATUS
+con_stat = bind_rows(
+                mutate(con_stat_pcb, ind= "PCB"),
+                mutate(con_stat_diox, ind= "Dioxin"),
+                mutate(con_stat_pfos, ind= "PFOS"))
+
+
+# trend
+con_trend = bind_rows(
+                mutate(con_trend_pcb, ind= "PCB"),
+                mutate(con_trend_diox, ind= "Dioxin"),
+                mutate(con_trend_pfos, ind= "PFOS"))
+
+```
+
+### 7.2 Plot CON indicators
+```{r plot con indicators}
+ggplot(con_stat)+
+    geom_point(aes(ind, score), size=1)+
+  facet_wrap(~rgn_id)+
+  ylab("Indicator Status Score")+
+  ylim (0,110)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("CON indicator status comparision")
+
+
+ggplot(con_trend)+
+    geom_point(aes(ind, score), size=1)+
+  facet_wrap(~rgn_id)+
+  ylab("Indicator trend Score")+
+  ylim (-1,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("CON indicator trend comparision")
+
+```
+
+### 7.3 Number of CON indicators available per BHI region
+```{r Number of CON indicators available per BHI region}
+
+con_stat_n = con_stat%>%
+             select(rgn_id,score)%>%
+             filter(!is.na(score))%>%
+             group_by(rgn_id)%>%
+             count()%>%
+             ungroup()%>%
+             full_join(.,
+                       data.frame(rgn_id =seq(1,42,1)),
+                       by= "rgn_id")%>%
+            arrange(rgn_id) %>%
+            mutate(n = ifelse(is.na(n),0,n)) ## replace NA with zero, NAs indicate zero indicators avaialable
+
+
+
+con_trend_n =  con_trend%>%
+             select(rgn_id,score)%>%
+             filter(!is.na(score))%>%
+             group_by(rgn_id)%>%
+             count()%>%
+             ungroup()%>%
+             full_join(.,
+                       data.frame(rgn_id =seq(1,42,1)),
+                       by= "rgn_id")%>%
+            arrange(rgn_id) %>%
+            mutate(n = ifelse(is.na(n),0,n)) ## replace NA with zero, NAs indicate zero indicators avaialable
+
+
+```
+
+
+### 7.4 Plot number of CON indicators per BHI region
+```{r Plot number of CON indicators per BHI region}
+
+ggplot(con_stat_n)+
+    geom_point(aes(rgn_id, n), size=2.5)+
+  ylab("Count")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("Number of CON Status indicators per BHI Region")
+
+ggplot(con_trend_n)+
+    geom_point(aes(rgn_id, n), size=2.5)+
+  ylab("Count")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("Number of CON Trend indicators per BHI Region")
+
+
+```
+
+
+
+### 7.5 j
