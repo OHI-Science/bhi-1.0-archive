@@ -1,0 +1,163 @@
+##VISUALIZE PLOT FUNCTIONS ##
+
+## These functions are to create generic plots of raw data inputs for BHI goals to
+## visualize the spatial and temporal dimensions of the data used for goal status
+
+
+
+## Created by Jennifer Griffiths
+## 21 July 2016
+
+
+
+
+##---------------------------------------##
+## FUNCTION:  plot_datalocation_latlon
+## plot unique lat-lon location of data samples
+
+plot_datalocation_latlon = function(mapdata){
+  ##mapdata - dataframe with columns
+  ##lat
+  ##lon
+  ##data_descrip
+  ##bhi_goal
+
+
+  ## get the Baltic Sea map template
+
+  map = get_map(location = c(8.5, 53, 32, 67.5))
+
+  ##set up plot
+  plot_map = ggmap(map) +
+    geom_point(aes(x=lon, y=lat), data=mapdata,size = 1.5)
+
+  ##plot the map
+  return( plot_map +
+            ggtitle(paste(mapdata[1,3],"for goal", mapdata[1,4])) +
+            theme(title = element_text(size = 11)))
+
+} ## end function
+##---------------------------------------##
+
+
+
+
+##---------------------------------------##
+## FUNCTION: plot_datatime
+## plot times series data, plots by a facet (basin,station,rgn_id)
+## with or without color coding by variable
+
+plot_datatime = function(timedata, facet_type, variable = TRUE){
+  ##timedata - dataframe with columns
+  ##year
+  ##value
+  ##unit
+  ##station, basin, rgn_id - at least one required
+  ##variable - this is for color/shape coding
+  ##bhi_goal
+  ##data_descrip
+
+  ##facet_type
+  ##single character vector describing the facet_wrap option
+  ## "station", "basin", "rgn_id"
+
+  if(variable == FALSE){
+
+    facet = data.frame(facet=timedata[,facet_type])
+
+    timedata = timedata %>%
+      select(year,value,unit,bhi_goal,data_descrip)%>%
+      bind_cols(.,facet)
+
+    p = ggplot(timedata)+
+      geom_point(aes(year,value))+
+      facet_wrap(~facet)
+
+    return(p+
+             ylab(paste(timedata[1,"unit"]))+
+             theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                              hjust=.5, vjust=.5, face = "plain"))+
+             ggtitle(paste(timedata[1,"data_descrip"], "for goal",
+                           timedata[1,"bhi_goal"], "by", facet_type )))
+  }
+
+  if(variable == TRUE){
+
+    facet = data.frame(facet=timedata[,facet_type])
+
+    timedata = timedata %>%
+      select(year,value,unit,bhi_goal,data_descrip,variable)%>%
+      bind_cols(.,facet)
+
+    p = ggplot(timedata)+
+      geom_point(aes(year,value, colour=variable))+
+      facet_wrap(~facet)
+
+    return(p+
+             ylab(paste(timedata[1,"unit"]))+
+             theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                              hjust=.5, vjust=.5, face = "plain"))+
+             ggtitle(paste(timedata[1,"data_descrip"], "for goal",
+                           timedata[1,"bhi_goal"], "by", facet_type )))
+  }
+
+
+}## end function
+##---------------------------------------##
+
+
+
+
+##---------------------------------------##
+## FUNCTION: plot_datavalue
+## plot data value by location (for data without time series), plots by a variable if variable ==TRUE
+
+plot_datavalue = function(valuedata, variable = TRUE){
+  ##valuedata - dataframe with columns
+  ##value
+  ##unit
+  ##location - primary location for x axis
+  ##variable - this for faceting
+  ##bhi_goal
+  ##data_descrip
+
+    if(variable == FALSE){
+
+    valuedata = valuedata %>%
+      select(location,value,unit,bhi_goal,data_descrip)
+
+
+    p = ggplot(valuedata)+
+      geom_point(aes(location,value))
+
+
+    return(p+
+             ylab(paste(valuedata[1,"unit"]))+
+             theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                              hjust=.5, vjust=.5, face = "plain"))+
+             ggtitle(paste(valuedata[1,"data_descrip"], "for goal",
+                           valuedata[1,"bhi_goal"])))
+  }
+
+
+  if(variable == TRUE){
+
+
+    valuedata = valuedata %>%
+      select(location,value,unit,bhi_goal,data_descrip,variable)
+
+    p = ggplot(valuedata)+
+      geom_point(aes(location,value))+
+      facet_wrap(~variable)
+
+    return(p+
+             ylab(paste(valuedata[1,"unit"]))+
+             theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                              hjust=.5, vjust=.5, face = "plain"))+
+             ggtitle(paste(valuedata[1,"data_descrip"], "for goal",
+                           valuedata[1,"bhi_goal"])))
+  }
+
+
+}## end function
+
