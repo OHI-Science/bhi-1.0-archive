@@ -22,7 +22,7 @@ source('PrepSpatial.r')  # until added to ohicore
 source('PlotMap.r')      # until added to ohicore
 source('PlotMapMulti.r') # until added to ohicore
 PlotMapMulti(scores       = scores,
-             spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'), # can be .geojson or .shp
+             spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
              path_figures = 'reports/figures')
 
 

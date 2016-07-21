@@ -36,6 +36,20 @@ contaminants\_prep
         -   [5.13 Dioxin trend value](#dioxin-trend-value)
         -   [5.14 Prepare and save layer for layers](#prepare-and-save-layer-for-layers)
     -   [6. Data Prep - PFOS Indicator](#data-prep---pfos-indicator)
+        -   [6.1 Read in and organize data](#read-in-and-organize-data)
+        -   [6.2 Filter for data years](#filter-for-data-years)
+        -   [6.3 Assess qflagged data](#assess-qflagged-data-1)
+        -   [6.4 Evaluate number of samples by date and location, take mean](#evaluate-number-of-samples-by-date-and-location-take-mean)
+        -   [6.5 Basin means](#basin-means)
+        -   [6.6 PFOS Status calculation](#pfos-status-calculation)
+        -   [6.7 PFOS trend](#pfos-trend)
+        -   [6.8 Prepare and save PFOS layer for layers](#prepare-and-save-pfos-layer-for-layers)
+    -   [7. Compare Contaminant Indicator Status](#compare-contaminant-indicator-status)
+        -   [7.1 Read in CON indicators from layers](#read-in-con-indicators-from-layers)
+        -   [7.2 Join into single object](#join-into-single-object)
+        -   [7.2 Plot CON indicators](#plot-con-indicators)
+        -   [7.3 Number of CON indicators available per BHI region](#number-of-con-indicators-available-per-bhi-region)
+        -   [7.4 Plot number of CON indicators per BHI region](#plot-number-of-con-indicators-per-bhi-region)
 
 ``` r
 ## source common libraries, directories, functions, etc
@@ -188,7 +202,18 @@ Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
 
 #### 2.1.3 PFOS
 
-#### Other sources
+Download from [ICES DOME database](http://dome.ices.dk/views/ContaminantsBiota.aspx) on 15 July 2016 by Jennifer Griffiths.
+
+Database selections:
+Year: 2005- 2014
+Purpose of Monitoring: All
+Monitoring Program: All
+Parameter group = Organofluorines
+Reporting Laboratory = All
+Analytical laboratory = All
+Geographical Areas = (HELCOM) ALL HELCOM Sub-basins
+
+#### Other sources - Data not used
 
 IVL (Svenska Miljönstitutet / Swedish Environmental Research Institute)
 [IVL database](http://dvsb.ivl.se/)
@@ -1540,6 +1565,38 @@ ggplot(filter(plotdata_temp, year >2008 & year < 2013)) +
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-3.png)
 
+``` r
+## Plot unique sampling locations including qflag
+ices6_lat_lon = ices6_1datemean%>%
+                select(lat,lon)%>%
+                distinct()
+
+## get the map
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
+```
+
+    ## Warning: bounding box given to google - spatial extent only approximate.
+
+    ## converting bounding box to center/zoom specification. (experimental)
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=60.25,20.25&zoom=5&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+
+``` r
+    map_data_ices6 = ices6_lat_lon
+
+    ##set up the plot
+    plot_map_ices6 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=map_data_ices6,size = 1.5)
+
+    ##plot the map
+    plot_map_ices6  +
+      ggtitle('ICES6 PCB unique herring sampling locations 2000-2014') +
+      theme(title = element_text(size = 11))
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20ices6%20date%20mean%20by%20basin%20plot-4.png)
+
 **Plot By BHI Region** Gray dots are the ices6 concentration mean by date and location including qflagg-adjusted values.
 Red dots are the ices6 concentration mean by date and location excluding qflagged values.
  - More observations for Regions 1, 11,26,35,36,39,41,42 when including qflagged values.
@@ -2076,7 +2133,7 @@ status_ices6 = ices6_mean %>%
   
 
 ## TREND
-## Trend calculated iin 4.5.6
+## Trend calculated in 4.5.6
 trend_ices6 = ices6_basin_trend_alt2 %>%
               full_join(.,select(lookup_basins, rgn_id,basin), by= c("basin_name"="basin"))%>%
               select(rgn_id, trend_score)%>%
@@ -3167,6 +3224,36 @@ ggplot(dioxin_sumteq2)+
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin%20TEQ%20by%20date%20and%20location-1.png)
 
+``` r
+## Plot unique Dioxin and dioxin-like pcb sampling locations
+## get the map
+library('ggmap')
+  map = get_map(location = c(8.5, 53, 32, 67.5))
+```
+
+    ## Warning: bounding box given to google - spatial extent only approximate.
+
+    ## converting bounding box to center/zoom specification. (experimental)
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=60.25,20.25&zoom=5&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+
+``` r
+    map_data_diox = dioxin_sumteq2 %>%
+                select(lat,lon)%>%
+                distinct()
+
+    ##set up the plot
+    plot_map_diox = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=map_data_diox,size = 2.5)
+
+    ##plot the map
+    plot_map_diox  +
+      ggtitle('Sampling locations shared for herring dioxin and dioxin-like PCB concentrations') +
+      theme(title = element_text(size = 8))
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin%20TEQ%20by%20date%20and%20location-2.png)
+
 #### 5.7.3 dioxin-like PCB mean TEQ value by date and location
 
 Mean TEQ by date and location. For observations averaged, track the mean, min, and max number of congeners in each of the observations. Count the number of observations for each date and location
@@ -3648,3 +3735,870 @@ write.csv(dioxin_trend_layer, file.path(dir_layers, 'cw_con_dioxin_trend_bhi2015
 
 6. Data Prep - PFOS Indicator
 -----------------------------
+
+### 6.1 Read in and organize data
+
+#### 6.1.1 Read in PFOS data
+
+``` r
+## Read in PFOS data
+pfos = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_pfos.csv'), stringsAsFactors = FALSE)
+str(pfos)
+```
+
+    ## 'data.frame':    237 obs. of  35 variables:
+    ##  $ country                  : chr  "Sweden" "Sweden" "Sweden" "Sweden" ...
+    ##  $ monit_program            : chr  "COMB" "COMB" "COMB" "COMB" ...
+    ##  $ monit_purpose            : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+    ##  $ report_institute         : chr  "SERI" "SERI" "SERI" "SERI" ...
+    ##  $ station                  : chr  "Abbekas" "Abbekas" "Abbekas" "Abbekas" ...
+    ##  $ latitude                 : num  55.3 55.3 55.3 55.3 55.3 ...
+    ##  $ longitude                : num  13.6 13.6 13.6 13.6 13.6 ...
+    ##  $ BHI_ID                   : int  11 11 11 11 11 11 11 11 11 11 ...
+    ##  $ date                     : chr  "2008-10-18" "2008-10-18" "2009-11-30" "2009-11-30" ...
+    ##  $ monit_year               : int  2008 2008 2009 2009 2010 2010 2011 2011 2012 2012 ...
+    ##  $ date_ices                : chr  "18/10/2008" "18/10/2008" "30/11/2009" "30/11/2009" ...
+    ##  $ year                     : int  2008 2008 2009 2009 2010 2010 2011 2011 2012 2012 ...
+    ##  $ species                  : chr  "Clupea harengus" "Clupea harengus" "Clupea harengus" "Clupea harengus" ...
+    ##  $ sub_samp_ref             : int  3685568 3685569 3686935 3686936 3688014 3688015 3679444 3679445 3681240 3681241 ...
+    ##  $ sub_samp_id              : int  7796 780807819 912409135 913609147 982809839 984009851 760307614 761507626 676806779 678006791 ...
+    ##  $ samp_id                  : int  1841538 1841538 1841609 1841609 1841669 1841669 1841293 1841293 1841355 1841355 ...
+    ##  $ num_indiv_subsample      : int  12 12 12 12 12 12 12 12 12 12 ...
+    ##  $ bulk_id                  : logi  NA NA NA NA NA NA ...
+    ##  $ basis_determination      : chr  "wet weight" "wet weight" "wet weight" "wet weight" ...
+    ##  $ AGMEA_whole.organism_y   : int  4 3 4 4 4 6 4 4 3 3 ...
+    ##  $ DRYWT._liver_.           : int  28 27 29 27 27 29 26 27 27 28 ...
+    ##  $ DRYWT._muscle_.          : num  22.1 23.4 30 28.4 22.6 23.8 25.2 24.3 24.1 22.1 ...
+    ##  $ EXLIP._liver_.           : num  NA NA 9.93 6.81 2.73 2.95 6.05 5.5 4.7 3.5 ...
+    ##  $ EXLIP._muscle_.          : num  3 NA 9.93 6.81 2.73 2.95 7.53 7.37 4.7 4 ...
+    ##  $ LIPIDWT._muscle_.        : logi  NA NA NA NA NA NA ...
+    ##  $ LNMEA_whole.organism_cm  : num  20 1.7 23.4 23.6 20 20.6 22.4 21.8 15.8 17.5 ...
+    ##  $ WTMEA_whole.organism_g   : num  50.5 4 95.7 105.2 47.5 ...
+    ##  $ qflag                    : logi  NA NA NA NA NA NA ...
+    ##  $ detect_lim               : num  0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 ...
+    ##  $ quant_lim                : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ uncert_val               : num  NA NA NA NA NA ...
+    ##  $ method_uncert            : chr  "" "" "" "" ...
+    ##  $ pfos_tissue_original_type: chr  "liver" "liver" "liver" "liver" ...
+    ##  $ variable                 : chr  "pfos_ug_kg_muscle_equiv_con" "pfos_ug_kg_muscle_equiv_con" "pfos_ug_kg_muscle_equiv_con" "pfos_ug_kg_muscle_equiv_con" ...
+    ##  $ value                    : num  0.35 0.396 0.228 0.227 0.804 ...
+
+``` r
+dim(pfos)
+```
+
+    ## [1] 237  35
+
+``` r
+## Read in lookup - BHI region to HOLAS basins
+lookup_basins = read.csv(file.path(dir_con,'bhi_basin_country_lookup.csv'), sep=";", stringsAsFactors = FALSE) %>%
+  select(BHI_ID, rgn_nam, Subbasin)%>%
+  dplyr::rename(rgn_id = BHI_ID, 
+                country = rgn_nam,
+                basin = Subbasin)
+```
+
+#### 6.1.2 Organize PFOS data
+
+``` r
+## these columns may change if data are added to database and then read into data folder first
+
+pfos1 = pfos %>%
+        dplyr::rename(lat = latitude, lon = longitude, bhi_id  = BHI_ID ,
+                      agmea_y = `AGMEA_whole.organism_y`,drywt_liver= `DRYWT._liver_.` ,
+                      drywt_muscle = `DRYWT._muscle_.`, exlip_liver = `EXLIP._liver_.`,
+                      exlip_muscle  = `EXLIP._muscle_.`,lipidwt_muscle = `LIPIDWT._muscle_.`,
+                      lnmea_cm  = `LNMEA_whole.organism_cm`  , wtmea_g  = `WTMEA_whole.organism_g`) %>%
+      select(-date_ices) %>% #remove columns not needed
+      mutate(date =as.Date(date,"%Y-%m-%d"))
+
+str(pfos1)
+```
+
+    ## 'data.frame':    237 obs. of  34 variables:
+    ##  $ country                  : chr  "Sweden" "Sweden" "Sweden" "Sweden" ...
+    ##  $ monit_program            : chr  "COMB" "COMB" "COMB" "COMB" ...
+    ##  $ monit_purpose            : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+    ##  $ report_institute         : chr  "SERI" "SERI" "SERI" "SERI" ...
+    ##  $ station                  : chr  "Abbekas" "Abbekas" "Abbekas" "Abbekas" ...
+    ##  $ lat                      : num  55.3 55.3 55.3 55.3 55.3 ...
+    ##  $ lon                      : num  13.6 13.6 13.6 13.6 13.6 ...
+    ##  $ bhi_id                   : int  11 11 11 11 11 11 11 11 11 11 ...
+    ##  $ date                     : Date, format: "2008-10-18" "2008-10-18" ...
+    ##  $ monit_year               : int  2008 2008 2009 2009 2010 2010 2011 2011 2012 2012 ...
+    ##  $ year                     : int  2008 2008 2009 2009 2010 2010 2011 2011 2012 2012 ...
+    ##  $ species                  : chr  "Clupea harengus" "Clupea harengus" "Clupea harengus" "Clupea harengus" ...
+    ##  $ sub_samp_ref             : int  3685568 3685569 3686935 3686936 3688014 3688015 3679444 3679445 3681240 3681241 ...
+    ##  $ sub_samp_id              : int  7796 780807819 912409135 913609147 982809839 984009851 760307614 761507626 676806779 678006791 ...
+    ##  $ samp_id                  : int  1841538 1841538 1841609 1841609 1841669 1841669 1841293 1841293 1841355 1841355 ...
+    ##  $ num_indiv_subsample      : int  12 12 12 12 12 12 12 12 12 12 ...
+    ##  $ bulk_id                  : logi  NA NA NA NA NA NA ...
+    ##  $ basis_determination      : chr  "wet weight" "wet weight" "wet weight" "wet weight" ...
+    ##  $ agmea_y                  : int  4 3 4 4 4 6 4 4 3 3 ...
+    ##  $ drywt_liver              : int  28 27 29 27 27 29 26 27 27 28 ...
+    ##  $ drywt_muscle             : num  22.1 23.4 30 28.4 22.6 23.8 25.2 24.3 24.1 22.1 ...
+    ##  $ exlip_liver              : num  NA NA 9.93 6.81 2.73 2.95 6.05 5.5 4.7 3.5 ...
+    ##  $ exlip_muscle             : num  3 NA 9.93 6.81 2.73 2.95 7.53 7.37 4.7 4 ...
+    ##  $ lipidwt_muscle           : logi  NA NA NA NA NA NA ...
+    ##  $ lnmea_cm                 : num  20 1.7 23.4 23.6 20 20.6 22.4 21.8 15.8 17.5 ...
+    ##  $ wtmea_g                  : num  50.5 4 95.7 105.2 47.5 ...
+    ##  $ qflag                    : logi  NA NA NA NA NA NA ...
+    ##  $ detect_lim               : num  0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 ...
+    ##  $ quant_lim                : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ uncert_val               : num  NA NA NA NA NA ...
+    ##  $ method_uncert            : chr  "" "" "" "" ...
+    ##  $ pfos_tissue_original_type: chr  "liver" "liver" "liver" "liver" ...
+    ##  $ variable                 : chr  "pfos_ug_kg_muscle_equiv_con" "pfos_ug_kg_muscle_equiv_con" "pfos_ug_kg_muscle_equiv_con" "pfos_ug_kg_muscle_equiv_con" ...
+    ##  $ value                    : num  0.35 0.396 0.228 0.227 0.804 ...
+
+``` r
+## check for locations missing BHI ID assignment
+pfos1 %>% filter(is.na(bhi_id))  ## none missing
+```
+
+    ##  [1] country                   monit_program            
+    ##  [3] monit_purpose             report_institute         
+    ##  [5] station                   lat                      
+    ##  [7] lon                       bhi_id                   
+    ##  [9] date                      monit_year               
+    ## [11] year                      species                  
+    ## [13] sub_samp_ref              sub_samp_id              
+    ## [15] samp_id                   num_indiv_subsample      
+    ## [17] bulk_id                   basis_determination      
+    ## [19] agmea_y                   drywt_liver              
+    ## [21] drywt_muscle              exlip_liver              
+    ## [23] exlip_muscle              lipidwt_muscle           
+    ## [25] lnmea_cm                  wtmea_g                  
+    ## [27] qflag                     detect_lim               
+    ## [29] quant_lim                 uncert_val               
+    ## [31] method_uncert             pfos_tissue_original_type
+    ## [33] variable                  value                    
+    ## <0 rows> (or 0-length row.names)
+
+``` r
+## check for unique unit/variable
+pfos1 %>% select(variable) %>% distinct()
+```
+
+    ##                      variable
+    ## 1 pfos_ug_kg_muscle_equiv_con
+
+``` r
+## Join to HOLAS basins by BHI ID
+pfos2 = pfos1 %>%
+        full_join(., lookup_basins,
+                  by=c("bhi_id"="rgn_id", "country"))
+```
+
+#### 6.1.3 Plot PFOS data
+
+``` r
+ggplot(filter(pfos2, !is.na(value)))+
+  geom_point(aes(year,value, colour = pfos_tissue_original_type, shape = country))+
+  facet_wrap(~basin)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("PFOS concentration, converted to muscle equivalent")
+```
+
+![](contaminants_prep_files/figure-markdown_github/initial%20PFOS%20data%20plot-1.png)
+
+``` r
+ggplot(filter(pfos2, !is.na(value)))+
+  geom_boxplot(aes(factor(year),value))+
+  facet_wrap(~basin)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("PFOS concentration, converted to muscle equivalent")
+```
+
+![](contaminants_prep_files/figure-markdown_github/initial%20PFOS%20data%20plot-2.png)
+
+#### 6.1.4 Create rgn look up for lat and lon and sample info lookup
+
+``` r
+pfos_bhi_rgn_lookup = pfos2 %>%
+                      select(country,lat,lon,bhi_id)%>%
+                      filter(!is.na(bhi_id)) %>%
+                      distinct()
+
+pfos_sample_lookup = pfos2 ## all data associated with a sample
+```
+
+#### 6.1.5 Plot PFOS sampling locations
+
+``` r
+## get the map
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
+```
+
+    ## Warning: bounding box given to google - spatial extent only approximate.
+
+    ## converting bounding box to center/zoom specification. (experimental)
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=60.25,20.25&zoom=5&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+
+``` r
+    map_data1 = pfos_bhi_rgn_lookup %>%
+                filter(!is.na(lat))
+
+    ##set up the plot
+    plot_map1 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=map_data1,size = 2.5)
+
+    ##plot the map
+    plot_map1  +
+      ggtitle('PFOS herring sampling locations 2005-2014') +
+      theme(title = element_text(size = 12))
+```
+
+![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-2-1.png)
+
+#### 6.1.6 Assess unqiueness of IDs
+
+``` r
+pfos2 %>% select(sub_samp_ref) %>% distinct()%>%nrow() #238
+```
+
+    ## [1] 238
+
+``` r
+pfos2 %>% select(sub_samp_id) %>% distinct()%>%nrow()  #224
+```
+
+    ## [1] 224
+
+``` r
+pfos2 %>% select(samp_id) %>% distinct()%>%nrow()  #114
+```
+
+    ## [1] 114
+
+``` r
+pfos2 %>% select(bulk_id) %>% distinct()%>%nrow()  #1
+```
+
+    ## [1] 1
+
+#### 6.1.7 How much variation in the number of individuals sampled for a subsample?
+
+``` r
+## How many individuals in a subsample
+pfos2 %>% select(country,num_indiv_subsample) %>% filter(!is.na(num_indiv_subsample))%>%distinct()
+```
+
+    ##   country num_indiv_subsample
+    ## 1  Sweden                  12
+    ## 2  Sweden                  10
+    ## 3  Sweden                  15
+    ## 4  Sweden                  11
+    ## 5  Poland                   1
+
+``` r
+## Sweden                  12
+## Sweden                  10
+## Sweden                  15
+## Sweden                  11
+## Poland                   1
+```
+
+### 6.2 Filter for data years
+
+``` r
+pfos2 %>% select(year) %>% min(na.rm=TRUE) ## 2005
+```
+
+    ## [1] 2005
+
+``` r
+pfos2 %>% select(year) %>% max(na.rm=TRUE) ## 2014
+```
+
+    ## [1] 2014
+
+``` r
+pfos2 %>% filter(year == 2014) %>% select(country) %>% distinct()
+```
+
+    ##   country
+    ## 1  Sweden
+    ## 2  Poland
+
+### 6.3 Assess qflagged data
+
+There is no qflagged data
+
+``` r
+pfos2 %>% filter(!is.na(qflag))
+```
+
+    ##  [1] country                   monit_program            
+    ##  [3] monit_purpose             report_institute         
+    ##  [5] station                   lat                      
+    ##  [7] lon                       bhi_id                   
+    ##  [9] date                      monit_year               
+    ## [11] year                      species                  
+    ## [13] sub_samp_ref              sub_samp_id              
+    ## [15] samp_id                   num_indiv_subsample      
+    ## [17] bulk_id                   basis_determination      
+    ## [19] agmea_y                   drywt_liver              
+    ## [21] drywt_muscle              exlip_liver              
+    ## [23] exlip_muscle              lipidwt_muscle           
+    ## [25] lnmea_cm                  wtmea_g                  
+    ## [27] qflag                     detect_lim               
+    ## [29] quant_lim                 uncert_val               
+    ## [31] method_uncert             pfos_tissue_original_type
+    ## [33] variable                  value                    
+    ## [35] basin                    
+    ## <0 rows> (or 0-length row.names)
+
+``` r
+pfos3 = pfos2 %>%
+        select(country,station, lat, lon,basin, date, year, sub_samp_ref,pfos_tissue_original_type,
+               variable,value) %>%
+        filter(!is.na(value))
+```
+
+### 6.4 Evaluate number of samples by date and location, take mean
+
+#### 6.4.1 Number of samples by data and location
+
+``` r
+pfos_sample_count_date_location = pfos3 %>%
+                                  select(station,date)%>%
+                                  count(station,date)
+```
+
+#### 6.4.2 Plot Number of samples by data and location
+
+``` r
+ggplot(pfos_sample_count_date_location)+
+    geom_point(aes(date,n))+
+    facet_wrap(~station)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Sample size by date and location")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20Number%20of%20pfos%20samples%20by%20data%20and%20location-1.png)
+
+#### 6.4.3 Mean PFOS concentration by date and sampling location
+
+``` r
+pfos4 = pfos3 %>%
+        select(-sub_samp_ref)%>%
+        group_by(country,station,lat,lon,basin,date,year,pfos_tissue_original_type, variable)%>%
+        summarise(mean_date_loc = mean(value, na.rm =TRUE))%>%
+        ungroup()
+
+## join with sample size
+
+pfos4 = pfos4 %>%
+        full_join(.,pfos_sample_count_date_location,
+                  by=c("station","date"))%>%
+        dplyr::rename(n_obs = n)
+```
+
+#### 6.4.4 Plot mean PFOS value by date and location
+
+``` r
+## by station
+ggplot(pfos4)+
+  geom_point(aes(date,mean_date_loc, size=n_obs))+
+  facet_wrap(~station)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean PFOS concentration by date and location")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20mean%20PFOS%20value%20by%20date%20and%20location-1.png)
+
+``` r
+## by basin
+ggplot(pfos4)+
+  geom_point(aes(date,mean_date_loc, size=n_obs))+
+  facet_wrap(~basin)+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean PFOS concentration by date and location")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20mean%20PFOS%20value%20by%20date%20and%20location-2.png)
+
+### 6.5 Basin means
+
+#### 6.5.1 Restrict data to most recent 5 years 2010-2014
+
+``` r
+pfos5 = pfos4 %>%
+        filter(year > 2009 & year < 2015)
+```
+
+#### 6.5.2 Calculate mean basin value for 5 year period and sample size
+
+``` r
+## mean basin value
+
+pfos6 = pfos5 %>%
+        select(basin,variable,mean_date_loc) %>%
+        group_by(basin,variable)%>%
+        summarise(mean_basin = mean(mean_date_loc, na.rm=TRUE))%>%
+        ungroup()
+
+pfos_basin_mean_sample_size = pfos5 %>%
+                              select(basin)%>%
+                              count(basin)%>%
+                              dplyr::rename(n_obs_basin = n)
+
+### join sample size to basin mean
+pfos6 = pfos6 %>%
+        full_join(., pfos_basin_mean_sample_size,
+                  by="basin")
+```
+
+#### 6.5.3 Plot mean basin value for 5 year period and sample size
+
+``` r
+##
+ggplot(pfos6)+
+  geom_point(aes(basin,mean_basin, size=n_obs_basin))+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean Basin PFOS concentration")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20mean%20basin%20value%20for%205%20year%20period%20and%20sample%20size-1.png)
+
+``` r
+## Plot the variation in the data
+
+ggplot(pfos5)+
+  geom_boxplot(aes(factor(basin),mean_date_loc))+
+  ylab("Date& location mean of pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6),
+        axis.title.y = element_text (size=7))+
+  ggtitle("PFOS concentration Basin variation")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20mean%20basin%20value%20for%205%20year%20period%20and%20sample%20size-2.png)
+
+#### 6.5.4 Assign threshold value
+
+9.1 μg/kg wet weight
+
+``` r
+pfos7 = pfos6 %>%
+        mutate(pfos_threshold = 9.1)
+```
+
+#### 6.5.5 Plot with threshold
+
+``` r
+## 
+ggplot(pfos7)+
+  geom_point(aes(basin,mean_basin, size=n_obs_basin))+
+  geom_hline(aes(yintercept = pfos_threshold))+
+  ylab("pfos_ug_kg_muscle_equiv_con")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+       axis.text.y = element_text(size=6 ))+
+  ggtitle("Mean Basin PFOS concentration with threshold")
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20pfos%20basin%20mean%20with%20the%20threshold-1.png)
+
+### 6.6 PFOS Status calculation
+
+Xpfos\_status = 1 / (pfos value/ pfos threshold )
+
+#### 6.6.1 Calculate PFOS status by basin
+
+``` r
+pfos_status_basin = pfos7 %>%
+                    mutate(pfos_ratio = mean_basin /pfos_threshold,
+                           pfos_status = 1 / pfos_ratio,
+                           pfos_status_adj = pmin(1,pfos_status)) ## value cannot exceed 1
+
+pfos_status_basin %>% select(basin, mean_basin,n_obs_basin,pfos_threshold,pfos_ratio,pfos_status,pfos_status_adj)
+```
+
+    ## Source: local data frame [9 x 7]
+    ## 
+    ##                    basin mean_basin n_obs_basin pfos_threshold pfos_ratio
+    ##                    <chr>      <dbl>       <int>          <dbl>      <dbl>
+    ## 1           Arkona Basin  0.8556425           5            9.1 0.09402664
+    ## 2         Bornholm Basin  0.8290904          11            9.1 0.09110884
+    ## 3           Bothnian Bay  0.5632588          15            9.1 0.06189658
+    ## 4           Bothnian Sea  0.3717232          13            9.1 0.04084871
+    ## 5  Eastern Gotland Basin  0.6309167           1            9.1 0.06933150
+    ## 6               Kattegat  0.1870670          10            9.1 0.02055682
+    ## 7 Northern Baltic Proper  0.9094972          10            9.1 0.09994475
+    ## 8              The Quark  0.3303911           5            9.1 0.03630671
+    ## 9  Western Gotland Basin  0.7343017           5            9.1 0.08069249
+    ## Variables not shown: pfos_status <dbl>, pfos_status_adj <dbl>.
+
+``` r
+### final status object
+pfos_status_basin = pfos_status_basin %>%
+                    select(basin,pfos_status_adj)%>%
+                    dplyr::rename(pfos_status = pfos_status_adj)
+```
+
+#### 6.6.2 Plot PFOS status by basin
+
+``` r
+ggplot(pfos_status_basin)+
+  geom_point(aes(basin,pfos_status), size = 2.5)+
+  ylab("Status score")+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS Basin status ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20PFOS%20status%20by%20basin-1.png)
+
+#### 6.6.3 Join PFOS Basin status to rgn\_id
+
+``` r
+pfos_status_rgn = pfos_status_basin %>%
+                  full_join(., lookup_basins,
+                            by="basin") %>%
+                  select(-basin,country)%>%
+                  select(rgn_id, pfos_status)%>%
+                  arrange(rgn_id)
+```
+
+#### 6.6.4 Plot PFOS status by rgn\_id
+
+``` r
+## with 0-1 values
+ggplot(pfos_status_rgn)+
+  geom_point(aes(rgn_id,pfos_status), size = 2.5)+
+  ylab("Status score")+
+  ylim(0,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS BHI Region status ")
+```
+
+    ## Warning: Removed 17 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20PFOS%20status%20by%20rgn_id-1.png)
+
+``` r
+## with 0-100 values
+ggplot(pfos_status_rgn)+
+  geom_point(aes(rgn_id,pfos_status*100), size = 2.5)+
+  ylab("Status score")+
+  ylim(0,100)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS BHI Region status (status range 0-100) ")
+```
+
+    ## Warning: Removed 17 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20PFOS%20status%20by%20rgn_id-2.png)
+
+### 6.7 PFOS trend
+
+Calculate the trend over data period 2005-2014 using unique date/location observations (mean of site samples) transformed to status values. Trend calculated per basin.
+
+Status\_basin\_obs ~ slope x year + intercept
+
+Trend = slope x 5
+
+#### 6.7.1 Prepare PFOS data for trend
+
+``` r
+head(pfos4)
+```
+
+    ## Source: local data frame [6 x 11]
+    ## 
+    ##   country station      lat      lon                 basin       date  year
+    ##     <chr>   <chr>    <dbl>    <dbl>                 <chr>     <date> <int>
+    ## 1  Poland    LKOL 54.91667 16.66667        Bornholm Basin 2014-09-15  2014
+    ## 2  Poland    LWLA 54.91667 18.66667 Eastern Gotland Basin 2014-08-28  2014
+    ## 3  Sweden Abbekas 55.31630 13.61100          Arkona Basin 2008-10-18  2008
+    ## 4  Sweden Abbekas 55.31630 13.61100          Arkona Basin 2009-11-30  2009
+    ## 5  Sweden Abbekas 55.31630 13.61100          Arkona Basin 2010-10-21  2010
+    ## 6  Sweden Abbekas 55.31630 13.61100          Arkona Basin 2011-11-14  2011
+    ## Variables not shown: pfos_tissue_original_type <chr>, variable <chr>,
+    ##   mean_date_loc <dbl>, n_obs <int>.
+
+``` r
+pfos_trend_data = pfos4 %>%
+                  select(basin,year, mean_date_loc)%>%
+                  mutate(pfos_threshold = 9.1,
+                         pfos_ratio = mean_date_loc/pfos_threshold,
+                         pfos_obs_status = pmin(1, 1/pfos_ratio))
+```
+
+#### 6.7.2 Plot PFOS obs transformed for trend
+
+``` r
+ggplot(pfos_trend_data)+
+  geom_point(aes(year, pfos_obs_status))+
+  facet_wrap(~basin)+
+  ylim(0,1)+
+  ylab("Observation status")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS Observations for Trend calculation ")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20PFOS%20obs%20transformed%20for%20trend-1.png)
+
+#### 6.7.3 Fit trend to PFOS basin observations
+
+``` r
+lag_win = 5  ## number of years for future status
+
+pfos_trend_basin =pfos_trend_data %>% 
+            group_by(basin) %>% 
+              do(trend_mdl = lm(pfos_obs_status~year, data=.)) %>%  ## regression model to get trend from raw observations
+               summarize(basin=basin,
+                              trend_score = coef(trend_mdl)['year']*lag_win) %>%  ## lag_win defined above, numbe of years in the future for future status
+                    ungroup()
+
+pfos_trend_basin
+```
+
+    ## Source: local data frame [9 x 2]
+    ## 
+    ##                    basin   trend_score
+    ##                    <chr>         <dbl>
+    ## 1           Arkona Basin  0.000000e+00
+    ## 2         Bornholm Basin  0.000000e+00
+    ## 3           Bothnian Bay  6.615969e-16
+    ## 4           Bothnian Sea -6.469332e-16
+    ## 5  Eastern Gotland Basin            NA
+    ## 6               Kattegat  0.000000e+00
+    ## 7 Northern Baltic Proper  0.000000e+00
+    ## 8              The Quark  0.000000e+00
+    ## 9  Western Gotland Basin  0.000000e+00
+
+#### 6.7.4 Plot PFOS basin trends
+
+NA for Eastern Gotland basin because only one year of observations
+
+``` r
+ggplot(pfos_trend_basin)+
+  geom_point(aes(basin, trend_score), size=2.5)+
+  ylim(-1,1)+
+  ylab("Trend score")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS Basin Trend score ")
+```
+
+    ## Warning: Removed 1 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20PFOS%20basin%20trends-1.png)
+
+#### 6.7.5 Apply basin trend to BHI regions
+
+``` r
+pfos_trend_rgn = pfos_trend_basin %>%
+                 full_join(., lookup_basins,
+                           by="basin")%>%
+                  select(rgn_id,trend_score)%>%
+                  arrange(rgn_id)
+```
+
+#### 6.7.6 Plot PFOS BHI region trends
+
+``` r
+ggplot(pfos_trend_rgn)+
+  geom_point(aes(rgn_id, trend_score), size=2.5)+
+  ylim(-1,1)+
+  ylab("Trend score")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+ ggtitle("PFOS BHI region Trend score ")
+```
+
+    ## Warning: Removed 23 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20PFOS%20rgn%20trends-1.png)
+
+### 6.8 Prepare and save PFOS layer for layers
+
+#### 6.8.1 Prepare PFOS layers
+
+``` r
+pfos_status_layer =   pfos_status_rgn %>%
+                      dplyr::rename(score = pfos_status)%>%
+                      mutate(score = score*100,
+                             dimension = "status")%>%
+                      select(rgn_id,dimension,score)%>%
+                      arrange(rgn_id)
+str(pfos_status_layer)
+```
+
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    42 obs. of  3 variables:
+    ##  $ rgn_id   : int  1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ dimension: chr  "status" "status" "status" "status" ...
+    ##  $ score    : num  100 100 NA NA NA NA NA NA NA NA ...
+
+``` r
+pfos_trend_layer = pfos_trend_rgn %>%
+                     dplyr::rename(score = trend_score)%>%
+                     mutate(dimension = "trend")%>%
+                     select(rgn_id,dimension,score)%>%
+                      arrange(rgn_id)
+
+str(pfos_trend_layer)
+```
+
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    42 obs. of  3 variables:
+    ##  $ rgn_id   : int  1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ dimension: chr  "trend" "trend" "trend" "trend" ...
+    ##  $ score    : num  0 0 NA NA NA NA NA NA NA NA ...
+
+#### 6.8.2 Write PFOS layer to csv
+
+``` r
+write.csv(pfos_status_layer, file.path(dir_layers, 'cw_con_pfos_status_bhi2015.csv'), row.names=FALSE)
+
+write.csv(pfos_trend_layer, file.path(dir_layers, 'cw_con_pfos_trend_bhi2015.csv'), row.names=FALSE)
+```
+
+7. Compare Contaminant Indicator Status
+---------------------------------------
+
+### 7.1 Read in CON indicators from layers
+
+``` r
+con_stat_pcb = read.csv(file.path(dir_layers, 'cw_con_ices6_status_bhi2015.csv'),stringsAsFactors = FALSE)
+con_stat_diox = read.csv(file.path(dir_layers, 'cw_con_dioxin_status_bhi2015.csv'),stringsAsFactors = FALSE) 
+con_stat_pfos =read.csv(file.path(dir_layers, 'cw_con_pfos_status_bhi2015.csv'),stringsAsFactors = FALSE)
+
+
+con_trend_pcb = read.csv(file.path(dir_layers, 'cw_con_ices6_trend_bhi2015.csv'),stringsAsFactors = FALSE)
+con_trend_diox = read.csv(file.path(dir_layers, 'cw_con_dioxin_trend_bhi2015.csv'),stringsAsFactors = FALSE)
+con_trend_pfos =read.csv(file.path(dir_layers, 'cw_con_pfos_trend_bhi2015.csv'),stringsAsFactors = FALSE)
+```
+
+### 7.2 Join into single object
+
+``` r
+#STATUS
+con_stat = bind_rows(
+                mutate(con_stat_pcb, ind= "PCB"),
+                mutate(con_stat_diox, ind= "Dioxin"),
+                mutate(con_stat_pfos, ind= "PFOS"))
+
+
+# trend
+con_trend = bind_rows(
+                mutate(con_trend_pcb, ind= "PCB"),
+                mutate(con_trend_diox, ind= "Dioxin"),
+                mutate(con_trend_pfos, ind= "PFOS"))
+```
+
+### 7.2 Plot CON indicators
+
+``` r
+ggplot(con_stat)+
+    geom_point(aes(ind, score), size=1)+
+  facet_wrap(~rgn_id)+
+  ylab("Indicator Status Score")+
+  ylim (0,110)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("CON indicator status comparision")
+```
+
+    ## Warning: Removed 57 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20con%20indicators-1.png)
+
+``` r
+ggplot(con_trend)+
+    geom_point(aes(ind, score), size=1)+
+  facet_wrap(~rgn_id)+
+  ylab("Indicator trend Score")+
+  ylim (-1,1)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("CON indicator trend comparision")
+```
+
+    ## Warning: Removed 63 rows containing missing values (geom_point).
+
+![](contaminants_prep_files/figure-markdown_github/plot%20con%20indicators-2.png)
+
+### 7.3 Number of CON indicators available per BHI region
+
+``` r
+con_stat_n = con_stat%>%
+             select(rgn_id,score)%>%
+             filter(!is.na(score))%>%
+             group_by(rgn_id)%>%
+             count()%>%
+             ungroup()%>%
+             full_join(.,
+                       data.frame(rgn_id =seq(1,42,1)),
+                       by= "rgn_id")%>%
+            arrange(rgn_id) %>%
+            mutate(n = ifelse(is.na(n),0,n)) ## replace NA with zero, NAs indicate zero indicators avaialable
+
+
+
+con_trend_n =  con_trend%>%
+             select(rgn_id,score)%>%
+             filter(!is.na(score))%>%
+             group_by(rgn_id)%>%
+             count()%>%
+             ungroup()%>%
+             full_join(.,
+                       data.frame(rgn_id =seq(1,42,1)),
+                       by= "rgn_id")%>%
+            arrange(rgn_id) %>%
+            mutate(n = ifelse(is.na(n),0,n)) ## replace NA with zero, NAs indicate zero indicators avaialable
+```
+
+### 7.4 Plot number of CON indicators per BHI region
+
+``` r
+ggplot(con_stat_n)+
+    geom_point(aes(rgn_id, n), size=2.5)+
+  ylab("Count")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("Number of CON Status indicators per BHI Region")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20number%20of%20CON%20indicators%20per%20BHI%20region-1.png)
+
+``` r
+ggplot(con_trend_n)+
+    geom_point(aes(rgn_id, n), size=2.5)+
+  ylab("Count")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6))+
+  ggtitle("Number of CON Trend indicators per BHI Region")
+```
+
+![](contaminants_prep_files/figure-markdown_github/Plot%20number%20of%20CON%20indicators%20per%20BHI%20region-2.png)
