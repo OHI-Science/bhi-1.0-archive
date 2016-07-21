@@ -45,11 +45,11 @@ dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'l
 # withr::with_dir(
 #   root_file("DESCRIPTION"))
 
-dir_viz    = file.path(dir_baltic,'visualize')
+dir_vis    = file.path(dir_baltic,'visualize')
 
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_ao, 'visualize.rmd')
+create_readme(dir_vis, 'visualize.rmd')
 ```
 
 ## 1. Visualize Functions
@@ -99,13 +99,20 @@ plot_datatime = function(timedata, facet_type){
             ##year
             ##value
             ##unit 
-            ##facet (either station name, basin name, or rgn_id) 
+            ##station, basin, rgn_id - at least one required
+            ##
             ##bhi_goal
             ##data_descrip
   
         ##facet_type
           ##single character vector describing the facet_wrap option
-
+              ## "station", "basin", "rgn_id"
+    facet = data.frame(facet=timedata[,facet_type])
+    
+    timedata = timedata %>%
+               select(year,value,unit,bhi_goal,data_descrip)%>%
+               bind_cols(.,facet)
+    
     p = ggplot(timedata)+
     geom_point(aes(year,value))+
     facet_wrap(~facet)
@@ -122,6 +129,14 @@ plot_datatime = function(timedata, facet_type){
 
 ```
 
+## 1.3 Source PlotMap function
+```{r source plotmap function}
+source('PlotMap.r') 
+source('PrepSpatial.r') 
+
+
+
+```
 
 
 ## Test the plots
@@ -136,16 +151,75 @@ testdata = data.frame(lat = c(55.3163,60.5326,57.3167),
 testdata1 = data.frame(year = rep(seq(2000,2005,1),4),
                        value = rep(seq(22,27,1),4),
                        unit = rep("mg",24),
-                       facet =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
+                       station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
                        data_descrip =rep("test plot",24),
                        bhi_goal=rep("NNN",24))
 
+
+testscores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal=='AO')
 
 ##test plot
 plot_datalocation_latlon(testdata)
 
 
 plot_datatime (testdata1, "station")
+
+
+PlotMap(filter(testscores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+                    rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+                    map_title       = element_blank(),
+                    fld_rgn         = 'region_id',
+                    fld_score       = 'score',
+                    scale_label     = 'score',
+                    scale_limits    = c(0, 100),
+                    print_fig       = TRUE, ### print to display
+                    fig_path        = NULL)
+
+
+PlotMap(filter(testscores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+                    rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+                    map_title       = element_blank(),
+                    fld_rgn         = 'region_id',
+                    fld_score       = 'score',
+                    scale_label     = 'score',
+                    scale_limits    = c(0, 100),
+                    print_fig       = TRUE, ### print to display
+                    fig_path        = NULL)
+
+```
+
+
+
+## Set local directory for pdf output
+```{r Set local directory for pdf output}
+
+pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Output")
+
+```
+
+
+
+## AO Goal
+
+```{r AO plots}
+pdf_name = "AO"
+
+ao_latlon
+ao_time
+
+
+pdf(paste(pdf_dir,"/output_"),pdf_name,".pdf")
+
+
+
+
+
+
+
+
+
+
 
 ```
 
