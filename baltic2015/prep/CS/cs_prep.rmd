@@ -55,7 +55,9 @@ Read the file in from 'layers' and resave as the CS trend for layers.
 
 ## 4. Layer prep
 
-```{r setup}
+```{r setup, message = FALSE, warning = FALSE, echo = FALSE}
+
+# knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = FALSE)
 
 ## Libraries
 library(readr)
@@ -67,6 +69,7 @@ library(stringr)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
 library(stringr) # install.packages("stringr")
+library(rgdal)
 
 # source
 source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
@@ -90,6 +93,7 @@ create_readme(dir_cs, 'cs_prep.rmd')
 
 
 ### 4.1 Read in data
+
 ```{r read in data}
 
 ## directory setup
@@ -105,24 +109,28 @@ if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
 
 dir_shp <- file.path(dir_M, 'git-annex/Baltic')
 
-cs_data <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bostera_meadows')),
-                          layer = 'Zostera meadows')  
-
 
 ```
 
 ### 4.2 Explore and plot data
+
+We explored the Zostera data and see how that matches with the BHI region shape files. They seem to overlap well. 
+
 ```{r explore data}
-# explore data
-plot(cs_data, col = cs_data@data$coverage )
 
-head(cs_data@data) 
+## read in Zostera data
+cs_data <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bostera_meadows')),
+                          layer = 'Zostera meadows')  
+#plot(cs_data, col = cs_data@data$coverage )
+#head(cs_data@data) 
 
-list(cs_data@data$name)
-cs_data@proj4string
+#  cs_data@proj4string: 
 #  +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
 
-## plot data...
+## plot data: bhi regions and Zostera
+bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
+                      layer = 'BHI_MCG_11052016')
+
 bhi_transform = spTransform(bhi, cs_data@proj4string) # transform bhi to the same coordinate system; bhi from lsp_prep. need to expand here. 
 
 plot(bhi_transform, col = 'light blue', border = "grey", main = "BHI regions and Meadows intersect"); plot(cs_data, col = 'blue', add = TRUE) 
@@ -134,16 +142,49 @@ plot(bhi_transform, col = 'light blue', border = "grey", main = "BHI regions and
 
 ### 4.3  Intersect the BHI shapefiles and zostera data
 
+The zostera data contains areal extent that matches well with the BHI regions. The graph below shows overlay of zostera data with BHI region shape file - each blue cross is a sampling site with coordinates and coverage type (dense, sparse, or NA). 
+
+**Problem**: The area listed in the Bostera file only contained the lcoation of each sampling point, but not the area of vegetation coverage. The area data seems to be the total area of the BHI region. Therefore, we can't calculate the total area of Bostera as planned.
+
 ```{r intersect and save csv}
 cs_bhi_intersect = sp::over(cs_data, bhi_transform)
-head(cs_bhi_intersect)
-plot(cs_bhi_intersect)
+# head(cs_bhi_intersect)
+# plot(cs_bhi_intersect)
 
 cs_bhi_data = cbind(cs_bhi_intersect, cs_data@data) %>%
   dplyr::select(country = rgn_nam, BHI_ID, Area_km2, coverage) %>%
   filter(!is.na(country))
-  
+
+DT::datatable(cs_bhi_data)
 # save data as csv
 # write_csv(cs_bhi_data, file.path(dir_cs, 'cs_bhi_data.csv'))
 ```
 
+### 4.4 Status Calcuation
+
+Two appraoches to calculat the status of Carbon storage according to coverage types. 
+
+1. weigh the coverage types: NA, sparse, and dense (as 0, 0.5, and 1), and average the weights
+2. no weights, and all presence (eg sparse or dense) = 1
+
+Original plan to set up the reference point: 
+
+"During the last 50 years the distribution of the Zostera marina biotope has declined >25%. The biotope has declined to varying extents in the different Baltic Sea regions. The decline in the southern areas of the Baltic Sea begun almost 100 years ago, however there is not enough reliable information to classify the biotope under A3 which requires data or inference as to the decline in quantity over the last 150 years. There are two alternatives to reference point. 
+
+1. Could use current extent x 1.25 applied equally to all BHI regions as a reference point?'
+2. use the current extent of zostera meadows (total area) in each BHI region. Use status as that extent*weight of threat level (by BHI region only). Therefore if zostera not threatened in a BHI region - score is 100 because full extent is not threatened. If threatened, score is lower?"
+
+TODO: decide what to do with area data. See section 4.3. 
+
+```{r status Alt 1 Ref Alt 1}
+
+cov_type_wt = data.frame(coverage = c("NA", "sparse", "dense"), 
+                         weight = c(1, 0.5, 1))
+
+cs_with_wt = cs_bhi_data %>%
+  full_join(cov_type_wt, 
+            by = "coverage")
+
+DT::datatable(cs_with_wt)
+
+```
