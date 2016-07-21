@@ -1,11 +1,14 @@
 ## PlotMap plots data frame values onto a map with region identifiers, and saves output
 ## If there are multiple goals, will loop through and map all
 
+## see: https://github.com/hadley/ggplot2/wiki/plotting-polygon-shapefiles
+
 
 library(ggplot2) # install.packages('ggplot2')
 library(RColorBrewer) # install.packages('RColorBrewer')
 library(dplyr)
 library(tidyr)
+# library(plotly) # plotly not working yet; would add an active_plotly = TRUE argument to call
 
 PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id and scores/values.
                     rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
@@ -15,10 +18,11 @@ PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id 
                     scale_label     = 'score',
                     scale_limits    = c(0, 100),
                     print_fig       = TRUE, ### print to display
-                    fig_path        = NULL, ### path to save the plot as an image
-                    # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on
-                    overwrite       = TRUE) {
-  ## DEBUG: setwd('baltic2015'); source('PrepSpatial.R'); scores_all <- read.csv('scores.csv'); scores <- scores_all %>% filter(goal == 'BD' & dimension == 'score') %>% filter(region_id != 0); fld_rgn <- 'region_id'; fld_score <- 'score'; scale_limits <- c(0, 100); map_title= 'Title'; scale_label = 'Biodiversity'; rgn_poly = PrepSpatial('spatial/regions_gcs.geojson'); PlotMap(scores, rgn_poly = rgn_poly, scale_label = 'test1', map_title = 'test2')
+                    fig_path        = NULL) { ### path to save the plot as an image
+                    # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on {
+  ## DEBUG: source('PrepSpatial.R'); fld_rgn <- 'region_id'; fld_score <- 'score'; scale_limits <- c(0, 100);
+  ## rgn_poly = PrepSpatial('spatial/regions_gcs.geojson');
+  ## PlotMap(scores, rgn_poly = rgn_poly, scale_label = 'test1', map_title = 'test2')
 
 
   ### rename columns for convenience...
@@ -58,6 +62,11 @@ PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id 
   if(!is.null(fig_path)) {
     ggsave(fig_path, plot = df_plot, width = 7, height = 7)
   }
+
+  # tested July 2016: plotly super super slow, causes RStudio to crash.
+  # if(active_plotly) {
+  #   ggplotly(df_plot, tooltip = c("region_id", "score"))
+  # }
 
   return(invisible(df_plot))
 }

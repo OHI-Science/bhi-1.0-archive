@@ -10,7 +10,7 @@ library(broom) # install.packages('broom')
 library(rgdal) # install.packages('rgdal')
 
 PrepSpatial <- function(mapfile_path = 'subcountry2014/spatial/rgn_offshore_gcs.shp') {
-  # can be .geojson or .shp
+  # can be .geojson or .shp #debug:: mapfile_path = 'spatial/regions_gcs.geojson'
 
   ## identify spatial file type ----
 
@@ -23,12 +23,12 @@ PrepSpatial <- function(mapfile_path = 'subcountry2014/spatial/rgn_offshore_gcs.
   if (shp_ext == 'shp') {
 
     ## Fortify SpatialPolygonsDataFrames into a data.frame for ggplot
-    poly_rgn    <- readShapePoly(fn = fp_sans_ext)
+    poly_rgn    <- maptools::readShapePoly(fn = fp_sans_ext)
 
   ## if geojson, prepare
   } else if (shp_ext == 'geojson'){
 
-    poly_rgn = readOGR(dsn = mapfile_path, "OGRGeoJSON")
+    poly_rgn = rgdal::readOGR(dsn = mapfile_path, "OGRGeoJSON")
 
   } else {
     print('Sorry, only .shp or .geojson files are supported at this time.')
@@ -36,8 +36,8 @@ PrepSpatial <- function(mapfile_path = 'subcountry2014/spatial/rgn_offshore_gcs.
   }
 
   ## tidy
-  poly_rgn_df <- broom::tidy(poly_rgn) %>% # use broom::tidy() instead of ggplot2::fortify()
-    dplyr::rename(region_id = id) %>%
+  poly_rgn_df <- broom::tidy(poly_rgn, region = 'rgn_id') %>% # use broom::tidy() instead of ggplot2::fortify()
+    dplyr::rename(region_id = id) %>% # during broom::tidy, 'rgn_id' was renamed to 'id'
     mutate(region_id = as.integer(region_id))
 
   return(poly_rgn_df)
