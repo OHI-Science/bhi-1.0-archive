@@ -54,7 +54,7 @@ create_readme(dir_vis, 'visualize.rmd')
 
 ## 1. Visualize Functions
 
-## 1.1 Spatial raw data with lat, lon
+## 1.1 Map data location with lat, lon
 ```{r Spatial raw data with lat lon}
 
 
@@ -94,19 +94,22 @@ plot_datalocation_latlon = function(mapdata){
 ## 1.2 Time series by station
 ```{r Times seres by station}
 
-plot_datatime = function(timedata, facet_type){
+plot_datatime = function(timedata, facet_type, variable = TRUE){
         ##timedata - dataframe with columns
             ##year
             ##value
             ##unit 
             ##station, basin, rgn_id - at least one required
-            ##
+            ##variable - this is for color/shape coding
             ##bhi_goal
             ##data_descrip
   
         ##facet_type
           ##single character vector describing the facet_wrap option
               ## "station", "basin", "rgn_id"
+  
+    if(variable == FALSE){
+    
     facet = data.frame(facet=timedata[,facet_type])
     
     timedata = timedata %>%
@@ -123,11 +126,97 @@ plot_datatime = function(timedata, facet_type){
                                     hjust=.5, vjust=.5, face = "plain"))+
     ggtitle(paste(timedata[1,"data_descrip"], "for goal",
                   timedata[1,"bhi_goal"], "by", facet_type )))
+    }
+  
+  if(variable == TRUE){
+    
+    facet = data.frame(facet=timedata[,facet_type])
+    
+    timedata = timedata %>%
+               select(year,value,unit,bhi_goal,data_descrip,variable)%>%
+               bind_cols(.,facet)
+    
+    p = ggplot(timedata)+
+    geom_point(aes(year,value, colour=variable))+
+    facet_wrap(~facet)
+ 
+    return(p+
+     ylab(paste(timedata[1,"unit"]))+
+     theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+    ggtitle(paste(timedata[1,"data_descrip"], "for goal",
+                  timedata[1,"bhi_goal"], "by", facet_type )))
+    }
+  
        
 }
 
 
 ```
+
+## Value by station - Not timeseries
+```{r value by station function}
+
+plot_datavalue = function(valuedata, variable = TRUE){
+        ##valuedata - dataframe with columns
+            ##value
+            ##unit 
+            ##location - primary location for x axis
+            ##variable - this for faceting
+            ##bhi_goal
+            ##data_descrip
+  
+        ##facet_type
+          ##single character vector describing the facet_wrap option
+              ## "station", "basin", "rgn_id"
+  
+    if(variable == FALSE){
+    
+ 
+    
+    valuedata = valuedata %>%
+               select(location,value,unit,bhi_goal,data_descrip)
+               
+    
+    p = ggplot(valuedata)+
+    geom_point(aes(location,value))
+  
+ 
+    return(p+
+     ylab(paste(valuedata[1,"unit"]))+
+     theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+    ggtitle(paste(valuedata[1,"data_descrip"], "for goal",
+                  valuedata[1,"bhi_goal"])))
+    }
+  
+  
+  if(variable == TRUE){
+    
+    
+    valuedata = valuedata %>%
+               select(location,value,unit,bhi_goal,data_descrip,variable)
+    
+    p = ggplot(valuedata)+
+    geom_point(aes(location,value))+
+      facet_wrap(~variable)
+ 
+    return(p+
+     ylab(paste(valuedata[1,"unit"]))+
+     theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"))+
+    ggtitle(paste(valuedata[1,"data_descrip"], "for goal",
+                  valuedata[1,"bhi_goal"])))
+    }
+  
+       
+}
+
+
+
+```
+
+
 
 ## 1.3 Source PlotMap function
 ```{r source plotmap function}
@@ -156,6 +245,15 @@ testdata1 = data.frame(year = rep(seq(2000,2005,1),4),
                        bhi_goal=rep("NNN",24))
 
 
+testdata2 = data.frame(year = rep(seq(2000,2005,1),4),
+                       value = rep(seq(22,27,1),4),
+                       unit = rep("mg",24),
+                       variable=rep(c("help","out"),12),
+                       station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
+                       data_descrip =rep("test plot",24),
+                       bhi_goal=rep("NNN",24))
+
+
 testscores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
               filter(goal=='AO')
 
@@ -163,29 +261,29 @@ testscores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE
 plot_datalocation_latlon(testdata)
 
 
-plot_datatime (testdata1, "station")
+plot_datatime (testdata1, "station", variable=FALSE)
+plot_datatime (testdata2, "station", variable=TRUE)
 
-
-PlotMap(filter(testscores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-                    rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-                    map_title       = element_blank(),
-                    fld_rgn         = 'region_id',
-                    fld_score       = 'score',
-                    scale_label     = 'score',
-                    scale_limits    = c(0, 100),
-                    print_fig       = TRUE, ### print to display
-                    fig_path        = NULL)
-
-
-PlotMap(filter(testscores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-                    rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-                    map_title       = element_blank(),
-                    fld_rgn         = 'region_id',
-                    fld_score       = 'score',
-                    scale_label     = 'score',
-                    scale_limits    = c(0, 100),
-                    print_fig       = TRUE, ### print to display
-                    fig_path        = NULL)
+# PlotMap(filter(testscores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+#                     rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+#                     map_title       = element_blank(),
+#                     fld_rgn         = 'region_id',
+#                     fld_score       = 'score',
+#                     scale_label     = 'score',
+#                     scale_limits    = c(0, 100),
+#                     print_fig       = TRUE, ### print to display
+#                     fig_path        = NULL)
+# 
+# 
+# PlotMap(filter(testscores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+#                     rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+#                     map_title       = element_blank(),
+#                     fld_rgn         = 'region_id',
+#                     fld_score       = 'score',
+#                     scale_label     = 'score',
+#                     scale_limits    = c(0, 100),
+#                     print_fig       = TRUE, ### print to display
+#                     fig_path        = NULL)
 
 ```
 
@@ -203,19 +301,102 @@ pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Out
 ## AO Goal
 
 ```{r AO plots}
-pdf_name = "AO"
 
-ao_latlon
-ao_time
+## set values and location
+goal = "AO"
+
+##data
+space_data = read.csv(file.path(dir_vis,'ao_space_data.csv'), stringsAsFactors = FALSE)
+#time_data
+value_data = read.csv(file.path(dir_vis,'ao_value_data.csv'), stringsAsFactors = FALSE)
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal==goal)
 
 
-pdf(paste(pdf_dir,"/output_"),pdf_name,".pdf")
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal,".pdf", sep=""))
 
 
 
+      ##plot raw spatial
+      plot_datalocation_latlon(space_data)
+      
+      ## plot raw values single time period by staton
+      plot_datavalue(value_data, variable=TRUE)
+      
+      ##plot raw times series by station
+      #plot_datatime (time_data, "station", variable=TRUE)
+      
+      ##plot raw time series by basin
+      #plot_datatime (time_data, "basin", variable=TRUE)
+      
+      
+      ##plot status map
+      PlotMap(filter(scores, dimension=="status"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+              map_title       = element_blank(),
+              fld_rgn         = 'region_id',
+              fld_score       = 'score',
+              scale_label     = 'status score',
+              scale_limits    = c(0, 100),
+              print_fig       = TRUE, ### print to display
+              fig_path        = NULL)
+      
+      
+      ##plot pressures map
+      PlotMap(filter(scores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+              map_title       = element_blank(),
+              fld_rgn         = 'region_id',
+              fld_score       = 'score',
+              scale_label     = 'pressures score',
+              scale_limits    = c(0, 100),
+              print_fig       = TRUE, ### print to display
+              fig_path        = NULL)
+      
+      
+      ##plot resilience map
+      PlotMap(filter(scores, dimension=="resilience"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+              map_title       = element_blank(),
+              fld_rgn         = 'region_id',
+              fld_score       = 'score',
+              scale_label     = 'resilience score',
+              scale_limits    = c(0, 100),
+              print_fig       = TRUE, ### print to display
+              fig_path        = NULL)
+      
+      
+      ##plot future map
+      PlotMap(filter(scores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+              map_title       = element_blank(),
+              fld_rgn         = 'region_id',
+              fld_score       = 'score',
+              scale_label     = 'future score',
+              scale_limits    = c(0, 100),
+              print_fig       = TRUE, ### print to display
+              fig_path        = NULL)
+      
+      
+      
+      ## plot scores map
+      PlotMap(filter(scores, dimension=="score"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+              map_title       = element_blank(),
+              fld_rgn         = 'region_id',
+              fld_score       = 'score',
+              scale_label     = 'score',
+              scale_limits    = c(0, 100),
+              print_fig       = TRUE, ### print to display
+              fig_path        = NULL)
 
 
-
+dev.off() ## Finish PDF
 
 
 
