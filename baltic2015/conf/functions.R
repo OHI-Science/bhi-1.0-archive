@@ -855,6 +855,7 @@ LSP = function(layers){
 
 SP = function(scores){
 
+  ## to calculate the four SP dimesions, average those dimensions for ICO and LSP
   s <- scores %>%
     filter(goal %in% c('ICO','LSP'),
            dimension %in% c('status', 'trend', 'future', 'score')) %>%
