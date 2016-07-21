@@ -330,7 +330,7 @@ GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
     - Baltic Proper BHI regions =  of area >= 70m depth, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
     - Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
     
-``` {r Max value, echo = FALSE, message = FALSE,  }
+``` {r Max value}
 
 BP_max_anoxic_area = BP_anoxia_all_yr %>%
   filter(year == 2005:2014) %>%
@@ -350,7 +350,7 @@ GoF_max_anoxic_area = GoF_anoxia_all_yr %>%
      - Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  in 1906  
      - Gulf of Finland BHI regions = total surface area, the area with O2 <0 mg⋅L−1  in 1906
 
-``` {r Min value, echo = FALSE, message = FALSE,  }
+``` {r Min value }
 
 BP_min_anoxic_area = BP_anoxia_all_yr %>%
   filter(year == 1906) %>%
@@ -368,7 +368,7 @@ GoF_min_anoxic_area = GoF_anoxia_all_yr %>%
 
 ### 4.5 Combining Mean, Max, and Min values 
 
-``` {r Combine value, echo = FALSE, message = FALSE,  }
+``` {r Combine value }
 
 # Baltic Proper
 

@@ -111,22 +111,6 @@ for (anox_file in anox_file_list) {
 }
 ```
 
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-
 4. Open sea anoxia data rescaling
 ---------------------------------
 
@@ -168,7 +152,7 @@ halocline_70 = bathymetry
 halocline_70[halocline_70 > -70] = NA
 
 halocline_70 = projectRaster(halocline_70, O2_raster) # transform to the same projection as O2 data
-plot(halocline_70)
+plot(halocline_70, main = "area with depth of 70m or greater")
 ```
 
 ![](open_sea_anoxia_prep_files/figure-markdown_github/anoxia%20rescaling-1.png)
@@ -329,8 +313,24 @@ GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
     - Baltic Proper BHI regions =  of area >= 70m depth, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
     - Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
 
+``` r
+BP_max_anoxic_area = BP_anoxia_all_yr %>%
+  filter(year == 2005:2014) %>%
+  group_by(BHI_ID) %>%
+  summarize(max_area = max(area_km2)) %>%
+  ungroup()
+```
+
     ## Warning in c(1906L, 1906L, 1906L, 1906L, 1906L, 1906L, 1906L, 1906L,
     ## 1906L, : longer object length is not a multiple of shorter object length
+
+``` r
+GoF_max_anoxic_area = GoF_anoxia_all_yr %>%
+    filter(year == 2005:2014) %>%
+  group_by(BHI_ID) %>%
+  summarize(max_area = max(area_km2)) %>%
+  ungroup()
+```
 
     ## Warning in c(1906L, 1906L, 1906L, 1931L, 1931L, 1931L, 1955L, 1955L,
     ## 1955L, : longer object length is not a multiple of shorter object length
@@ -340,9 +340,47 @@ GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
      - Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  in 1906  
      - Gulf of Finland BHI regions = total surface area, the area with O2 <0 mg⋅L−1  in 1906
 
+``` r
+BP_min_anoxic_area = BP_anoxia_all_yr %>%
+  filter(year == 1906) %>%
+  group_by(BHI_ID) %>%
+  summarize(min_area = min(area_km2)) %>%
+  ungroup()
+
+GoF_min_anoxic_area = GoF_anoxia_all_yr %>%
+    filter(year == 1906) %>%
+  group_by(BHI_ID) %>%
+  summarize(min_area = min(area_km2)) %>%
+  ungroup()
+```
+
 ### 4.5 Combining Mean, Max, and Min values
 
-![](open_sea_anoxia_prep_files/figure-markdown_github/Combine%20value-1.png)![](open_sea_anoxia_prep_files/figure-markdown_github/Combine%20value-2.png)
+``` r
+# Baltic Proper
+
+BP_anoxic_area = full_join(BP_current_anoxic_area, BP_max_anoxic_area, 
+                           by = 'BHI_ID') %>%
+  full_join(BP_min_anoxic_area, 
+            by = 'BHI_ID')
+  
+DT::datatable(BP_anoxic_area)
+```
+
+![](open_sea_anoxia_prep_files/figure-markdown_github/Combine%20value-1.png)
+
+``` r
+# Gulf of Finland
+
+GoF_anoxic_area = full_join(GoF_current_anoxic_area, GoF_max_anoxic_area, 
+                           by = 'BHI_ID') %>%
+  full_join(GoF_min_anoxic_area, 
+            by = 'BHI_ID')
+
+DT::datatable(GoF_anoxic_area)
+```
+
+![](open_sea_anoxia_prep_files/figure-markdown_github/Combine%20value-2.png)
 
 5. Open Sea Anoxia layer prep
 -----------------------------
