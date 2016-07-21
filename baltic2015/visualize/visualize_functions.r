@@ -25,11 +25,11 @@ plot_datalocation_latlon = function(mapdata){
 
   ## get the Baltic Sea map template
 
-  map = get_map(location = c(8.5, 53, 32, 67.5))
+  map = get_map(location = c(8.5, 53, 32, 67.5), maptype="hybrid")
 
   ##set up plot
   plot_map = ggmap(map) +
-    geom_point(aes(x=lon, y=lat), data=mapdata,size = 1.5)
+    geom_point(aes(x=lon, y=lat), colour="yellow", data=mapdata,size = 1.5)
 
   ##plot the map
   return( plot_map +
