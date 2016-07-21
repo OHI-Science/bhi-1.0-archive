@@ -779,6 +779,31 @@ ggplot(filter(plotdata_temp, year >2008 & year < 2013)) +
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle("Mean ICES6 concentration (ug/kg) variation by basin, 2009-2013")
 
+
+
+
+## Plot unique sampling locations including qflag
+ices6_lat_lon = ices6_1datemean%>%
+                select(lat,lon)%>%
+                distinct()
+
+## get the map
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
+
+    map_data_ices6 = ices6_lat_lon
+
+    ##set up the plot
+    plot_map_ices6 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=map_data_ices6,size = 1.5)
+
+    ##plot the map
+    plot_map_ices6  +
+      ggtitle('ICES6 PCB unique herring sampling locations 2000-2014') +
+      theme(title = element_text(size = 11))
+
+
+
 ```
 
 **Plot By BHI Region**
@@ -1199,7 +1224,7 @@ status_ices6 = ices6_mean %>%
   
 
 ## TREND
-## Trend calculated iin 4.5.6
+## Trend calculated in 4.5.6
 trend_ices6 = ices6_basin_trend_alt2 %>%
               full_join(.,select(lookup_basins, rgn_id,basin), by= c("basin_name"="basin"))%>%
               select(rgn_id, trend_score)%>%
@@ -1780,18 +1805,18 @@ ggplot(dioxin_sumteq2)+
 library('ggmap')
   map = get_map(location = c(8.5, 53, 32, 67.5))
 
-    map_data1 = dioxin_sumteq2 %>%
+    map_data_diox = dioxin_sumteq2 %>%
                 select(lat,lon)%>%
                 distinct()
 
     ##set up the plot
-    plot_map1 = ggmap(map) +
-      geom_point(aes(x=lon, y=lat, colour="black"), data=map_data1,size = 2.5)
+    plot_map_diox = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=map_data_diox,size = 2.5)
 
     ##plot the map
-    plot_map1  +
+    plot_map_diox  +
       ggtitle('Sampling locations shared for herring dioxin and dioxin-like PCB concentrations') +
-      theme(title = element_text(size = 9))
+      theme(title = element_text(size = 8))
 
 
 ```
@@ -2675,7 +2700,7 @@ ggplot(pfos_trend_rgn)+
 ### 6.8 Prepare and save PFOS layer for layers
 
 #### 6.8.1 Prepare PFOS layers
-```{r prepare dioxin layers}
+```{r prepare PFOS layers}
 pfos_status_layer =   pfos_status_rgn %>%
                       dplyr::rename(score = pfos_status)%>%
                       mutate(score = score*100,
@@ -2818,6 +2843,3 @@ ggplot(con_trend_n)+
 
 ```
 
-
-
-### 7.5 j
