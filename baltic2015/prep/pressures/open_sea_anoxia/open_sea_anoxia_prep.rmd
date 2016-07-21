@@ -431,19 +431,18 @@ print(gof_plot)
 
 ```
 
-#### 4.7 Rescale Anoxia data 
+#### 5. Rescale Anoxia data and save data layer
 
 ```{r rescale anoxia}
 
+anoxia_all_rgns = full_join(BP_anoxic_area, GoF_anoxic_area, 
+                            by = c("BHI_ID", "mean_area", "max_area", "min_area")) %>%
+  mutate(pressure_score = round((mean_area - min_area) / (max_area - min_area), 1), 
+         pressure_score = str_replace_all(pressure_score, "NaN", "0")) %>%
+  dplyr::select(rgn_id = BHI_ID, 
+                pressure_score )
 
+write_csv(anoxia_all_rgns, file.path(dir_layers, "hab_anoxia_bhi2015.csv"))
 
 ``` 
 
-## 5. Open Sea Anoxia layer prep
-
-```{r TODO, echo = FALSE, message = FALSE,  }
-## read in data...
-
-## plot data...
-
-```
