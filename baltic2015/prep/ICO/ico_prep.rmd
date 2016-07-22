@@ -175,6 +175,24 @@ ggplot(ico_spp_data)+
   ggtitle("Presence/Absence of ICO species by basin")
 
 
+```
+
+
+#### 4.1.4 Save for Visualize output
+This is for later results exploration
+```{r Save for Visualize output}
+ico_dist_value_data = ico_spp_data %>%
+                 select(value= as.numeric(presence),
+                        location =basin,
+                        variable = common_name)%>%
+                mutate(data_descrip = "species presence/absence",
+                       unit= "presence",
+                       bhi_goal = "ICO")
+
+
+write.csv(ico_dist_value_data, file.path(dir_baltic,'visualize/ico_dist_value_data.csv'), row.names = FALSE)
+
+
 
 ```
 

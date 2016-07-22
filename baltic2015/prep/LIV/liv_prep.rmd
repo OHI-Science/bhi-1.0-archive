@@ -466,6 +466,17 @@ liv_regional_employ = employ_nuts5 %>%
                      arrange(rgn_id, year)
 
 
+## save also for visualize
+### SAVE also for VISUALIZE
+liv_rgn_time_data = employ_nuts5 %>%
+                    dplyr::rename(value = employ_pop_bhi)%>%
+                    mutate(unit= "employed people",
+                           bhi_goal="LIV",
+                           data_descrip = "NUTS2 Employment rate allocated to BHI region buffer population")
+
+write.csv(liv_rgn_time_data, file.path(dir_baltic,'visualize/liv_rgn_time_data.csv'),row.names=FALSE)
+
+
 ```
 
 #### 5.5.2 Write object to csv
@@ -749,6 +760,16 @@ liv_national_employ = rgn_nat_employ %>%
                      select(rgn_id, year, employ_pop)%>%
                      arrange(rgn_id, year)
 
+
+
+### SAVE also for VISUALIZE
+liv_nat_time_data = rgn_nat_employ %>%
+                    select(rgn_id,year,value = employ_pop)%>%
+                    mutate(unit= "employed people",
+                           bhi_goal="ECO",
+                           data_descrip = "National number of people employed (2005 pop size)")
+
+write.csv(liv_nat_time_data, file.path(dir_baltic,'visualize/liv_nat_time_data.csv'),row.names=FALSE)
 ```
 
 

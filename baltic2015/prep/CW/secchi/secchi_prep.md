@@ -1143,6 +1143,27 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
 ![](secchi_prep_files/figure-markdown_github/restrict%20data%20before%202014-1.png)
 
+``` r
+## SAVE DATA FOR VISUALIZE
+
+nut_space_data = summer %>%
+                 select(lat,lon)%>%
+                 distinct()%>%
+                 mutate(data_descrip = "summer secchi unique sampling locations 2000-2013",
+                        bhi_goal = "NUT")
+
+write.csv(nut_space_data, file.path(dir_baltic,'visualize/nut_space_data.csv'),row.names=FALSE)
+
+nut_time_data = summer %>%
+                select(rgn_id=bhi_id,basin=basin_name,year,variable=month,value=secchi)%>%
+                mutate(unit="secchi depth m",
+                       data_descrip = "summer secchi observations",
+                       bhi_goal ="NUT")
+
+
+write.csv(nut_time_data, file.path(dir_baltic,'visualize/nut_time_data.csv'),row.names=FALSE)
+```
+
 ### 3.8 Evaluate number of stations sampled in each basin
 
 Very different number of unique lat-lon locations by month and basin.

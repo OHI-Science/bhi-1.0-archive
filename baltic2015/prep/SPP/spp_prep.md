@@ -2827,7 +2827,8 @@ Breeding birds were distributed by country so no basin assignment currently.
 ``` r
 ## recreate object without DD and NE
 shared_species_dist_n = shared_species_dist %>%
-                       count(basin,taxa_group,helcom_category)
+                       count(basin,taxa_group,helcom_category)%>%
+                        ungroup()
 
 ggplot(shared_species_dist_n, aes(x=taxa_group, y=n, fill=helcom_category))+
   geom_bar(stat="identity")+
@@ -2841,7 +2842,7 @@ ggplot(shared_species_dist_n, aes(x=taxa_group, y=n, fill=helcom_category))+
 ``` r
 ## Count of species not by category
 shared_species_dist_n_no_category = shared_species_dist %>%
-                       count(basin,taxa_group)
+                       count(basin,taxa_group) %>% ungroup()
 
 ggplot(shared_species_dist_n_no_category, aes(x=taxa_group, y=n))+
   geom_bar(stat="identity")+
@@ -2854,6 +2855,30 @@ ggplot(shared_species_dist_n_no_category, aes(x=taxa_group, y=n))+
 ![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 ``` r
+## SAVE for visualize
+spp_dist_value_data = shared_species_dist_n_no_category%>%
+                      select(value =n,
+                             location = basin,
+                             variable=taxa_group)%>%
+                     mutate(unit = "count",
+                            data_descrip = "species presence/absence",
+                            bhi_goal = "SPP")
+
+write.csv(spp_dist_value_data, file.path(dir_baltic,'visualize/spp_dist_value_data.csv'),row.names = FALSE)
+
+spp_dist_threat_value_data = shared_species_dist_n%>%
+                             dplyr::rename(value=n,
+                                           location = basin)%>%
+                             mutate(variable = paste(taxa_group, "_",helcom_category,sep=""))%>%
+                             select(-taxa_group, -helcom_category)%>%
+                            mutate(unit = "count",
+                            data_descrip = "species presence/absence",
+                            bhi_goal = "SPP")
+
+
+write.csv(spp_dist_threat_value_data, file.path(dir_baltic,'visualize/spp_dist_threat_value_data.csv'),row.names = FALSE)
+
+
 ## distribution without DD with each taxa group separately by basin & threat
 #invert
 ##color to highlight Gulf of Finland

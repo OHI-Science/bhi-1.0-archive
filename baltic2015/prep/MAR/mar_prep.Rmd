@@ -224,6 +224,15 @@ ggplot(production2)+
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle("Rainbow Trout Production by Country")
 
+### save for visualize
+mar_countryrgn_time_data = production2 %>%
+                           select(year, value = production,
+                                  unit, mar_region)%>%
+                           mutate(bhi_goal ="MAR",
+                                  data_descrip = "Rainbow trout production by country region")
+
+write.csv(mar_countryrgn_time_data, file.path(dir_baltic, 'visualize/mar_countryrgn_time_data.csv'),row.names = FALSE)
+
 ```
 
 
@@ -262,6 +271,16 @@ ggplot(prod_allot)+
    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))+
   ggtitle("Production (tons) by BHI region")
+
+### save for visualize
+mar_rgn_time_data = prod_allot %>%
+                           select(year, value = prod_tot,
+                                   rgn_id = BHI)%>%
+                           mutate(bhi_goal ="MAR",
+                                  unit= "ton",
+                                  data_descrip = "Rainbow trout production allocated to BHI region")
+
+write.csv(mar_rgn_time_data, file.path(dir_baltic, 'visualize/mar_rgn_time_data.csv'),row.names = FALSE)
 
 ```
 
