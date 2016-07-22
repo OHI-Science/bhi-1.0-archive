@@ -197,13 +197,13 @@ spp_dist_vuln = read.csv(file.path(dir_ico,'data_database/checklist_redlist_data
 dim(spp_dist_vuln)
 ```
 
-    ## [1] 25771     7
+    ## [1] 25467     7
 
 ``` r
 str(spp_dist_vuln)
 ```
 
-    ## 'data.frame':    25771 obs. of  7 variables:
+    ## 'data.frame':    25467 obs. of  7 variables:
     ##  $ taxa_group             : chr  "breeding birds" "breeding birds" "breeding birds" "breeding birds" ...
     ##  $ latin_name             : chr  "Actitis hypoleucos" "Alca torda" "Anas clypeata" "Anas platyrhynchos" ...
     ##  $ common_name            : chr  NA NA NA NA ...
@@ -258,6 +258,29 @@ ggplot(ico_spp_data)+
 ```
 
 ![](ico_prep_files/figure-markdown_github/plot%20ico%20species%20by%20basin-1.png)
+
+#### 4.1.4 Save for Visualize output
+
+This is for later results exploration
+
+``` r
+ico_dist_value_data = ico_spp_data %>%
+                 select(value= presence,
+                        location =basin,
+                        variable = common_name)%>%
+                mutate(data_descrip = "species presence/absence",
+                       bhi_goal = "ICO")
+ico_threat_value_data = ico_spp_data %>%
+                 select(value= helcom_category,
+                        location =common_name)%>%
+                distinct()%>%
+                mutate(data_descrip = "redlist threat level",
+                       bhi_goal = "ICO")
+
+write.csv(ico_dist_value_data, file.path(dir_baltic,'visualize/ico_dist_value_data.csv'), row.names = FALSE)
+
+write.csv(ico_threat_value_data, file.path(dir_baltic,'visualize/ico_threat_value_data .csv'), row.names = FALSE)
+```
 
 ### 4.2 Calculate status
 
