@@ -6,14 +6,17 @@ open\_sea\_anoxia\_prep
 -   [2. Anoxia data](#anoxia-data)
     -   [2.1 Data source](#data-source)
 -   [3. Open sea anoxia spatial data scale](#open-sea-anoxia-spatial-data-scale)
--   [4. Open sea anoxia data rescaling](#open-sea-anoxia-data-rescaling)
-    -   [4.1 Balic Proper rescaling](#balic-proper-rescaling)
-    -   [4.2 Gulf of Finland rescaling:](#gulf-of-finland-rescaling)
-    -   [4.1 Current value](#current-value)
-    -   [4.2 Max value](#max-value)
-    -   [4.3 Min value](#min-value)
-    -   [4.5 Combining Mean, Max, and Min values](#combining-mean-max-and-min-values)
--   [5. Open Sea Anoxia layer prep](#open-sea-anoxia-layer-prep)
+-   [4. Open sea anoxia data extraction](#open-sea-anoxia-data-extraction)
+    -   [4.1 Balic Proper anoxia data extraction](#balic-proper-anoxia-data-extraction)
+    -   [4.2 Gulf of Finland anoxia data extraction](#gulf-of-finland-anoxia-data-extraction)
+    -   [4.3 Combine anoxia data in all years](#combine-anoxia-data-in-all-years)
+-   [Rescale Anoxia pressure data](#rescale-anoxia-pressure-data)
+    -   [5.1 Current value](#current-value)
+    -   [5.2 Max value](#max-value)
+    -   [5.3 Min value](#min-value)
+    -   [5.4 Combining Mean, Max, and Min values](#combining-mean-max-and-min-values)
+    -   [5.5 Plot Mean, Max, and Min](#plot-mean-max-and-min)
+    -   [5.6 Rescale Anoxia data and save data layer](#rescale-anoxia-data-and-save-data-layer)
 
 1. Background on open sea anoxia data
 -------------------------------------
@@ -111,28 +114,12 @@ for (anox_file in anox_file_list) {
 }
 ```
 
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-    ## Field name: '_TYPE_' changed to: 'X_TYPE_'
-
-4. Open sea anoxia data rescaling
----------------------------------
+4. Open sea anoxia data extraction
+----------------------------------
 
 Note, we may need to treat the Baltic Proper and the Gulf of Finland separately. In the Baltic Proper there is a strong halocline at 70m and it is the anoxic area below the halocline that is of interest (therefore we focus on areas with depths &gt;= 70). In the Gulf of Finland, there a less strong halocline and thermal stratification is important so we may have to think differently about which areas to focus on.
 
-### 4.1 Balic Proper rescaling
+### 4.1 Balic Proper anoxia data extraction
 
 ``` r
 # isolate Baltic Proper and Gulf of Finland
@@ -168,10 +155,10 @@ halocline_70 = bathymetry
 halocline_70[halocline_70 > -70] = NA
 
 halocline_70 = projectRaster(halocline_70, O2_raster) # transform to the same projection as O2 data
-plot(halocline_70)
+plot(halocline_70, main = "area with depth of 70m or greater")
 ```
 
-![](open_sea_anoxia_prep_files/figure-markdown_github/anoxia%20rescaling-1.png)
+![](open_sea_anoxia_prep_files/figure-markdown_github/Baltic%20Proper%20anoxia%20data-1.png)
 
 ``` r
 # Loop for each O2_bottom tif file, mask with halocline_70
@@ -219,7 +206,7 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 }
 ```
 
-### 4.2 Gulf of Finland rescaling:
+### 4.2 Gulf of Finland anoxia data extraction
 
 ``` r
 O2_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
@@ -263,15 +250,15 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 }
 ```
 
-Combine anoxia data in all years for Gulf of Finland and Baltic Proper
+### 4.3 Combine anoxia data in all years
 
 ``` r
+setwd(file.path(dir_anox, 'O2_bottom_files'))
+
 ## Baltif Proper anoxia data in all years
 
 BP_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
                           pattern ="CodRVmap_.+[BP].csv")
-
-setwd(file.path(dir_anox, 'O2_bottom_files'))
 
 dat = read_csv(BP_file_list [1])
 
@@ -282,6 +269,7 @@ for (i in 2:length(BP_file_list )) {
 }
 
 BP_anoxia_all_yr = dat
+
 
 ## Gulf of Finland anoxia data in all years
 
@@ -302,49 +290,139 @@ GoF_anoxia_all_yr = dat
 setwd(file.path('~/github/bhi'))
 ```
 
-### 4.1 Current value
+Rescale Anoxia pressure data
+----------------------------
 
-    - Baltic Proper BHI regions =  of the area >= 70m deep the area with O2 <0 mg⋅L−1  
-        - Use the mean area for the most recent 3 years (2012-2014)  
-    - Gulf of Finland BHI regions = of the total surface area in each BHI region, the area with O2 <0 mg⋅L−1  
-        - Use the mean area for the most recent 3 years (2012-2014)  
-        
+### 5.1 Current value
+
+-   Baltic Proper BHI regions = of the area &gt;= 70m deep the area with O2 &lt;0 mg⋅L−1
+     - Use the mean area for the most recent 3 years (2012-2014)
+-   Gulf of Finland BHI regions = of the total surface area in each BHI region, the area with O2 &lt;0 mg⋅L−1
+     - Use the mean area for the most recent 3 years (2012-2014)
 
 ``` r
 BP_current_anoxic_area = BP_anoxia_all_yr %>%
-  filter(year == 2012:2014) %>%
   group_by(BHI_ID) %>%
+  filter(year %in% 2012:2014) %>%
   summarize(mean_area = mean(area_km2)) %>%
   ungroup()
 
 GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
-    filter(year == 2012:2014) %>%
   group_by(BHI_ID) %>%
+  filter(year %in% 2012:2014) %>%
   summarize(mean_area = mean(area_km2)) %>%
   ungroup()
 ```
 
-### 4.2 Max value
+### 5.2 Max value
 
-    - Baltic Proper BHI regions =  of area >= 70m depth, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
-    - Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
+-   Baltic Proper BHI regions = of area &gt;= 70m depth, the maximum extent of area O2 &lt;0 mg⋅L−1 in last 10 years
+-   Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 &lt;0 mg⋅L−1 in last 10 years
 
-    ## Warning in c(1906L, 1906L, 1906L, 1906L, 1906L, 1906L, 1906L, 1906L,
-    ## 1906L, : longer object length is not a multiple of shorter object length
+``` r
+BP_max_anoxic_area = BP_anoxia_all_yr %>%
+  group_by(BHI_ID) %>%
+  filter(year %in% 2005:2014) %>%
+  summarize(max_area = max(area_km2)) %>%
+  ungroup()
 
-    ## Warning in c(1906L, 1906L, 1906L, 1931L, 1931L, 1931L, 1955L, 1955L,
-    ## 1955L, : longer object length is not a multiple of shorter object length
+GoF_max_anoxic_area = GoF_anoxia_all_yr %>%
+  group_by(BHI_ID) %>%
+  filter(year %in% 2005:2014) %>%
+  summarize(max_area = max(area_km2)) %>%
+  ungroup()
+```
 
-### 4.3 Min value
+### 5.3 Min value
 
-     - Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  in 1906  
-     - Gulf of Finland BHI regions = total surface area, the area with O2 <0 mg⋅L−1  in 1906
+-   Baltic Proper BHI regions = of area &gt;= 70m deep the area with O2 &lt;0 mg⋅L−1 in 1906
+-   Gulf of Finland BHI regions = total surface area, the area with O2 &lt;0 mg⋅L−1 in 1906
 
-### 4.5 Combining Mean, Max, and Min values
+``` r
+BP_min_anoxic_area = BP_anoxia_all_yr %>%
+  group_by(BHI_ID) %>%
+  filter(year == 1906) %>%
+  summarize(min_area = min(area_km2)) %>%
+  ungroup()
 
-![](open_sea_anoxia_prep_files/figure-markdown_github/Combine%20value-1.png)![](open_sea_anoxia_prep_files/figure-markdown_github/Combine%20value-2.png)
+GoF_min_anoxic_area = GoF_anoxia_all_yr %>%
+  group_by(BHI_ID) %>%
+  filter(year == 1906) %>%
+  summarize(min_area = min(area_km2)) %>%
+  ungroup()
+```
 
-5. Open Sea Anoxia layer prep
------------------------------
+### 5.4 Combining Mean, Max, and Min values
 
-UTM 34 North.
+``` r
+# Baltic Proper
+
+BP_anoxic_area = full_join(BP_current_anoxic_area, BP_max_anoxic_area, 
+                           by = 'BHI_ID') %>%
+  full_join(BP_min_anoxic_area, 
+            by = 'BHI_ID')
+  
+# DT::datatable(BP_anoxic_area)
+
+# Gulf of Finland
+
+GoF_anoxic_area = full_join(GoF_current_anoxic_area, GoF_max_anoxic_area, 
+                           by = 'BHI_ID') %>%
+  full_join(GoF_min_anoxic_area, 
+            by = 'BHI_ID')
+
+# DT::datatable(GoF_anoxic_area)
+```
+
+### 5.5 Plot Mean, Max, and Min
+
+``` r
+## Baltic Proper 
+
+bp_plot_data = BP_anoxic_area %>%
+  gather(area_type, area, 2:4) 
+
+bp_plot <- ggplot(bp_plot_data, aes(x = BHI_ID, y = area, fill = area_type)) +
+ geom_bar(position="dodge", stat = "identity") +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Baltic Proper Anoxia data - Max, Min, and Mean',
+      x = 'BHI region', 
+      y = 'Area (km2)')
+
+print(bp_plot)
+```
+
+![](open_sea_anoxia_prep_files/figure-markdown_github/plot%20mean%20max%20and%20min-1.png)
+
+``` r
+## Gulf of Finland
+
+gof_plot_data = GoF_anoxic_area %>%
+  gather(area_type, area, 2:4) 
+
+gof_plot <- ggplot(gof_plot_data, aes(x = BHI_ID, y = area, fill = area_type)) +
+ geom_bar(position="dodge", stat = "identity") +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'Gulf of Finland Anoxia data - Max, Min, and Mean',
+      x = 'BHI region', 
+      y = 'Area (km2)')
+
+print(gof_plot)
+```
+
+![](open_sea_anoxia_prep_files/figure-markdown_github/plot%20mean%20max%20and%20min-2.png)
+
+### 5.6 Rescale Anoxia data and save data layer
+
+Mean value was rescaled using max and min values, and was kept between 0 and 1.
+
+``` r
+anoxia_all_rgns = full_join(BP_anoxic_area, GoF_anoxic_area, 
+                            by = c("BHI_ID", "mean_area", "max_area", "min_area")) %>%
+  mutate(pressure_score = round((mean_area - min_area) / (max_area - min_area), 1), 
+         pressure_score = str_replace_all(pressure_score, "NaN", "0")) %>%
+  dplyr::select(rgn_id = BHI_ID, 
+                pressure_score )
+
+write_csv(anoxia_all_rgns, file.path(dir_layers, "hab_anoxia_bhi2015.csv"))
+```

@@ -801,7 +801,8 @@ ICO = function(layers){
   ## add dimension to object
   ico_status = ico_status %>%
                dplyr::rename(region_id =rgn_id) %>%
-               mutate(dimension = 'status')
+               mutate(dimension = 'status',
+                      score = score* 100)
 
   ## ICO TREND
    ## No data to calculate as trend, set as NA
@@ -854,18 +855,20 @@ LSP = function(layers){
 
 SP = function(scores){
 
-  d = within(
-    dcast(
-      scores,
-      region_id + dimension ~ goal, value.var='score',
-      subset=.(goal %in% c('ICO','LSP') & !dimension %in% c('pressures','resilience')))
-    , {
-      goal = 'SP'
-      score = rowMeans(cbind(ICO, LSP), na.rm=T)})
-
+  ## to calculate the four SP dimesions, average those dimensions for ICO and LSP
+  s <- scores %>%
+    filter(goal %in% c('ICO','LSP'),
+           dimension %in% c('status', 'trend', 'future', 'score')) %>%
+    group_by(region_id, dimension) %>%
+    summarize(score = mean(score, na.rm=TRUE)) %>%
+    ungroup() %>%
+    arrange(region_id) %>%
+    mutate(goal = "SP") %>%
+    select(region_id, goal, dimension, score) %>%
+    data.frame()
 
   # return all scores
-  return(rbind(scores, d[,c('region_id','goal','dimension','score')]))
+  return(rbind(scores, s))
 } ## End SP function
 
 
@@ -1099,19 +1102,18 @@ CW = function(scores){
   ## NOTE to @jennifergriffiths: there are still several 'NaN's, perhaps because of TRA?
   ## 7 July 2016 - Think have fixed the NaN problem with the function mean_NAall()
   ## also, rounding score doesn't seem to work here; ends up with .00 precision. maybe round later?
-  s <- rbind(
-    scores_cw %>%
-      filter(dimension %in% 'status') %>%
-      group_by(region_id) %>%
-      summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
-      ungroup() %>%
-      mutate(dimension = 'status'),
-    scores_cw %>%
-      filter(dimension %in% 'trend') %>%
-      group_by(region_id) %>%
-      summarize(score = round(mean_NAall(score),2)) %>% # round trend to 2 decimals #if all values are NA, NA not NaN returned; if only some values are NA, exclude
-      ungroup() %>%
-      mutate(dimension = 'trend')) %>%
+
+  ## July 21, 2016 @jules32 after discussing with @Melsteroni.
+  ## Calculate CW as a geometric mean from NUT, CON, and TRA
+  ## for only 3 dimensions: status, likely future state and score. Other 'supragoals' (SP, FP, LE) would
+  ## also calculate trend, and would do this as a simple mean (excluding pressures and resilience since
+  ## the mean of those variables makes less sense). But here, geometric mean of trend also makes less sense, so exclude.
+  ## take the
+  s <- scores_cw %>%
+    filter(dimension %in% c('status', 'future', 'score')) %>%
+    group_by(region_id, dimension) %>%
+    summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
+    ungroup() %>%
     arrange(region_id) %>%
     mutate(goal = "CW") %>%
     select(region_id, goal, dimension, score) %>%
@@ -1120,7 +1122,6 @@ CW = function(scores){
   ## return all scores
   return(rbind(scores, s))
 } ## End CW function
-
 
 
 BD = function(layers){

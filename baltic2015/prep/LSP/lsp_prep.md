@@ -23,7 +23,7 @@ lsp\_prep
         -   [5.1 Alternative 1: Linear trend of cumulative MPA area](#alternative-1-linear-trend-of-cumulative-mpa-area)
         -   [5.2 Alternative 2: Linear trend of status scores](#alternative-2-linear-trend-of-status-scores)
         -   [5.3 Alternative 3: Difference between management status](#alternative-3-difference-between-management-status)
-    -   [6. Prepate and write csv to layers](#prepate-and-write-csv-to-layers)
+    -   [6. Prepare and write csv to layers](#prepare-and-write-csv-to-layers)
 
 Preparation of Data Layers for Lasting Special Places (LSP)
 ===========================================================
@@ -66,7 +66,7 @@ This status is based upon self-reporting to HELCOM by each country.
 
 #### 2.1.3 Additional data not currently used.
 
-**Management plan status csv** The status of the management plans associated with each MPA were downloaded from HELCOM's \[MPA database\] (<http://mpas.helcom.fi/apex/f?p=103:40>::::::) under the *Management Plans* tab. Data were downloaded on 15 April 2016.
+**Management plan status csv** The status of the management plans associated with each MPA were downloaded from HELCOM's [MPA database](http://mpas.helcom.fi/apex/f?p=103:40::::::) under the *Management Plans* tab. Data were downloaded on 15 April 2016.
  - Key columns in this csv file are "Site name" (MPA name) and "Management Plan status"
 
 There are three levels of management plan status that can be assigned to each MPA: *No plan*, *In development*, *Implemented*.
@@ -87,37 +87,47 @@ Status is calculated by country and a country's status is applied to all BHI reg
 #### 3.1.1 Alternative 1
 
 Xlsp\_country = sum(w\_i \* MPA area)\_m / Reference\_pt\_country
- - Numerator is the sum over all MPAs within a country's EEZ of the MPA area weighted by the management status.
- - w\_i = value between 0 -1
 
-w\_i are based upon management status. 0.3 = designated 0.6 = designated and partly managed
-1.0 designated and managed
+-   Numerator is the sum over all MPAs within a country's EEZ of the MPA area weighted by the management status.
+-   w\_i = value between 0 -1
+
+w\_i is based upon management status.
+
+-   0.3 = designated
+-   0.6 = designated and partly managed
+-   1.0 designated and managed
 
 Reference\_pt\_country = 10% of the area in a country's EEZ is designated as an MPA and is 100% managed = 10% area country's EEZ
  - This is based on the Convention on Biodiversity [target](https://www.cbd.int/sp/targets/rationale/target-11/)
 
 **Problem with this approach, if a country designates more than 10% area but does not fully managed the MPA, can still achieve a score of 100**
 
-#### 3.1.2 Alternative 2
+#### 3.1.2 Alternative 2 (similar to Alt 1 but different weights (w\_i)
 
 Xlsp\_country = sum(w\_i \* MPA area)\_m / Reference\_pt\_country
  - Numerator is the sum over all MPAs within a country's EEZ of the MPA area weighted by the management status.
  - w\_i = value between 0 -1
 
-w\_i are based upon management status. 0.1 = designated 0.6 = designated and partly managed
-1.0 designated and managed
+w\_i are based upon management status.
+
+-   0.1 = designated
+-   0.6 = designated and partly managed
+-   1.0 designated and managed
 
 Reference\_pt\_country = 10% of the area in a country's EEZ is designated as an MPA and is 100% managed = 10% area country's EEZ
  - This is based on the Convention on Biodiversity [target](https://www.cbd.int/sp/targets/rationale/target-11/)
 
-**Problem with this approach, if a country designates more than 10% area but does not fully managed the MPA, can still achieve a score of 100. However, because the weight for "designated"" is lower than in Alternative 1, it is more difficult to acheive a score of 100 without also have managed MPAs**
+**Problem with this approach, if a country designates more than 10% area but does not fully managed the MPA, can still achieve a score of 100. However, because the weight for "designated" is lower than in Alternative 1, it is more difficult to acheive a score of 100 without also having managed MPAs**
 
 #### 3.1.3 Alternative 3
 
-Xlsp\_country = geometric\_mean(Xlsp\_country\_mpa\_area\_score + Xlsp\_country\_mpa\_management\_score)
+Xlsp\_country = geometric\_mean(Xlsp\_country\_mpa\_area\_score, Xlsp\_country\_mpa\_management\_score)
 
-Xlsp\_country\_mpa\_area\_score = pmin(1,MPA\_area\_country / area\_10percent\_eez\_country) MPA\_area\_country = total MPA area in each country area\_10percent\_eez\_country = area that is 10% of a country's EEZ
-*score cannot excede 1.0*
+Xlsp\_country\_mpa\_area\_score = pmin(1,MPA\_area\_country / area\_10percent\_eez\_country))
+
+-   MPA\_area\_country = total MPA area in each country
+-   area\_10percent\_eez\_country = area that is 10% of a country's EEZ
+    *score cannot excede 1.0*
 
 Xlsp\_country\_mpa\_management\_score =sum(w\_i \* MPA area)\_m / Reference\_pt\_country
 
@@ -131,7 +141,7 @@ Reference\_pt\_country = 10% of the area in a country's EEZ is designated as an 
 
 #### 3.1.4 Status and self-reporting
 
-MPA status is based on self-reporting. If country's differ in their definitions of "managed" or inflate their MPA status, we cannot account for those biases in the data.
+MPA status is based on self-reporting. If countries differ in their definitions of "managed" or inflate their MPA status, we cannot account for those biases in the data.
 
 ### 3.2 Trend calculation
 
@@ -157,7 +167,7 @@ Trend = Future\_year \* m; Future\_ear = 5
 
 ##### 3.2.4 Alternative 3 - Difference between old and updated management status
 
-MPA status data file from 06 June 2016 ontains more recent management status data than that from the MPA dbf file. The difference between management status weight between these two files can be used to represent trend.
+MPA status data file from 06 June 2016 contains more recent management status data than that from the MPA dbf file. The difference between management status weight between these two files can be used to represent trend.
 
 -   if mgmt\_csv &gt; mgmt\_shape, trend = 0.2
 -   if mgmt\_csv = mgmt\_shape, trend = 0
@@ -169,8 +179,6 @@ The logic here is straightforward, however, the criteria for management status i
 
 4. MPA data prep
 ----------------
-
-Prep data layer
 
 ### 4.1 Set-up directories
 
@@ -192,7 +200,7 @@ The MPA file is in the [LAEA coordinate reference system](http://spatialreferenc
 
 ### 4.3 Intersect BHI and HELCOM\_MPA polygons
 
-MPA regions were divided by with BHI region shape file, and thus we were able to calculate the total MPA area within each BHI region. MPA area per region is saved in the prep folder (\`mpa\_area\_per\_rgn.csv).
+MPA regions were divided by with BHI region shape file, and thus we were able to calculate the total MPA area within each BHI region. MPA area per region is saved in the prep folder (`mpa_area_per_rgn.csv`).
 
 The csv. file includes information: Area per MPA, Date established, MPA status, total MPA area per region.
 
@@ -285,11 +293,14 @@ There are three types of management status (and their corresponding weight): Des
 #### 4.1.1 Calulate the status
 
 ``` r
-mgmt_weight = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
+mgmt_weight = data.frame( mgmt_status = c("Designated", 
+                                          "Designated_and_partly_managed", 
+                                          "Designated_and_managed", 
+                                          "Managed"),
                           weight = c(0.3, 0.6, 1, 1) )
 
-mpa_mgmt_with_wt = full_join( mgmt_weight, mpa_mgmt, 
-                              by = 'mgmt_status') 
+mpa_mgmt_with_wt = full_join(mgmt_weight, mpa_mgmt, 
+                            by = 'mgmt_status') 
 ```
 
     ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
@@ -355,7 +366,7 @@ write_csv(r.status, file.path(dir_lsp, 'lsp_status_by_rgn.csv'))
 
 #### 4.1.1 Area of each country with MPAs relative to 10% of the EEZ
 
-Status was calculated as described in Section 3.1.1. In the plot, the red line reprsents where total MPA area equals that of the reference point (ie. 10% EEZ). Any ponit above that line mean that the country has exceeded the reference point of designated MPA area and therefore will receive a status score of 100, and any point below a lower score.
+Status was calculated as described in Section 3.1.1. In the plot below, the red line represents where total MPA area equals that of the reference point (ie. 10% EEZ). Any point above that line means that the country has exceeded the reference point of designated MPA area and therefore will have a status score of 100, and any point below the line will have a score lower than 100.
 
 ``` r
 mpa_vs_eez = mpa_mgmt_with_wt %>%
@@ -389,7 +400,7 @@ print( mpa_vs_eez_plot)
 
 #### 4.1.2 Plot Status Calculation Alternative 1
 
-The following graphs show LSP status by country and by BHI ID, as well as the distribution of MPAs by country and by country and management levels.
+The following graphs show LSP status by country and by BHI ID, as well as the distribution of MPAs by country and management levels.
 
 ``` r
 ## plot status by country
@@ -454,7 +465,7 @@ print(mpa_per_country_plot)
 ## plot number of MPAs per country by mgmt levels 
 
 mgmt_weight_alt = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed"),
-                          weight = c(0.3, 0.6, 1) ) # ignore "managed" category 
+                          weight = c(0.3, 0.6, 1) ) 
 
 num_mpa_per_country_mgmt = mpa_mgmt_with_wt %>%
                            group_by(country, weight) %>%
@@ -478,6 +489,35 @@ print(num_country_mgmt_plot)
 
 ![](lsp_prep_files/figure-markdown_github/plot%20number%20of%20MPAs%20per%20country%20by%20mgmt%20levels-1.png)
 
+#### 4.1.5 Plot the area of MPA by management level
+
+Even when a country has many MPAs that are just designated but not managed, it can still achieve a score of 100, is it because the area of MPAs that are "managed" (ie. higher weight) is relatively larger compared to that of the "designated"" (ie. lower weight), and thus have a higher \_weight\*area\_ score?
+
+``` r
+area_vs_mgmt_lvl = mpa_mgmt_with_wt %>%
+  dplyr::select(BSPA_ID, country, mpa_area_km2, date_est, mgmt_status) %>%
+  filter(!is.na(date_est), 
+         !duplicated(BSPA_ID)) %>%  # the same MPA could exist in different BHI_IDs
+  mutate(mgmt_status = str_replace_all(mgmt_status, 'Managed', 'Designated_and_managed')) %>% # treat Managed and Desig_and_managed as the same status
+  group_by(country, mgmt_status)  %>%
+  summarize(total_mpa_area = sum(mpa_area_km2)) 
+
+area_vs_mgmt_lvl_plot <- ggplot(area_vs_mgmt_lvl, aes(x = country, y = total_mpa_area, fill = mgmt_status)) +
+ geom_bar(stat = 'identity') +
+ # geom_text(aes(label = sprintf('n = %s', count), y = count), 
+ #           size = 2, 
+ #           angle = 90, hjust = 0, color = 'grey30') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'MPA area of each management level per country',
+      x = 'Country', 
+      y = 'MPA area (km2)',
+      fill = 'Management Level')
+
+print(area_vs_mgmt_lvl_plot)
+```
+
+![](lsp_prep_files/figure-markdown_github/MPA%20area%20vs%20management%20level-1.png)
+
 ### 4.2 Status Calculation Alternative 2
 
 Status was calculated as described in Section 3.1.2
@@ -488,7 +528,7 @@ Status was calculated as described in Section 3.1.2
 mgmt_weight_2 = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
                           weight = c(0.1, 0.6, 1, 1) )
                           
-mpa_mgmt_with_wt_2 = full_join( mgmt_weight, mpa_mgmt, 
+mpa_mgmt_with_wt_2 = full_join( mgmt_weight_2, mpa_mgmt, 
                               by = 'mgmt_status') 
 ```
 
@@ -533,7 +573,7 @@ r.status_2 = mpa_mgmt_with_wt_2 %>%
            filter(!duplicated(BHI_ID)) %>%
            dplyr::select(rgn_id = BHI_ID, 
                   country) %>%
-           full_join(status_by_country, 
+           full_join(status_by_country_2, 
                      by = 'country') %>% 
            dplyr::select(rgn_id, 
                          score = status) %>%
@@ -872,5 +912,13 @@ r.trend.3 = mpa_mgmt %>%
 # write_csv(trend_data_4, file.path(dir_lsp, "trend_lsp_4.csv"))
 ```
 
-6. Prepate and write csv to layers
+6. Prepare and write csv to layers
 ----------------------------------
+
+TODO: plot area of mpa per country, number of MPA, and mgmt levels -&gt; why still achieving 100 even when there are many mpas that are not managed?
+
+TODO: bottom trawling. see Jen's prep file. rescaling: might not have a good ref point, the max could be the most recent year's value. data: hours of efforts, calculate hours/km2 use as spatial max -&gt; 1.2 x Max
+
+TODO: illegal oil spill (check: layers.csv)
+
+html tag:
