@@ -158,6 +158,18 @@ baltic = data_clean %>%
 ggplot(baltic, aes(country, modeled_waste_2010)) +
   geom_bar(stat='identity')
 
+
+## SAVE THIS DATA for VISUALIZE
+
+tra_value_data= baltic%>%
+                select(value=modeled_waste_2010,
+                       location =country)%>%
+                mutate(unit= "tonnes",
+                       bhi_goal = "TRA",
+                       data_descrip="modeled mismanaged plastic waste 2010" )
+
+write.csv(tra_value_data, file.path(dir_baltic,'visualize/tra_value_data.csv'), row.names=TRUE)
+
 ```
 
 
