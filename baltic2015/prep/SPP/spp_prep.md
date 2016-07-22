@@ -2875,7 +2875,7 @@ spp_dist_threat_value_data = shared_species_dist_n%>%
                             bhi_goal = "SPP")
 
 
-write.csv(spp_dist_threat_value_data, file.path(dir_baltic,'visualize/ spp_dist_threat_value_data.csv'),row.names = FALSE)
+write.csv(spp_dist_threat_value_data, file.path(dir_baltic,'visualize/spp_dist_threat_value_data.csv'),row.names = FALSE)
 
 
 ## distribution without DD with each taxa group separately by basin & threat
