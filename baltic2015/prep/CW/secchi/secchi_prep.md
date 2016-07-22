@@ -1152,7 +1152,7 @@ nut_space_data = summer %>%
                  mutate(data_descrip = "summer secchi unique sampling locations 2000-2013",
                         bhi_goal = "NUT")
 
-write.csv(nut_space_data, file.path(dir_baltic,'visualize/nut_space_data.csv'),row.names=TRUE)
+write.csv(nut_space_data, file.path(dir_baltic,'visualize/nut_space_data.csv'),row.names=FALSE)
 
 nut_time_data = summer %>%
                 select(rgn_id=bhi_id,basin=basin_name,year,variable=month,value=secchi)%>%
@@ -1161,7 +1161,7 @@ nut_time_data = summer %>%
                        bhi_goal ="NUT")
 
 
-write.csv(nut_time_data, file.path(dir_baltic,'visualize/nut_time_data.csv'),row.names=TRUE)
+write.csv(nut_time_data, file.path(dir_baltic,'visualize/nut_time_data.csv'),row.names=FALSE)
 ```
 
 ### 3.8 Evaluate number of stations sampled in each basin
