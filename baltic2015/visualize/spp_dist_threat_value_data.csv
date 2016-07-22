@@ -1,4 +1,4 @@
-"basin","value","variable","unit","data_descrip","bhi_goal"
+"location","value","variable","unit","data_descrip","bhi_goal"
 "Aland Sea",4,"fish_CR","count","species presence/absence","SPP"
 "Aland Sea",3,"fish_EN","count","species presence/absence","SPP"
 "Aland Sea",80,"fish_LC","count","species presence/absence","SPP"

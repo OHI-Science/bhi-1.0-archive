@@ -1063,7 +1063,8 @@ spp_dist_value_data = shared_species_dist_n_no_category%>%
 write.csv(spp_dist_value_data, file.path(dir_baltic,'visualize/spp_dist_value_data.csv'),row.names = FALSE)
 
 spp_dist_threat_value_data = shared_species_dist_n%>%
-                             dplyr::rename(value=n)%>%
+                             dplyr::rename(value=n,
+                                           location = basin)%>%
                              mutate(variable = paste(taxa_group, "_",helcom_category,sep=""))%>%
                              select(-taxa_group, -helcom_category)%>%
                             mutate(unit = "count",
