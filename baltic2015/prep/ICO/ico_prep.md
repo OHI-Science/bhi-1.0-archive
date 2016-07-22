@@ -279,7 +279,7 @@ ico_threat_value_data = ico_spp_data %>%
 
 write.csv(ico_dist_value_data, file.path(dir_baltic,'visualize/ico_dist_value_data.csv'), row.names = FALSE)
 
-write.csv(ico_threat_value_data, file.path(dir_baltic,'visualize/ico_threat_value_data .csv'), row.names = FALSE)
+write.csv(ico_threat_value_data, file.path(dir_baltic,'visualize/ico_threat_value_data.csv'), row.names = FALSE)
 ```
 
 ### 4.2 Calculate status
