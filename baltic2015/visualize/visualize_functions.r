@@ -61,6 +61,8 @@ plot_datatime = function(timedata, facet_type, variable = TRUE){
   ##single character vector describing the facet_wrap option
   ## "station", "basin", "rgn_id"
 
+  ## variable = TRUE if there are different data variables that should be color coded in the plot
+
   if(variable == FALSE){
 
     facet = data.frame(facet=timedata[,facet_type])
@@ -76,7 +78,8 @@ plot_datatime = function(timedata, facet_type, variable = TRUE){
     return(p+
              ylab(paste(timedata[1,"unit"]))+
              theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                              hjust=.5, vjust=.5, face = "plain"))+
+                                              hjust=.5, vjust=.5, face = "plain"),
+                   strip.text.x = element_text(size = 8))+
              ggtitle(paste(timedata[1,"data_descrip"], "for goal",
                            timedata[1,"bhi_goal"], "by", facet_type )))
   }
@@ -96,7 +99,8 @@ plot_datatime = function(timedata, facet_type, variable = TRUE){
     return(p+
              ylab(paste(timedata[1,"unit"]))+
              theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                              hjust=.5, vjust=.5, face = "plain"))+
+                                              hjust=.5, vjust=.5, face = "plain"),
+                   strip.text.x = element_text(size = 8))+
              ggtitle(paste(timedata[1,"data_descrip"], "for goal",
                            timedata[1,"bhi_goal"], "by", facet_type )))
   }
@@ -134,7 +138,8 @@ plot_datavalue = function(valuedata, variable = TRUE){
     return(p+
              ylab(paste(valuedata[1,"unit"]))+
              theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                              hjust=.5, vjust=.5, face = "plain"))+
+                                              hjust=.5, vjust=.5, face = "plain"),
+                   strip.text.x = element_text(size = 8))+
              ggtitle(paste(valuedata[1,"data_descrip"], "for goal",
                            valuedata[1,"bhi_goal"])))
   }
@@ -153,7 +158,8 @@ plot_datavalue = function(valuedata, variable = TRUE){
     return(p+
              ylab(paste(valuedata[1,"unit"]))+
              theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                              hjust=.5, vjust=.5, face = "plain"))+
+                                              hjust=.5, vjust=.5, face = "plain"),
+                   strip.text.x = element_text(size = 8))+
              ggtitle(paste(valuedata[1,"data_descrip"], "for goal",
                            valuedata[1,"bhi_goal"])))
   }
@@ -161,3 +167,75 @@ plot_datavalue = function(valuedata, variable = TRUE){
 
 }## end function
 
+##---------------------------------------##
+
+
+
+
+##---------------------------------------##
+## FUNCTION: plotScoreTypes
+## Plot map of each score type, uses function PlotMap( from baltic2015/PlotMap.r)
+
+
+plotScoreTypes = function(scores,goal){
+
+PlotMap(filter(scores, dimension=="status"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        map_title       = paste(goal, "Status Score"),
+        fld_rgn         = 'region_id',
+        fld_score       = 'score',
+        scale_label     = 'status score',
+        scale_limits    = c(0, 100),
+        print_fig       = TRUE, ### print to display
+        fig_path        = NULL)
+
+
+##plot pressures map
+PlotMap(filter(scores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        map_title       =  paste(goal, "Pressures Score"),
+        fld_rgn         = 'region_id',
+        fld_score       = 'score',
+        scale_label     = 'pressures score',
+        scale_limits    = c(0, 100),
+        print_fig       = TRUE, ### print to display
+        fig_path        = NULL)
+
+
+##plot resilience map
+PlotMap(filter(scores, dimension=="resilience"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        map_title       = paste(goal, "Resilience Score"),
+        fld_rgn         = 'region_id',
+        fld_score       = 'score',
+        scale_label     = 'resilience score',
+        scale_limits    = c(0, 100),
+        print_fig       = TRUE, ### print to display
+        fig_path        = NULL)
+
+
+##plot future map
+PlotMap(filter(scores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        map_title       = paste(goal, "Future Score"),
+        fld_rgn         = 'region_id',
+        fld_score       = 'score',
+        scale_label     = 'future score',
+        scale_limits    = c(0, 100),
+        print_fig       = TRUE, ### print to display
+        fig_path        = NULL)
+
+
+
+## plot scores map
+PlotMap(filter(scores, dimension=="score"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        map_title       = paste(goal, "Overall Score"),
+        fld_rgn         = 'region_id',
+        fld_score       = 'score',
+        scale_label     = 'score',
+        scale_limits    = c(0, 100),
+        print_fig       = TRUE, ### print to display
+        fig_path        = NULL)
+
+}##end plotScoreType

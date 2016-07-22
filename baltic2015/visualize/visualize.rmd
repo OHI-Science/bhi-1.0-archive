@@ -57,8 +57,8 @@ create_readme(dir_vis, 'visualize.rmd')
 
 ## Source functions
 ```{r source plotmap function}
-source('PlotMap.r') 
-source('PrepSpatial.r') 
+source('baltic2015/PlotMap.r') 
+source('baltic2015/PrepSpatial.r') 
 source(file.path(dir_vis,'visualize_functions.r'))
 
 
@@ -67,39 +67,39 @@ source(file.path(dir_vis,'visualize_functions.r'))
 
 ## Test the plots
 ```{r test the plots}
-testdata = data.frame(lat = c(55.3163,60.5326,57.3167),
-                        lon = c(13.611,18.1624,17.5),
-                        data_descrip =rep("test plot",3),
-                        bhi_goal=rep("MAR",3))
-
-
-
-testdata1 = data.frame(year = rep(seq(2000,2005,1),4),
-                       value = rep(seq(22,27,1),4),
-                       unit = rep("mg",24),
-                       station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
-                       data_descrip =rep("test plot",24),
-                       bhi_goal=rep("NNN",24))
-
-
-testdata2 = data.frame(year = rep(seq(2000,2005,1),4),
-                       value = rep(seq(22,27,1),4),
-                       unit = rep("mg",24),
-                       variable=rep(c("help","out"),12),
-                       station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
-                       data_descrip =rep("test plot",24),
-                       bhi_goal=rep("NNN",24))
-
-
-testscores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
-              filter(goal=='AO')
-
-##test plot
-plot_datalocation_latlon(testdata)
-
-
-plot_datatime (testdata1, "station", variable=FALSE)
-plot_datatime (testdata2, "station", variable=TRUE)
+# testdata = data.frame(lat = c(55.3163,60.5326,57.3167),
+#                         lon = c(13.611,18.1624,17.5),
+#                         data_descrip =rep("test plot",3),
+#                         bhi_goal=rep("MAR",3))
+# 
+# 
+# 
+# testdata1 = data.frame(year = rep(seq(2000,2005,1),4),
+#                        value = rep(seq(22,27,1),4),
+#                        unit = rep("mg",24),
+#                        station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
+#                        data_descrip =rep("test plot",24),
+#                        bhi_goal=rep("NNN",24))
+# 
+# 
+# testdata2 = data.frame(year = rep(seq(2000,2005,1),4),
+#                        value = rep(seq(22,27,1),4),
+#                        unit = rep("mg",24),
+#                        variable=rep(c("help","out"),12),
+#                        station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
+#                        data_descrip =rep("test plot",24),
+#                        bhi_goal=rep("NNN",24))
+# 
+# 
+# testscores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+#               filter(goal=='AO')
+# 
+# ##test plot
+# plot_datalocation_latlon(testdata)
+# 
+# 
+# plot_datatime (testdata1, "station", variable=FALSE)
+# plot_datatime (testdata2, "station", variable=TRUE)
 
 # PlotMap(filter(testscores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
 #                     rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
@@ -140,22 +140,28 @@ pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Out
 ```{r AO plots}
 
 ## set values and location
-goal = "AO"
+goal_select = "AO"
 
 ##data
+
+##space data
 space_data = read.csv(file.path(dir_vis,'ao_space_data.csv'), stringsAsFactors = FALSE)
-#time_data
+
+## time data
+## no time series
+
+#value_data
 value_data = read.csv(file.path(dir_vis,'ao_value_data.csv'), stringsAsFactors = FALSE)
   
 ##Scores
 scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
-              filter(goal==goal)
+              filter(goal==goal_select)
 
 
 ##-------------------------------------------##
 ## Save PDF of Plots
 
-pdf(paste(pdf_dir,"/output_",goal,".pdf", sep=""))
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
 
 
 
@@ -172,72 +178,74 @@ pdf(paste(pdf_dir,"/output_",goal,".pdf", sep=""))
       #plot_datatime (time_data, "basin", variable=TRUE)
       
       
-      ##plot status map
-      PlotMap(filter(scores, dimension=="status"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-              map_title       = element_blank(),
-              fld_rgn         = 'region_id',
-              fld_score       = 'score',
-              scale_label     = 'status score',
-              scale_limits    = c(0, 100),
-              print_fig       = TRUE, ### print to display
-              fig_path        = NULL)
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
       
-      
-      ##plot pressures map
-      PlotMap(filter(scores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-              map_title       = element_blank(),
-              fld_rgn         = 'region_id',
-              fld_score       = 'score',
-              scale_label     = 'pressures score',
-              scale_limits    = c(0, 100),
-              print_fig       = TRUE, ### print to display
-              fig_path        = NULL)
-      
-      
-      ##plot resilience map
-      PlotMap(filter(scores, dimension=="resilience"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-              map_title       = element_blank(),
-              fld_rgn         = 'region_id',
-              fld_score       = 'score',
-              scale_label     = 'resilience score',
-              scale_limits    = c(0, 100),
-              print_fig       = TRUE, ### print to display
-              fig_path        = NULL)
-      
-      
-      ##plot future map
-      PlotMap(filter(scores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-              map_title       = element_blank(),
-              fld_rgn         = 'region_id',
-              fld_score       = 'score',
-              scale_label     = 'future score',
-              scale_limits    = c(0, 100),
-              print_fig       = TRUE, ### print to display
-              fig_path        = NULL)
-      
-      
-      
-      ## plot scores map
-      PlotMap(filter(scores, dimension=="score"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-              rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-              map_title       = element_blank(),
-              fld_rgn         = 'region_id',
-              fld_score       = 'score',
-              scale_label     = 'score',
-              scale_limits    = c(0, 100),
-              print_fig       = TRUE, ### print to display
-              fig_path        = NULL)
-
 
 dev.off() ## Finish PDF
 
+```
 
 
+## CON subgoal
+```{r con subgoal}
 
+## set values and location
+goal_select = "CON"
+ind= c("pcb", "dioxin", "pfos")
+
+##data
+space_pcb= read.csv(file.path(dir_vis,'con_pcb_space_data.csv'), stringsAsFactors = FALSE)
+space_diox= read.csv(file.path(dir_vis,'con_dioxin_space_data.csv'), stringsAsFactors = FALSE)
+space_pfos= read.csv(file.path(dir_vis,'con_pfos_space_data.csv'), stringsAsFactors = FALSE)
+
+
+#time_data
+time_pcb= read.csv(file.path(dir_vis,'con_pcb_time_data.csv'), stringsAsFactors = FALSE)
+time_diox= read.csv(file.path(dir_vis,'con_dioxin_time_data.csv'), stringsAsFactors = FALSE)
+time_pfos= read.csv(file.path(dir_vis,'con_pfos_time_data.csv'), stringsAsFactors = FALSE)
+
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+        plot_datalocation_latlon(space_pcb)
+        plot_datalocation_latlon(space_diox)
+        plot_datalocation_latlon(space_pfos)
+      
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+   
+      plot_datatime (time_pcb, facet_type= "station",variable =FALSE)
+      
+      plot_datatime (time_diox, facet_type= "station",variable =TRUE)
+      
+      plot_datatime (time_pfos, facet_type= "station",variable =FALSE)
+      
+      
+      ##plot raw time series by basin
+       plot_datatime (time_pcb, facet_type= "basin",variable =FALSE)
+      
+      plot_datatime (time_diox, facet_type= "basin",variable =TRUE)
+      
+      plot_datatime (time_pfos, facet_type= "basin",variable =FALSE)
+      
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
 
 ```
 
