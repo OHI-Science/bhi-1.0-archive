@@ -265,21 +265,15 @@ This is for later results exploration
 
 ``` r
 ico_dist_value_data = ico_spp_data %>%
-                 select(value= presence,
+                 select(value= as.numeric(presence),
                         location =basin,
                         variable = common_name)%>%
                 mutate(data_descrip = "species presence/absence",
+                       unit= "presence",
                        bhi_goal = "ICO")
-ico_threat_value_data = ico_spp_data %>%
-                 select(value= helcom_category,
-                        location =common_name)%>%
-                distinct()%>%
-                mutate(data_descrip = "redlist threat level",
-                       bhi_goal = "ICO")
+
 
 write.csv(ico_dist_value_data, file.path(dir_baltic,'visualize/ico_dist_value_data.csv'), row.names = FALSE)
-
-write.csv(ico_threat_value_data, file.path(dir_baltic,'visualize/ico_threat_value_data.csv'), row.names = FALSE)
 ```
 
 ### 4.2 Calculate status
