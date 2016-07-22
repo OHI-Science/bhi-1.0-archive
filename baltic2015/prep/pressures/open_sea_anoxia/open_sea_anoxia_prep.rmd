@@ -136,12 +136,13 @@ for (anox_file in anox_file_list) {
 
 ```
 
-## 4. Open sea anoxia data rescaling
+## 4. Open sea anoxia data extraction
+
 Note, we may need to treat the Baltic Proper and the Gulf of Finland separately.  In the Baltic Proper there is a strong halocline at 70m and it is the anoxic area below the halocline that is of interest (therefore we focus on areas with depths >= 70).  In the Gulf of Finland, there a less strong halocline and thermal stratification is important so we may have to think differently about which areas to focus on.  
 
-### 4.1 Balic Proper rescaling 
+### 4.1 Balic Proper anoxia data extraction
 
-```{r anoxia rescaling, warning = FALSE, message = FALSE}
+```{r Baltic Proper anoxia data, warning = FALSE, message = FALSE}
 
 # isolate Baltic Proper and Gulf of Finland
 
@@ -217,9 +218,9 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 ```
 
-### 4.2 Gulf of Finland rescaling: 
+### 4.2 Gulf of Finland anoxia data extraction
 
-``` {r Gulf of Finland Anoxia rescaling, warning = FALSE}
+``` {r Gulf of Finland Anoxia data extraction, warning = FALSE}
 
 O2_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
                           pattern ="CodRVmap_[0-9]+\\.tif")
@@ -264,7 +265,7 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 ```
 
-Combine anoxia data in all years for Gulf of Finland and Baltic Proper 
+### 4.3 Combine anoxia data in all years 
 
 ``` {r combine GoF and BP data }
 
@@ -305,10 +306,13 @@ GoF_anoxia_all_yr = dat
 setwd(file.path('~/github/bhi'))
 
 ```
-### 4.1 Current value  
-    - Baltic Proper BHI regions =  of the area >= 70m deep the area with O2 <0 mg⋅L−1  
+
+## Rescale Anoxia pressure data
+
+### 5.1 Current value  
+- Baltic Proper BHI regions =  of the area >= 70m deep the area with O2 <0 mg⋅L−1  
         - Use the mean area for the most recent 3 years (2012-2014)  
-    - Gulf of Finland BHI regions = of the total surface area in each BHI region, the area with O2 <0 mg⋅L−1  
+- Gulf of Finland BHI regions = of the total surface area in each BHI region, the area with O2 <0 mg⋅L−1  
         - Use the mean area for the most recent 3 years (2012-2014)  
         
 ``` {r Current value }
@@ -327,9 +331,10 @@ GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
 
 ```
 
-### 4.2 Max value
-    - Baltic Proper BHI regions =  of area >= 70m depth, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
-    - Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
+### 5.2 Max value
+
+- Baltic Proper BHI regions =  of area >= 70m depth, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
+- Gulf of Finland BHI regions = of the surface area, the maximum extent of area O2 <0 mg⋅L−1 in last 10 years  
     
 ``` {r Max value}
 
@@ -347,9 +352,10 @@ GoF_max_anoxic_area = GoF_anoxia_all_yr %>%
 
 ```
 
-### 4.3 Min value
-     - Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  in 1906  
-     - Gulf of Finland BHI regions = total surface area, the area with O2 <0 mg⋅L−1  in 1906
+### 5.3 Min value
+
+- Baltic Proper BHI regions =  of area >= 70m deep the area with O2 <0 mg⋅L−1  in 1906  
+- Gulf of Finland BHI regions = total surface area, the area with O2 <0 mg⋅L−1  in 1906
 
 ``` {r Min value }
 
@@ -367,7 +373,7 @@ GoF_min_anoxic_area = GoF_anoxia_all_yr %>%
 
 ```
 
-### 4.5 Combining Mean, Max, and Min values 
+### 5.4 Combining Mean, Max, and Min values 
 
 ``` {r Combine value }
 
@@ -378,7 +384,7 @@ BP_anoxic_area = full_join(BP_current_anoxic_area, BP_max_anoxic_area,
   full_join(BP_min_anoxic_area, 
             by = 'BHI_ID')
   
-DT::datatable(BP_anoxic_area)
+# DT::datatable(BP_anoxic_area)
 
 # Gulf of Finland
 
@@ -387,12 +393,12 @@ GoF_anoxic_area = full_join(GoF_current_anoxic_area, GoF_max_anoxic_area,
   full_join(GoF_min_anoxic_area, 
             by = 'BHI_ID')
 
-DT::datatable(GoF_anoxic_area)
+# DT::datatable(GoF_anoxic_area)
 
 
 ```
 
-### 4.6 Plot Mean, Max, and Min 
+### 5.5 Plot Mean, Max, and Min 
 
 ```{r plot mean max and min}
 
@@ -400,8 +406,6 @@ DT::datatable(GoF_anoxic_area)
 
 bp_plot_data = BP_anoxic_area %>%
   gather(area_type, area, 2:4) 
-
-head(bp_plot_data)
 
 bp_plot <- ggplot(bp_plot_data, aes(x = BHI_ID, y = area, fill = area_type)) +
  geom_bar(position="dodge", stat = "identity") +
@@ -418,8 +422,6 @@ print(bp_plot)
 gof_plot_data = GoF_anoxic_area %>%
   gather(area_type, area, 2:4) 
 
-head(gof_plot_data)
-
 gof_plot <- ggplot(gof_plot_data, aes(x = BHI_ID, y = area, fill = area_type)) +
  geom_bar(position="dodge", stat = "identity") +
  theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
@@ -431,7 +433,9 @@ print(gof_plot)
 
 ```
 
-#### 5. Rescale Anoxia data and save data layer
+### 5.6 Rescale Anoxia data and save data layer
+
+Mean value was rescaled using max and min values, and was kept between 0 and 1. 
 
 ```{r rescale anoxia}
 
