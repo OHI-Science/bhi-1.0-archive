@@ -917,6 +917,15 @@ bhi_gdp_layer = bhi_gdp %>%
 
 ``` r
 write.csv(bhi_gdp_layer, file.path(dir_layers, "le_gdp_region_bhi2015.csv"),row.names=FALSE)
+
+### SAVE also for VISUALIZE
+eco_rgn_time_data = bhi_gdp_layer %>%
+                    dplyr::rename(value = bhi_gdp_per_capita)%>%
+                    mutate(unit= "GDP per capita",
+                           bhi_goal="ECO",
+                           data_descrip = "NUTS3 GDP allocated to BHI regions")
+
+write.csv(eco_rgn_time_data, file.path(dir_baltic,'visualize/eco_rgn_time_data.csv'),row.names=FALSE)
 ```
 
 6.Country GDP prep
@@ -1550,6 +1559,17 @@ rgn_nat_gdp %>% select(rgn_id) %>% distinct() %>% nrow() ##42
 ```
 
     ## [1] 42
+
+``` r
+### SAVE also for VISUALIZE
+eco_nat_time_data = rgn_nat_gdp %>%
+                    select(rgn_id,year,value = gdp_per_cap_2005)%>%
+                    mutate(unit= "GDP per capita",
+                           bhi_goal="ECO",
+                           data_descrip = "National GDP per capita (2005 pop size)")
+
+write.csv(eco_nat_time_data, file.path(dir_baltic,'visualize/eco_nat_time_data.csv'),row.names=FALSE)
+```
 
 #### 6.6.3 plot national gdp by region to check
 
