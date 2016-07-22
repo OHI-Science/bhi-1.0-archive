@@ -68,7 +68,7 @@ fis_landings_time_data = landings%>%
                         distinct()%>%
                          mutate(unit= "tonnes",
                                 bhi_goal = "FIS",
-                                data_decrip = "ICES area landings")
+                                data_descrip = "ICES area landings")
 
 write.csv(fis_bbmsy_time_data, file.path(dir_baltic,'visualize/fis_bbmsy_time_data.csv'),row.names = FALSE)
 write.csv(fis_ffmsy_time_data, file.path(dir_baltic,'visualize/fis_ffmsy_time_data.csv'),row.names = FALSE)
