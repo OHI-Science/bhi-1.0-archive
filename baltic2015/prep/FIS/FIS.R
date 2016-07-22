@@ -41,6 +41,38 @@ landings = landings %>%
 write.csv(scores.bbmsy, file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'), row.names=FALSE)
 write.csv(scores.ffmsy, file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'), row.names=FALSE)
 write.csv(landings, file.path(dir_layers ,'fis_landings_bhi2015.csv'), row.names=FALSE)
+
+### save for VISUALIZE
+fis_bbmsy_time_data = scores.bbmsy %>%
+                           select(rgn_id,
+                                  year,
+                                  value = score,
+                                  variable = stock)%>%
+                           mutate(unit = NA,
+                                  data_descrip= "B/Bmsy",
+                                  bhi_goal="FIS")
+
+fis_ffmsy_time_data = scores.ffmsy %>%
+  select(rgn_id,
+         year,
+         value = score,
+         variable = stock)%>%
+  mutate(unit = NA,
+         data_descrip= "F/Fmsy",
+         bhi_goal="FIS")
+
+fis_landings_time_data = landings%>%
+                         dplyr::rename(variable = stock,
+                                       value = landings)%>%
+                         mutate(unit= "tonnes",
+                                bhi_goal = "FIS",
+                                data_decrip = "ICES area landings")
+
+write.csv(fis_bbmsy_time_data, file.path(dir_baltic,'visualize/fis_bbmsy_time_data.csv'),row.names = FALSE)
+write.csv(fis_ffmsy_time_data, file.path(dir_baltic,'visualize/fis_ffmsy_time_data.csv'),row.names = FALSE)
+write.csv(fis_landings_time_data, file.path(dir_baltic,'visualize/fis_landings_time_data.csv'),row.names = FALSE)
+
+
 ##########################################################################
 
 
