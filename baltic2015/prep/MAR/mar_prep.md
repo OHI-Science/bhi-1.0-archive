@@ -492,6 +492,17 @@ ggplot(production2)+
 
 ![](mar_prep_files/figure-markdown_github/plot%20combined%20data-1.png)
 
+``` r
+### save for visualize
+mar_countryrgn_time_data = production2 %>%
+                           select(year, value = production,
+                                  unit, mar_region)%>%
+                           mutate(bhi_goal ="MAR",
+                                  data_descrip = "Rainbow trout production by country region")
+
+write.csv(mar_countryrgn_time_data, file.path(dir_baltic, 'visualize/mar_countryrgn_time_data.csv'),row.names = FALSE)
+```
+
 ### 4.4 Use mar\_lookup to allocate production among BHI regions
 
 Allocate data equally from mar\_region to all associated BHI region.
@@ -553,6 +564,18 @@ ggplot(prod_allot)+
 ```
 
 ![](mar_prep_files/figure-markdown_github/plot%20production%20by%20bhi%20region-1.png)
+
+``` r
+### save for visualize
+mar_rgn_time_data = prod_allot %>%
+                           select(year, value = prod_tot,
+                                   rgn_id = BHI)%>%
+                           mutate(bhi_goal ="MAR",
+                                  unit= "ton",
+                                  data_descrip = "Rainbow trout production allocated to BHI region")
+
+write.csv(mar_rgn_time_data, file.path(dir_baltic, 'visualize/mar_rgn_time_data.csv'),row.names = FALSE)
+```
 
 ### 4.5 Create objects to save to put in layers, save a csv
 
