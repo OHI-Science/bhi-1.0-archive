@@ -15,10 +15,10 @@ lsp\_prep
         -   [4.3 Intersect BHI and HELCOM\_MPA polygons](#intersect-bhi-and-helcom_mpa-polygons)
         -   [4.3 MPA management status](#mpa-management-status)
         -   [4.4 Status Calculation](#status-calculation)
-        -   [4.1 Status Calculation Alternative 1 and data exploration](#status-calculation-alternative-1-and-data-exploration)
         -   [4.2 Status Calculation Alternative 2](#status-calculation-alternative-2)
         -   [4.3 Status Calculation Alternative 3](#status-calculation-alternative-3)
-        -   [4.4 Comparative plot of Status Calculation Alternatives](#comparative-plot-of-status-calculation-alternatives)
+        -   [4.4 Status Calculation Alternative 4](#status-calculation-alternative-4)
+        -   [4.5 Comparative plot of Status Calculation Alternatives](#comparative-plot-of-status-calculation-alternatives)
     -   [5. Trend calculation](#trend-calculation-1)
         -   [5.1 Alternative 1: Linear trend of cumulative MPA area](#alternative-1-linear-trend-of-cumulative-mpa-area)
         -   [5.2 Alternative 2: Linear trend of status scores](#alternative-2-linear-trend-of-status-scores)
@@ -138,6 +138,14 @@ w\_i are based upon management status, must be managed to count
 
 Reference\_pt\_country = 10% of the area in a country's EEZ is designated as an MPA and is 100% managed = 10% area country's EEZ
  - This is based on the Convention on Biodiversity [target](https://www.cbd.int/sp/targets/rationale/target-11/)
+
+#### 3.1.4 Alternative 4
+
+The same as alternative 2, except with a slightly different weighing scheme for the management levels (w\_i):
+
+-   0.1 = designated
+-   0.4 = designated and partly managed
+-   1.0 designated and managed
 
 #### 3.1.4 Status and self-reporting
 
@@ -286,11 +294,13 @@ While combining MPA management data with MPA area data from the shapefile, 7 MPA
 
 ### 4.4 Status Calculation
 
-### 4.1 Status Calculation Alternative 1 and data exploration
+#### 4.4.1 Status Calculation Alternative 1 and data exploration
 
-There are three types of management status (and their corresponding weight): Designated (0.3), Designated and Partially Managed (0.6), and Designated and Managed (1).
+There are three types of management status (and their corresponding weight):
 
-#### 4.1.1 Calulate the status
+-   Designated (0.3)
+-   Designated and Partially Managed (0.6)
+-   Designated and Managed (1)
 
 ``` r
 mgmt_weight = data.frame( mgmt_status = c("Designated", 
@@ -342,9 +352,6 @@ status_per_year_by_country = full_join(cum_mpa_area_wt, eez_data, by = 'country'
   ungroup() %>%
   arrange(country, year)
 
-write_csv(status_per_year_by_country, file.path(dir_lsp, 'lsp_status_by_country_year.csv'))
-
-
 # status by BHI_ID to be uploaded to layers folder
 status_by_country = status_per_year_by_country %>%
   group_by(country) %>%
@@ -360,43 +367,7 @@ r.status = mpa_mgmt_with_wt %>%
            dplyr::select(rgn_id, 
                          score = status) %>%
            mutate(dimension = 'status') 
-                  
-write_csv(r.status, file.path(dir_lsp, 'lsp_status_by_rgn.csv'))
 ```
-
-#### 4.1.1 Area of each country with MPAs relative to 10% of the EEZ
-
-Status was calculated as described in Section 3.1.1. In the plot below, the red line represents where total MPA area equals that of the reference point (ie. 10% EEZ). Any point above that line means that the country has exceeded the reference point of designated MPA area and therefore will have a status score of 100, and any point below the line will have a score lower than 100.
-
-``` r
-mpa_vs_eez = mpa_mgmt_with_wt %>%
-  dplyr::select(BSPA_ID, country, mpa_area_km2, year = date_est) %>%
-  filter(!is.na(year), 
-         !duplicated(BSPA_ID)) %>%  # the same MPA could exist in different BHI_IDs 
-  group_by(country, year)  %>%
-  summarize(total_mpa_per_year = sum(mpa_area_km2)) %>%
-  ungroup() %>%
-  group_by(country) %>%
-  mutate(total_mpa = cumsum(total_mpa_per_year)) %>%
-  filter(year == max(year)) %>%
-  full_join(dplyr::select(eez_data, country, ref_eez_km2), 
-            by = 'country') %>%
-  dplyr::select( -total_mpa_per_year, -year)
-  
- mpa_vs_eez_plot <- ggplot(mpa_vs_eez, aes(x = ref_eez_km2, y = total_mpa)) +
- geom_point(aes(color = country), size = 3) +
- geom_abline(slope = 1, intercept = 0, color = 'red') +
- geom_text(aes(label = country), nudge_y = -300) +
- theme(legend.position = 'none') +
- coord_cartesian(xlim = c(0, 15000), ylim = c(0, 15000)) +
- labs(title = 'Total MPA vs. Reference EEZ area by country',
-      x = '10% EEZ (km2)', 
-      y = 'Total MPA (km2)')
-
-print( mpa_vs_eez_plot)
-```
-
-![](lsp_prep_files/figure-markdown_github/compare%20total%20MPA%20area%20with%20ref%20EEZ-1.png)
 
 #### 4.1.2 Plot Status Calculation Alternative 1
 
@@ -489,9 +460,47 @@ print(num_country_mgmt_plot)
 
 ![](lsp_prep_files/figure-markdown_github/plot%20number%20of%20MPAs%20per%20country%20by%20mgmt%20levels-1.png)
 
-#### 4.1.5 Plot the area of MPA by management level
+#### 4.1.5 Area of each country with MPAs relative to 10% of the EEZ
+
+Status was calculated as described in Section 3.1.1. In the plot below, the red line represents where total MPA area equals that of the reference point (ie. 10% EEZ). Any point above that line means that the country has exceeded the reference point of designated MPA area and therefore will have a status score of 100, and any point below the line will have a score lower than 100.
+
+``` r
+mpa_vs_eez = mpa_mgmt_with_wt %>%
+  dplyr::select(BSPA_ID, country, mpa_area_km2, year = date_est) %>%
+  filter(!is.na(year), 
+         !duplicated(BSPA_ID)) %>%  # the same MPA could exist in different BHI_IDs 
+  group_by(country, year)  %>%
+  summarize(total_mpa_per_year = sum(mpa_area_km2)) %>%
+  ungroup() %>%
+  group_by(country) %>%
+  mutate(total_mpa = cumsum(total_mpa_per_year)) %>%
+  filter(year == max(year)) %>%
+  full_join(dplyr::select(eez_data, country, ref_eez_km2), 
+            by = 'country') %>%
+  dplyr::select( -total_mpa_per_year, -year)
+  
+ mpa_vs_eez_plot <- ggplot(mpa_vs_eez, aes(x = ref_eez_km2, y = total_mpa)) +
+ geom_point(aes(color = country), size = 3) +
+ geom_abline(slope = 1, intercept = 0, color = 'red') +
+ geom_text(aes(label = country), nudge_y = -300) +
+ theme(legend.position = 'none') +
+ coord_cartesian(xlim = c(0, 15000), ylim = c(0, 15000)) +
+ labs(title = 'Total MPA vs. Reference EEZ area by country',
+      x = '10% EEZ (km2)', 
+      y = 'Total MPA (km2)')
+
+print( mpa_vs_eez_plot)
+```
+
+![](lsp_prep_files/figure-markdown_github/compare%20total%20MPA%20area%20with%20ref%20EEZ-1.png)
+
+#### 4.1.6 Plot the area of MPA by management level
 
 Even when a country has many MPAs that are just designated but not managed, it can still achieve a score of 100, is it because the area of MPAs that are "managed" (ie. higher weight) is relatively larger compared to that of the "designated"" (ie. lower weight), and thus have a higher \_weight\*area\_ score?
+
+The plot below compares the total MPA area of each mangement level with the reference point (10% EEZ). The black dots represent 10% EEZ.
+
+**TODO**: fix the labels for the black dots.
 
 ``` r
 area_vs_mgmt_lvl = mpa_mgmt_with_wt %>%
@@ -500,15 +509,14 @@ area_vs_mgmt_lvl = mpa_mgmt_with_wt %>%
          !duplicated(BSPA_ID)) %>%  # the same MPA could exist in different BHI_IDs
   mutate(mgmt_status = str_replace_all(mgmt_status, 'Managed', 'Designated_and_managed')) %>% # treat Managed and Desig_and_managed as the same status
   group_by(country, mgmt_status)  %>%
-  summarize(total_mpa_area = sum(mpa_area_km2)) 
+  summarize(total_mpa_area = sum(mpa_area_km2)) %>%
+  full_join(eez_data, by = "country")
 
 area_vs_mgmt_lvl_plot <- ggplot(area_vs_mgmt_lvl, aes(x = country, y = total_mpa_area, fill = mgmt_status)) +
  geom_bar(stat = 'identity') +
- # geom_text(aes(label = sprintf('n = %s', count), y = count), 
- #           size = 2, 
- #           angle = 90, hjust = 0, color = 'grey30') +
+ geom_point(aes(x = country, y = ref_eez_km2), size = 2, col = "black") +
  theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
- labs(title = 'MPA area of each management level per country',
+ labs(title = 'MPA area of each management level vs. 10% EEZ per country',
       x = 'Country', 
       y = 'MPA area (km2)',
       fill = 'Management Level')
@@ -735,26 +743,92 @@ print(Xlsp_components_plot)
 
 ![](lsp_prep_files/figure-markdown_github/plot%20components%20separately%20by%20country-1.png)
 
-### 4.4 Comparative plot of Status Calculation Alternatives
+### 4.4 Status Calculation Alternative 4
+
+Similar to Alternative 2, but with a different weighing scheme: Designated\_and\_partly\_managed is assigned a weight of 0.4.
+
+#### 4.4.1 Status calculation
+
+``` r
+mgmt_weight_4 = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
+                          weight = c(0.1, 0.4, 1, 1) )
+                          
+mpa_mgmt_with_wt_4 = full_join( mgmt_weight_4, mpa_mgmt, 
+                              by = 'mgmt_status') 
+```
+
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## character vector and factor, coercing into character vector
+
+``` r
+### the reference point: 10% total eez per country - the same eez_data as in alternative 1 (4.1)
+  
+### calculating cumulative mpa_area*weight, per country per year:
+### cumulative_sum (weight * mpa_area_km2)
+
+cum_mpa_area_wt_4 = mpa_mgmt_with_wt_4 %>%
+                 dplyr::select(BSPA_ID, BHI_ID, weight, country, mpa_area_km2, year = date_est) %>%
+                 filter(!is.na(year), 
+                        !duplicated(BSPA_ID)) %>% # the same MPA could exist in different BHI_IDs 
+                 group_by(country, year) %>%
+                 dplyr::summarize(sum_mpa_wt = sum(mpa_area_km2*weight)) %>%
+                 arrange(year) %>%
+                 mutate(cum_mpa_wt = cumsum(sum_mpa_wt)) %>%
+                 ungroup()
+
+### caculating status per country per year: 
+### cumulative_sum (weight * mpa_area_km2) / ref_point
+
+status_per_year_by_country_4 = full_join(cum_mpa_area_wt_4, eez_data, by = 'country') %>% 
+  group_by(country, year) %>%
+  summarize(status = round(max( -1, min(1, cum_mpa_wt/ref_eez_km2)) * 100, 1)) %>%
+  ungroup() %>%
+  arrange(country, year)
+
+status_by_country_4 = status_per_year_by_country_4 %>%
+  group_by(country) %>%
+  filter(year == max(year)) %>%
+  dplyr::select( -year)
+```
+
+#### 4.4.2 Plot status per country
+
+``` r
+status_by_country_plot_4 <- ggplot(status_by_country_4, aes(x = country, y = status)) +
+ geom_bar(stat = 'identity') +
+ theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+ labs(title = 'LSP status by country - Alternative 4',
+      x = 'Country', 
+      y = 'LSP status')
+
+print(status_by_country_plot_4)
+```
+
+![](lsp_prep_files/figure-markdown_github/plot%20status%20by%20country%20of%20alternative%204-1.png)
+
+### 4.5 Comparative plot of Status Calculation Alternatives
 
 Plot the three alternative status scores together for each country.
 
 ``` r
 comparative_status = rename(status_by_country, 
-                            status.1 = status) %>%
+                            Alternative.1 = status) %>%
                      full_join(rename(status_by_country_2, 
-                                      status.2 = status),
+                                      Alternative.2 = status),
                                       by = 'country') %>% 
                     full_join(dplyr::select(Xlsp_country_status,
                                             country,
-                                            status.3 = status), 
+                                            Alternative.3 = status), 
                               by = 'country') %>%
-                    gather(key = approaches, value = status, 2:4)
+                   full_join(rename(status_by_country_4, 
+                                      Alternative.4 = status),
+                                      by = 'country') %>%
+                   gather(key = Approaches, value = status, 2:5)
   
-comparative_status_plot <- ggplot(comparative_status, aes(x = country, y = status, fill = approaches)) +
+comparative_status_plot <- ggplot(comparative_status, aes(x = country, y = status, fill = Approaches)) +
  geom_bar(position="dodge", stat = "identity") +
  theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
- labs(title = 'LSP status by country - Comparison of 3 approaches',
+ labs(title = 'LSP status by country - Comparison of 4 approaches',
       x = 'Country', 
       y = 'LSP status')
 
@@ -914,8 +988,6 @@ r.trend.3 = mpa_mgmt %>%
 
 6. Prepare and write csv to layers
 ----------------------------------
-
-TODO: plot area of mpa per country, number of MPA, and mgmt levels -&gt; why still achieving 100 even when there are many mpas that are not managed?
 
 TODO: bottom trawling. see Jen's prep file. rescaling: might not have a good ref point, the max could be the most recent year's value. data: hours of efforts, calculate hours/km2 use as spatial max -&gt; 1.2 x Max
 
