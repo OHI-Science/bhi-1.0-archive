@@ -44,26 +44,28 @@ write.csv(landings, file.path(dir_layers ,'fis_landings_bhi2015.csv'), row.names
 
 ### save for VISUALIZE
 fis_bbmsy_time_data = scores.bbmsy %>%
-                           select(rgn_id,
-                                  year,
+                           select(year,
                                   value = score,
-                                  variable = stock)%>%
+                                  ices = stock)%>%
+                           distinct()%>%
                            mutate(unit = NA,
                                   data_descrip= "B/Bmsy",
                                   bhi_goal="FIS")
 
 fis_ffmsy_time_data = scores.ffmsy %>%
-  select(rgn_id,
-         year,
+  select(year,
          value = score,
-         variable = stock)%>%
+         ices = stock)%>%
+  distinct()%>%
   mutate(unit = NA,
          data_descrip= "F/Fmsy",
          bhi_goal="FIS")
 
 fis_landings_time_data = landings%>%
-                         dplyr::rename(variable = stock,
+                         select(-rgn_id)%>%
+                          dplyr::rename(ices = stock,
                                        value = landings)%>%
+                        distinct()%>%
                          mutate(unit= "tonnes",
                                 bhi_goal = "FIS",
                                 data_decrip = "ICES area landings")
