@@ -93,7 +93,7 @@ plot_datatime = function(timedata, facet_type, variable = TRUE){
       bind_cols(.,facet)
 
     p = ggplot(timedata)+
-      geom_point(aes(year,value, colour=variable))+
+      geom_point(aes(year,value, colour=as.factor(variable)))+
       facet_wrap(~facet)
 
     return(p+
@@ -189,6 +189,15 @@ PlotMap(filter(scores, dimension=="status"),        # dataframe with at least 2 
         print_fig       = TRUE, ### print to display
         fig_path        = NULL)
 
+  PlotMap(filter(scores, dimension=="trend"),        # dataframe with at least 2 columns: rgn_id and scores/values.
+          rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+          map_title       = paste(goal, "Trend Score"),
+          fld_rgn         = 'region_id',
+          fld_score       = 'score',
+          scale_label     = 'trend score',
+          scale_limits    = c(-1, 1),
+          print_fig       = TRUE, ### print to display
+          fig_path        = NULL)
 
 ##plot pressures map
 PlotMap(filter(scores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.

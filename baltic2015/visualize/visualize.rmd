@@ -65,67 +65,6 @@ source(file.path(dir_vis,'visualize_functions.r'))
 ```
 
 
-## Test the plots
-```{r test the plots}
-# testdata = data.frame(lat = c(55.3163,60.5326,57.3167),
-#                         lon = c(13.611,18.1624,17.5),
-#                         data_descrip =rep("test plot",3),
-#                         bhi_goal=rep("MAR",3))
-# 
-# 
-# 
-# testdata1 = data.frame(year = rep(seq(2000,2005,1),4),
-#                        value = rep(seq(22,27,1),4),
-#                        unit = rep("mg",24),
-#                        station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
-#                        data_descrip =rep("test plot",24),
-#                        bhi_goal=rep("NNN",24))
-# 
-# 
-# testdata2 = data.frame(year = rep(seq(2000,2005,1),4),
-#                        value = rep(seq(22,27,1),4),
-#                        unit = rep("mg",24),
-#                        variable=rep(c("help","out"),12),
-#                        station =c(rep("A",6),rep("B",6),rep("C",6),rep("D",6)),
-#                        data_descrip =rep("test plot",24),
-#                        bhi_goal=rep("NNN",24))
-# 
-# 
-# testscores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
-#               filter(goal=='AO')
-# 
-# ##test plot
-# plot_datalocation_latlon(testdata)
-# 
-# 
-# plot_datatime (testdata1, "station", variable=FALSE)
-# plot_datatime (testdata2, "station", variable=TRUE)
-
-# PlotMap(filter(testscores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-#                     rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-#                     map_title       = element_blank(),
-#                     fld_rgn         = 'region_id',
-#                     fld_score       = 'score',
-#                     scale_label     = 'score',
-#                     scale_limits    = c(0, 100),
-#                     print_fig       = TRUE, ### print to display
-#                     fig_path        = NULL)
-# 
-# 
-# PlotMap(filter(testscores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-#                     rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
-#                     map_title       = element_blank(),
-#                     fld_rgn         = 'region_id',
-#                     fld_score       = 'score',
-#                     scale_label     = 'score',
-#                     scale_limits    = c(0, 100),
-#                     print_fig       = TRUE, ### print to display
-#                     fig_path        = NULL)
-
-```
-
-
-
 ## Set local directory for pdf output
 ```{r Set local directory for pdf output}
 
@@ -249,3 +188,336 @@ dev.off() ## Finish PDF
 
 ```
 
+## NUT subgoal
+```{r NUT subgoal}
+
+
+## set values and location
+goal_select = "NUT"
+
+
+##data
+space_data= read.csv(file.path(dir_vis,'nut_space_data.csv'), stringsAsFactors = FALSE)
+
+
+#time_data
+time_data= read.csv(file.path(dir_vis,'nut_time_data.csv'), stringsAsFactors = FALSE)
+
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+        plot_datalocation_latlon(space_data)
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       plot_datatime (time_data, facet_type= "basin",variable =TRUE)
+      
+       ##plot raw times series by rgn_id
+      ## NA 
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+## TRA subgoal
+```{r tra subgoal}
+
+
+## set values and location
+goal_select = "TRA"
+
+##space data
+##NA
+
+## value data
+value_data= read.csv(file.path(dir_vis,'tra_value_data.csv'), stringsAsFactors = FALSE)
+
+
+#time_data
+##NA
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+       plot_datavalue(value_data, variable=FALSE)
+      
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+
+## ECO subgoal
+```{r eco subgoal}
+
+
+## set values and location
+goal_select = "ECO"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/eco_rgn_time_data.csv'), stringsAsFactors=FALSE)
+
+time_data_nat = read.csv(file.path(dir_baltic, 'visualize/eco_nat_time_data.csv'), stringsAsFactors=FALSE)
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
+       plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+## FIS subgoal
+```{r eco subgoal}
+
+
+## set values and location
+goal_select = "FIS"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+time_data_bbmsy = read.csv(file.path(dir_baltic, 'visualize/fis_bbmsy_time_data.csv'), stringsAsFactors=FALSE)
+
+time_data_ffmsy = read.csv(file.path(dir_baltic, 'visualize/fis_ffmsy_time_data.csv'), stringsAsFactors=FALSE)
+  
+time_data_landings = read.csv(file.path(dir_baltic, 'visualize/fis_landings_time_data.csv'), stringsAsFactors=FALSE)
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       plot_datatime (time_data_bbmsy, facet_type= "ices", variable =FALSE)
+       plot_datatime (time_data_ffmsy, facet_type= "ices", variable =FALSE)
+       plot_datatime (time_data_landings, facet_type= "ices", variable =FALSE)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+
+## ICO subgoal
+```{r ico subgoal}
+
+
+## set values and location
+goal_select = "ICO"
+
+##space data
+##NA
+
+## value data
+value_threat= read.csv(file.path(dir_vis,'ico_threat_value_data.csv'), stringsAsFactors = FALSE)
+value_dist= read.csv(file.path(dir_vis,'ico_dist_value_data.csv'), stringsAsFactors = FALSE)
+
+#time_data
+##NA
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+    
+      plot_datavalue(value_dist, variable=TRUE)
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+
+
+## LIV subgoal
+```{r eco subgoal}
+
+
+## set values and location
+goal_select = "LIV"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/liv_rgn_time_data.csv'), stringsAsFactors=FALSE)
+
+time_data_nat = read.csv(file.path(dir_baltic, 'visualize/liv_nat_time_data.csv'), stringsAsFactors=FALSE)
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
+       plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
