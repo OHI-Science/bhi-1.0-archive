@@ -248,3 +248,64 @@ PlotMap(filter(scores, dimension=="score"),        # dataframe with at least 2 c
         fig_path        = NULL)
 
 }##end plotScoreType
+
+##---------------------------------------##
+
+
+
+
+##---------------------------------------##
+## FUNCTION: plotSubgoalRelationship
+
+plotSubgoalRelationship = function(count,scores, subgoal_abb,goal){
+    ## count = numeric, number of subgoals, must be > 1
+    ## scores, filtered for subgoals
+    ## subgoal_abb- subgoal abreviations
+    ## goal name
+
+    if(count ==2 ){
+      sub1 = noquote(subgoal_abb[1])
+      sub2 = noquote(subgoal_abb[2])
+
+      scores_spread = scores%>%
+                      spread(goal,score)
+
+      ggplot(scores_spread)+
+        geom_point(aes(paste(sub1),paste(sub2),colour=region_id))+
+        facet_wrap(~dimension)+
+        ylim(0,100)+
+        xlim(0,100)+
+        xlab(paste(sub1,"score"))+
+        xlab(paste(sub2,"score"))+
+        ggtitle(paste(goal, "subgoal comparision"))
+
+    }
+
+
+  if(count ==3 ){
+    sub1 = noquote(subgoal_abb[1])
+    sub2 = noquote(subgoal_abb[2])
+    sub3 = noquote(subgoal_abb[3])
+
+    scores_spread = scores%>%
+      spread(goal,score)
+
+    ggplot(scores_spread)+
+      geom_point(aes(select(scores_spread, sub1),select(scores_spread, sub2),colour=region_id))+
+      facet_wrap(~dimension)+
+      ylim(0,100)+
+      xlim(0,100)+
+      xlab(paste(sub1,"score"))+
+      xlab(paste(sub2,"score"))+
+      ggtitle(paste(goal, "subgoal comparision"))
+
+  }
+
+
+
+
+
+
+}
+
+
