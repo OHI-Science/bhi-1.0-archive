@@ -16,7 +16,7 @@ cs\_prep
         -   [4.1 Read in data](#read-in-data)
         -   [4.2 Explore and plot data](#explore-and-plot-data)
         -   [4.3 Intersect the BHI shapefiles and zostera data](#intersect-the-bhi-shapefiles-and-zostera-data)
-        -   [4.4 Status Calcuation](#status-calcuation)
+        -   [4.4 Status Calcuation (Can't do... See 4.3 Problem)](#status-calcuation-cant-do...-see-4.3-problem)
 
 Carbon Storage (CS) Data prep
 =============================
@@ -138,7 +138,7 @@ plot(bhi_transform, col = 'light blue', border = "grey", main = "BHI regions and
 
 The zostera data contains areal extent that matches well with the BHI regions. The graph below shows overlay of zostera data with BHI region shape file - each blue cross is a sampling site with coordinates and coverage type (dense, sparse, or NA).
 
-**Problem**: The area listed in the Bostera file only contained the lcoation of each sampling point, but not the area of vegetation coverage. The area data seems to be the total area of the BHI region. Therefore, we can't calculate the total area of Bostera as planned.
+**Problem**: The area listed in the Zostera file only contained the location of each sampling point, but not the area of vegetation coverage. The area data seems to be the total area of the BHI region. Therefore, we can't calculate the total area of Zostera as planned.
 
 ``` r
 cs_bhi_intersect = sp::over(cs_data, bhi_transform)
@@ -159,7 +159,7 @@ DT::datatable(cs_bhi_data)
 # write_csv(cs_bhi_data, file.path(dir_cs, 'cs_bhi_data.csv'))
 ```
 
-### 4.4 Status Calcuation
+### 4.4 Status Calcuation (Can't do... See 4.3 Problem)
 
 Two appraoches to calculat the status of Carbon storage according to coverage types.
 
@@ -172,8 +172,6 @@ Original plan to set up the reference point:
 
 1.  Could use current extent x 1.25 applied equally to all BHI regions as a reference point?'
 2.  use the current extent of zostera meadows (total area) in each BHI region. Use status as that extent\*weight of threat level (by BHI region only). Therefore if zostera not threatened in a BHI region - score is 100 because full extent is not threatened. If threatened, score is lower?"
-
-TODO: decide what to do with area data. See section 4.3.
 
 ``` r
 cov_type_wt = data.frame(coverage = c("NA", "sparse", "dense"), 
@@ -188,7 +186,5 @@ cs_with_wt = cs_bhi_data %>%
     ## factors with different levels, coercing to character vector
 
 ``` r
-DT::datatable(cs_with_wt)
+# DT::datatable(cs_with_wt)
 ```
-
-![](cs_prep_files/figure-markdown_github/status%20Alt%201%20Ref%20Alt%201-1.png)
