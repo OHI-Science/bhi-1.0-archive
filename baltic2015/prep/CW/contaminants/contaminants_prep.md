@@ -1432,6 +1432,28 @@ dim(ices6_2)#1031   31
 
     ## [1] 1031   31
 
+``` r
+## THIS IS FOR VISUALIZATION OF THE FINAL PRODUCT ##
+##time series
+### save ices6_1 (sum ices6 for each sub_samp_ref) for visualization
+con_pcb_time_data = ices6_1 %>%
+                    select(rgn_id, basin = basin_name,
+                           station,year,value = sum_ices6_ug_kg)%>%
+                    mutate(bhi_goal='CON',
+                           unit= "ug/kg",
+                           data_descrip = "ICES6 PCB concentration unique samples")
+
+write.csv(con_pcb_time_data,file.path(dir_baltic, 'visualize/con_pcb_time_data.csv'),row.names=FALSE)
+
+## space
+con_pcb_space_data = ices6_1 %>%
+                    select(lat,lon)%>%
+                    distinct()%>%
+                    mutate(data_descrip = "ICES6 PCB unique locations",
+                           goal="CON")
+write.csv(con_pcb_space_data,file.path(dir_baltic, 'visualize/con_pcb_space_data.csv'),row.names=FALSE)
+```
+
 #### 4.4.2 Plot ICES6
 
 ``` r
@@ -3177,6 +3199,33 @@ ggplot(pcb_sumteq1)+
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20sub_samp_ref%20sum%20teq%20for%20pcb-3.png)
 
+#### 5.6.5 For visualization
+
+``` r
+## THIS IS FOR VISUALIZATION OF THE FINAL PRODUCT ##
+
+## save values with total conc. of each type
+
+
+con_dioxin_time_data = bind_rows(
+                            mutate(select(pcb_sumteq1,station,bhi_id,year,sum_teq),
+                                   variable = "total TEQ dioxin-like pcb"),
+                            mutate(select(dioxin_sumteq1,station,bhi_id,year,sum_teq),
+                                   variable = "total TEQ dioxins")) %>%
+                       select(station, rgn_id=bhi_id,
+                              year,value =sum_teq,variable)%>%
+                      full_join(., select(lookup_basins,-country), by="rgn_id")%>%
+                       mutate(bhi_goal = "CON",
+                     unit ="TEQ pg/g",
+                     data_descrip = "unique herring samples reference ids")
+```
+
+    ## Warning in bind_rows_(x, .id): Unequal factor levels: coercing to character
+
+``` r
+write.csv(con_dioxin_time_data,file.path(dir_baltic, 'visualize/con_dioxin_time_data.csv'),row.names=FALSE)
+```
+
 ### 5.7 Mean TEQ value by date and location
 
 #### 5.7.1 dioxin mean TEQ value by date and location
@@ -3223,36 +3272,6 @@ ggplot(dioxin_sumteq2)+
 ```
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin%20TEQ%20by%20date%20and%20location-1.png)
-
-``` r
-## Plot unique Dioxin and dioxin-like pcb sampling locations
-## get the map
-library('ggmap')
-  map = get_map(location = c(8.5, 53, 32, 67.5))
-```
-
-    ## Warning: bounding box given to google - spatial extent only approximate.
-
-    ## converting bounding box to center/zoom specification. (experimental)
-
-    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=60.25,20.25&zoom=5&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
-
-``` r
-    map_data_diox = dioxin_sumteq2 %>%
-                select(lat,lon)%>%
-                distinct()
-
-    ##set up the plot
-    plot_map_diox = ggmap(map) +
-      geom_point(aes(x=lon, y=lat), data=map_data_diox,size = 2.5)
-
-    ##plot the map
-    plot_map_diox  +
-      ggtitle('Sampling locations shared for herring dioxin and dioxin-like PCB concentrations') +
-      theme(title = element_text(size = 8))
-```
-
-![](contaminants_prep_files/figure-markdown_github/plot%20mean%20dioxin%20TEQ%20by%20date%20and%20location-2.png)
 
 #### 5.7.3 dioxin-like PCB mean TEQ value by date and location
 
@@ -3360,6 +3379,47 @@ ggplot(join_teq)+
 ```
 
 ![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-2.png)
+
+``` r
+## Plot unique Dioxin and dioxin-like pcb sampling locations
+## get the map
+library('ggmap')
+  map = get_map(location = c(8.5, 53, 32, 67.5))
+```
+
+    ## Warning: bounding box given to google - spatial extent only approximate.
+
+    ## converting bounding box to center/zoom specification. (experimental)
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=60.25,20.25&zoom=5&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+
+``` r
+    map_data_diox = join_teq %>%
+                select(lat,lon)%>%
+                distinct()
+
+    ##set up the plot
+    plot_map_diox = ggmap(map) +
+      geom_point(aes(x=lon, y=lat), data=map_data_diox,size = 2.5)
+
+    ##plot the map
+    plot_map_diox  +
+      ggtitle('Sampling locations shared for herring dioxin and dioxin-like PCB concentrations') +
+      theme(title = element_text(size = 8))
+```
+
+![](contaminants_prep_files/figure-markdown_github/plot%20join_teq-3.png)
+
+``` r
+## SAVE FOR VISUALIZE
+    ##save location for summary visualizaton
+con_dioxin_space_data =   map_data_diox %>%
+                        mutate(data_descrip = "TEQ pg/g dioxin + dioxin-like pcb",
+                        goal = 'CON')
+
+
+write.csv(con_dioxin_space_data,file.path(dir_baltic, 'visualize/con_dioxin_space_data.csv'),row.names=FALSE)    
+```
 
 #### 5.8.3 Sum dioxin and dioxin-like PCB mean TEQ values by date and location
 
@@ -3918,6 +3978,18 @@ ggplot(filter(pfos2, !is.na(value)))+
 
 ![](contaminants_prep_files/figure-markdown_github/initial%20PFOS%20data%20plot-2.png)
 
+``` r
+### SAVE FOR VISUALISE
+con_pfos_time_data = pfos2 %>%
+                    select(rgn_id=bhi_id, basin,
+                           station,year,value)%>%
+                    mutate(bhi_goal='CON',
+                           unit= "pfos_ug_kg_muscle_equiv_con",
+                           data_descrip = "PFOS herring conc. unique samples")
+
+write.csv(con_pfos_time_data,file.path(dir_baltic, 'visualize/con_pfos_time_data.csv'),row.names=FALSE)
+```
+
 #### 6.1.4 Create rgn look up for lat and lon and sample info lookup
 
 ``` r
@@ -3958,6 +4030,16 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
 ```
 
 ![](contaminants_prep_files/figure-markdown_github/unnamed-chunk-2-1.png)
+
+``` r
+## SAVE FOR VIZUALIZE
+con_pfos_space_data = map_data1 %>%
+                      select(lat,lon)%>%
+                      mutate(data_descrip = "PFOS unique locations",
+                           goal="CON")
+
+write.csv(con_pfos_space_data,file.path(dir_baltic, 'visualize/con_pfos_space_data.csv'),row.names=FALSE)
+```
 
 #### 6.1.6 Assess unqiueness of IDs
 
