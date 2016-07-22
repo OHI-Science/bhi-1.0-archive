@@ -738,6 +738,18 @@ tr_layer = accom_nuts7 %>%
 tr_layer %>% select(rgn_id,year)%>% filter(!is.na(year)) %>% group_by(rgn_id) %>% summarise(max_year= max(year)) %>% ungroup() %>% print(n=42)
 ## last year is 2014 for all regions!
 
+
+
+### SAVE also for VISUALIZE
+tr_time_data =tr_layer %>%
+                    select(rgn_id,
+                           year,value = bhi_coastal_stays_per_cap)%>%
+                    mutate(unit= "Nights in Coastal Accommodation per capita",
+                           bhi_goal="LIV",
+                           data_descrip = "NUTS2 Nights in Coastal Accommodation allocated to BHI region")
+
+write.csv(tr_time_data, file.path(dir_baltic,'visualize/tr_time_data.csv'),row.names=FALSE)
+
 ```
 
 ### 5.2 Write layer to csv
