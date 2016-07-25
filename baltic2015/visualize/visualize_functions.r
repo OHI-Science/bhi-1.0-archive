@@ -175,6 +175,7 @@ plot_datavalue = function(valuedata, variable = TRUE){
 ##---------------------------------------##
 ## FUNCTION: plotScoreTypes
 ## Plot map of each score type, uses function PlotMap( from baltic2015/PlotMap.r)
+## need to have dir_baltic created
 
 
 plotScoreTypes = function(scores,goal){
@@ -252,60 +253,284 @@ PlotMap(filter(scores, dimension=="score"),        # dataframe with at least 2 c
 ##---------------------------------------##
 
 
+##---------------------------------------##
+## FUNCTION: plotSubgoalsGoal
+## Plot all dimensions by subgoal and goal across region ID
+## for all goals with 2 or more subgoals
+
+plotSubgoalsGoal = function(count_goals,scores, subgoal_abb,goal_name){
+
+  ## count_goals = numeric, number of subgoals, must be > 1
+  ## scores, the complete scores csv
+  ## subgoal_abb- subgoal abreviations
+  ## goal_name
+
+  ## 2 subgoals
+  if(count_goals ==2 ){
+
+    ## filter score data for subgoals and goals
+    scores_sub= scores %>% filter(goal %in% subgoal_abb)
+    scores_goal = scores %>% filter(goal == goal_name )
+
+    ## combine score data
+    scores_plot = bind_rows(scores_sub,scores_goal)%>%
+      filter(region_id !=0)
+
+    ## get subgoal names
+    sub1 = subgoal_abb[1]
+    sub2 = subgoal_abb[2]
+
+    ##--------------------------------------------------##
+
+    ## plot scores separately
+    ## set goal order
+    plot_order = c(rep(sub1,42),rep(sub2,42),rep(goal_name,42))
+    scores_plot$goal = with(scores_plot, factor(goal, levels = c(subgoal_abb,goal_name)))
+
+    #plot
+    p1 =ggplot(scores_plot)+
+      geom_point(aes(region_id,score,colour=goal,shape = goal))+
+      scale_colour_manual(name="Goal Name",values=c("dark blue", "light blue",
+                                                    "black"))+
+      facet_wrap(~dimension, scales = "free_y")+
+      scale_shape_manual(values=c(1,1,19), guide=FALSE)+
+      xlab("BHI region")+
+      ylab("score")+
+      ggtitle(paste(goal_name , "Subgoal and Goal scores"))
+
+
+    return(p1)
+  }## end 2 subgoals
+
+
+  if(count_goals ==3 ){
+
+    ## filter score data for subgoals and goals
+    scores_sub= scores %>% filter(goal %in% subgoal_abb)
+    scores_goal = scores %>% filter(goal == goal_name )
+
+    ## combine score data
+    scores_plot = bind_rows(scores_sub,scores_goal) %>%
+      filter(region_id !=0)
+
+    ## get subgoal names
+    sub1 = subgoal_abb[1]
+    sub2 = subgoal_abb[2]
+    sub3 = subgoal_abb[3]
+
+    ##--------------------------------------------------##
+    ## plot scores separately
+    ## set goal order
+    plot_order = c(rep(sub1,42),rep(sub2,42),rep(sub3,42),rep(goal_name,42))
+    scores_plot$goal = with(scores_plot, factor(goal, levels = c(subgoal_abb,goal_name)))
+
+    #plot
+    p1= ggplot(scores_plot)+
+      geom_point(aes(region_id,score,colour=goal,shape = goal))+
+      scale_colour_manual(name="Goal Name",values=c("dark blue", "light blue",
+                                                    "gray","black"))+
+      scale_shape_manual(values=c(1,1,1,19), guide=FALSE)+
+      facet_wrap(~dimension, scales = "free_y")+
+      xlab("BHI region")+
+      ylab("score")+
+      ggtitle(paste(goal_name , "Subgoal and Goal scores"))
+
+    return(p1)
+
+  } ## end 3 subgoals
+
+}## end function
+#---------------------------------------##
+
+
+##---------------------------------------##
+## FUNCTION: plotSubgoalsGoal_bar
+## Plot all dimensions by subgoal and goal across region ID as bar plot
+## for all goals with 2 or more subgoals
+
+
+plotSubgoalsGoal_bar = function(count_goals,scores, subgoal_abb,goal_name){
+
+  ## count_goals = numeric, number of subgoals, must be > 1
+  ## scores, the complete scores csv
+  ## subgoal_abb- subgoal abreviations
+  ## goal_name
+
+  ## 2 subgoals
+  if(count_goals ==2 ){
+
+    ## filter score data for subgoals and goals
+    scores_sub= scores %>% filter(goal %in% subgoal_abb)
+    scores_goal = scores %>% filter(goal == goal_name )
+
+    ## combine score data
+    scores_plot = bind_rows(scores_sub,scores_goal)%>%
+      filter(region_id !=0)
+
+    ## get subgoal names
+    sub1 = subgoal_abb[1]
+    sub2 = subgoal_abb[2]
+
+    ##--------------------------------------------------##
+
+    ## plot scores separately
+    ## set goal order
+    plot_order = c(rep(sub1,42),rep(sub2,42),rep(goal_name,42))
+    scores_plot$goal = with(scores_plot, factor(goal, levels = c(subgoal_abb,goal_name)))
+
+    #plot
+    p1 =ggplot(scores_plot,aes(x=region_id,y=score, colour=goal))+
+      geom_bar(stat="identity", position="dodge", fill="white")+
+      scale_colour_manual(name="Goal Name",values=c("dark blue", "light blue",
+                                                    "black"))+
+      facet_wrap(~dimension, scales = "free_y")+
+      xlab("BHI region")+
+      ylab("score")+
+      ggtitle(paste(goal_name , "Subgoal and Goal scores"))
+
+
+    return(p1)
+  }## end 2 subgoals
+
+
+
+
+  if(count_goals ==3 ){
+
+    ## filter score data for subgoals and goals
+    scores_sub= scores %>% filter(goal %in% subgoal_abb)
+    scores_goal = scores %>% filter(goal == goal_name )
+
+    ## combine score data
+    scores_plot = bind_rows(scores_sub,scores_goal) %>%
+      filter(region_id !=0)
+
+    ## get subgoal names
+    sub1 = subgoal_abb[1]
+    sub2 = subgoal_abb[2]
+    sub3 = subgoal_abb[3]
+
+    ##--------------------------------------------------##
+    ## plot scores separately
+    ## set goal order
+    plot_order = c(rep(sub1,42),rep(sub2,42),rep(sub3,42),rep(goal_name,42))
+    scores_plot$goal = with(scores_plot, factor(goal, levels = c(subgoal_abb,goal_name)))
+
+    #plot
+    p1= ggplot(scores_plot,aes(x=region_id,y=score, colour=goal))+
+      geom_bar(stat="identity", position="dodge", fill="white")+
+      scale_colour_manual(name="Goal Name",values=c("dark blue", "light blue","gray",
+                                                    "black"))+
+      facet_wrap(~dimension, scales = "free_y")+
+      xlab("BHI region")+
+      ylab("score")+
+      ggtitle(paste(goal_name , "Subgoal and Goal scores"))
+
+    return(p1)
+
+  } ## end 3 subgoals
+
+}## end function
+##---------------------------------------##
 
 
 ##---------------------------------------##
 ## FUNCTION: plotSubgoalRelationship
+## plot relationship between subgoals for  goals with 2 or 3 subgoals
+## (if one subgoal, do not need to plot comparison for goal)
+## NOTE:  IF there are NA values for one of the subgoals, the others do not plot!
 
-plotSubgoalRelationship = function(count,scores, subgoal_abb,goal){
-    ## count = numeric, number of subgoals, must be > 1
-    ## scores, filtered for subgoals
+plotSubgoalRelationship = function(count_goals,scores, subgoal_abb,goal_name){
+    ## count_goals = numeric, number of subgoals, must be > 1
+    ## scores, the complete scores csv
     ## subgoal_abb- subgoal abreviations
-    ## goal name
+    ## goal_name
 
-    if(count ==2 ){
-      sub1 = noquote(subgoal_abb[1])
-      sub2 = noquote(subgoal_abb[2])
+    ## 2 subgoals
+    if(count_goals ==2 ){
 
-      scores_spread = scores%>%
+     ## filter score data for subgoals and goals
+      scores_sub= scores %>% filter(goal %in% subgoal_abb)
+      scores_goal = scores %>% filter(goal == goal_name )
+
+      ## combine score data
+      scores_plot = bind_rows(scores_sub,scores_goal)%>%
+        filter(region_id !=0)
+
+     ## get subgoal names
+      sub1 = subgoal_abb[1]
+      sub2 = subgoal_abb[2]
+
+      ##--------------------------------------------------##
+      ## plot comparison scores
+
+      ## rename subgoals to generic names and spread data
+      scores_spread = scores_plot %>%
+                      mutate(goal= ifelse(goal == sub1,"sub1",
+                                   ifelse(goal == sub2, "sub2","goal"))) %>%
                       spread(goal,score)
 
-      ggplot(scores_spread)+
-        geom_point(aes(paste(sub1),paste(sub2),colour=region_id))+
-        facet_wrap(~dimension)+
-        ylim(0,100)+
-        xlim(0,100)+
+
+      ## plot subgoal 1 (x-axis)  and subgoal 2 (y-axis)
+      p2= ggplot(scores_spread)+
+        geom_jitter(aes(sub1,sub2, colour = as.factor(region_id)))+
+        facet_wrap(~dimension, scales="free")+
         xlab(paste(sub1,"score"))+
-        xlab(paste(sub2,"score"))+
-        ggtitle(paste(goal, "subgoal comparision"))
+        ylab(paste(sub2,"score"))+
+        guides(colour = guide_legend(title = "BHI region"))+
+        theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                         hjust=.5, vjust=.5, face = "plain"),
+              axis.text.y = element_text(size =8))+
+        ggtitle(paste(goal_name , "subgoal comparision (points jittered)"))
 
-    }
 
+      return(p2)
 
-  if(count ==3 ){
-    sub1 = noquote(subgoal_abb[1])
-    sub2 = noquote(subgoal_abb[2])
-    sub3 = noquote(subgoal_abb[3])
+    }## end subgoals
+  ##--------------------------------------------------##
+  ## 3 subgoals
+  if(count_goals ==3 ){
 
-    scores_spread = scores%>%
-      spread(goal,score)
+    ## filter score data for subgoals and goals
+    scores_sub= scores %>% filter(goal %in% subgoal_abb)
+    scores_goal = scores %>% filter(goal == goal_name )
 
-    ggplot(scores_spread)+
-      geom_point(aes(select(scores_spread, sub1),select(scores_spread, sub2),colour=region_id))+
-      facet_wrap(~dimension)+
-      ylim(0,100)+
-      xlim(0,100)+
+    ## combine score data
+    scores_plot = bind_rows(scores_sub,scores_goal) %>%
+                  filter(region_id !=0)
+
+    ## get subgoal names
+    sub1 = subgoal_abb[1]
+    sub2 = subgoal_abb[2]
+    sub3 = subgoal_abb[3]
+
+    ##--------------------------------------------------##
+    ## plot comparison scores
+
+    ## rename subgoals to generic names and spread data
+    scores_spread = scores_plot %>%
+                    mutate(goal= ifelse(goal == sub1,"sub1",
+                                 ifelse(goal == sub2, "sub2",
+                                 ifelse(goal == sub3, "sub3",
+                                 ifelse(goal == goal_name,"goal",""))))) %>%
+                    spread(goal,score)
+
+     ## plot subgoal 1 (x-axis)  and subgoal 2 (y-axis) and subgoal3 (size).This is a problem if NA does not plot)
+    p2=ggplot(scores_spread)+
+      geom_jitter(aes(sub1,sub2, size= sub3, colour = as.factor(region_id)))+
+      facet_wrap(~dimension, scales="free")+
       xlab(paste(sub1,"score"))+
-      xlab(paste(sub2,"score"))+
-      ggtitle(paste(goal, "subgoal comparision"))
+      ylab(paste(sub2,"score"))+
+      guides(colour = guide_legend(title = "BHI region"))+
+      theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                       hjust=.5, vjust=.5, face = "plain"),
+            axis.text.y = element_text(size =8))+
+      ggtitle(paste(goal_name , "subgoal comparision (points jittered)"))
 
-  }
+    return(p2)
 
+  } ## end three subgoals
 
-
-
-
-
-}
+}## end function
 
 
