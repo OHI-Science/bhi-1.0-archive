@@ -1,3 +1,5 @@
+# This branch is now STALE; was used to develop CW subgoals, but now incorporated into @draft branch.
+
 # Ocean Health Index for the Baltic Sea [bhi]
 
 ## Learn More about the Baltic Health Index Project
