@@ -28,7 +28,7 @@ HELCOM requires spatially explicit information on fishing activity affecting the
 The correct data product citation is following: [ICES. 2015. Fishing abrasion pressure maps for mobile bottom-contacting gears in HELCOM area](http://ices.dk/sites/pub/Publication%20Reports/Data%20outputs/HELCOM_mapping_fishing_intensity_and_effort_data_outputs_2015.zip).   
 
 **Data caveates**  
-When using the data for analysis/assessments the following caveats need to be taken into consideration:The methods for identifying fishing activity from the VMS data varied between countries; therefore there may be some country-specific biases that ICES cannot evaluate. Additionally, activities other than active towing of gear may have been incorrectly identified as fishing activity. This would have the effect of overestimating the apparent fishing intensity in ports and in areas used for passage.The data for 2012 and 2013 is not directly comparable to the data of previous years in the data call (2009–2011) due to the gradual increase in VMS-enabled vessels in the range of 12–15 m. This is likely to be most relevant when examining trends in effort for inshore areas.Many countries have substantial fleets of smaller vessels that are not equipped with VMS (The fishing abrasion pressure methodology is based on very broad assumptions in terms of the area affected by abrasion. A single speed and gear width was applied across each gear category in most cases, which can lead to both underestimates and overestimates in actual surface and subsurface abrasion.  
+When using the data for analysis/assessments the following caveats need to be taken into consideration:The methods for identifying fishing activity from the VMS data varied between countries; therefore there may be some country-specific biases that ICES cannot evaluate. Additionally, activities other than active towing of gear may have been incorrectly identified as fishing activity. This would have the effect of overestimating the apparent fishing intensity in ports and in areas used for passage.The data for 2012 and 2013 is not directly comparable to the data of previous years in the data call (2009–2011) due to the gradual increase in VMS-enabled vessels in the range of 12–15 m. This is likely to be most relevant when examining trends in effort for inshore areas. Many countries have substantial fleets of smaller vessels that are not equipped with VMS (The fishing abrasion pressure methodology is based on very broad assumptions in terms of the area affected by abrasion. A single speed and gear width was applied across each gear category in most cases, which can lead to both underestimates and overestimates in actual surface and subsurface abrasion.  
 
 ### 2.2 Data attributes
 
@@ -101,17 +101,18 @@ library(RMySQL)
 library(stringr)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
+library(stringr) # install.packages("stringr")
+library(rgdal)  # install.packages('rgdal')
+library(raster) # install.packages('raster')
+library(rgeos)  # install.packages('rgeos')
 
 source('~/github/bhi/baltic2015/prep/common.r')
 
 ## rprojroot
 root <- rprojroot::is_rstudio_project
 
-
 ## make_path() function to 
 make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-
 
 dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
 
@@ -126,10 +127,7 @@ dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'l
 #   root_file("DESCRIPTION"))
 
 
-
-
 dir_trawl    = file.path(dir_prep, 'pressures/bottom_trawling')
-
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
 create_readme(dir_trawl, 'bottom_trawling_prep.rmd') 
@@ -137,7 +135,71 @@ create_readme(dir_trawl, 'bottom_trawling_prep.rmd')
 
 ### 4.1 Read in Data 
 ```{r read in data}
-## read in data...
+
+## directory setup
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+  warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
+}
+
+dir_shp <- file.path(dir_M, 'git-annex/Baltic')
+
+# list.files(file.path(dir_shp, 'Bottom_trawling_pressure'))
+# contains data from 2009 to 2013
+
+## read in bottom trawling pressure data from 2009
+
+trawling_raw_2009 <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')),
+                      layer = 'HELCOM_effort_year_MBCG_VMS_2009')  
+
+plot(trawling_raw_2009)
+# head(trawling_raw_2009@data)
+
+#         c_square year mid_lat mid_lon Reported fishing_ho
+# 0    Russian EEZ    0   0.000   0.000       No   0.000000
+# 1 1500:249:248:4 2009  54.475   9.875      Yes   0.638889
+# 2 1500:249:249:3 2009  54.475   9.925      Yes  12.844444
+
+
+##  extract crs_trawling for scaling 
+
+# trawling_raw_2009@proj4string
+# +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
+crs_trawling = CRS("+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+
+
+## read all pressure data layers and save as .csv in temp_data folder 
+
+trawling_file_list = list.files(file.path(dir_shp, 'Bottom_trawling_pressure'), 
+                                pattern = 'HELCOM_effort_year_MBCG_VMS_[0-9]+.dbf')
+
+for (i in trawling_file_list) {
+  
+  i = file_path_sans_ext(i)
+  
+  # read in shape file 
+  trawl = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')), 
+                         layer = i) 
+  
+  # intersect trawling and bhi shape file
+  trawling_bhi <- raster::intersect(trawl, bhi)
+  
+  # save as Polygon file
+  rgdal::writeOGR(trawling_bhi,
+                  dsn = path.expand(file.path(dir_trawl, "temp_data")),
+                  driver = "ESRI Shapefile",
+                  layer = paste0('trawling_bhi_intersect_', substr(i, 29, 32)),
+                  overwrite_layer = T)
+  
+  # extract data and save as .csv
+  write_csv(trawling_bhi@data, file.path(dir_trawl, "temp_data", paste0('trawling_bhi_intersect_', substr(i, 29, 32), '.csv')))
+
+}
+
 
 ```
 
@@ -145,6 +207,28 @@ create_readme(dir_trawl, 'bottom_trawling_prep.rmd')
 
 
 ### 4.3 Intersect trawling effort with BHI shapefiles  
+
+```{r intersect trawling with BHI shapefiles}
+
+## read in bhi shape files
+bhi = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
+                      layer = 'BHI_MCG_11052016')  
+
+## change bhi coord. system to the same as trawling efforts
+bhi = spTransform(bhi, crs_trawling)
+
+## plot trawling efforts 2009 with BHI boundaries
+plot(bhi, col = 'light blue', border = "grey", main = "BHI regions and Trawling Efforts intersect"); plot(trawling_raw_2009, col = 'blue', border = "blue", add = TRUE); legend('bottomright', c("BHI regions", "BHI borders", "Trawling efforts (2009)"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c( "light blue", "grey", "blue"), text.font = 1, box.lty = 0 )
+
+## intersect trawling efforts with bhi shapefile
+system.time({trawling_bhi_2009 <- raster::intersect(trawling_raw_2009, bhi)})
+plot(trawling_bhi_2009)
+
+# save into bottom_trawling/temp_data folder
+write_csv(trawling_bhi_2009@data, file.path(dir_trawl, "temp_data", "trawling_2009.csv"))
+
+
+```
 
 ### 4.4 Extract total hours effort by BHI region for each year  
 

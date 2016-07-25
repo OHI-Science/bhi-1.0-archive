@@ -633,6 +633,7 @@ dev.off() ## Finish PDF
 
 
 ## BD 
+SPP results for BD
 ```{r BD subgoal}
 
 
@@ -691,8 +692,160 @@ dev.off() ## Finish PDF
 
 ## CW
 
+```{r CW goal}
+
+##goal_select
+goal_select = "CW"
+
+## set parameters for subgoal comparison
+count_goals = 3
+subgoal_abb = c("NUT","CON","TRA")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_select)
+    
+    ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+    
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
+
 ## FP
+
+```{r FP goal}
+
+##goal_select
+goal_select = "FP"
+
+## set parameters for subgoal comparison
+count_goals = 2
+subgoal_abb = c("FIS","MAR")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_name =goal_select)
+    
+     ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+   
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
 
 ## LE
 
+```{r LE goal}
+
+##goal_select
+goal_select = "LE"
+
+## set parameters for subgoal comparison
+count_goals = 2
+subgoal_abb = c("ECO","LIV")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_select)
+    
+     ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+   
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
+
+
 ## SP
+```{r SP goal}
+
+##goal_select
+goal_select = "SP"
+
+## set parameters for subgoal comparison
+count_goals = 2
+subgoal_abb = c("ICO","LSP")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_select)
+    
+     ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+   
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+

@@ -1105,15 +1105,19 @@ CW = function(scores){
 
   ## July 21, 2016 @jules32 after discussing with @Melsteroni.
   ## Calculate CW as a geometric mean from NUT, CON, and TRA
-  ## for only 3 dimensions: status, likely future state and score. Other 'supragoals' (SP, FP, LE) would
-  ## also calculate trend, and would do this as a simple mean (excluding pressures and resilience since
-  ## the mean of those variables makes less sense). But here, geometric mean of trend also makes less sense, so exclude.
-  ## take the
-  s <- scores_cw %>%
-    filter(dimension %in% c('status', 'future', 'score')) %>%
-    group_by(region_id, dimension) %>%
-    summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
-    ungroup() %>%
+  ## for only 3 dimensions: status, likely future state and score.
+  ## Calculate trend as a simple mean.
+  s <- rbind(
+    scores_cw %>%
+      filter(dimension %in% c('status', 'future', 'score')) %>%
+      group_by(region_id, dimension) %>%
+      summarize(score = round(geometric.mean2(score, na.rm=TRUE))) %>% # round status to 0 decimals
+      ungroup(),
+    scores_cw %>%
+      filter(dimension %in% c('trend')) %>%
+      group_by(region_id, dimension) %>%
+      summarize(score = mean(score, na.rm=TRUE)) %>%
+      ungroup()) %>%
     arrange(region_id) %>%
     mutate(goal = "CW") %>%
     select(region_id, goal, dimension, score) %>%
