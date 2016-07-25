@@ -105,6 +105,7 @@ Steps:
 bhi = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
                       layer = 'BHI_MCG_11052016')  
 
+# bhi@proj4string
 list.files(file.path(dir_shp, "Illegal_Oil_Discharges"))
 
 ## read in Illegal Oil Discharge file
@@ -116,14 +117,24 @@ oil_data = oil@data
 
 write_csv(oil_data, file.path(dir_oil, "oil_data_raw.csv"))
 
+## initial exploration: the same as bhi coord. system
+# oil@proj4string
+#  +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
+
 # years covered: 
 # unique(oil_data$Year)
 # 1998 1999 2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014
 
-oil@proj4string
 ## plot data...
 plot(oil); plot(bhi, border = "grey", main = "Illegal Oil Discharges and BHI regions overlay", add = TRUE); legend('bottom', c("BHI regions", " Illegal Oil Discharges"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c("grey", "black"), text.font = 1, box.lty = 0 )
 
-## inter
+## intersect with BHI regions
+
+oil_bhi_intersect = raster::intersect(oil, bhi)
+# plot(oil_bhi_intersect)
+# head(oil_bhi_intersect@data)
+write_csv(oil_bhi_intersect@data, file.path(dir_oil, "ohi_bhi_intersect.csv"))
+
+
 
 ```
