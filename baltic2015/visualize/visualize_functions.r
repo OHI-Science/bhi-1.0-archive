@@ -477,10 +477,14 @@ plotSubgoalRelationship = function(count_goals,scores, subgoal_abb,goal_name){
         facet_wrap(~dimension, scales="free")+
         xlab(paste(sub1,"score"))+
         ylab(paste(sub2,"score"))+
-        guides(colour = guide_legend(title = "BHI region"))+
+        guides(colour = guide_legend(title = "BHI region"),
+               legend.key.size=1,
+               override.aes = list(size=1))+
         theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                          hjust=.5, vjust=.5, face = "plain"),
-              axis.text.y = element_text(size =8))+
+              axis.text.y = element_text(size =8),
+              legend.text = element_text(size=6),
+              legend.key.size = unit(.25, "cm"))+
         ggtitle(paste(goal_name , "subgoal comparision (points jittered)"))
 
 
@@ -521,10 +525,15 @@ plotSubgoalRelationship = function(count_goals,scores, subgoal_abb,goal_name){
       facet_wrap(~dimension, scales="free")+
       xlab(paste(sub1,"score"))+
       ylab(paste(sub2,"score"))+
-      guides(colour = guide_legend(title = "BHI region"))+
+      guides(colour = guide_legend(title = "BHI region",
+                                   legend.key.size=1,
+                                   override.aes = list(size=1)),
+             size = guide_legend(title = sub3))+
       theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                        hjust=.5, vjust=.5, face = "plain"),
-            axis.text.y = element_text(size =8))+
+            axis.text.y = element_text(size =8),
+            legend.text = element_text(size=6),
+            legend.key.size = unit(.25, "cm"))+
       ggtitle(paste(goal_name , "subgoal comparision (points jittered)"))
 
     return(p2)
@@ -534,3 +543,300 @@ plotSubgoalRelationship = function(count_goals,scores, subgoal_abb,goal_name){
 }## end function
 
 
+
+
+##---------------------------------------##
+## FUNCTION: plotPressuresResilience
+##plot the values of the pressure and resilience data layers by BHI region
+
+plotPressuresResilience = function(type){
+  ## type = "pressures" or "resilience"
+
+  if(type == "pressures"){
+
+
+    ## read in pressure layers (some maybe proxy files)
+    cc_sal_surf      =read.csv(file.path(dir_layers,'cc_sal_surf_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( pressure = "cc_sal_surf"      )%>% arrange(rgn_id)
+    cc_sal_deep      =read.csv(file.path(dir_layers,'cc_sal_deep_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( pressure = "cc_sal_deep"      )%>% arrange(rgn_id)
+    cc_sst           =read.csv(file.path(dir_layers,'cc_sst_bhi2015.csv'           ),stringsAsFactors =FALSE )  %>% mutate( pressure = "cc_sst"           )%>% arrange(rgn_id)
+    po_nload         =read.csv(file.path(dir_layers,'po_nload_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_nload"         )%>% arrange(rgn_id)
+    ss_wgi           =read.csv(file.path(dir_layers,'ss_wgi_bhi2015.csv'           ),stringsAsFactors =FALSE )  %>% mutate( pressure = "ss_wgi"           )%>% arrange(rgn_id)
+    po_atmos_pcb153  =read.csv(file.path(dir_layers,'po_atmos_pcb153_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_atmos_pcb153"  )%>% arrange(rgn_id)
+    po_atmos_pcddf   =read.csv(file.path(dir_layers,'po_atmos_pcddf_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_atmos_pcddf"   )%>% arrange(rgn_id)
+    po_pload         =read.csv(file.path(dir_layers,'po_pload_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_pload"         )%>% arrange(rgn_id)
+    hab_anoxia       =read.csv(file.path(dir_layers,'hab_anoxia_bhi2015.csv'       ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_anoxia"       )%>% arrange(rgn_id)
+    hab_illegal_oil  =read.csv(file.path(dir_layers,'hab_illegal_oil_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_illegal_oil"  )%>% arrange(rgn_id)
+    hab_coastal_pop  =read.csv(file.path(dir_layers,'hab_coastal_pop_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_coastal_pop"  )%>% arrange(rgn_id)
+    hab_bottom_trawl =read.csv(file.path(dir_layers,'hab_bottom_trawl_bhi2015.csv' ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_bottom_trawl" )%>% arrange(rgn_id)
+    fp_over_harvest  =read.csv(file.path(dir_layers,'fp_over_harvest_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "fp_over_harvest"  )%>% arrange(rgn_id)
+    sp_invasives     =read.csv(file.path(dir_layers,'sp_invasives_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( pressure = "sp_invasives"     )%>% arrange(rgn_id)
+    po_inverse_secchi=read.csv(file.path(dir_layers,'po_inverse_secchi_bhi2015.csv'),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_inverse_secchi")%>% arrange(rgn_id)
+    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% dplyr::rename(pressure_score =score) %>%arrange(rgn_id)
+
+    ##
+    pressure_plot = bind_rows(cc_sal_surf      ,
+                              cc_sal_deep      ,
+                              cc_sst           ,
+                              po_nload         ,
+                              ss_wgi           ,
+                              po_atmos_pcb153  ,
+                              po_atmos_pcddf   ,
+                              po_pload         ,
+                              hab_anoxia       ,
+                              hab_illegal_oil  ,
+                              hab_coastal_pop  ,
+                              hab_bottom_trawl ,
+                              fp_over_harvest  ,
+                              sp_invasives     ,
+                              po_inverse_secchi,
+                              po_trash         )
+
+    ## plot
+    p1 = ggplot(pressure_plot)+
+      geom_point(aes(rgn_id,pressure_score),size=1)+
+      facet_wrap(~pressure)+
+      ylim(0,1)+
+      ylab("Score")+
+      xlab("BHI region")+
+      ggtitle(paste(type, " Score"))
+
+    return(p1)
+
+  }## end pressures
+
+
+  if(type == "resilience"){
+
+
+    ## read in resilience layers (some maybe proxy files)
+    res_reg_birds   =read.csv(file.path(dir_layers,'res_reg_birds_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_birds"   )%>% arrange(rgn_id)
+    res_reg_bsap    =read.csv(file.path(dir_layers,'res_reg_bsap_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_bsap"     )%>% arrange(rgn_id)
+    res_reg_bwd     =read.csv(file.path(dir_layers,'res_reg_bwd_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_bwd"     )%>% arrange(rgn_id)
+    res_reg_cbd     =read.csv(file.path(dir_layers,'res_reg_cbd_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cbd"     )%>% arrange(rgn_id)
+    res_reg_cfp     =read.csv(file.path(dir_layers,'res_reg_cfp_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cfp"     )%>% arrange(rgn_id)
+    res_reg_cites   =read.csv(file.path(dir_layers,'res_reg_cites_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cites"   )%>% arrange(rgn_id)
+    res_reg_cop21   =read.csv(file.path(dir_layers,'res_reg_cop21_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cop21"   )%>% arrange(rgn_id)
+    res_reg_hd      =read.csv(file.path(dir_layers,'res_reg_hd_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_hd"      )%>% arrange(rgn_id)
+    res_reg_helcom  =read.csv(file.path(dir_layers,'res_reg_helcom_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_helcom"  )%>% arrange(rgn_id)
+    res_reg_ied     =read.csv(file.path(dir_layers,'res_reg_ied_bhi2015.csv'    ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_ied"      )%>% arrange(rgn_id)
+    res_reg_msfd    =read.csv(file.path(dir_layers,'res_reg_msfd_bhi2015.csv'    ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_msfd"    )%>% arrange(rgn_id)
+    res_reg_mspd    =read.csv(file.path(dir_layers,'res_reg_mspd_bhi2015.csv'    ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_mspd"    )%>% arrange(rgn_id)
+    res_reg_nd      =read.csv(file.path(dir_layers,'res_reg_nd_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_nd"      )%>% arrange(rgn_id)
+    res_reg_nec     =read.csv(file.path(dir_layers,'res_reg_nec_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_nec"     )%>% arrange(rgn_id)
+    res_reg_pop     =read.csv(file.path(dir_layers,'res_reg_pop_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_pop"     )%>% arrange(rgn_id)
+    res_reg_reach   =read.csv(file.path(dir_layers,'res_reg_reach_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_reach"   )%>% arrange(rgn_id)
+    res_reg_uwwtd    =read.csv(file.path(dir_layers,'res_reg_uwwtd_bhi2015.csv'   ),stringsAsFactors =FALSE ) %>% mutate(resilience ="res_reg_uwwtd"    )%>% arrange(rgn_id)
+    res_reg_wfd      =read.csv(file.path(dir_layers,'res_reg_wfd_bhi2015.csv'     ),stringsAsFactors =FALSE ) %>% mutate(resilience ="res_reg_wfd"      )%>% arrange(rgn_id)
+    wgi_all          =read.csv(file.path(dir_layers,'wgi_all_bhi2015.csv'         ),stringsAsFactors =FALSE ) %>% mutate(resilience ="wgi_all"          )%>% arrange(rgn_id)
+    res_biodiversity =read.csv(file.path(dir_layers,'res_biodiversity_bhi2015.csv'),stringsAsFactors =FALSE ) %>% mutate(resilience ="res_biodiversity" )%>% arrange(rgn_id)
+    ##
+    resilience_plot = bind_rows(res_reg_birds  ,
+                                res_reg_bsap   ,
+                                res_reg_bwd    ,
+                                res_reg_cbd    ,
+                                res_reg_cfp    ,
+                                res_reg_cites  ,
+                                res_reg_cop21  ,
+                                res_reg_hd     ,
+                                res_reg_helcom ,
+                                res_reg_ied    ,
+                                res_reg_msfd   ,
+                                res_reg_mspd   ,
+                                res_reg_nd     ,
+                                res_reg_nec    ,
+                                res_reg_pop    ,
+                                res_reg_reach  ,
+                                res_reg_uwwtd  ,
+                                res_reg_wfd    ,
+                                wgi_all        ,
+                                res_biodiversity)
+
+
+    ## plot
+    p1 = ggplot(resilience_plot)+
+      geom_point(aes(rgn_id,resilience_score),size=1)+
+      facet_wrap(~resilience)+
+      ylim(0,1)+
+      ylab("Score")+
+      xlab("BHI region")+
+      ggtitle(paste(type, " Score"))
+
+
+    return(p1)
+
+}# end resilience
+
+}## end function
+
+
+##---------------------------------------##
+## FUNCTION: plotPressuresResilienceGoal
+##plot goal specific pressure and resilience measures
+
+##
+
+plotPressuresResilienceGoal = function(type, goal_select){
+
+  if(type == "pressures"){
+
+
+    ## read in pressure layers (some maybe proxy files)
+    cc_sal_surf      =read.csv(file.path(dir_layers,'cc_sal_surf_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( pressure = "cc_sal_surf"      )%>% arrange(rgn_id)
+    cc_sal_deep      =read.csv(file.path(dir_layers,'cc_sal_deep_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( pressure = "cc_sal_deep"      )%>% arrange(rgn_id)
+    cc_sst           =read.csv(file.path(dir_layers,'cc_sst_bhi2015.csv'           ),stringsAsFactors =FALSE )  %>% mutate( pressure = "cc_sst"           )%>% arrange(rgn_id)
+    po_nload         =read.csv(file.path(dir_layers,'po_nload_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_nload"         )%>% arrange(rgn_id)
+    ss_wgi           =read.csv(file.path(dir_layers,'ss_wgi_bhi2015.csv'           ),stringsAsFactors =FALSE )  %>% mutate( pressure = "ss_wgi"           )%>% arrange(rgn_id)
+    po_atmos_pcb153  =read.csv(file.path(dir_layers,'po_atmos_pcb153_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_atmos_pcb153"  )%>% arrange(rgn_id)
+    po_atmos_pcddf   =read.csv(file.path(dir_layers,'po_atmos_pcddf_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_atmos_pcddf"   )%>% arrange(rgn_id)
+    po_pload         =read.csv(file.path(dir_layers,'po_pload_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_pload"         )%>% arrange(rgn_id)
+    hab_anoxia       =read.csv(file.path(dir_layers,'hab_anoxia_bhi2015.csv'       ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_anoxia"       )%>% arrange(rgn_id)
+    hab_illegal_oil  =read.csv(file.path(dir_layers,'hab_illegal_oil_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_illegal_oil"  )%>% arrange(rgn_id)
+    hab_coastal_pop  =read.csv(file.path(dir_layers,'hab_coastal_pop_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_coastal_pop"  )%>% arrange(rgn_id)
+    hab_bottom_trawl =read.csv(file.path(dir_layers,'hab_bottom_trawl_bhi2015.csv' ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_bottom_trawl" )%>% arrange(rgn_id)
+    fp_over_harvest  =read.csv(file.path(dir_layers,'fp_over_harvest_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "fp_over_harvest"  )%>% arrange(rgn_id)
+    sp_invasives     =read.csv(file.path(dir_layers,'sp_invasives_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( pressure = "sp_invasives"     )%>% arrange(rgn_id)
+    po_inverse_secchi=read.csv(file.path(dir_layers,'po_inverse_secchi_bhi2015.csv'),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_inverse_secchi")%>% arrange(rgn_id)
+    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% dplyr::rename(pressure_score =score) %>%arrange(rgn_id)
+
+    ##read in pressure matrix
+    pressure_matrix = read.csv(file.path(dir_baltic,'conf/pressures_matrix.csv'), stringsAsFactors = FALSE)
+
+
+    ##
+    pressure_plot = bind_rows(cc_sal_surf      ,
+                              cc_sal_deep      ,
+                              cc_sst           ,
+                              po_nload         ,
+                              ss_wgi           ,
+                              po_atmos_pcb153  ,
+                              po_atmos_pcddf   ,
+                              po_pload         ,
+                              hab_anoxia       ,
+                              hab_illegal_oil  ,
+                              hab_coastal_pop  ,
+                              hab_bottom_trawl ,
+                              fp_over_harvest  ,
+                              sp_invasives     ,
+                              po_inverse_secchi,
+                              po_trash         )
+
+
+
+    ##
+    pressure_goal = pressure_matrix %>%
+                    filter(goal == goal_select) %>%
+                    gather(pressure, weight, -goal)%>%
+                    filter(!is.na(weight))
+
+
+
+    pressure_join = inner_join(pressure_goal, pressure_plot,
+                               by="pressure")
+
+
+
+    ## plot
+    p1 = ggplot(pressure_join)+
+      geom_point(aes(rgn_id,pressure_score, size=weight,colour=pressure))+
+      scale_size(range = c(0, 3),breaks=c(1, 2,3))+
+      ylim(0,1)+
+      ylab("Score")+
+      xlab("BHI region")+
+      ggtitle(paste(goal_select, type, "scores and weights"))
+
+  return(p1)
+
+}## end pressures
+
+
+
+
+  if(type == "resilience"){
+
+
+    ## read in resilience layers (some maybe proxy files)
+    res_reg_birds   =read.csv(file.path(dir_layers,'res_reg_birds_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_birds"   )%>% arrange(rgn_id)
+    res_reg_bsap    =read.csv(file.path(dir_layers,'res_reg_bsap_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_bsap"     )%>% arrange(rgn_id)
+    res_reg_bwd     =read.csv(file.path(dir_layers,'res_reg_bwd_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_bwd"     )%>% arrange(rgn_id)
+    res_reg_cbd     =read.csv(file.path(dir_layers,'res_reg_cbd_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cbd"     )%>% arrange(rgn_id)
+    res_reg_cfp     =read.csv(file.path(dir_layers,'res_reg_cfp_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cfp"     )%>% arrange(rgn_id)
+    res_reg_cites   =read.csv(file.path(dir_layers,'res_reg_cites_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cites"   )%>% arrange(rgn_id)
+    res_reg_cop21   =read.csv(file.path(dir_layers,'res_reg_cop21_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_cop21"   )%>% arrange(rgn_id)
+    res_reg_hd      =read.csv(file.path(dir_layers,'res_reg_hd_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_hd"      )%>% arrange(rgn_id)
+    res_reg_helcom  =read.csv(file.path(dir_layers,'res_reg_helcom_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_helcom"  )%>% arrange(rgn_id)
+    res_reg_ied     =read.csv(file.path(dir_layers,'res_reg_ied_bhi2015.csv'    ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_ied"      )%>% arrange(rgn_id)
+    res_reg_msfd    =read.csv(file.path(dir_layers,'res_reg_msfd_bhi2015.csv'    ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_msfd"    )%>% arrange(rgn_id)
+    res_reg_mspd    =read.csv(file.path(dir_layers,'res_reg_mspd_bhi2015.csv'    ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_mspd"    )%>% arrange(rgn_id)
+    res_reg_nd      =read.csv(file.path(dir_layers,'res_reg_nd_bhi2015.csv'      ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_nd"      )%>% arrange(rgn_id)
+    res_reg_nec     =read.csv(file.path(dir_layers,'res_reg_nec_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_nec"     )%>% arrange(rgn_id)
+    res_reg_pop     =read.csv(file.path(dir_layers,'res_reg_pop_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_pop"     )%>% arrange(rgn_id)
+    res_reg_reach   =read.csv(file.path(dir_layers,'res_reg_reach_bhi2015.csv'   ),stringsAsFactors =FALSE )  %>% mutate( resilience = "res_reg_reach"   )%>% arrange(rgn_id)
+    res_reg_uwwtd    =read.csv(file.path(dir_layers,'res_reg_uwwtd_bhi2015.csv'   ),stringsAsFactors =FALSE ) %>% mutate(resilience ="res_reg_uwwtd"    )%>% arrange(rgn_id)
+    res_reg_wfd      =read.csv(file.path(dir_layers,'res_reg_wfd_bhi2015.csv'     ),stringsAsFactors =FALSE ) %>% mutate(resilience ="res_reg_wfd"      )%>% arrange(rgn_id)
+    wgi_all          =read.csv(file.path(dir_layers,'wgi_all_bhi2015.csv'         ),stringsAsFactors =FALSE ) %>% mutate(resilience ="wgi_all"          )%>% arrange(rgn_id)
+    res_biodiversity =read.csv(file.path(dir_layers,'res_biodiversity_bhi2015.csv'),stringsAsFactors =FALSE ) %>% mutate(resilience ="res_biodiversity" )%>% arrange(rgn_id)
+    ##
+    resilience_plot = bind_rows(res_reg_birds  ,
+                                res_reg_bsap   ,
+                                res_reg_bwd    ,
+                                res_reg_cbd    ,
+                                res_reg_cfp    ,
+                                res_reg_cites  ,
+                                res_reg_cop21  ,
+                                res_reg_hd     ,
+                                res_reg_helcom ,
+                                res_reg_ied    ,
+                                res_reg_msfd   ,
+                                res_reg_mspd   ,
+                                res_reg_nd     ,
+                                res_reg_nec    ,
+                                res_reg_pop    ,
+                                res_reg_reach  ,
+                                res_reg_uwwtd  ,
+                                res_reg_wfd    ,
+                                wgi_all        ,
+                                res_biodiversity)
+
+
+    ##read in resilience matrix and categories
+
+    resilience_matrix =  read.csv(file.path(dir_baltic,'conf/resilience_matrix.csv'), stringsAsFactors = FALSE)
+
+    resilience_weight = read.csv(file.path(dir_baltic,'conf/resilience_categories.csv'), stringsAsFactors = FALSE)%>%
+                        select(layer, weight)%>%
+                        dplyr::rename(resilience=layer)
+
+
+
+    ##
+    resilience_goal =resilience_matrix %>%
+                    filter(goal == goal_select) %>%
+                    gather(resilience, select, -goal)%>%
+                    mutate(select = ifelse(select =="x",1, NA),
+                           select = as.numeric(select))%>%
+                    filter(!is.na(select))%>%
+                    select(-select)%>%
+                    inner_join(.,resilience_weight,
+                               by="resilience")
+
+
+
+    resilience_join = inner_join(resilience_goal, resilience_plot,
+                               by="resilience")
+
+
+
+    ## plot
+    p1 = ggplot(resilience_join)+
+      geom_point(aes(rgn_id,resilience_score, size=weight,colour=resilience))+
+      scale_size(range = c(0, 3),breaks=c(1, 2,3))+
+      ylim(0,1)+
+      ylab("Score")+
+      xlab("BHI region")+
+      ggtitle(paste(goal_select, type, "scores and weights"))
+
+    return(p1)
+
+
+  }##end resilience
+}#end function
