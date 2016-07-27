@@ -31,10 +31,10 @@ root <- rprojroot::is_rstudio_project
 
 
 ## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+make_path <- function(...) rprojroot::find_root_file(..., criterion = rprojroot::is_rstudio_project)
 
 
-
+dir_baltic = make_path('baltic2015')
 dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
 
 
@@ -57,8 +57,8 @@ create_readme(dir_vis, 'visualize.rmd')
 
 ## Source functions
 ```{r source plotmap function}
-source('baltic2015/PlotMap.r') 
-source('baltic2015/PrepSpatial.r') 
+source(file.path(dir_baltic, 'PlotMap.r'))
+source(file.path(dir_baltic, 'PrepSpatial.r'))
 source(file.path(dir_vis,'visualize_functions.r'))
 
 
@@ -68,7 +68,8 @@ source(file.path(dir_vis,'visualize_functions.r'))
 ## Set local directory for pdf output
 ```{r Set local directory for pdf output}
 
-pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Output")
+# pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Output")
+pdf_dir = c("/Users/julialowndes/Dropbox/NCEAS_Julie/OHI_Regional/OHI_Baltic/_documentation/visualize_reports")
 
 ```
 
@@ -117,10 +118,10 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
       #plot_datatime (time_data, "basin", variable=TRUE)
       
       ##plot pressure data layers and weights for goal
-      plotPressuresResilienceGoal ("pressures", goal_select)
+      plotPressuresResilienceGoal("pressures", goal_select)
       
       ##plot resilience data layers and weights for goal
-      plotPressuresResilienceGoal ("resilience", goal_select)
+      plotPressuresResilienceGoal("resilience", goal_select)
       
       ##plot Map of Each score type
       plotScoreTypes(scores,goal_select)
@@ -171,25 +172,25 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
       
       ##plot raw times series by station
    
-      plot_datatime (time_pcb, facet_type= "station",variable =FALSE)
+      plot_datatime(time_pcb, facet_type= "station",variable =FALSE)
       
-      plot_datatime (time_diox, facet_type= "station",variable =TRUE)
+      plot_datatime(time_diox, facet_type= "station",variable =TRUE)
       
-      plot_datatime (time_pfos, facet_type= "station",variable =FALSE)
+      plot_datatime(time_pfos, facet_type= "station",variable =FALSE)
       
       
       ##plot raw time series by basin
-       plot_datatime (time_pcb, facet_type= "basin",variable =FALSE)
+       plot_datatime(time_pcb, facet_type= "basin",variable =FALSE)
       
-      plot_datatime (time_diox, facet_type= "basin",variable =TRUE)
+      plot_datatime(time_diox, facet_type= "basin",variable =TRUE)
       
-      plot_datatime (time_pfos, facet_type= "basin",variable =FALSE)
+      plot_datatime(time_pfos, facet_type= "basin",variable =FALSE)
       
       ##plot pressure data layers and weights for goal
-      plotPressuresResilienceGoal ("pressures", goal_select)
+      plotPressuresResilienceGoal("pressures", goal_select)
       
       ##plot resilience data layers and weights for goal
-      plotPressuresResilienceGoal ("resilience", goal_select)
+      plotPressuresResilienceGoal("resilience", goal_select)
       
       ##plot Map of Each score type
       plotScoreTypes(scores,goal_select)
@@ -381,7 +382,7 @@ dev.off() ## Finish PDF
 
 
 ## FIS subgoal
-```{r eco subgoal}
+```{r fis subgoal}
 
 
 ## set values and location
@@ -456,7 +457,7 @@ goal_select = "ICO"
 ##NA
 
 ## value data
-value_threat= read.csv(file.path(dir_vis,'ico_threat_value_data.csv'), stringsAsFactors = FALSE)
+# value_threat= read.csv(file.path(dir_vis,'ico_threat_value_data.csv'), stringsAsFactors = FALSE)
 value_dist= read.csv(file.path(dir_vis,'ico_dist_value_data.csv'), stringsAsFactors = FALSE)
 
 #time_data
@@ -876,7 +877,7 @@ dev.off() ## Finish PDF
 
 
 ## SP
-```{r SP goal}
+```{r SP goal, eval=FALSE, echo=FALSE}
 
 ##goal_select
 goal_select = "SP"

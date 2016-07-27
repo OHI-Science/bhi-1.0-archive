@@ -181,7 +181,7 @@ plot_datavalue = function(valuedata, variable = TRUE){
 plotScoreTypes = function(scores,goal){
 
 PlotMap(filter(scores, dimension=="status"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        rgn_poly        = PrepSpatial(file.path(dir_baltic, 'spatial/regions_gcs.geojson')),
         map_title       = paste(goal, "Status Score"),
         fld_rgn         = 'region_id',
         fld_score       = 'score',
@@ -191,7 +191,7 @@ PlotMap(filter(scores, dimension=="status"),        # dataframe with at least 2 
         fig_path        = NULL)
 
   PlotMap(filter(scores, dimension=="trend"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-          rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+          rgn_poly        = PrepSpatial(file.path(dir_baltic, 'spatial/regions_gcs.geojson')),
           map_title       = paste(goal, "Trend Score"),
           fld_rgn         = 'region_id',
           fld_score       = 'score',
@@ -202,8 +202,8 @@ PlotMap(filter(scores, dimension=="status"),        # dataframe with at least 2 
 
 ##plot pressures map
 PlotMap(filter(scores, dimension=="pressures"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
-        map_title       =  paste(goal, "Pressures Score"),
+        rgn_poly        = PrepSpatial(file.path(dir_baltic, 'spatial/regions_gcs.geojson')),
+        map_title       = paste(goal, "Pressures Score"),
         fld_rgn         = 'region_id',
         fld_score       = 'score',
         scale_label     = 'pressures score',
@@ -214,7 +214,7 @@ PlotMap(filter(scores, dimension=="pressures"),        # dataframe with at least
 
 ##plot resilience map
 PlotMap(filter(scores, dimension=="resilience"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        rgn_poly        = PrepSpatial(file.path(dir_baltic, 'spatial/regions_gcs.geojson')),
         map_title       = paste(goal, "Resilience Score"),
         fld_rgn         = 'region_id',
         fld_score       = 'score',
@@ -226,7 +226,7 @@ PlotMap(filter(scores, dimension=="resilience"),        # dataframe with at leas
 
 ##plot future map
 PlotMap(filter(scores, dimension=="future"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        rgn_poly        = PrepSpatial(file.path(dir_baltic, 'spatial/regions_gcs.geojson')),
         map_title       = paste(goal, "Future Score"),
         fld_rgn         = 'region_id',
         fld_score       = 'score',
@@ -239,7 +239,7 @@ PlotMap(filter(scores, dimension=="future"),        # dataframe with at least 2 
 
 ## plot scores map
 PlotMap(filter(scores, dimension=="score"),        # dataframe with at least 2 columns: rgn_id and scores/values.
-        rgn_poly        = PrepSpatial('baltic2015/spatial/regions_gcs.geojson'), # default for OHI+
+        rgn_poly        = PrepSpatial(file.path(dir_baltic, 'spatial/regions_gcs.geojson')),
         map_title       = paste(goal, "Overall Score"),
         fld_rgn         = 'region_id',
         fld_score       = 'score',
