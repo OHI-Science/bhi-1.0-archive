@@ -240,19 +240,19 @@ for (i in trawling_file_list) {
 
 
 
-
-```{r intersect trawling with BHI shapefiles}
-
-
-```
-
 ### 4.4 Extract total fishing hours by BHI region for each year  
 
 ```{r extract total hours, eval = FALSE, echo = FALSE}
 
-data_2013 = read_csv(file.path(dir_trawl, 'temp_data', 'trawling_bhi_intersect_2013.csv'))
+trawling_bhi_intersect_file_list = list.files(file.path(dir_trawl, 'temp_data'), 'trawling_bhi_intersect_[0-9]+.csv')
 
-hours_per_area = data_2013 %>%
+i = 1  
+  
+for (i in trawling_bhi_intersect_file_list) {
+  
+dat = read_csv(file.path(dir_trawl, 'temp_data', i))
+
+hours_per_area = dat %>%
   dplyr::select(fishing_ho, BHI_ID) %>%
   group_by(BHI_ID) %>%
   summarize(total_hrs = sum(fishing_ho)) %>%
@@ -261,41 +261,51 @@ hours_per_area = data_2013 %>%
   mutate(hours_per_area = total_hrs/Area_km2) %>%
   dplyr::select(BHI_ID, hours_per_area)
 
-write_csv(hours_per_area, file.path(dir_trawl, 'temp_data', 'hours_per_area_2013.csv'))
+write_csv(hours_per_area, file.path(dir_trawl, 'temp_data', sprintf('hours_per_area_%s.csv', substr(hours_per_area_file_list[i], 16, 19))))
   
+}
 
 ```
 
 
-### 4.5 Plot hours per BHI region
+### 4.5 Calculate and Plot Fising Hours per km2
 
-```{r plot hours per region}
+Plot below shows the trawling efforts per area in each region in each year. Note that each year's data covers slightly different BHI regions, and contain 33-36 regions out of 42. 
 
-setwd(file.path(dir_trawl, 'temp_data'))
+TODO: May need to fill in the missing data as "0". 
 
-hours_per_area_file_list = list.files(path= file.path(dir_trawl, 'temp_data'),
-                            pattern="hours_per_area_[0-9]+.csv")
+```{r calculate and plot hours per area region}
+
+## calculate hours per km2, per year, in each region
+
+hours_per_area_file_list = list.files(file.path(dir_trawl, 'temp_data'), 'hours_per_area_[0-9]+.csv' )
+
+hours_per_area_all = data.frame()
 
 for (i in hours_per_area_file_list) {
-   
-dat = read_csv(hours_per_area_file_list[1])
 
-plot(dat, main = "Total fishing hours per km2 per region")
+ d = read_csv(file.path(dir_trawl, 'temp_data', i)) %>%
+   mutate(year = substr(i, 16, 19))
 
+ hours_per_area_all = rbind(hours_per_area_all, d) %>%
+   mutate(year = as.factor(year))
 
-## didn't work coz each year contains different number of rows/rgions
-# for (i in 2:length(hours_per_area_file_list)) {
-#   
-#  d = read_csv(hours_per_area_file_list[i]) 
-#  dat = rbind(dat, d) %>%
-#    mutate(year = substr(hours_per_area_file_list[i], 16, 19))
-# 
-# }
-
-# hours_per_area_all = dat
-  
 }
 
+# ## fill in the missing years for each region; TODO: also fill in the missing BHI_IDs
+# hours_per_area_filled = hours_per_area_all %>%
+#   tidyr::complete(year = full_seq(year, 1), nesting(BHI_ID), fill = list(hours_per_area = 0)) %>%
+#   arrange(BHI_ID, year) %>%
+#   mutate(year = as.factor(year))
+
+plot_hours_area = ggplot(hours_per_area_all, aes(x = BHI_ID, y = hours_per_area, fill = year)) +
+  geom_bar(position="dodge", stat = 'identity') +
+  labs(title = 'Fishing efforts per km2 2009 - 2014', 
+       x = 'BHI ID', 
+       y = 'Hours per km2')
+
+print(plot_hours_area)
+  
 
 ```
  
