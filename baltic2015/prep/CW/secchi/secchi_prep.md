@@ -29,6 +29,7 @@ secchi\_prep
         -   [4.5 Plot BHI region status and trend values](#plot-bhi-region-status-and-trend-values)
         -   [4.6 Save csv files](#save-csv-files)
     -   [5. Next steps](#next-steps)
+-   [6. Rescale Mean secchi data and recalculate status](#rescale-mean-secchi-data-and-recalculate-status)
 
 Nutrient subgoal data layer prep - Secchi data
 ==============================================
@@ -37,10 +38,6 @@ Nutrient subgoal data layer prep - Secchi data
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
 ```
-
-    ## Warning: package 'readr' was built under R version 3.2.4
-
-    ## Warning: package 'dplyr' was built under R version 3.2.5
 
     ## 
     ## Attaching package: 'dplyr'
@@ -53,15 +50,7 @@ source('~/github/bhi/baltic2015/prep/common.r')
     ## 
     ##     intersect, setdiff, setequal, union
 
-    ## Warning: package 'tidyr' was built under R version 3.2.5
-
-    ## Warning: package 'ggplot2' was built under R version 3.2.4
-
-    ## Warning: package 'RMySQL' was built under R version 3.2.5
-
     ## Loading required package: DBI
-
-    ## Warning: package 'DBI' was built under R version 3.2.5
 
 ``` r
 dir_cw    = file.path(dir_prep, 'CW')
@@ -205,7 +194,7 @@ str(data2)
 ``` r
 ## Initial filtering
 ices <- data1 %>% data.frame()%>%
-  select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
+  dplyr::select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
          lat= Latitude, lon = Longitude, 
          cruise= Cruise, station = Station, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
   mutate(date = as.Date(date, format= "%Y-%m-%d"))%>%
@@ -239,14 +228,14 @@ ices.na <- ices %>%
     ## [1] 1684   11
 
 ``` r
-    ices.na.loc = ices.na %>% select(lat,lon) %>% distinct() ## unique locations
+    ices.na.loc = ices.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
     dim(ices.na.loc) # 86  2
 ```
 
     ## [1] 86  2
 
 ``` r
-    ices.na %>% select(coast_code)%>% distinct()  ## at least one location is off shore
+    ices.na %>% dplyr::select(coast_code)%>% distinct()  ## at least one location is off shore
 ```
 
     ##    coast_code
@@ -281,7 +270,7 @@ ices.na <- ices %>%
 
 smhi <- data2 %>% data.frame()%>%
   rename(secchi = value) %>%
-  select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
+  dplyr::select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
         lat= Latitude, lon= Longitude, 
          cruise = Provtagningstillfaelle.id, 
          station = Stationsnamn, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
@@ -315,14 +304,14 @@ smhi.na <- smhi %>%
     ## [1] 35034    11
 
 ``` r
-    smhi.na.loc = smhi.na %>% select(lat,lon) %>% distinct() ## unique locations
+    smhi.na.loc = smhi.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
     dim(smhi.na.loc) #615   2
 ```
 
     ## [1] 615   2
 
 ``` r
-    smhi.na %>% select(coast_code)%>% distinct()  ## none are offshore
+    smhi.na %>% dplyr::select(coast_code)%>% distinct()  ## none are offshore
 ```
 
     ##    coast_code
@@ -361,7 +350,7 @@ sum(ices.duplicated==TRUE) #181855  ## MANY duplicates
     ## [1] 181855
 
 ``` r
-ices.duplicated = duplicated(select(ices,-station))
+ices.duplicated = duplicated(dplyr::select(ices,-station))
 sum(ices.duplicated==TRUE) #181977 ## more duplicated when remove station columns
 ```
 
@@ -1030,8 +1019,7 @@ target <- readr::read_csv(file.path(dir_secchi, "eutro_targets_HELCOM.csv"))
 head(target)
 ```
 
-    ## Source: local data frame [6 x 6]
-    ## 
+    ## # A tibble: 6 x 6
     ##                basin winter_din winter_dip summer_chl summer_secchi
     ##                <chr>      <dbl>      <dbl>      <dbl>         <dbl>
     ## 1           Kattegat        5.0       0.49        1.5           7.6
@@ -1040,7 +1028,7 @@ head(target)
     ## 4        Little_Belt        7.1       0.71        2.8           7.3
     ## 5           Kiel_Bay        5.5       0.57        2.0           7.4
     ## 6 Bay_of_Mecklenburg        4.3       0.49        1.8           7.1
-    ## Variables not shown: oxy_debt <dbl>.
+    ## # ... with 1 more variables: oxy_debt <dbl>
 
 ``` r
 #select just summer_seccchi target
@@ -1191,7 +1179,7 @@ basin_summary
     ## 8   Aland Sea  2005     6         2
     ## 9   Aland Sea  2005     8         1
     ## 10  Aland Sea  2006     7         1
-    ## ..        ...   ...   ...       ...
+    ## # ... with 621 more rows
 
 ``` r
 #plot sampling overview
@@ -1216,8 +1204,7 @@ mean_months = summer %>% select(year, month,basin_name,secchi)%>%
 head(mean_months)
 ```
 
-    ## Source: local data frame [6 x 4]
-    ## 
+    ## # A tibble: 6 x 4
     ##    year month            basin_name mean_secchi
     ##   <int> <int>                <fctr>       <dbl>
     ## 1  2000     6             Aland Sea         5.5
@@ -1284,8 +1271,7 @@ secchi_target = left_join(mean_months_summer,target, by=c("basin_name" = "basin"
 head(secchi_target)
 ```
 
-    ## Source: local data frame [6 x 4]
-    ## 
+    ## # A tibble: 6 x 4
     ##    year         basin_name mean_secchi target_secchi
     ##   <int>              <chr>       <dbl>         <dbl>
     ## 1  2000          Aland Sea         5.5           6.9
@@ -1340,8 +1326,7 @@ last_year = secchi_target%>%
             print(n=15)
 ```
 
-    ## Source: local data frame [16 x 2]
-    ## 
+    ## # A tibble: 16 x 2
     ##                basin_name last_year
     ##                     <chr>     <int>
     ## 1               Aland Sea      2012
@@ -1359,15 +1344,14 @@ last_year = secchi_target%>%
     ## 13               Kiel Bay      2013
     ## 14 Northern Baltic Proper      2013
     ## 15              The Quark      2012
-    ## ..                    ...       ...
+    ## # ... with 1 more rows
 
 ``` r
 ##which are not in 2013
 last_year %>% filter(last_year < 2013)
 ```
 
-    ## Source: local data frame [5 x 2]
-    ## 
+    ## # A tibble: 5 x 2
     ##        basin_name last_year
     ##             <chr>     <int>
     ## 1       Aland Sea      2012
@@ -1396,8 +1380,7 @@ Status must be calculated in data prep because calculation for a basin and then 
   secchi_target
 ```
 
-    ## Source: local data frame [214 x 4]
-    ## 
+    ## # A tibble: 214 x 4
     ##     year            basin_name mean_secchi target_secchi
     ##    <int>                 <chr>       <dbl>         <dbl>
     ## 1   2000             Aland Sea         5.5           6.9
@@ -1410,7 +1393,7 @@ Status must be calculated in data prep because calculation for a basin and then 
     ## 8   2000          Gdansk Basin         6.7           6.5
     ## 9   2000            Great Belt         6.9           8.5
     ## 10  2000       Gulf of Finland         4.8           5.5
-    ## ..   ...                   ...         ...           ...
+    ## # ... with 204 more rows
 
 ``` r
 ## Calculate basin status
@@ -1517,3 +1500,92 @@ If model, do a linear model.
 *Linear model options* 1. Take mean summer secchi, ignore that different months sampled in different years, just average the months that are sampled in any given year. Model by basin and year.
 2. Take mean monthly value by year, model by basin + year + month. Average the modelled monthly value to get a summer mean.
 3. Do the above but just model all the data points, don't take the mean value and instead use a random effect to account for location?
+
+6. Rescale Mean secchi data and recalculate status
+==================================================
+
+Rescale secchi depth to target level and change the goal model equation to:
+
+Xnut\_b = (mean\_summer\_secchi\_y\_b - min\_secchi\_b) / (Reference point\_r - min\_secchi\_b)
+
+mean\_summer\_secchi\_y = mean summer secchi in year (y) in a basin (b) min\_secchi\_b = minimum mean summer secchi in a basin (b) Reference point = HELCOM target for that basin
+
+Xnut\_bhi\_region = Xnut\_b
+*Each BHI region will receive the status value of the HOLAS basin it belongs to*
+
+``` r
+# rescale: 
+# (mean - min) / (target - min)
+
+basin_status_rescaled = secchi_target %>%
+  group_by(basin_name) %>%
+  mutate(min_secchi = min(mean_secchi),
+         status = pmin( (mean_secchi - min_secchi)/(target_secchi - min_secchi), 1))
+
+ggplot(basin_status_rescaled) + 
+  geom_point(aes(year, status)) +
+  facet_wrap(~basin_name)
+```
+
+![](secchi_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-1.png)
+
+``` r
+status_by_basin = basin_status_rescaled %>% 
+  group_by(basin_name) %>% 
+  filter(year == max(year)) %>% 
+  mutate(status = round(status*100, 2)) %>% 
+  select(basin_name, status)
+
+DT::datatable(status_by_basin, options = list(pageLength = 25) )
+```
+
+![](secchi_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-2.png)
+
+``` r
+# ## recreate the Selig/Halpern paper
+# 
+# d = data.frame(risk = c(0, 0.2, 0.4, 0.6, 0.8, 1))
+# 
+# wt = d %>%
+#   mutate(wt_linear = risk, 
+#          wt_0.5_0.1 = 1/(1+ exp(-(risk - 0.5)/0.1)), 
+#          wt_0.3_0.08 = 1/(1+ exp(-(risk - 0.3)/0.08)),
+#          wt_0.4_0.08 = 1/(1+ exp(-(risk - 0.4)/0.08)), 
+#          wt_0.7_0.08 = 1/(1+ exp(-(risk - 0.7)/0.08)), 
+#          wt_0.7_0.1 = 1/(1+ exp(-(risk - 0.7)/0.15))) %>%
+#   gather(key = reg, value = wt, 2:7)
+# 
+# plot_wt_qplot = qplot(x = risk, y = wt, color = reg, data = wt, geom = "point") +
+#   geom_line(stat = "identity", position = "identity")
+# 
+# print(plot_wt_qplot)
+# 
+# # plot_wt_ggplot = ggplot(wt, aes(x = risk, y = wt, fill = 'reg')) +
+# #   geom_point(stat = "identity", position = "identity")
+# # 
+# # print(plot_wt_ggplot)
+# 
+# ## set up 
+# # https://people.richland.edu/james/lecture/m116/logs/models.html
+# score = d %>%
+#   mutate(s_linear = risk, 
+#          s_0.1 = risk*exp(100), 
+#          s_0.2 = risk * exp(5))  %>%
+#   gather(key = k, value = score, 2:4)
+# 
+# plot_score = qplot(x = risk, y = score, color = k, data = score, geom = "point") +
+#   geom_line(stat = "identity", position = "identity")
+# 
+# print(plot_score)
+# 
+# score_log = d %>%
+#   mutate(s_linear = risk, 
+#          s_0.1 = risk*log(10), 
+#          s_0.2 = risk * log(100))  %>%
+#   gather(key = k, value = score, 2:4)
+# 
+# plot_score_log = qplot(x = risk, y = score_log, color = k, data = score, geom = "point") +
+#   geom_line(stat = "identity", position = "identity")
+# 
+# print(plot_score_log)
+```

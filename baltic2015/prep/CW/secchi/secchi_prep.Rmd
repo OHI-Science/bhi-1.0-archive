@@ -86,7 +86,7 @@ str(data2)
 
 ## Initial filtering
 ices <- data1 %>% data.frame()%>%
-  select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
+  dplyr::select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
          lat= Latitude, lon = Longitude, 
          cruise= Cruise, station = Station, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
   mutate(date = as.Date(date, format= "%Y-%m-%d"))%>%
@@ -99,9 +99,9 @@ ices.na <- ices %>%
            filter(is.na(bhi_id))
   
     dim(ices.na) # 1684   11
-    ices.na.loc = ices.na %>% select(lat,lon) %>% distinct() ## unique locations
+    ices.na.loc = ices.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
     dim(ices.na.loc) # 86  2
-    ices.na %>% select(coast_code)%>% distinct()  ## at least one location is off shore
+    ices.na %>% dplyr::select(coast_code)%>% distinct()  ## at least one location is off shore
     ices.na %>% filter(coast_code==0)
 
     ## will need to manally add BHI id for site with NA and coastal code of 0
@@ -110,7 +110,7 @@ ices.na <- ices %>%
 
 smhi <- data2 %>% data.frame()%>%
   rename(secchi = value) %>%
-  select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
+  dplyr::select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
         lat= Latitude, lon= Longitude, 
          cruise = Provtagningstillfaelle.id, 
          station = Stationsnamn, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
@@ -122,9 +122,9 @@ smhi.na <- smhi %>%
            filter(is.na(bhi_id))
   
     dim(smhi.na) # 35034    11
-    smhi.na.loc = smhi.na %>% select(lat,lon) %>% distinct() ## unique locations
+    smhi.na.loc = smhi.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
     dim(smhi.na.loc) #615   2
-    smhi.na %>% select(coast_code)%>% distinct()  ## none are offshore
+    smhi.na %>% dplyr::select(coast_code)%>% distinct()  ## none are offshore
     smhi.na %>% filter(coast_code==0)
     ## no coastal code of zero
 
@@ -137,7 +137,7 @@ smhi.na <- smhi %>%
 ices.duplicated = duplicated(ices)
 sum(ices.duplicated==TRUE) #181855  ## MANY duplicates 
 
-ices.duplicated = duplicated(select(ices,-station))
+ices.duplicated = duplicated(dplyr::select(ices,-station))
 sum(ices.duplicated==TRUE) #181977 ## more duplicated when remove station columns
     ## it is not because of multiple cruises on same day and location
     ## tried by removing lat and lon and keeping station, fewer duplicates detected
@@ -580,3 +580,91 @@ If model, do a linear model.
 1. Take mean summer secchi, ignore that different months sampled in different years, just average the months that are sampled in any given year.  Model by basin and year.  
 2. Take mean monthly value by year, model by basin + year + month. Average the modelled monthly value to get a summer mean.  
 3. Do the above but just model all the data points, don't take the mean value and instead use a random effect to account for location?  
+
+
+
+# 6. Rescale Mean secchi data and recalculate status
+
+Rescale secchi depth to target level and change the goal model equation to:  
+
+Xnut_b = (mean_summer_secchi_y_b - min_secchi_b) / (Reference point_r - min_secchi_b)
+
+mean_summer_secchi_y = mean summer secchi in year (y) in a basin (b)
+min_secchi_b = minimum mean summer secchi in a basin (b)
+Reference point = HELCOM target for that basin   
+
+Xnut_bhi_region = Xnut_b  
+*Each BHI region will receive the status value of the HOLAS basin it belongs to*  
+
+```{r testing non linear weighting}
+
+# rescale: 
+# (mean - min) / (target - min)
+
+basin_status_rescaled = secchi_target %>%
+  group_by(basin_name) %>%
+  mutate(min_secchi = min(mean_secchi),
+         status = pmin( (mean_secchi - min_secchi)/(target_secchi - min_secchi), 1))
+
+ggplot(basin_status_rescaled) + 
+  geom_point(aes(year, status)) +
+  facet_wrap(~basin_name)
+
+
+status_by_basin = basin_status_rescaled %>% 
+  group_by(basin_name) %>% 
+  filter(year == max(year)) %>% 
+  mutate(status = round(status*100, 2)) %>% 
+  select(basin_name, status)
+
+DT::datatable(status_by_basin, options = list(pageLength = 25) )
+
+# ## recreate the Selig/Halpern paper
+# 
+# d = data.frame(risk = c(0, 0.2, 0.4, 0.6, 0.8, 1))
+# 
+# wt = d %>%
+#   mutate(wt_linear = risk, 
+#          wt_0.5_0.1 = 1/(1+ exp(-(risk - 0.5)/0.1)), 
+#          wt_0.3_0.08 = 1/(1+ exp(-(risk - 0.3)/0.08)),
+#          wt_0.4_0.08 = 1/(1+ exp(-(risk - 0.4)/0.08)), 
+#          wt_0.7_0.08 = 1/(1+ exp(-(risk - 0.7)/0.08)), 
+#          wt_0.7_0.1 = 1/(1+ exp(-(risk - 0.7)/0.15))) %>%
+#   gather(key = reg, value = wt, 2:7)
+# 
+# plot_wt_qplot = qplot(x = risk, y = wt, color = reg, data = wt, geom = "point") +
+#   geom_line(stat = "identity", position = "identity")
+# 
+# print(plot_wt_qplot)
+# 
+# # plot_wt_ggplot = ggplot(wt, aes(x = risk, y = wt, fill = 'reg')) +
+# #   geom_point(stat = "identity", position = "identity")
+# # 
+# # print(plot_wt_ggplot)
+# 
+# ## set up 
+# # https://people.richland.edu/james/lecture/m116/logs/models.html
+# score = d %>%
+#   mutate(s_linear = risk, 
+#          s_0.1 = risk*exp(100), 
+#          s_0.2 = risk * exp(5))  %>%
+#   gather(key = k, value = score, 2:4)
+# 
+# plot_score = qplot(x = risk, y = score, color = k, data = score, geom = "point") +
+#   geom_line(stat = "identity", position = "identity")
+# 
+# print(plot_score)
+# 
+# score_log = d %>%
+#   mutate(s_linear = risk, 
+#          s_0.1 = risk*log(10), 
+#          s_0.2 = risk * log(100))  %>%
+#   gather(key = k, value = score, 2:4)
+# 
+# plot_score_log = qplot(x = risk, y = score_log, color = k, data = score, geom = "point") +
+#   geom_line(stat = "identity", position = "identity")
+# 
+# print(plot_score_log)
+  
+  
+```
