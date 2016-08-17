@@ -1524,7 +1524,7 @@ Xnut\_bhi\_region = Xnut\_b
 
 ## logistic:
 ## status_3 & status_4 = 1/(1 + exp( -(ratio - a)/b))
-## a_3 = 0.5, b_3 = 0.1 -> low -interests: water quality considered bad when secchi depth <50% of target value and are given disproportionally bad scores. 
+## a_3 = 0.5, b_3 = 0.1 -> medium-interests: water quality considered bad when secchi depth <50% of target value and are given disproportionally bad scores. 
 ## a_4 = 0.7, b_4 = 0.08 -> high-interests: water quality considered bad when secchi depth <80% of target value and are given disproportionally bad scores. 
 
 ## general comparison of decay and logistic
@@ -1676,7 +1676,7 @@ gpclibPermit()
                 dplyr::select (rgn_id = bhi_id, score=status)
 
  plot_transf_4 =  PlotMap(bhi_status_4,  
-                          map_title = 'Transformation 3: \n status = 1/(1+ exp(-(mean/target - 0.7)/0.08))', 
+                          map_title = 'Transformation 4: \n status = 1/(1+ exp(-(mean/target - 0.7)/0.08))', 
                            rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
 ```
 
@@ -1686,76 +1686,3 @@ gpclibPermit()
     ## It has 2 fields
 
 ![](secchi_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-5.png)
-
-``` r
-#  
-#  
-## recreate the Selig/Halpern paper
-
-# d = data.frame(risk = c(0, 0.2, 0.4, 0.6, 0.8, 1))
-# 
-# wt = d %>%
-#   mutate(wt_linear = risk,
-#          wt_0.5_0.1 = 1/(1+ exp(-(risk - 0.5)/0.1)),
-#          wt_0.3_0.08 = 1/(1+ exp(-(risk - 0.3)/0.08)),
-#          wt_0.4_0.08 = 1/(1+ exp(-(risk - 0.4)/0.08)),
-#          wt_0.7_0.08 = 1/(1+ exp(-(risk - 0.7)/0.08)),
-#          wt_0.7_0.1 = 1/(1+ exp(-(risk - 0.7)/0.15))) %>%
-#   gather(key = reg, value = wt, 2:7)
-# 
-# plot_wt_qplot = qplot(x = risk, y = wt, color = reg, data = wt, geom = "point") +
-#   geom_line(stat = "identity", position = "identity")
-# 
-# print(plot_wt_qplot)
-# 
-# # plot_wt_ggplot = ggplot(wt, aes(x = risk, y = wt, fill = 'reg')) +
-# #   geom_point(stat = "identity", position = "identity")
-# # 
-# # print(plot_wt_ggplot)
-# 
-# ## set up 
-# # https://people.richland.edu/james/lecture/m116/logs/models.html
-# score = d %>%
-#   mutate(s_linear = risk, 
-#          s_0.1 = risk*exp(100), 
-#          s_0.2 = risk * exp(5))  %>%
-#   gather(key = k, value = score, 2:4)
-# 
-# plot_score = qplot(x = risk, y = score, color = k, data = score, geom = "point") +
-#   geom_line(stat = "identity", position = "identity")
-# 
-# print(plot_score)
-# 
-# score_log = d %>%
-#   mutate(s_linear = risk, 
-#          s_0.1 = risk*log(10), 
-#          s_0.2 = risk * log(100))  %>%
-#   gather(key = k, value = score, 2:4)
-# 
-# plot_score_log = qplot(x = risk, y = score_log, color = k, data = score, geom = "point") +
-#   geom_line(stat = "identity", position = "identity")
-# 
-# print(plot_score_log)
- 
-#  # rescale: 
-# # (mean - min) / (target - min)
-# 
-# basin_status_rescaled = secchi_target %>%
-#   group_by(basin_name) %>%
-#   mutate(min_secchi = min(mean_secchi),
-#          status = pmin( (mean_secchi - min_secchi)/(target_secchi - min_secchi), 1))
-# 
-# ggplot(basin_status_rescaled) + 
-#   geom_point(aes(year, status)) +
-#   facet_wrap(~basin_name)
-# 
-# 
-# status_by_basin = basin_status_rescaled %>% 
-#   group_by(basin_name) %>% 
-#   filter(year == max(year)) %>% 
-#   mutate(status = round(status*100, 2)) %>% 
-#   dplyr::select(basin_name, status)
-# 
-# DT::datatable(status_by_basin, options = list(pageLength = 25) )
-#   
-```
