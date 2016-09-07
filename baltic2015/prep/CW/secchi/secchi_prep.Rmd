@@ -449,6 +449,7 @@ The trend value is the slope (m) of the linear regression multiplied by the year
     - No data for the Sound  
     - One option is no gap filling and calculating the status for differenet final years and over a different 5 year period
 ```{r what is the last year}
+
 ## get the last year of non-NA data
 last_year = secchi_target%>%
             filter(!is.na(mean_secchi))%>%

@@ -296,7 +296,7 @@ mpa_area_per_rgn = mpa_bhi_data %>%
                    dplyr::select(name_shape = Name, 
                                  BSPA_ID,
                                  BHI_ID, 
-                                 country = Country,
+                                 country = rgn_nam,
                                  status_shape = MPA_Status,
                                  mpa_area = AreaTot_Ha,
                                  date_est = Date_Est) %>%
@@ -306,7 +306,6 @@ mpa_area_per_rgn = mpa_bhi_data %>%
                              by = "BHI_ID")
 
 # write_csv(mpa_area_per_rgn, file.path(dir_prep, 'mpa_area_per_rgn.csv')) 
-
 
 ```
 
@@ -561,7 +560,6 @@ Even when a country has many MPAs that are just designated but not managed, it c
 
 The plot below compares the total MPA area of each mangement level with the reference point (10% EEZ). The black dots represent 10% EEZ. 
 
-**TODO**: fix the labels for the black dots. 
 
 ```{r MPA area vs management level}
 
@@ -599,7 +597,7 @@ Status was calculated as described in Section 3.1.2
 mgmt_weight_2 = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
                           weight = c(0.1, 0.6, 1, 1) )
                           
-mpa_mgmt_with_wt_2 = full_join( mgmt_weight_2, mpa_mgmt, 
+mpa_mgmt_with_wt_2 = full_join(mgmt_weight_2, mpa_mgmt, 
                               by = 'mgmt_status') 
 
 ### the reference point: 10% total eez per country - the same eez_data as in alternative 1 (4.1)
@@ -626,8 +624,6 @@ status_per_year_by_country_2 = full_join(cum_mpa_area_wt_2, eez_data, by = 'coun
   ungroup() %>%
   arrange(country, year)
 
-write_csv(status_per_year_by_country_2, file.path(dir_lsp, 'lsp_status_by_country_year_alt_2.csv'))
-
 
 # status by BHI_ID to be uploaded to layers folder
 status_by_country_2 = status_per_year_by_country_2 %>%
@@ -644,9 +640,7 @@ r.status_2 = mpa_mgmt_with_wt_2 %>%
            dplyr::select(rgn_id, 
                          score = status) %>%
            mutate(dimension = 'status') 
-                  
-write_csv(r.status_2, file.path(dir_lsp, 'lsp_status_by_rgn_alt_2.csv'))
-
+               
 
 ```
 
@@ -749,7 +743,7 @@ Xlsp_country_status = mpa_area_score %>%
   filter(year == max(year)) %>%
   dplyr::select(-year)
 
-write_csv(Xlsp_country_status, file.path(dir_lsp, 'lsp_status_by_country_year_alt_3.csv'))
+
 ```
 
 ### 5.3.2 Plot status by country
@@ -829,6 +823,21 @@ status_by_country_4 = status_per_year_by_country_4 %>%
   group_by(country) %>%
   filter(year == max(year)) %>%
   dplyr::select( -year)
+
+r.status.4 = mpa_mgmt_with_wt_4 %>%
+           filter(!duplicated(BHI_ID)) %>%
+           dplyr::select(rgn_id = BHI_ID, 
+                  country) %>%
+           full_join(status_by_country_4, 
+                     by = 'country') %>% 
+           dplyr::select(rgn_id, 
+                         score = status) %>%
+           mutate(dimension = 'status') 
+
+write_csv(status_by_country_4, file.path(dir_lsp, 'lsp_status_by_country_year_alt_4.csv'))
+
+write_csv(r.status.4, file.path(dir_lsp, 'lsp_status_by_bhi_rgn.csv'))
+write_csv(r.status.4, file.path(dir_layers, 'lsp_status_by_rgn_bhi2015.csv'))
 
 ```
 
