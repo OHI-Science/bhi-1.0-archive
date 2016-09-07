@@ -351,7 +351,6 @@ mpa_mgmt = right_join(mgmt_status, mpa_area_per_rgn,
                       # Mgmt_status = str_replace_all(mgmt_status, Managed, Designated_and_partially_managed),
                       date_est    = str_sub(date_est, start = -4)) # only select the year of establishment
              
-# write_csv(mpa_mgmt, file.path(dir_prep, 'mpa_mgmt_status_csv.csv'))
 
 # count number of MPAs in shape file with no matches in csv file. 
 # num_mismatch_new = dplyr::count(mpa_mgmt, !status_csv== "NA") 
@@ -834,8 +833,8 @@ r.status.4 = mpa_mgmt_with_wt_4 %>%
                          score = status) %>%
            mutate(dimension = 'status') 
 
+# save as .csv
 write_csv(status_by_country_4, file.path(dir_lsp, 'lsp_status_by_country_year_alt_4.csv'))
-
 write_csv(r.status.4, file.path(dir_lsp, 'lsp_status_by_bhi_rgn.csv'))
 write_csv(r.status.4, file.path(dir_layers, 'lsp_status_by_rgn_bhi2015.csv'))
 
@@ -907,8 +906,6 @@ area_trend_data = mpa_mgmt %>%
   mutate(area_cumulative = cumsum(area_total)) %>%
   ungroup()
 
-# write_csv(area_trend_data, file.path(dir_lsp, 'cumulative_mpa_area_trend_data.csv')) 
-
 trend_data_1 = area_trend_data %>%
   mutate(year = as.integer(year)) %>%
   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
@@ -944,7 +941,7 @@ Linear trend was drawn on the status scores of the past five years.
 
 ```{r trend alternative 2}
 
-trend_data_2 = status_per_year_by_country %>%
+trend_data_2 = status_per_year_by_country_4 %>% # chose status alt. 4 
   filter(!is.na(year)) %>% # one russian MPA didn't have info on established year
   mutate(year = as.integer(year)) %>%
   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
@@ -960,7 +957,13 @@ r.trend.2 = trend_data_2 %>%
   mutate(score = round(pmax(-1, pmin(1, coef(dlm)[['year']]*5/100)), 1)) %>%
   dplyr::select(country, score) 
 
-write_csv(r.trend.2,  file.path(dir_prep, 'lsp_trend_2.csv'))
+r.trend_by_bhi = dplyr::select(mpa_mgmt, BHI_ID, country) %>% 
+  filter(!duplicated(BHI_ID)) %>% 
+  full_join(r.trend.2,
+            by = "country") %>% 
+  dplyr::select(-country)
+  
+write_csv(r.trend_by_bhi, file.path(dir_layers, 'lsp_trend_bhi2015.csv'))
 
 ### plot r.status.2
 trend_2_plot <- ggplot(r.trend.2, aes(x = country, y = score)) +
@@ -1020,12 +1023,7 @@ r.trend.3 = mpa_mgmt %>%
          # score = ifelse(weight_csv > weight_shape, 0.2, -0.2), 
          # score = ifelse(weight_csv = weight_shape, 0, score))
 
-# write_csv(trend_data_4, file.path(dir_lsp, "trend_lsp_4.csv"))
 
 ```
 
-
-## 7. Prepare and write csv to layers  
-
-TODO: save and register data layer after BHI team decides which approach to take for the status and trend calculation
 

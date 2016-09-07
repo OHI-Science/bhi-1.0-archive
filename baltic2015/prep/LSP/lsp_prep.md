@@ -36,7 +36,6 @@ lsp\_prep
         -   [6.1 Alternative 1: Linear trend of cumulative MPA area](#alternative-1-linear-trend-of-cumulative-mpa-area)
         -   [6.2 Alternative 2: Linear trend of status scores](#alternative-2-linear-trend-of-status-scores)
         -   [6.3 Alternative 3: Difference between management status](#alternative-3-difference-between-management-status)
-    -   [7. Prepare and write csv to layers](#prepare-and-write-csv-to-layers)
 
 Preparation of Data Layers for Lasting Special Places (LSP)
 ===========================================================
@@ -415,8 +414,6 @@ status_by_BHI_ID_plot <- ggplot(r.status, aes(x = rgn_id, y = score)) +
 print(status_by_BHI_ID_plot)
 ```
 
-    ## Warning: Removed 1 rows containing missing values (position_stack).
-
 ![](lsp_prep_files/figure-markdown_github/plots-2.png)
 
 ### 5.1.3 Plot number of MPAs per country
@@ -514,8 +511,6 @@ Even when a country has many MPAs that are just designated but not managed, it c
 
 The plot below compares the total MPA area of each mangement level with the reference point (10% EEZ). The black dots represent 10% EEZ.
 
-**TODO**: fix the labels for the black dots.
-
 ``` r
 area_vs_mgmt_lvl = mpa_mgmt_with_wt %>%
   dplyr::select(BSPA_ID, country, mpa_area_km2, date_est, mgmt_status) %>%
@@ -552,7 +547,7 @@ Status was calculated as described in Section 3.1.2
 mgmt_weight_2 = data.frame( mgmt_status = c("Designated", "Designated_and_partly_managed", "Designated_and_managed", "Managed"),
                           weight = c(0.1, 0.6, 1, 1) )
                           
-mpa_mgmt_with_wt_2 = full_join( mgmt_weight_2, mpa_mgmt, 
+mpa_mgmt_with_wt_2 = full_join(mgmt_weight_2, mpa_mgmt, 
                               by = 'mgmt_status') 
 ```
 
@@ -584,8 +579,6 @@ status_per_year_by_country_2 = full_join(cum_mpa_area_wt_2, eez_data, by = 'coun
   ungroup() %>%
   arrange(country, year)
 
-write_csv(status_per_year_by_country_2, file.path(dir_lsp, 'lsp_status_by_country_year_alt_2.csv'))
-
 
 # status by BHI_ID to be uploaded to layers folder
 status_by_country_2 = status_per_year_by_country_2 %>%
@@ -602,8 +595,6 @@ r.status_2 = mpa_mgmt_with_wt_2 %>%
            dplyr::select(rgn_id, 
                          score = status) %>%
            mutate(dimension = 'status') 
-                  
-write_csv(r.status_2, file.path(dir_lsp, 'lsp_status_by_rgn_alt_2.csv'))
 ```
 
 ### 5.2.2 Plot status by country
@@ -635,8 +626,6 @@ status_by_BHI_ID_plot_2 <- ggplot(r.status_2, aes(x = rgn_id, y = score)) +
 
 print(status_by_BHI_ID_plot_2)
 ```
-
-    ## Warning: Removed 1 rows containing missing values (position_stack).
 
 ![](lsp_prep_files/figure-markdown_github/plot%20status%20by%20country%20of%20alternative%202-2.png)
 
@@ -724,8 +713,6 @@ Xlsp_country_status = mpa_area_score %>%
   group_by(country) %>%
   filter(year == max(year)) %>%
   dplyr::select(-year)
-
-write_csv(Xlsp_country_status, file.path(dir_lsp, 'lsp_status_by_country_year_alt_3.csv'))
 ```
 
 ### 5.3.2 Plot status by country
@@ -809,6 +796,21 @@ status_by_country_4 = status_per_year_by_country_4 %>%
   group_by(country) %>%
   filter(year == max(year)) %>%
   dplyr::select( -year)
+
+r.status.4 = mpa_mgmt_with_wt_4 %>%
+           filter(!duplicated(BHI_ID)) %>%
+           dplyr::select(rgn_id = BHI_ID, 
+                  country) %>%
+           full_join(status_by_country_4, 
+                     by = 'country') %>% 
+           dplyr::select(rgn_id, 
+                         score = status) %>%
+           mutate(dimension = 'status') 
+
+# save as .csv
+write_csv(status_by_country_4, file.path(dir_lsp, 'lsp_status_by_country_year_alt_4.csv'))
+write_csv(r.status.4, file.path(dir_lsp, 'lsp_status_by_bhi_rgn.csv'))
+write_csv(r.status.4, file.path(dir_layers, 'lsp_status_by_rgn_bhi2015.csv'))
 ```
 
 ### 5.4.2 Plot status per country
@@ -876,8 +878,6 @@ area_trend_data = mpa_mgmt %>%
   mutate(area_cumulative = cumsum(area_total)) %>%
   ungroup()
 
-# write_csv(area_trend_data, file.path(dir_lsp, 'cumulative_mpa_area_trend_data.csv')) 
-
 trend_data_1 = area_trend_data %>%
   mutate(year = as.integer(year)) %>%
   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
@@ -911,7 +911,7 @@ print(trend_1_plot)
 Linear trend was drawn on the status scores of the past five years.
 
 ``` r
-trend_data_2 = status_per_year_by_country %>%
+trend_data_2 = status_per_year_by_country_4 %>% # chose status alt. 4 
   filter(!is.na(year)) %>% # one russian MPA didn't have info on established year
   mutate(year = as.integer(year)) %>%
   tidyr::complete(year = full_seq(year, 1), nesting(country)) %>%
@@ -927,7 +927,13 @@ r.trend.2 = trend_data_2 %>%
   mutate(score = round(pmax(-1, pmin(1, coef(dlm)[['year']]*5/100)), 1)) %>%
   dplyr::select(country, score) 
 
-write_csv(r.trend.2,  file.path(dir_prep, 'lsp_trend_2.csv'))
+r.trend_by_bhi = dplyr::select(mpa_mgmt, BHI_ID, country) %>% 
+  filter(!duplicated(BHI_ID)) %>% 
+  full_join(r.trend.2,
+            by = "country") %>% 
+  dplyr::select(-country)
+  
+write_csv(r.trend_by_bhi, file.path(dir_layers, 'lsp_trend_bhi2015.csv'))
 
 ### plot r.status.2
 trend_2_plot <- ggplot(r.trend.2, aes(x = country, y = score)) +
@@ -986,8 +992,6 @@ trend_3_plot <- ggplot(trend_data_3, aes(x = country, y = score)) +
 print(trend_3_plot)
 ```
 
-    ## Warning: Stacking not well defined when ymin != 0
-
 ![](lsp_prep_files/figure-markdown_github/trend%20alternative%203-1.png)
 
 ``` r
@@ -1003,11 +1007,4 @@ r.trend.3 = mpa_mgmt %>%
          # OR:
          # score = ifelse(weight_csv > weight_shape, 0.2, -0.2), 
          # score = ifelse(weight_csv = weight_shape, 0, score))
-
-# write_csv(trend_data_4, file.path(dir_lsp, "trend_lsp_4.csv"))
 ```
-
-7. Prepare and write csv to layers
-----------------------------------
-
-TODO: save and register data layer after BHI team decides which approach to take for the status and trend calculation
