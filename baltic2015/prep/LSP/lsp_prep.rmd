@@ -830,8 +830,7 @@ r.status.4 = mpa_mgmt_with_wt_4 %>%
            full_join(status_by_country_4, 
                      by = 'country') %>% 
            dplyr::select(rgn_id, 
-                         score = status) %>%
-           mutate(dimension = 'status') 
+                         score = status) 
 
 # save as .csv
 write_csv(status_by_country_4, file.path(dir_lsp, 'lsp_status_by_country_year_alt_4.csv'))
