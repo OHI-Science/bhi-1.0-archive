@@ -68,10 +68,6 @@ Overlay trawl effort with BHI shape files so can assign effort per each BHI regi
 Use most recent year: 2013  
 Xtrawl_r_y = sum hours within a BHI region in each year *y* in each region *r* / area of BHI region *r* (hours/km2)  
 
-
-
-
-
  
 ### 3.2 Rescale data
 Calculate Xtrawl_r_y for all data years.  
@@ -80,6 +76,10 @@ min value = 0
 
 max value = max(Xtrawl_r_y) in any area  
 *It should be discussed with the team if this is okay, or if think even higher pressure in the past, should take pressure_max =  max(XtrawL_r_y) x 1.2  or some greater percentage?*  
+
+for now: 
+
+rescaled value = (max - current) / (max - min)
 
 
 ### 3.3. Potential issues with pressure model  
@@ -126,8 +126,9 @@ dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'l
 # withr::with_dir(
 #   root_file("DESCRIPTION"))
 
-
-dir_trawl    = file.path(dir_prep, 'pressures/bottom_trawling')
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+dir_prep = make_path('baltic2015/prep') # replaces  file.path(dir_baltic, 'layers')
+dir_trawl = file.path(dir_prep, 'pressures/bottom_trawling')
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
 create_readme(dir_trawl, 'bottom_trawling_prep.rmd') 
@@ -270,9 +271,9 @@ write_csv(hours_per_area, file.path(dir_trawl, 'temp_data', sprintf('hours_per_a
 
 ### 4.5 Calculate and Plot Fising Hours per km2
 
-Plot below shows the trawling efforts per area in each region in each year. Note that each year's data covers slightly different BHI regions, and contain 33-36 regions out of 42. 
+Plot below shows the trawling efforts per area in each region in each year. Note that each year's data covers slightly different BHI regions, and contain 33-37 regions out of 42. 
 
-TODO: May need to fill in the missing data as "0". 
+For years when a region reported no trawling data, the data gap was filled with the average trawling efforts of the rest of the years for that region. 
 
 ```{r calculate and plot hours per area region}
 
@@ -305,9 +306,39 @@ plot_hours_area = ggplot(hours_per_area_all, aes(x = BHI_ID, y = hours_per_area,
        y = 'Hours per km2')
 
 print(plot_hours_area)
+
+# fill in the NA's in hours_per_area, select the most recent year 2014
+hours_per_area_filled <-  hours_per_area_all %>% 
+  mutate(year = as.integer(as.character(year))) %>% 
+  tidyr::complete(year = full_seq(year, 1), nesting(BHI_ID)) %>% 
+  group_by(BHI_ID) %>% 
+  mutate(ave_hours = mean(hours_per_area, na.rm = TRUE), 
+         hours_per_area = ifelse(is.na(hours_per_area), ave_hours, hours_per_area)) %>% 
+  ungroup
   
+
+# rescale hours_per_area
+
+bottom_trawling_score <- hours_per_area_filled %>% 
+  group_by(BHI_ID) %>% 
+  mutate(max = max(hours_per_area), 
+         min = min(hours_per_area),
+         score = round((hours_per_area - min) / (max - min), 1)) %>% 
+  filter(year == 2014) %>% 
+  dplyr::select(BHI_ID, 
+         score)
+
+# fill in the missing BHI_IDs, as this data set only contains 37 out of 42 BHI regions
+BHI_rgns <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
+  dplyr::select(BHI_ID)
+
+bottom_trawling_score <- full_join(BHI_rgns, bottom_trawling_score, 
+                                   by = "BHI_ID") %>% 
+  mutate(score = ifelse(is.na(score), 0, score), 
+         score = ifelse(BHI_ID == '32', 0, score))
+
+write_csv(bottom_trawling_score, file.path(dir_layers, 'bottom_trawling_score_bhi2015.csv'))
 
 ```
  
 
-### 4.7 
