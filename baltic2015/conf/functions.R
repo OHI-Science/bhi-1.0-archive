@@ -824,33 +824,27 @@ ICO = function(layers){
 
 LSP = function(layers){
 
-  ## TO DO......Add layers when finalized
+# status
 
-  ## Select Layers
+lsp_status <- SelectLayersData(layers, layers = 'lsp_status') %>%
+  dplyr::select(region_id = id_num,
+         score = val_num) %>%
+  mutate(dimension = 'status'); head(lsp_status)
 
-    ## Status
+# trend
 
-    ## Trend
+lsp_trend <-  SelectLayersData(layers, layers = 'lsp_trend') %>%
+  dplyr::select(region_id = id_num,
+                score = val_num) %>%
+  mutate(dimension = 'trend'); head(lsp_trend)
 
+# combine scores
 
-
-    ## proxy scores
-
-        scores = bind_rows(data.frame(region_id = seq(1,42,1),
-                          dimension = as.character(rep("status",42)),
-                          score = rep (100, 42)),
-                          data.frame(region_id = seq(1,42,1),
-                                     dimension = as.character(rep("trend",42)),
-                                     score = rep (0, 42))
-                            ) %>%
-                  mutate(goal = 'LSP')
-
-
-  # return scores
-
+scores <- rbind(lsp_status, lsp_trend) %>%
+  mutate(goal = 'LSP')
 
     return(scores)
-} ## End LSP function
+}
 
 
 SP = function(scores){

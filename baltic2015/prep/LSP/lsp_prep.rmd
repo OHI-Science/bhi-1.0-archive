@@ -960,7 +960,8 @@ r.trend_by_bhi = dplyr::select(mpa_mgmt, BHI_ID, country) %>%
   filter(!duplicated(BHI_ID)) %>% 
   full_join(r.trend.2,
             by = "country") %>% 
-  dplyr::select(-country)
+  dplyr::select(rgn_id = BHI_ID, 
+                score)
   
 write_csv(r.trend_by_bhi, file.path(dir_layers, 'lsp_trend_bhi2015.csv'))
 
