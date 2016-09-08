@@ -17,15 +17,24 @@ dir_fis = file.path(dir_prep, 'FIS')
 
 ## Read in data layers
 scores <- read.csv(file.path(dir_fis,
-                             'data/FIS_scores.csv'))
+                             'data/FIS_scores.csv')) %>%
+  filter(stock %in% c('cod_2224', 'cod_2532')) # only select cod, and remove sprat and herring. .
+                                               # since they are not for human consumption. Doesn't fit the goal philosophy
+                                               # Conversation with Thorsten (9/9/2016)
+# unique(scores$stock)
+# cod_2224 cod_2532 her_3a22 her_2532 her_riga her_30   spr_2232
+
+
 colnames(scores) # "region_id" "stock"     "year"      "metric"    "score"
+
 scores = scores %>%
-         dplyr::rename(rgn_id=region_id)
+         dplyr::rename(rgn_id = region_id)
 
 ## separate objects for bbmsy and ffmsy
 scores.bbmsy = scores %>%
                filter(metric == "bbmsy") %>%
                select(-metric)
+
 scores.ffmsy = scores %>%
               filter(metric == "ffmsy") %>%
               select(-metric)
@@ -35,12 +44,23 @@ landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
 colnames(landings) # "region_id" "stock"     "year"      "landings"
 
 landings = landings %>%
-  dplyr::rename(rgn_id=region_id)
+  dplyr::rename(rgn_id=region_id) %>%
+  filter(stock %in% c('cod_2224', 'cod_2532')) # selecting only cod
+
 
 ## save to layers folder
 write.csv(scores.bbmsy, file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'), row.names=FALSE)
 write.csv(scores.ffmsy, file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'), row.names=FALSE)
 write.csv(landings, file.path(dir_layers ,'fis_landings_bhi2015.csv'), row.names=FALSE)
+
+
+############## separate NP data (sprat and herrings) #############
+landings_NP = landings %>%
+  dplyr::rename(rgn_id=region_id) %>%
+  filter(!stock %in% c('cod_2224', 'cod_2532')) # remove cod
+
+write.csv(landings_NP, file.path(dir_layers, 'np_landings_bhi2015.csv'), row.names = FALSE)
+##################################################################
 
 ### save for VISUALIZE
 fis_bbmsy_time_data = scores.bbmsy %>%
@@ -225,7 +245,7 @@ trend = read.csv(file.path(dir_fis,
 
 
 ## Plot FIS status and trend by BHI region
-windows()
+# windows()
 par(mfrow=c(1,2), mar=c(1,1,1,1), oma=c(2,2,2,2))
 plot(status~region_id, data=status, pch=19, cex=1,
      xlim=c(0,43), ylim=c(0,100),
