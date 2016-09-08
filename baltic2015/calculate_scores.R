@@ -17,35 +17,19 @@ scores = CalculateAll(conf, layers)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
-## plot maps of scores
-source('PrepSpatial.r')  # until added to ohicore
-source('PlotMap.r')      # until added to ohicore
-source('PlotMapMulti.r') # until added to ohicore
+## Plots of OHI scores ----
+source('PrepSpatial.r')     # until added to ohicore
+source('PlotMap.r')         # until added to ohicore
+source('PlotMapMulti.r')    # until added to ohicore
+source('PlotFlowerMulti.r') # until added to ohicore
+
+## Make Maps ----
 PlotMapMulti(scores       = scores,
              spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
              path_figures = 'reports/figures')
 PlotMap(scores %>% filter(goal == 'CW'), fig_path = 'reports/figures/map_CW.png')
 
+## Make Flower Plots ----
+## see https://github.com/OHI-Science/ohi-global/blob/draft/ESM_270/OHI_Instructions.Rmd#choose-your-region
+PlotFlowerMulti(rgns_to_plot = 0:42)
 
-## Display app locally.
-## Note 1: to stop the app, type Ctrl+C or Esc, or closing the window.
-## Note 2: if it does not load properly the first time, stop and run again.
-source('launch_app_code.r')
-
-
-## Display app on ohi-science.org/bhi (merge to published branch)
-merge_branches = F
-
-if (merge_branches) {
-  # switch to draft branch and get latest
-  system('git checkout draft')
-  system('git commit -m "committing draft branch"')
-  system('git pull')
-  # merge published with the draft branch
-  system('git checkout published')
-  system('git merge draft')
-  system('git push origin published')
-
-  # switch to draft branch and get latest
-  system('git checkout draft; git pull')
-}
