@@ -335,10 +335,21 @@ BHI_rgns <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = 
 bottom_trawling_score <- full_join(BHI_rgns, bottom_trawling_score, 
                                    by = "BHI_ID") %>% 
   mutate(score = ifelse(is.na(score), 0, score), 
-         score = ifelse(BHI_ID == '32', 0, score))
+         score = ifelse(BHI_ID == '32', 0, score)) %>% 
+  dplyr::select(rgn_id = BHI_ID, 
+         pressure_score = score)
 
-write_csv(bottom_trawling_score, file.path(dir_layers, 'bottom_trawling_score_bhi2015.csv'))
+write_csv(bottom_trawling_score, file.path(dir_layers, 'hab_bottom_trawl_bhi2015.csv')) 
 
 ```
  
+# plot bottom trawling scores per region 
+
+```{r plot scores}
+
+ggplot(bottom_trawling_score, aes(x = rgn_id, y = pressure_score)) +
+  geom_bar(stat = 'identity')
+
+
+```
 
