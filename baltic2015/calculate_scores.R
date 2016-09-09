@@ -31,5 +31,5 @@ PlotMap(scores %>% filter(goal == 'CW'), fig_path = 'reports/figures/map_CW.png'
 
 ## Make Flower Plots ----
 ## see https://github.com/OHI-Science/ohi-global/blob/draft/ESM_270/OHI_Instructions.Rmd#choose-your-region
-PlotFlowerMulti(rgns_to_plot = 0:42)
+PlotFlowerMulti(rgns_to_plot = 0:42, assessment_name = 'Baltic')
 
