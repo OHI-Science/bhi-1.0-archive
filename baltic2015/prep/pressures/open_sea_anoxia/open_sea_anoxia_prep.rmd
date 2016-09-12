@@ -441,7 +441,7 @@ Mean value was rescaled using max and min values, and was kept between 0 and 1.
 
 anoxia_all_rgns = full_join(BP_anoxic_area, GoF_anoxic_area, 
                             by = c("BHI_ID", "mean_area", "max_area", "min_area")) %>%
-  mutate(pressure_score = round((mean_area - min_area) / (max_area - min_area), 1), 
+  mutate(pressure_score = round((mean_area - min_area) / (max_area - min_area), 2), 
          pressure_score = str_replace_all(pressure_score, "NaN", "0")) %>%
   dplyr::select(rgn_id = BHI_ID, 
                 pressure_score ) %>% 
@@ -451,3 +451,6 @@ write_csv(anoxia_all_rgns, file.path(dir_layers, "hab_anoxia_bhi2015.csv"))
 
 ``` 
 
+#### trend of anoxia data 
+
+Anoxia will be added to the 
