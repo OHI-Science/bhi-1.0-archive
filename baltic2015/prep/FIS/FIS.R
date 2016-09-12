@@ -10,59 +10,82 @@ dir_baltic = '~/github/bhi/baltic2015'
 dir_layers = file.path(dir_baltic, 'layers')
 dir_prep   = file.path(dir_baltic, 'prep')
 dir_fis = file.path(dir_prep, 'FIS')
+dir_np  = file.path(dir_prep, 'NP')
 
 
 ###########################################################################
-## Layers for layers.csv
 
-## Read in data layers
-scores <- read.csv(file.path(dir_fis,
-                             'data/FIS_scores.csv')) %>%
-  filter(!stock == 'spr_2232') # only select cod and herring. .
-                               # since sprat is not used for human consumption. Doesn't fit the goal philosophy
-                               # Conversation with Thorsten (9/9/2016)
-# unique(scores$stock)
-# cod_2224 cod_2532 her_3a22 her_2532 her_riga her_30   spr_2232
+## prepare layers for FIS and NP goals.
+  ## FIS stocks: cod_2224, cod_2532, her_3a22, her_2532, her_riga, her_30
+  ## NP  stocks: spr_2232 # sprat is fished, but not for human consumption. NP goal.
+  # unique(scores$stock)
+  # cod_2224 cod_2532 her_3a22 her_2532 her_riga her_30   spr_2232
 
 
-colnames(scores) # "region_id" "stock"     "year"      "metric"    "score"
+## Read in data layers ----
+scores <- read.csv(file.path(dir_fis, 'data/FIS_scores.csv')) %>%
+  dplyr::rename(rgn_id = region_id)
 
-scores = scores %>%
-         dplyr::rename(rgn_id = region_id)
-
-## separate objects for bbmsy and ffmsy
-scores.bbmsy = scores %>%
-               filter(metric == "bbmsy") %>%
-               select(-metric)
-
-scores.ffmsy = scores %>%
-              filter(metric == "ffmsy") %>%
-              select(-metric)
+landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv')) %>%
+  dplyr::rename(rgn_id=region_id)
 
 
-landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
-colnames(landings) # "region_id" "stock"     "year"      "landings"
+## filter layers for FIS and NP, save.
 
-landings = landings %>%
-  dplyr::rename(rgn_id=region_id) %>%
-  filter(!stock == 'spr_2232') # selecting only sprat
+goal_stocks = c('FIS', 'NP')
+for (g in goal_stocks) { # g = 'FIS'
+
+  ## select the stocks appropriate to the goal
+  if (g == 'FIS') {
+
+    scores = scores %>%
+      filter(!stock == 'spr_2232') # only select cod and herring
+
+    landings = landings %>%
+      filter(!stock == 'spr_2232') # only select cod and herring
+
+  } else if (g == 'NP') {
+
+     scores = scores %>%
+      filter(stock == 'spr_2232') # only select sprat
+
+     landings = landings %>%
+       filter(stock == 'spr_2232') # only select sprat
+
+  }
 
 
-## save to layers folder
-write.csv(scores.bbmsy, file.path(dir_layers ,'fis_bbmsy_bhi2015.csv'), row.names=FALSE)
-write.csv(scores.ffmsy, file.path(dir_layers ,'fis_ffmsy_bhi2015.csv'), row.names=FALSE)
-write.csv(landings, file.path(dir_layers ,'fis_landings_bhi2015.csv'), row.names=FALSE)
+  ## separate objects for bbmsy and ffmsy
+  scores.bbmsy = scores %>%
+    filter(metric == "bbmsy") %>%
+    select(-metric)
+
+  scores.ffmsy = scores %>%
+    filter(metric == "ffmsy") %>%
+    select(-metric)
 
 
-############## separate NP data (sprat only) #############
+  ## save to layers folder
+  if (g == 'FIS') {
 
-landings_NP = read.csv(file.path(dir_fis,'data/FIS_landings.csv')) %>%
-  dplyr::rename(rgn_id=region_id) %>%
-  filter(stock == 'spr_2232')
+    write.csv(scores.bbmsy, file.path(dir_layers, 'fis_bbmsy_bhi2015.csv'),    row.names=FALSE)
+    write.csv(scores.ffmsy, file.path(dir_layers, 'fis_ffmsy_bhi2015.csv'),    row.names=FALSE)
+    write.csv(landings,     file.path(dir_layers, 'fis_landings_bhi2015.csv'), row.names=FALSE)
 
-write.csv(landings_NP, file.path(dir_layers, 'np_landings_bhi2015.csv'), row.names = FALSE)
+  } else if (g == 'NP') {
+
+    write.csv(scores.bbmsy, file.path(dir_layers, 'np_bbmsy_bhi2015.csv'),    row.names=FALSE)
+    write.csv(scores.ffmsy, file.path(dir_layers, 'np_ffmsy_bhi2015.csv'),    row.names=FALSE)
+    write.csv(landings,     file.path(dir_layers, 'np_landings_bhi2015.csv'), row.names=FALSE)
+
+  }
+
+}
+
 
 ##################################################################
+
+## NING TODO: generalize this to visualize NP data too
 
 ### save for VISUALIZE
 fis_bbmsy_time_data = scores.bbmsy %>%
