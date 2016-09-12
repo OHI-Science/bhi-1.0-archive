@@ -444,7 +444,8 @@ anoxia_all_rgns = full_join(BP_anoxic_area, GoF_anoxic_area,
   mutate(pressure_score = round((mean_area - min_area) / (max_area - min_area), 1), 
          pressure_score = str_replace_all(pressure_score, "NaN", "0")) %>%
   dplyr::select(rgn_id = BHI_ID, 
-                pressure_score )
+                pressure_score ) %>% 
+    complete(rgn_id = full_seq(rgn_id, 1), fill = list(pressure_score = 0))
 
 write_csv(anoxia_all_rgns, file.path(dir_layers, "hab_anoxia_bhi2015.csv"))
 
