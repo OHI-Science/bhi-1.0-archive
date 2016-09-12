@@ -6,6 +6,7 @@ library(dplyr) #install.packages('dplyr')
 PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # dataframe with regions, goals, dimensions, scores
                             rgns_to_plot, # vector of regions to plot. Can be single many, eg 1 or c(1, 5)
                             rgn_names       = read.csv('layers/rgn_global.csv'),
+                            assessment_name = 'Global',
                             goals           = read.csv('conf/goals.csv'),
                             fld_value_id    = 'region_id', # header of scores variable; likely 'rgn_id' or 'region_id'
                             fld_value_score = 'score', # header of scores variable; likely 'score' or 'value'
@@ -18,7 +19,7 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
                             overwrite       = TRUE,
                             color_scheme    = 'new' ) {
   # TODO: interactive = FALSE
-  # DEBUG: scores=read.csv('scores.csv'); rgn_names = read.csv('layers/rgn_global.csv'); goals = read.csv('conf/goals.csv'),fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; path_figures = 'reports/figures'; scale_label = 'score';  scale_limits = c(0, 100);overwrite = TRUE; color_scheme = 'new'
+  # DEBUG: scores=read.csv('scores.csv'); rgn_names = read.csv('layers/rgn_global.csv'); goals = read.csv('conf/goals.csv'); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; path_figures = 'reports/figures'; scale_label = 'score';  scale_limits = c(0, 100);overwrite = TRUE; color_scheme = 'new'
 
   ## setup ----
 
@@ -67,12 +68,16 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
   #   arrange(country) %>%
   #   filter(region_id != 213)
 
+  ## add assessment area ('Global') to rgn_names
+  rgn_names <- rgn_names %>%
+    mutate(label = as.character(label)) %>%
+    bind_rows(data_frame(rgn_id = as.integer(0), label = assessment_name))
 
   ## loop through regions
   for (r in rgns_to_plot){  # r=0
 
     ## region name for title
-    rgn_name = rgn_names %>%
+    rgn_name <- rgn_names %>%
       dplyr::filter(rgn_id == r)
     rgn_name = rgn_name$label
     print(sprintf('Flower Plot for %s (rgn_id %s) . . .', rgn_name, r))
