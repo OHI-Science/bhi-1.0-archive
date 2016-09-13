@@ -132,6 +132,7 @@ write.csv(fis_landings_time_data, file.path(dir_baltic,'visualize/fis_landings_t
 
 scores <- read.csv(file.path(dir_fis,
                              'data/FIS_scores.csv')) %>%
+  filter(!stock == 'spr_2232') %>%
   spread(metric, score)
 
 ###########################################################################
@@ -178,7 +179,8 @@ scores <- rbind(B_scores, F_scores) %>%
 ## STEP 4: calculating the weights.
 #############################################
 
-landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv'))
+landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv')) %>%
+  filter(!stock == 'spr_2232')
 
 ##### Subset the data to include only the most recent 10 years
 landings <- landings %>%
