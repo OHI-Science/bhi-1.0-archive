@@ -10,22 +10,19 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
                             goals           = read.csv('conf/goals.csv'),
                             fld_value_id    = 'region_id', # header of scores variable; likely 'rgn_id' or 'region_id'
                             fld_value_score = 'score', # header of scores variable; likely 'score' or 'value'
-                            dim_choice      = 'score', # header of scores variable; likely "future", "pressures", "resilience", "score", "status", "trend"
+                            dim_choice      = 'score', # header of scores variable; likely "future", "pressures", "resilience", "score", "status", "trend". This should be optional so if scores is only a 2-column dataframe it still works
                             print_fig       = FALSE,
                             save_fig        = TRUE,
                             name_fig        = 'reports/figures/flower',
-                            # scale_label     = 'score',
-                            # scale_limits    = c(0, 100),
                             overwrite       = TRUE,
                             color_scheme    = 'new' ) {
-  # TODO: interactive = FALSE
-  # DEBUG: scores=read.csv('scores.csv'); rgn_names = read.csv('layers/rgn_global.csv'); goals = read.csv('conf/goals.csv'); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; path_figures = 'reports/figures'; scale_label = 'score';  scale_limits = c(0, 100);overwrite = TRUE; color_scheme = 'new'
+  # DEBUG: scores=read.csv('scores.csv'); rgn_names = read.csv('layers/rgn_global.csv'); goals = read.csv('conf/goals.csv'); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; path_figures = 'reports/figures'; overwrite = TRUE; color_scheme = 'new'
 
   ## setup ----
 
   ## check field values in scores column names
   if ( !fld_value_score %in% names(scores) | !fld_value_id %in% names(scores) ) {
-    stop(sprintf('Column name "%s" or "%s" not found in scores variable, please modify PlotFlower() function call.',
+    stop(sprintf('PlotFlowerMulti() is attempting to plot `%s` and `%s` but one or both of these are not found.',
                  fld_value_score, fld_value_id))
   }
 
@@ -42,14 +39,24 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
   #   rbind(data.frame(rgn_id=0, w_fis=mean(weights$w_fis)))
   #
 
-  goals_supra = na.omit(unique(conf$goals$parent)) # goals comprised of subgoals, not included in plot
+  ## identify goals to include in flower plot ----
 
+  ## goals that have subgoals; not included in flower plot
+  goals_supra <- goals %>%
+    filter(parent != '') %>%
+    unique()
+
+  ## identify goals that will be plotted
   goals <- goals %>%
-    dplyr::filter(!(goal %in% goals_supra)) %>%
+    dplyr::filter(!(goal %in% goals_supra$parent)) %>%
     dplyr::select(goal, order_color, order_hierarchy, weight, name_flower) %>%
     dplyr::mutate(name_flower = gsub("\\n", "\n", name_flower, fixed = TRUE)) %>%
     dplyr::mutate(goal = as.character(goal)) %>%
     dplyr::arrange(order_hierarchy)
+
+  message(sprintf('These will be included in the flower plot: %s.
+                  Note: "supragoals" (goals that have subgoals) are not plotted',
+                  paste(goals$goal, collapse = ', ')))
 
   ## TODO: add check to ensure goals columns are numeric with decimals (not strings with commas)
 
@@ -58,15 +65,6 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
     dplyr::filter(region_id <= 250) %>%       # get rid of high seas regions
     dplyr::filter(region_id != 213)
 
-  # TODO, not sure this is needed
-  # region names, ordered by GLOBAL and alphabetical
-  # rgn_names2 = rbind(
-  #   data.frame(
-  #     region_id=0,
-  #     country='GLOBAL'),
-  #   rgn_names) %>%
-  #   arrange(country) %>%
-  #   filter(region_id != 213)
 
   ## add assessment area ('Global') to rgn_names
   rgn_names <- rgn_names %>%
@@ -115,10 +113,10 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
 
     if (overwrite | !file.exists(fig_png)){
 
-       png(fig_png, width=res*7, height=res*7, bg = "transparent")
+      png(fig_png, width=res*7, height=res*7, bg = "transparent")
 
       # TODO: also a pdf
-       # fig_pdf = sprintf('%s/flowerPlots/flower_%s.pdf', path_figures, gsub(' ','_', rgn_name))
+      # fig_pdf = sprintf('%s/flowerPlots/flower_%s.pdf', path_figures, gsub(' ','_', rgn_name))
       # if (overwrite | !file.exists(fig_pdf)){
       #       pdf(fig_pdf)
 
