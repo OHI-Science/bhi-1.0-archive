@@ -1046,16 +1046,36 @@ NUT = function(layers){
   #cw_nu_trend= read.csv('~github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
 
 
-  cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+  secchi_status = SelectLayersData(layers, layers='cw_nut_secchi_status') %>%
+    dplyr::select(rgn_id = id_num, sec_status = val_num)
 
-  cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+  secchi_trend  = SelectLayersData(layers, layers='cw_nut_secchi_trend') %>%
+    dplyr::select(rgn_id = id_num, sec_trend = val_num)
 
+  anoxia_status = SelectLayersData(layers, layers='cw_nut_anoxia_status') %>%
+    dplyr::select(rgn_id = id_num, anox_status = val_num)
+
+  anoxia_trend = SelectLayersData(layers, layers='cw_nut_anoxia_status') %>%
+    dplyr::select(rgn_id = id_num, anox_trend = val_num)
+
+  nut_status = full_join(secchi_status, anoxia_status, by = 'rgn_id') %>%
+    mutate(score = (sec_status + anox_status)/2, # did not remove NA, and result in NA as status for rgions 3:8
+           dimension = 'Status')  %>%
+    dplyr::select(rgn_id,
+                  score,
+                  dimension)
+
+
+
+  nut_trend = full_join(secchi_trend, anoxia_trend, by = 'rgn_id') %>%
+    mutate(score = round((sec_trend + anox_trend)/2, 2),
+           dimension = 'Trend') %>%
+    dplyr::select(rgn_id,
+                  score,
+                  dimension)
 
   # rbind NUT status and trend to one dataframe
-  scores = cw_nu_status %>%
-    rbind(cw_nu_trend) %>%
+  scores =  rbind(nut_status, nut_trend) %>%
     mutate(goal = 'NUT') %>%
     dplyr::select(goal,
                   dimension,
