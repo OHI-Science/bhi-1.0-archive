@@ -17,7 +17,9 @@ Our intention is to use three equally weighted indicators to capture different d
 ### Nutrients
 [See `secchi_prep.rmd` for information on indicators, data, and data prep.](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/secchi/secchi_prep.md)  
 
-For this goal we will use mean summer secchi relative to the HELCOM target to measure the nutrient sub-component status and trend.  
+[See `anoixa_prep.rmd` for information on data and data prep](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/open_sea_anoxia/open_sea_anoxia_prep.md)
+
+For this goal we will use mean summer secchi (relative to the HELCOM target) and open sea anoxia to measure the nutrient sub-component status and trend.  
 
 ### Trash
 [See `trash/README.rmd` `trash_prep.rmd` for more details.](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/trash_prep.rmd)  
