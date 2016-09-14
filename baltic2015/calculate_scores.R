@@ -17,19 +17,18 @@ scores = CalculateAll(conf, layers)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
-## Plots of OHI scores ----
-source('PrepSpatial.r')     # until added to ohicore
-source('PlotMap.r')         # until added to ohicore
-source('PlotMapMulti.r')    # until added to ohicore
-source('PlotFlowerMulti.r') # until added to ohicore
-
-## Make Maps ----
+## plot maps of scores
+source('PrepSpatial.r')  # until added to ohicore
+source('PlotMap.r')      # until added to ohicore
+source('PlotMapMulti.r') # until added to ohicore
 PlotMapMulti(scores       = scores,
              spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
              path_figures = 'reports/figures')
 PlotMap(scores %>% filter(goal == 'CW'), fig_path = 'reports/figures/map_CW.png')
 
-## Make Flower Plots ----
-## see https://github.com/OHI-Science/ohi-global/blob/draft/ESM_270/OHI_Instructions.Rmd#choose-your-region
-PlotFlowerMulti(rgns_to_plot = 0:42, assessment_name = 'Baltic')
 
+## Make Flower Plots ----
+source('PlotFlowerMulti.R')
+PlotFlowerMulti(rgns_to_plot = 0:42,
+                rgn_names       = read.csv('spatial/regions_lookup_complete.csv'),
+                assessment_name = 'Baltic') # unique(scores$region_id)
