@@ -4,6 +4,8 @@
 ##################################
 library(dplyr)
 library(tidyr)
+library(readr)
+library(stringr)
 
 ## Directories
 dir_baltic = '~/github/bhi/baltic2015'
@@ -321,3 +323,60 @@ ggplot(status)+ geom_point(aes(year,status)) +
                                    hjust=.5, vjust=.5))
 
 
+##### Compare FIS status and trend with and without sprat -  9.13.2016
+
+## read in files
+
+status_old <- read_csv(file.path(dir_fis, 'data', 'FIS_status_6.2016.csv')) %>%
+  dplyr::rename(with_sprat = status) #head(status_old)
+trend_old <-  read_csv(file.path(dir_fis, 'data', 'FIS_trend_6.2016.csv')) %>%
+  dplyr::rename(with_sprat = trend)
+status_new <- read_csv(file.path(dir_fis, 'data', 'FIS_status.csv')) %>%
+  dplyr::rename(without_sprat = status)
+trend_new <- read_csv(file.path(dir_fis, 'data', 'FIS_trend.csv')) %>%
+  dplyr::rename(without_sprat = trend)
+
+## combine old and new
+status_all <- full_join(status_old, status_new, by = "region_id") %>%
+  gather(key = type, value = status, 2:3 )
+
+trend_all <- full_join(trend_old, trend_new, by = 'region_id') %>%
+  gather(key = type, value = trend, 2:3)
+
+## plot comparison
+ggplot(status_all, aes(region_id, status, fill = type)) +
+  geom_bar(position = 'dodge', stat = 'identity') +
+  labs(title = 'Comparison of FIS status with and without sprat')
+
+ggplot(trend_all, aes(region_id, trend, fill = type)) +
+  geom_bar(position = 'dodge', stat = 'identity') +
+  labs(title = 'Comparison of FIS trend with and without sprat')
+
+#### comparing FP scores with and without sprat
+
+fp_old = read_csv(file.path(dir_baltic, 'scores_old.csv')) %>%
+  filter(goal == "FP",
+         dimension %in% c("status", "trend")) %>%
+  mutate(dimension = str_replace_all(dimension, "status", "old_status"),
+         dimension = str_replace_all(dimension, "trend", "old_trend"))
+
+fp_new = read_csv(file.path(dir_baltic, 'scores.csv')) %>%
+  filter(goal == "FP",
+         dimension %in% c("status", "trend")) %>%
+  mutate(dimension = str_replace_all(dimension, "status", "new_status"),
+         dimension = str_replace_all(dimension, "trend", "new_trend"))
+
+fp_all = rbind(fp_old, fp_new)
+
+status = fp_all %>%
+  filter(dimension %in% c("old_status", "new_status"))
+
+trend = fp_all %>%
+  filter(dimension %in% c("old_trend", "new_trend"))
+
+# plot
+ggplot(status, aes(region_id, score, fill = dimension)) +
+  geom_bar(position = 'dodge', stat = 'identity')
+
+ggplot(trend, aes(region_id, score, fill = dimension)) +
+  geom_bar(position = 'dodge', stat = 'identity')

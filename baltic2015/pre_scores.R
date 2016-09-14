@@ -17,6 +17,7 @@ if (!"ohicore" %in% (.packages())) {
 
   library(tidyr)
   library(dplyr)
+  library(stringr)
   library(reshape2)
   library(psych)
 
