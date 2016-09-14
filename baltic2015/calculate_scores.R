@@ -10,6 +10,11 @@
 ## When you are done with all the goal model modifications, you can come back here, and run the following scripts, which combines "current status" and "trend"
 ## with pressures and resilience to finish your OHI scores calculations.
 
+### To Debug:
+# remove.packages('ohicore') #remove original ohicore
+# devtools::load_all('~/github/ohicore') #load regional ohicore so not to affect the original ohicore accidentally
+# debug=F
+
 source('~/github/bhi/baltic2015/pre_scores.R')
 
 ## calculate scenario scores
