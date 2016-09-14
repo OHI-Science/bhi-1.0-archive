@@ -54,9 +54,8 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
     dplyr::mutate(goal = as.character(goal)) %>%
     dplyr::arrange(order_hierarchy)
 
-  message(sprintf('These will be included in the flower plot: %s.
-                  Note: "supragoals" (goals that have subgoals) are not plotted',
-                  paste(goals$goal, collapse = ', ')))
+  cat(sprintf('These will be included in the flower plot: %s. \nNote: "supragoals" (goals that have subgoals) are not plotted',
+              paste(goals$goal, collapse = ', ')))
 
   ## TODO: add check to ensure goals columns are numeric with decimals (not strings with commas)
 
@@ -69,10 +68,16 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
   ## add assessment area ('Global') to rgn_names
   rgn_names <- rgn_names %>%
     mutate(label = as.character(label)) %>%
-    bind_rows(data_frame(rgn_id = as.integer(0), label = assessment_name))
+    bind_rows(data_frame(rgn_id = as.integer(0), label = assessment_name)) %>%
+    distinct(rgn_id, label) # this will remove rgn_id 0 if was doubled up
 
   ## loop through regions
   for (r in rgns_to_plot){  # r=0
+
+    # error if rgn_id is not listed in rgn_names variable
+    if (!r %in% rgn_names$rgn_id){
+      stop(sprintf('Cannot plot rgn_id %s; this region is not found in the rgn_names variable', r))
+    }
 
     ## region name for title
     rgn_name <- rgn_names %>%
