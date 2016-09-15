@@ -30,6 +30,7 @@ secchi\_prep
         -   [4.6 Save csv files](#save-csv-files)
     -   [5. Next steps](#next-steps)
 -   [6. Rescale Mean secchi data and recalculate status](#rescale-mean-secchi-data-and-recalculate-status)
+-   [7. Trial: add Anoxia data to Nutrient calculations (NUT)](#trial-add-anoxia-data-to-nutrient-calculations-nut)
 
 Nutrient subgoal data layer prep - Secchi data
 ==============================================
@@ -1504,14 +1505,19 @@ If model, do a linear model.
 6. Rescale Mean secchi data and recalculate status
 ==================================================
 
-Rescale secchi depth to target level and change the goal model equation to:
+Rescaled to manipulate the status scores with different transformations:
 
-Xnut\_b = (mean\_summer\_secchi\_y\_b - min\_secchi\_b) / (Reference point\_r - min\_secchi\_b)
+*score = mean/target*
 
-mean\_summer\_secchi\_y = mean summer secchi in year (y) in a basin (b) min\_secchi\_b = minimum mean summer secchi in a basin (b) Reference point = HELCOM target for that basin
+Decay:
 
-Xnut\_bhi\_region = Xnut\_b
-*Each BHI region will receive the status value of the HOLAS basin it belongs to*
+transformation\_1 = score^2 transformation\_2 = score^4
+
+Logistic:
+
+transformation\_3 = 1/(1+ exp(-(score - 0.5)/0.1)) transformation\_4 = 1/(1+ exp(-(score - 0.7)/0.08))
+
+Note: decided that these transformations do not contribute to better representation of the status scores. We will stick to the original scores.
 
 ``` r
 ## non-linear transformation: decay and logisitic
@@ -1686,3 +1692,21 @@ gpclibPermit()
     ## It has 2 fields
 
 ![](secchi_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-5.png)
+
+7. Trial: add Anoxia data to Nutrient calculations (NUT)
+========================================================
+
+``` r
+# will move to functions.R
+
+anoxia_status = read_csv(file.path(dir_layers, 'hab_anoxia_bhi2015.csv')) %>% 
+    mutate(anoxia_score = (1-pressure_score) *100 ) %>% 
+    dplyr::select(rgn_id, anoxia_score)
+
+nut_status = full_join(dplyr::select(bhi_status, 
+                                     rgn_id, 
+                                     secchi_score = score), 
+                       anoxia_status, 
+                       by = 'rgn_id') %>% 
+  mutate(nut_status = mean(c(anoxia_score,  secchi_score), na.rm = F) )
+```

@@ -586,16 +586,21 @@ If model, do a linear model.
 
 # 6. Rescale Mean secchi data and recalculate status
 
-Rescale secchi depth to target level and change the goal model equation to:  
+Rescaled to manipulate the status scores with different transformations: 
 
-Xnut_b = (mean_summer_secchi_y_b - min_secchi_b) / (Reference point_r - min_secchi_b)
+_score = mean/target_
 
-mean_summer_secchi_y = mean summer secchi in year (y) in a basin (b)
-min_secchi_b = minimum mean summer secchi in a basin (b)
-Reference point = HELCOM target for that basin   
+Decay:
 
-Xnut_bhi_region = Xnut_b  
-*Each BHI region will receive the status value of the HOLAS basin it belongs to*  
+transformation_1 = score^2
+transformation_2 = score^4
+
+Logistic: 
+
+transformation_3 = 1/(1+ exp(-(score - 0.5)/0.1))
+transformation_4 = 1/(1+ exp(-(score - 0.7)/0.08))
+
+Note: decided that these transformations do not contribute to better representation of the status scores. We will stick to the original scores. 
 
 ```{r testing non linear weighting, warning = FALSE}
 
@@ -711,4 +716,27 @@ gpclibPermit()
 
 
   
+```
+
+# 7. Trial: add Anoxia data to Nutrient calculations (NUT)
+
+```{r add anoxia to NUT}
+
+# will move to functions.R
+
+anoxia_status = read_csv(file.path(dir_layers, 'hab_anoxia_bhi2015.csv')) %>% 
+    mutate(anoxia_score = (1-pressure_score) *100 ) %>% 
+    dplyr::select(rgn_id, anoxia_score)
+
+nut_status = full_join(dplyr::select(bhi_status, 
+                                     rgn_id, 
+                                     secchi_score = score), 
+                       anoxia_status, 
+                       by = 'rgn_id') %>% 
+  mutate(nut_status = mean(c(anoxia_score,  secchi_score), na.rm = F) )
+
+  
+
+
+
 ```
