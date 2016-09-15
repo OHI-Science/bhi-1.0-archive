@@ -270,17 +270,17 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 ``` {r combine GoF and BP data }
 
-setwd(file.path(dir_anox, 'O2_bottom_files'))
+#setwd(file.path(dir_anox, 'O2_bottom_files'))
 
 ## Baltif Proper anoxia data in all years
 
 BP_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
                           pattern ="CodRVmap_.+[BP].csv")
 
-dat = read_csv(BP_file_list [1])
+dat = read_csv(file.path(dir_anox, 'O2_bottom_files', BP_file_list [1]))
 
 for (i in 2:length(BP_file_list )) {
- d = read_csv(BP_file_list[i]) 
+ d = read_csv(file.path(dir_anox, 'O2_bottom_files', BP_file_list[i]))
  dat = rbind(dat, d) 
 
 }
@@ -293,10 +293,10 @@ BP_anoxia_all_yr = dat
 GoF_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
                           pattern ="CodRVmap_.+[GoF].csv")
 
-dat = read_csv(GoF_file_list[1])
+dat = read_csv(file.path(dir_anox, 'O2_bottom_files', GoF_file_list[1]))
 
 for (i in 2:length(GoF_file_list)) {
- d = read_csv(GoF_file_list[i]) 
+ d = read_csv(file.path(dir_anox, 'O2_bottom_files', GoF_file_list[i])) 
  dat = rbind(dat, d) 
 
 }
@@ -304,7 +304,7 @@ for (i in 2:length(GoF_file_list)) {
 GoF_anoxia_all_yr = dat
 
 ## reset working directory
-setwd(file.path('~/github/bhi'))
+#setwd(file.path('~/github/bhi'))
 
 ```
 
@@ -321,13 +321,11 @@ setwd(file.path('~/github/bhi'))
 BP_current_anoxic_area = BP_anoxia_all_yr %>%
   group_by(BHI_ID) %>%
   filter(year %in% 2010:2014) %>%
-  dplyr::rename(current_area = area_km2) %>% 
   ungroup()
 
 GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
   group_by(BHI_ID) %>%
   filter(year %in% 2010:2014) %>%
-  dplyr::rename(current_area = area_km2) %>% 
   ungroup()
 
 ```
@@ -342,13 +340,13 @@ GoF_current_anoxic_area = GoF_anoxia_all_yr %>%
 BP_max_anoxic_area = BP_anoxia_all_yr %>%
   group_by(BHI_ID) %>%
   filter(year %in% 2005:2014) %>%
-  summarize(max_area = max(area_km2)) %>%
+  summarize(max_area = max(current_area)) %>%
   ungroup()
 
 GoF_max_anoxic_area = GoF_anoxia_all_yr %>%
   group_by(BHI_ID) %>%
   filter(year %in% 2005:2014) %>%
-  summarize(max_area = max(area_km2)) %>%
+  summarize(max_area = max(current_area)) %>%
   ungroup()
 
 ```
@@ -363,13 +361,13 @@ GoF_max_anoxic_area = GoF_anoxia_all_yr %>%
 BP_min_anoxic_area = BP_anoxia_all_yr %>%
   group_by(BHI_ID) %>%
   filter(year == 1906) %>%
-  summarize(min_area = min(area_km2)) %>%
+  summarize(min_area = min(current_area)) %>%
   ungroup()
 
 GoF_min_anoxic_area = GoF_anoxia_all_yr %>%
   group_by(BHI_ID) %>%
   filter(year == 1906) %>%
-  summarize(min_area = min(area_km2)) %>%
+  summarize(min_area = min(current_area)) %>%
   ungroup()
 
 ```
@@ -403,38 +401,20 @@ GoF_anoxic_area = full_join(GoF_current_anoxic_area, GoF_max_anoxic_area,
 
 ```{r plot mean max and min}
 
-## Baltic Proper 
-
-bp_plot_data = BP_anoxic_area %>%
+anoxia_all_rgns = rbind(BP_anoxic_area, GoF_anoxic_area) %>% 
   group_by(year) %>% 
   gather(area_type, area, c(current_area, max_area, min_area)) 
 
-bp_plot <- ggplot(bp_plot_data, aes(x = BHI_ID, y = area, fill = area_type)) +
+anoxia_area_plot <- ggplot(anoxia_all_rgns, aes(x = year, y = area, fill = area_type)) +
  geom_bar(position="dodge", stat = "identity") +
  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
- facet_wrap(~year) + 
- labs(title = 'Baltic Proper Anoxia data - Max, Min, and Mean',
-      x = 'BHI region', 
+ facet_wrap(~BHI_ID) + 
+ labs(title = 'Anoxic Area 2010-2014 - Max, Min, and Current',
+      x = 'Year', 
       y = 'Area (km2)')
 
-print(bp_plot)
+print(anoxia_area_plot)
 
-
-## Gulf of Finland
-
-gof_plot_data = GoF_anoxic_area %>%
-  group_by(year) %>% 
-  gather(area_type, area, c(current_area, max_area, min_area)) 
-
-gof_plot <- ggplot(gof_plot_data, aes(x = BHI_ID, y = area, fill = area_type)) +
- geom_bar(position="dodge", stat = "identity") +
- theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
- facet_wrap(~year) + 
- labs(title = 'Gulf of Finland Anoxia data - Max, Min, and Mean',
-      x = 'BHI region', 
-      y = 'Area (km2)')
-
-print(gof_plot)
 
 ```
 
@@ -444,18 +424,22 @@ Mean value was rescaled using max and min values, and was kept between 0 and 1.
 
 ```{r rescale anoxia}
 
-anoxia_all_rgns = rbind(BP_anoxic_area, GoF_anoxic_area) %>%
+anoxia_scores_all = rbind(BP_anoxic_area, GoF_anoxic_area) %>%
   mutate(pressure_score = round((current_area - min_area) / (max_area - min_area), 2), 
          pressure_score = as.numeric(str_replace_all(pressure_score, "NaN", 0)) ) %>%
   dplyr::select(rgn_id = BHI_ID, 
                 year,
+                max_area, 
+                min_area, 
+                current_area,
                 pressure_score ) %>% 
     complete(rgn_id = full_seq(rgn_id, 1),  # missing rgn 3, 4, 7, 8, leave as NA 
              year = full_seq(year, 1))
 
+
 # select most recent year as the pressure score
 
-anoxia_pressure = anoxia_all_rgns %>% 
+anoxia_pressure = anoxia_scores_all %>% 
   filter(year == max(year)) %>% 
   dplyr::select(rgn_id, pressure_score)
 
@@ -470,14 +454,17 @@ Anoxia is added to Clean Water goal - Nutrient subgoal as a component. Anoxia st
 
 ```{r convert pressure to status}
 
-anoxia_status_all_years = anoxia_all_rgns %>% 
+# calculate status of each year 2010 - 2014
+anoxia_status_all_years = anoxia_scores_all %>% 
   dplyr::select(rgn_id, year, pressure_score) %>% 
-  mutate(score = (1 - pressure_score) *100)
+  mutate(status_score = (1 - pressure_score) *100)
    
+# most recent year 
 anoxia_status = anoxia_status_all_years %>% 
   filter(year == max(year)) %>% 
-  dplyr::select(rgn_id, score)
+  dplyr::select(rgn_id, score = status_score)
 
+# save as .csv in layers folder
 write_csv(anoxia_status, file.path(dir_layers, "cw_nut_anoxia_status_bhi2015.csv"))
 
 ``` 
@@ -489,11 +476,11 @@ write_csv(anoxia_status, file.path(dir_layers, "cw_nut_anoxia_status_bhi2015.csv
 
 anoxia_trend = anoxia_status_all_years %>% 
   group_by(rgn_id) %>% 
-  filter(!is.na(score)) %>% 
-  do(lmd = lm(score ~year, data = .)) %>% 
+  filter(!is.na(status_score)) %>% 
+  do(lmd = lm(status_score ~year, data = .)) %>% 
   summarize(rgn_id = rgn_id, 
-            score = round(coef(lmd)['year']*0.05, 2)) %>% 
-  complete(rgn_id = full_seq(rgn_id, 1)) 
+            score = min(1, max(-1, round(coef(lmd)['year']*0.05, 2)))) %>% 
+  complete(rgn_id = full_seq(rgn_id, 1)) # fill the empty BHI_ID as NA
 
 write_csv(anoxia_trend, file.path(dir_layers, 'cw_nut_anoxia_trend_bhi2015.csv'))
 

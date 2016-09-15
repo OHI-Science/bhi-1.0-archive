@@ -49,6 +49,16 @@ dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'l
 #   root_file("DESCRIPTION"))
 
 
+## directory setup
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+  warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
+}
+dir_shp <- file.path(dir_M, 'git-annex/Baltic')
 
 dir_oil    = file.path(dir_prep, 'pressures/illegal_oil_discharge')
 
@@ -98,18 +108,22 @@ Steps:
 2. Get volume spilled by year by BHI region (also visualize number of spills per year per BHI region, number of spills with zero volumne reported)  
 3. Get current conditions, find max value, rescale data to between 0 and 1  
 4. Export and register data layer
+
 ```{r TODO, echo=FALSE, message=FALSE}
 ## read in data...
 
 ## read in BHI shape file
 bhi = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
                       layer = 'BHI_MCG_11052016')  
-
 # bhi@proj4string
-list.files(file.path(dir_shp, "Illegal_Oil_Discharges"))
+
+# list files in illegal oil data base
+oil_list = list.files(file.path(dir_shp, "Illegal_Oil_Discharges"))
 
 ## read in Illegal Oil Discharge file
 
+for (i in oil_list) {
+  
 oil = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Illegal_Oil_Discharges')),
                       layer = 'IllegalOilDischarges')  
 
@@ -135,6 +149,6 @@ oil_bhi_intersect = raster::intersect(oil, bhi)
 # head(oil_bhi_intersect@data)
 write_csv(oil_bhi_intersect@data, file.path(dir_oil, "ohi_bhi_intersect.csv"))
 
-
+}
 
 ```
