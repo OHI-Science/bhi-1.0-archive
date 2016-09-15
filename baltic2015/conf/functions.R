@@ -613,7 +613,7 @@ CS = function(layers){
 
   scores = bind_rows(data.frame(region_id = seq(1,42,1),
                                 dimension = as.character(rep("status",42)),
-                                score = rep (100, 42)),
+                                score = rep (NA, 42)),
                      data.frame(region_id = seq(1,42,1),
                                 dimension = as.character(rep("trend",42)),
                                 score = rep (0, 42))
@@ -1058,9 +1058,10 @@ NUT = function(layers){
   anoxia_status = SelectLayersData(layers, layers='cw_nut_anoxia_status') %>%
     dplyr::select(rgn_id = id_num, anox_status = val_num)
 
-  anoxia_trend = SelectLayersData(layers, layers='cw_nut_anoxia_status') %>%
+  anoxia_trend = SelectLayersData(layers, layers='cw_nut_anoxia_trend') %>%
     dplyr::select(rgn_id = id_num, anox_trend = val_num)
 
+  ## calculate status
   nut_status = full_join(secchi_status, anoxia_status, by = 'rgn_id') %>%
     mutate(score = (sec_status + anox_status)/2, # did not remove NA, and result in NA as status for rgions 3:8
            dimension = 'status')  %>%
@@ -1068,11 +1069,10 @@ NUT = function(layers){
                   score,
                   dimension)
 
-
-
+## calculate trend
   nut_trend = full_join(secchi_trend, anoxia_trend, by = 'rgn_id') %>%
     mutate(score = round((sec_trend + anox_trend)/2, 2),
-           dimension = 'Trend') %>%
+           dimension = 'trend') %>%
     dplyr::select(rgn_id,
                   score,
                   dimension)

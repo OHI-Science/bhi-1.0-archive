@@ -34,6 +34,6 @@ PlotMap(scores %>% filter(goal == 'CW'), fig_path = 'reports/figures/map_CW.png'
 
 ## Make Flower Plots ----
 source('PlotFlowerMulti.R')
-PlotFlowerMulti(rgns_to_plot = 0:42,
+PlotFlowerMulti(rgns_to_plot = 0:42, # unique(scores$region_id)
                 rgn_names       = read.csv('spatial/regions_lookup_complete.csv'),
-                assessment_name = 'Baltic') # unique(scores$region_id)
+                assessment_name = 'Baltic')
