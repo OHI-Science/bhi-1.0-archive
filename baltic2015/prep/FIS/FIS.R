@@ -25,17 +25,18 @@ dir_np  = file.path(dir_prep, 'NP')
 
 
 ## Read in data layers ----
-scores <- read.csv(file.path(dir_fis, 'data/FIS_scores.csv')) %>%
-  dplyr::rename(rgn_id = region_id)
-
-landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv')) %>%
-  dplyr::rename(rgn_id=region_id)
-
-
 ## filter layers for FIS and NP, save.
 
 goal_stocks = c('FIS', 'NP')
-for (g in goal_stocks) { # g = 'FIS'
+for (g in goal_stocks) { # g = 'FIS' g = 'NP'
+
+  scores <- read.csv(file.path(dir_fis, 'data/FIS_scores.csv')) %>%
+    mutate(stock = as.character(stock)) %>%
+    dplyr::rename(rgn_id = region_id)
+
+  landings <- read.csv(file.path(dir_fis,'data/FIS_landings.csv')) %>%
+    dplyr::rename(rgn_id=region_id)
+
 
   ## select the stocks appropriate to the goal
   if (g == 'FIS') {
@@ -48,13 +49,14 @@ for (g in goal_stocks) { # g = 'FIS'
 
   } else if (g == 'NP') {
 
-     scores = scores %>%
+    scores = scores %>%
       filter(stock == 'spr_2232') # only select sprat
 
-     landings = landings %>%
-       filter(stock == 'spr_2232') # only select sprat
+    landings = landings %>%
+      filter(stock == 'spr_2232') # only select sprat
 
   }
+
 
 
   ## separate objects for bbmsy and ffmsy

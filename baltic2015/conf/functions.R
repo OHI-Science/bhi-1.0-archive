@@ -8,6 +8,7 @@
 FIS = function(layers, status_year){
  ## FIS code revised by Melanie Fraser
  ## added to functions.r by Jennifer Griffiths 7 June 2016
+ ## only Cod and Herrings data are used here. Sprats data moved to NP.
 
 
  ## Call Layers
@@ -266,17 +267,18 @@ MAR = function(layers){
 
   ## Calculate status
   mar_status_score = temp2 %>% group_by(rgn_id)%>%
-                mutate(year_ref= lag(year, lag_win, order_by=year),
-                       ref_val = lag(sust_tonnes_sum, lag_win, order_by=year))%>% #create ref year and value which is value 5 years preceeding within a BHI region
-                arrange(year)%>%
-                ungroup()%>%
-                filter(year %in% status_years) %>% #select status years
-                mutate(status = pmin(1,sust_tonnes_sum/ref_val))%>% #calculate status per year
-                select(rgn_id, year, status)%>%
-                full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
-                arrange(rgn_id,year)
+    mutate(year_ref= lag(year, lag_win, order_by=year),
+           ref_val = lag(sust_tonnes_sum, lag_win, order_by=year))%>% #create ref year and value which is value 5 years preceeding within a BHI region
+    arrange(year)%>%
+    ungroup()%>%
+    filter(year %in% status_years) %>% #select status years
+    mutate(status = pmin(1,sust_tonnes_sum/ref_val))%>% #calculate status per year
+    select(rgn_id, year, status)%>%
+    full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
+    arrange(rgn_id,year) %>%
+    ungroup()
 
-                ## use code chunk below if want regions with no data to have a score of 0, now have score of NA
+  ## use code chunk below if want regions with no data to have a score of 0, now have score of NA
                 #%>%
                 ##mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
 
@@ -291,14 +293,15 @@ MAR = function(layers){
   ###----------------------------###
   ## Calulate trend
       ##regr_length = 5; there are 5 data points used to calculate the trend
-  mar_trend= mar_status_score%>%group_by(rgn_id)%>%
+  mar_trend= mar_status_score %>%
+    group_by(rgn_id) %>%
     do(tail(. , n = regr_length)) %>% #select the years for trend calculate (regr_length # years from the end of the time series)
     #regr_length replaces the need to read in the trend_yrs from the csv file
     do({if(sum(!is.na(.$status)) >= min_regr_length)      #calculate trend only if X years of data (min_regr_length) in the last Y years of time serie (regr_length)
       data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year))) #future_year set in contants, this is the value 5 in the old code
       else data.frame(trend_score = NA)}) %>%
-    ungroup()%>%
-    mutate(trend_score=round(trend_score,2))
+    ungroup() %>%
+    mutate(trend_score = round(trend_score,2))
 
   #####----------------------######
   # return MAR scores
@@ -369,6 +372,167 @@ FP = function(layers, scores){
   return(rbind(scores, s))
 } ## End FP Function
 
+
+NP = function(layers){
+
+  ## This is the same function as FIS except for data. Only sprat data is used here.
+
+  ## Call Layers
+  bbmsy = SelectLayersData(layers, layers='np_bbmsy', narrow=T) %>%
+    select(rgn_id = id_num,
+           stock = category,
+           year,
+           score= val_num) %>%
+    mutate(metric ="bbmsy") %>%
+    dplyr::rename(region_id = rgn_id)
+
+  ffmsy = SelectLayersData(layers, layers='np_ffmsy', narrow=T) %>%
+    select(rgn_id = id_num,
+           stock = category,
+           year,
+           score= val_num) %>%
+    mutate(metric= "ffmsy")%>%
+    dplyr::rename(region_id = rgn_id)
+
+  landings = SelectLayersData(layers, layers='np_landings', narrow=T) %>%
+    select(rgn_id =id_num,
+           stock = category,
+           year,
+           landings= val_num)%>%
+    dplyr::rename(region_id = rgn_id)
+
+
+  ## combine bbmsy and ffmsy to single object
+
+  metric.scores = rbind(bbmsy, ffmsy) %>%
+    select(region_id, stock, year, metric, score) %>%
+    mutate(metric = as.factor(metric))%>%
+    spread(metric, score)
+
+
+  ###########################################################################
+  ## STEP 1: converting B/Bmsy and F/Fmsy to F-scores
+  ## see plot describing the relationship between these variables and scores
+  ## this may need to be adjusted:
+  ###########################################################################
+  F_scores <- metric.scores %>%
+    mutate(score = ifelse(bbmsy < 0.8 & ffmsy >= (bbmsy+1.5), 0, NA),
+           score = ifelse(bbmsy < 0.8 & ffmsy < (bbmsy - 0.2), ffmsy/(bbmsy-0.2), score),
+           score = ifelse(bbmsy < 0.8 & ffmsy >= (bbmsy + 0.2) & ffmsy < (bbmsy + 1.5), (bbmsy + 1.5 - ffmsy)/1.5, score),
+           score = ifelse(bbmsy < 0.8 & ffmsy >= (bbmsy - 0.2) & ffmsy < (bbmsy + 0.2), 1, score)) %>%
+    mutate(score = ifelse(bbmsy >= 0.8 & ffmsy < 0.8, ffmsy/0.8, score),
+           score = ifelse(bbmsy >= 0.8 & ffmsy >= 0.8 & ffmsy < 1.2, 1, score),
+           score = ifelse(bbmsy >= 0.8 & ffmsy >= 1.2, (2.5 - ffmsy)/1.3, score)) %>%
+    mutate(score = ifelse(score <= 0, 0.1, score)) %>%
+    mutate(score_type = "F_score")
+  ### NOTE: The reason the last score is 0.1 rather than zero is because
+  ### scores can't be zero if using a geometric mean because otherwise, 1 zero
+  ### results in a zero score.
+
+  ###########################################################################
+  ## STEP 2: converting B/Bmsy to B-scores
+  ###########################################################################
+  B_scores <- metric.scores %>%
+    mutate(score = ifelse(bbmsy < 0.8 , bbmsy/0.8, NA),
+           score = ifelse(bbmsy >= 0.8 & bbmsy < 1.5, 1, score),
+           score = ifelse(bbmsy >= 1.5, (3.35 - bbmsy)/1.8, score)) %>%
+    mutate(score = ifelse(score <= 0.1, 0.1, score)) %>%
+    mutate(score = ifelse(score > 1, 1, score))%>%
+    mutate(score_type = "B_score")
+
+  ###########################################################################
+  ## STEP 3: Averaging the F and B-scores to get the stock status score
+  ###########################################################################
+  status.scores <- rbind(B_scores, F_scores) %>%
+    group_by(region_id, stock, year) %>%
+    summarize(score = mean(score, na.rm=TRUE)) %>%
+    data.frame()
+
+  #############################################
+  ## STEP 4: calculating the weights.
+  #############################################
+
+  ##### Subset the data to include only the most recent 10 years
+  landings <- landings %>%
+    filter(year %in% (max(landings$year)-9):max(landings$year))
+
+  ## we use the average catch for each stock/region across all years
+  ## to obtain weights
+  weights <- landings %>%
+    group_by(region_id, stock) %>%
+    mutate(avgCatch = mean(landings)) %>%
+    ungroup() %>%
+    data.frame()
+
+  ## each region/stock will have the same average catch across years:
+  #filter(weights, region_id==3)
+
+  ## determine the total proportion of catch each stock accounts for:
+  weights <- weights %>%
+    group_by(region_id, year) %>%
+    mutate(totCatch = sum(avgCatch)) %>%
+    ungroup() %>%
+    mutate(propCatch = avgCatch/totCatch)
+
+  #### The total proportion of landings for each region/year will sum to one:
+  #filter(weights, region_id ==3, year==2014)
+
+  ############################################################
+  #####  STEP 5: Join scores and weights to calculate status
+  ############################################################
+
+
+  status <- weights %>%
+    left_join(status.scores, by=c('region_id', 'year', 'stock'))%>%
+    filter(!is.na(score)) %>%                    # remove missing data
+    select(region_id, year, stock, propCatch, score)        # cleaning data
+
+
+  ### Geometric mean weighted by proportion of catch in each region
+  status <- status %>%
+    group_by(region_id, year) %>%
+    summarize(status = prod(score^propCatch)) %>%
+    ungroup() %>%
+    data.frame()
+
+  ### To get trend, get slope of regression model based on most recent 5 years
+  ### of data
+
+  trend_years <- (max(status$year)-4):max(status$year)
+
+  trend <- status %>%
+    group_by(region_id) %>%
+    filter(year %in% trend_years) %>%
+    do(mdl = lm(status ~ year, data=.)) %>%
+    summarize(region_id = region_id,
+              trend = coef(mdl)['year'] * 5) %>%  ## trend multiplied by 5 to get prediction 5 years out
+    ungroup() %>%
+    mutate(trend = round(trend, 2))
+
+  ### final formatting of status data:
+  status <- status %>%
+    filter(year == max(year)) %>%
+    mutate(status = round(status * 100, 1)) %>%
+    select(region_id, status)
+
+
+  ############################################################
+  #####  STEP 6: Assemble dimensions
+  ############################################################
+
+  scores = status %>%
+    select(region_id,
+           score = status)%>%
+    mutate(dimension='status') %>%
+    rbind(
+      trend %>%
+        select(region_id,
+               score = trend) %>%
+        mutate(dimension = 'trend')) %>%
+    mutate(goal='NP')
+  return(scores)
+
+}
 
 AO = function(layers){
     ## AO Goal has thre components stock status, access, need
@@ -449,7 +613,7 @@ CS = function(layers){
 
   scores = bind_rows(data.frame(region_id = seq(1,42,1),
                                 dimension = as.character(rep("status",42)),
-                                score = rep (100, 42)),
+                                score = rep (NA, 42)),
                      data.frame(region_id = seq(1,42,1),
                                 dimension = as.character(rep("trend",42)),
                                 score = rep (0, 42))
@@ -507,7 +671,8 @@ TR = function(layers){
     full_join(bhi_rgn, .,by="rgn_id")%>% #all regions now listed, have NA for for status
     mutate(score = status*100,
            dimension = 'status') %>% ##scale to 0 to 100
-    select(region_id = rgn_id,score, dimension)
+    select(region_id = rgn_id,score, dimension) %>%
+    ungroup()
   ##-------------------------------------------------------------------##
 
 
@@ -884,16 +1049,36 @@ NUT = function(layers){
   #cw_nu_trend= read.csv('~github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
 
 
-  cw_nu_status   = SelectLayersData(layers, layers='cw_nu_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+  secchi_status = SelectLayersData(layers, layers='cw_nut_secchi_status') %>%
+    dplyr::select(rgn_id = id_num, sec_status = val_num)
 
-  cw_nu_trend  = SelectLayersData(layers, layers='cw_nu_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+  secchi_trend  = SelectLayersData(layers, layers='cw_nut_secchi_trend') %>%
+    dplyr::select(rgn_id = id_num, sec_trend = val_num)
 
+  anoxia_status = SelectLayersData(layers, layers='cw_nut_anoxia_status') %>%
+    dplyr::select(rgn_id = id_num, anox_status = val_num)
+
+  anoxia_trend = SelectLayersData(layers, layers='cw_nut_anoxia_trend') %>%
+    dplyr::select(rgn_id = id_num, anox_trend = val_num)
+
+  ## calculate status
+  nut_status = full_join(secchi_status, anoxia_status, by = 'rgn_id') %>%
+    mutate(score = (sec_status + anox_status)/2, # did not remove NA, and result in NA as status for rgions 3:8
+           dimension = 'status')  %>%
+    dplyr::select(rgn_id,
+                  score,
+                  dimension)
+
+## calculate trend
+  nut_trend = full_join(secchi_trend, anoxia_trend, by = 'rgn_id') %>%
+    mutate(score = round((sec_trend + anox_trend)/2, 2),
+           dimension = 'trend') %>%
+    dplyr::select(rgn_id,
+                  score,
+                  dimension)
 
   # rbind NUT status and trend to one dataframe
-  scores = cw_nu_status %>%
-    rbind(cw_nu_trend) %>%
+  scores =  rbind(nut_status, nut_trend) %>%
     mutate(goal = 'NUT') %>%
     dplyr::select(goal,
                   dimension,
@@ -1164,66 +1349,29 @@ BD = function(layers){
 
 FinalizeScores = function(layers, conf, scores){
 
-
-  ## get regions to aggregate as eezs and basins ----
-
-  ## lookup table for EEZ ids (named vector)
-  eez_lookup = c("SWE" = 1,
-                 "DNK" = 2,
-                 "DEU" = 3,
-                 "POL" = 4,
-                 "RUS" = 5,
-                 "LTU" = 6,
-                 "LVA" = 7,
-                 "EST" = 8,
-                 "FIN" = 9)
-
-  ## join region labels with labels for EEZs and HELCOM Subbasins
-  rgns <- left_join(
-
-    ## begin with region labels, as per usual...
-    SelectLayersData(layers, layers=conf$config$layer_region_labels, narrow=T) %>%
-      dplyr::select(region_id   = id_num,
-                    region_name = val_chr),
-
-    ## ...joined to the lookup table with basin and eez information
-    read.csv('prep/bhi_basin_country_lookup.csv', sep = ';') %>% ## don't use readr::read_csv2 because decimals will be dropped
-      dplyr::rename(region_id     = BHI_ID,
-                    eez_name      = rgn_nam,
-                    subbasin_name = Subbasin,
-                    area_km2_rgn  = Area_km2) %>%
-
-      ## for HELCOM sub-basin areas:: create numeric id and calculate area
-      mutate(subbasin_id = as.integer(stringr::str_replace_all(HELCOM_ID, "SEA-0", 5))) %>%
-
-      ## for EEZ areas:: create numeric id and calculate area
-      mutate(eez_id = as.integer(stringr::str_c("30", eez_lookup[match(rgn_key, names(eez_lookup))]))),
-
-    ## ...joined by region_id and select
-    by = 'region_id') %>%
-    select(region_id, region_name, area_km2_rgn, eez_id, eez_name, subbasin_id, subbasin_name)
-
-  ## save csv lookup of all regions, with headers to match layers/rgn_labels.csv
-  rgns_complete <- bind_rows(
-    data_frame(rgn_id = 0, label = 'Baltic'),
-    rgns %>%
-      mutate(label = as.character(region_name)) %>%
-      select(rgn_id = region_id, label),
-    rgns %>%
-      distinct(eez_id, eez_name) %>%
-      select(rgn_id = eez_id, label = eez_name),
-    rgns %>%
-      distinct(subbasin_id, subbasin_name) %>%
-      select(rgn_id = subbasin_id, label = subbasin_name))
-write.csv(rgns_complete, 'spatial/regions_lookup_complete.csv', row.names=FALSE)
+  ## modified from original to aggregte to EEZs and SUBBASINs
+  ## @jules32 September 2016
 
 
-  ## Calculate Scores for EEZs by area weighting ----
-  cat(sprintf("Calculating scores for EEZ AREAS (region_id=300's) by area weighting...\n"))
+  ## Regions to aggregate as eezs and basins
+  source('~/github/bhi/baltic2015/prep/create_rgns_lookup.r')
+  rgns_complete <- read.csv('spatial/regions_lookup_complete.csv', stringsAsFactors = FALSE); head(rgns_complete)
+
+  ## identify just eez, subbasin ids
+  rgns_eez_subbasin <- rgns_complete %>%
+    filter(type %in% c('eez', 'subbasin'))
+
+
+  ## ---- Calculate Scores for EEZs and SUBBASINS by area weighting ----
+  cat(sprintf("Calculating scores for EEZ and SUBBASIN AREAS by area weighting...\n"))
+
+  ## EEZs
   scores_eez <- scores %>%
 
     # filter only score, status, future dimensions, merge to the area (km2) of each region
-    dplyr::filter(dimension %in% c('score','status','future')) %>%
+    dplyr::filter(dimension %in% c('score','status','future'),
+                  region_id != 0,
+                  goal != 'Index') %>%
     left_join(rgns, by = 'region_id') %>%
 
     # calculate weighted mean by area
@@ -1232,13 +1380,13 @@ write.csv(rgns_complete, 'spatial/regions_lookup_complete.csv', row.names=FALSE)
     ungroup() %>%
     select(goal, dimension, score, region_id = eez_id)
 
-
-  ## Calculate Scores for SUBBASIN by area weighting ----
-  cat(sprintf("Calculating scores for SUBBASIN AREAS (region_id=500's) by area weighting...\n"))
+  ## SUBBASINS
   scores_subbasin <- scores %>%
 
     # filter only score, status, future dimensions, merge to the area (km2) of each region
-    dplyr::filter(dimension %in% c('score','status','future')) %>%
+    dplyr::filter(dimension %in% c('score','status','future'),
+                  region_id != 0,
+                  goal != 'Index') %>%
     left_join(rgns, by = 'region_id') %>%
 
     # calculate weighted mean by area
@@ -1247,29 +1395,73 @@ write.csv(rgns_complete, 'spatial/regions_lookup_complete.csv', row.names=FALSE)
     ungroup() %>%
     select(goal, dimension, score, region_id = subbasin_id)
 
-
-  ## TODO: NEED TO CALCULATE INDEX for EEZ AND SUBBASIN
-
-
-  ## combine scores with EEZ and SUBBASIN scores ----
+  ## combine scores with EEZ and SUBBASIN scores
   scores = bind_rows(scores, scores_eez, scores_subbasin)
 
 
+  ## ---- Calculate EEZ AND SUBBASIN Index Scores using goal weights ----
+  cat(sprintf('Calculating Index score for EEZs and SUBBASINs for supragoals using goal weights...\n'))
+  supragoals = subset(conf$goals, is.na(parent), goal, drop=T); supragoals
+
+  ## EEZs
+  rgns_eez  <- rgns_complete %>%
+    filter(type == 'eez')
+
+  index_eez <- scores %>%
+
+    # filter only supragoal scores, merge with supragoal weightings
+    dplyr::filter(dimension=='score',
+                  goal %in% supragoals,
+                  region_id %in% rgns_eez$region_id) %>%
+    merge(conf$goals %>%
+            select(goal, weight)) %>%
+
+    # calculate the weighted mean of supragoals, add goal and dimension column
+    dplyr::group_by(region_id) %>%
+    dplyr::summarise(score = weighted.mean(score, weight, na.rm=T)) %>%
+    dplyr::mutate(goal      = 'Index',
+                  dimension = 'score') %>%
+    data.frame()
+
+  ## SUBBASINS
+  rgns_subbasin  <- rgns_complete %>%
+    filter(type == 'subbasin')
+
+  index_subbasin <- scores %>%
+
+    # filter only supragoal scores, merge with supragoal weightings
+    dplyr::filter(dimension=='score',
+                  goal %in% supragoals,
+                  region_id %in% rgns_subbasin$region_id) %>%
+    merge(conf$goals %>%
+            select(goal, weight)) %>%
+
+    # calculate the weighted mean of supragoals, add goal and dimension column
+    dplyr::group_by(region_id) %>%
+    dplyr::summarise(score = weighted.mean(score, weight, na.rm=T)) %>%
+    dplyr::mutate(goal      = 'Index',
+                  dimension = 'score') %>%
+    data.frame()
+
+  ## combine scores with EEZ and SUBBASIN scores
+  scores = bind_rows(scores, index_eez, index_subbasin)
+
+
   ## add NAs to missing combos (region_id, goal, dimension)
-  rgns_aggregate = c(0, 300, 500)
+  rgns_aggregate = rgns_complete %>%
+    filter(!type %in% 'bhi')
 
   d = expand.grid(list(score_NA  = NA,
-                       region_id = c(rgns[,'region_id'], rgns_aggregate),
+                       region_id = c(rgns_complete$region_id),
                        dimension = c('pressures','resilience','status','trend','future','score'),
                        goal      = c(conf$goals$goal, 'Index')), stringsAsFactors = FALSE); head(d)
-  d = d %>%
-    filter(!(dimension %in% c('pressures','resilience','trend') & region_id %in% rgns_aggregate) &
-             !(dimension %in% c('pressures','resilience','status','trend') & goal == 'Index'))
+  d = subset(d,
+             !(dimension %in% c('pressures','resilience','trend') & region_id %in% rgns_aggregate$region_id) &
+               !(dimension %in% c('pressures','resilience','status','trend') & goal=='Index'))
 
-  scores = merge(scores, d, all=T)[,c('goal','dimension','region_id','score')]
-
-  # order
-  scores = arrange(scores, goal, dimension, region_id)
+  ## Merge with scores, and arrange
+  scores = merge(scores, d, all=T)[,c('goal','dimension','region_id','score')] %>%
+    arrange(goal, dimension, region_id)
 
   # round scores
   scores$score = round(scores$score, 2)

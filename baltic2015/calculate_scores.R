@@ -10,6 +10,11 @@
 ## When you are done with all the goal model modifications, you can come back here, and run the following scripts, which combines "current status" and "trend"
 ## with pressures and resilience to finish your OHI scores calculations.
 
+### To Debug:
+# remove.packages('ohicore') #remove original ohicore
+# devtools::load_all('~/github/ohicore') #load regional ohicore so not to affect the original ohicore accidentally
+# debug=F
+
 source('~/github/bhi/baltic2015/pre_scores.R')
 
 ## calculate scenario scores
@@ -29,6 +34,13 @@ PlotMap(scores %>% filter(goal == 'CW'), fig_path = 'reports/figures/map_CW.png'
 
 ## Make Flower Plots ----
 source('PlotFlowerMulti.R')
-PlotFlowerMulti(rgns_to_plot = 0:42,
-                rgn_names       = read.csv('spatial/regions_lookup_complete.csv'),
-                assessment_name = 'Baltic') # unique(scores$region_id)
+rgns_complete <- read.csv('spatial/regions_lookup_complete.csv') # %>% filter(type %in% c('eez', 'subbasin'))
+rgns_to_plot <- rgns_complete$region_id
+
+rgn_names <- read.csv('spatial/regions_lookup_complete.csv') %>%
+  dplyr::rename(rgn_id = region_id)
+
+PlotFlowerMulti(scores          = read.csv('scores.csv'),
+                rgns_to_plot    = rgns_to_plot,
+                rgn_names       = rgn_names,
+                assessment_name = 'Baltic')
