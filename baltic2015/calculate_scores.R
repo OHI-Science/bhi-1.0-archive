@@ -34,6 +34,13 @@ PlotMap(scores %>% filter(goal == 'CW'), fig_path = 'reports/figures/map_CW.png'
 
 ## Make Flower Plots ----
 source('PlotFlowerMulti.R')
-PlotFlowerMulti(rgns_to_plot = 0:42, # unique(scores$region_id)
-                rgn_names       = read.csv('spatial/regions_lookup_complete.csv'),
+rgns_complete <- read.csv('spatial/regions_lookup_complete.csv') # %>% filter(type %in% c('eez', 'subbasin'))
+rgns_to_plot <- rgns_complete$region_id
+
+rgn_names <- read.csv('spatial/regions_lookup_complete.csv') %>%
+  dplyr::rename(rgn_id = region_id)
+
+PlotFlowerMulti(scores          = read.csv('scores.csv'),
+                rgns_to_plot    = rgns_to_plot,
+                rgn_names       = rgn_names,
                 assessment_name = 'Baltic')

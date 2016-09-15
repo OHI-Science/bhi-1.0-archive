@@ -1349,201 +1349,122 @@ BD = function(layers){
 
 FinalizeScores = function(layers, conf, scores){
 
-  ## original
-   # get regions
-  rgns = SelectLayersData(layers, layers=conf$config$layer_region_labels, narrow = TRUE)
+  ## modified from original to aggregte to EEZs and SUBBASINs
+  ## @jules32 September 2016
 
-  # add NAs to missing combos (region_id, goal, dimension)
+
+  ## Regions to aggregate as eezs and basins
+  source('~/github/bhi/baltic2015/prep/create_rgns_lookup.r')
+  rgns_complete <- read.csv('spatial/regions_lookup_complete.csv', stringsAsFactors = FALSE); head(rgns_complete)
+
+  ## identify just eez, subbasin ids
+  rgns_eez_subbasin <- rgns_complete %>%
+    filter(type %in% c('eez', 'subbasin'))
+
+
+  ## ---- Calculate Scores for EEZs and SUBBASINS by area weighting ----
+  cat(sprintf("Calculating scores for EEZ and SUBBASIN AREAS by area weighting...\n"))
+
+  ## EEZs
+  scores_eez <- scores %>%
+
+    # filter only score, status, future dimensions, merge to the area (km2) of each region
+    dplyr::filter(dimension %in% c('score','status','future'),
+                  region_id != 0,
+                  goal != 'Index') %>%
+    left_join(rgns, by = 'region_id') %>%
+
+    # calculate weighted mean by area
+    dplyr::group_by(goal, dimension, eez_id) %>%
+    dplyr::summarise(score = weighted.mean(score, area_km2_rgn, na.rm=T)) %>%
+    ungroup() %>%
+    select(goal, dimension, score, region_id = eez_id)
+
+  ## SUBBASINS
+  scores_subbasin <- scores %>%
+
+    # filter only score, status, future dimensions, merge to the area (km2) of each region
+    dplyr::filter(dimension %in% c('score','status','future'),
+                  region_id != 0,
+                  goal != 'Index') %>%
+    left_join(rgns, by = 'region_id') %>%
+
+    # calculate weighted mean by area
+    dplyr::group_by(goal, dimension, subbasin_id) %>%
+    dplyr::summarise(score = weighted.mean(score, area_km2_rgn, na.rm=T)) %>%
+    ungroup() %>%
+    select(goal, dimension, score, region_id = subbasin_id)
+
+  ## combine scores with EEZ and SUBBASIN scores
+  scores = bind_rows(scores, scores_eez, scores_subbasin)
+
+
+  ## ---- Calculate EEZ AND SUBBASIN Index Scores using goal weights ----
+  cat(sprintf('Calculating Index score for EEZs and SUBBASINs for supragoals using goal weights...\n'))
+  supragoals = subset(conf$goals, is.na(parent), goal, drop=T); supragoals
+
+  ## EEZs
+  rgns_eez  <- rgns_complete %>%
+    filter(type == 'eez')
+
+  index_eez <- scores %>%
+
+    # filter only supragoal scores, merge with supragoal weightings
+    dplyr::filter(dimension=='score',
+                  goal %in% supragoals,
+                  region_id %in% rgns_eez$region_id) %>%
+    merge(conf$goals %>%
+            select(goal, weight)) %>%
+
+    # calculate the weighted mean of supragoals, add goal and dimension column
+    dplyr::group_by(region_id) %>%
+    dplyr::summarise(score = weighted.mean(score, weight, na.rm=T)) %>%
+    dplyr::mutate(goal      = 'Index',
+                  dimension = 'score') %>%
+    data.frame()
+
+  ## SUBBASINS
+  rgns_subbasin  <- rgns_complete %>%
+    filter(type == 'subbasin')
+
+  index_subbasin <- scores %>%
+
+    # filter only supragoal scores, merge with supragoal weightings
+    dplyr::filter(dimension=='score',
+                  goal %in% supragoals,
+                  region_id %in% rgns_subbasin$region_id) %>%
+    merge(conf$goals %>%
+            select(goal, weight)) %>%
+
+    # calculate the weighted mean of supragoals, add goal and dimension column
+    dplyr::group_by(region_id) %>%
+    dplyr::summarise(score = weighted.mean(score, weight, na.rm=T)) %>%
+    dplyr::mutate(goal      = 'Index',
+                  dimension = 'score') %>%
+    data.frame()
+
+  ## combine scores with EEZ and SUBBASIN scores
+  scores = bind_rows(scores, index_eez, index_subbasin)
+
+
+  ## add NAs to missing combos (region_id, goal, dimension)
+  rgns_aggregate = rgns_complete %>%
+    filter(!type %in% 'bhi')
+
   d = expand.grid(list(score_NA  = NA,
-                       region_id = c(rgns[,'id_num'], 0),
+                       region_id = c(rgns_complete$region_id),
                        dimension = c('pressures','resilience','status','trend','future','score'),
                        goal      = c(conf$goals$goal, 'Index')), stringsAsFactors = FALSE); head(d)
   d = subset(d,
-             !(dimension %in% c('pressures','resilience','trend') & region_id==0) &
+             !(dimension %in% c('pressures','resilience','trend') & region_id %in% rgns_aggregate$region_id) &
                !(dimension %in% c('pressures','resilience','status','trend') & goal=='Index'))
-  scores = merge(scores, d, all = TRUE)[,c('goal','dimension','region_id','score')]
 
-  # order
-  scores = arrange(scores, goal, dimension, region_id)
+  ## Merge with scores, and arrange
+  scores = merge(scores, d, all=T)[,c('goal','dimension','region_id','score')] %>%
+    arrange(goal, dimension, region_id)
 
   # round scores
   scores$score = round(scores$score, 2)
 
   return(scores)
-
-  #  ## @jules32 in progress
-  # ## ---- Identify regions to aggregate as eezs and basins ----
-  #
-  # ## lookup table for EEZ ids (named vector)
-  # eez_lookup = c("SWE" = 1,
-  #                "DNK" = 2,
-  #                "DEU" = 3,
-  #                "POL" = 4,
-  #                "RUS" = 5,
-  #                "LTU" = 6,
-  #                "LVA" = 7,
-  #                "EST" = 8,
-  #                "FIN" = 9)
-  #
-  # ## join region labels with labels for EEZs and HELCOM Subbasins
-  # rgns <- left_join(
-  #
-  #   ## begin with region labels, as per usual...
-  #   SelectLayersData(layers, layers=conf$config$layer_region_labels, narrow=T) %>%
-  #     dplyr::select(region_id   = id_num,
-  #                   region_name = val_chr),
-  #
-  #   ## ...joined to the lookup table with basin and eez information
-  #   read.csv('prep/bhi_basin_country_lookup.csv', sep = ';') %>% ## don't use readr::read_csv2 because decimals will be dropped
-  #     dplyr::rename(region_id     = BHI_ID,
-  #                   eez_name      = rgn_nam,
-  #                   subbasin_name = Subbasin,
-  #                   area_km2_rgn  = Area_km2) %>%
-  #
-  #     ## for HELCOM sub-basin areas:: create numeric id and calculate area
-  #     mutate(subbasin_id = as.integer(stringr::str_replace_all(HELCOM_ID, "SEA-0", 5))) %>%
-  #
-  #     ## for EEZ areas:: create numeric id and calculate area
-  #     mutate(eez_id = as.integer(stringr::str_c("30", eez_lookup[match(rgn_key, names(eez_lookup))]))),
-  #
-  #   ## ...joined by region_id and select
-  #   by = 'region_id') %>%
-  #   select(region_id, region_name, area_km2_rgn, eez_id, eez_name, subbasin_id, subbasin_name)
-  #
-  #
-  # ## Create csv lookup of all regions, with headers to match layers/rgn_labels.csv ----
-  # rgns_complete <- bind_rows(
-  #   data_frame(rgn_id = 0, label = 'Baltic', type = 'GLOBAL'),          ## combine rgn_id 0...
-  #   rgns %>%                                           ## ...with BHI ids...
-  #     mutate(label = as.character(region_name),
-  #            type = 'bhi') %>%
-  #     select(rgn_id = region_id, label, type),
-  #   rgns %>%                                           ## ...with EEZ ids...
-  #     distinct(eez_id, eez_name) %>%
-  #     mutate(type = 'eez') %>%
-  #     select(rgn_id = eez_id, label = eez_name, type),
-  #   rgns %>%                                           ## ...with SUBBASIN ids
-  #     distinct(subbasin_id, subbasin_name) %>%
-  #     mutate(type = 'subbasin') %>%
-  #     select(rgn_id = subbasin_id, label = subbasin_name, type))
-  #
-  # ## save csv lookup
-  # write.csv(rgns_complete, 'spatial/regions_lookup_complete.csv', row.names=FALSE)
-  #
-  # ## identify just eez, subbasin ids
-  # rgns_eez_subbasin <- rgns_complete %>%
-  #   filter(type %in% c('eez', 'subbasin'))
-  #
-  #
-  # ## ---- Calculate Scores for EEZs and SUBBASINS by area weighting ----
-  # cat(sprintf("Calculating scores for EEZ and SUBBASIN AREAS by area weighting...\n"))
-  #
-  # ## EEZs
-  # scores_eez <- scores %>%
-  #
-  #   # filter only score, status, future dimensions, merge to the area (km2) of each region
-  #   dplyr::filter(dimension %in% c('score','status','future')) %>%
-  #   left_join(rgns, by = 'region_id') %>%
-  #
-  #   # calculate weighted mean by area
-  #   dplyr::group_by(goal, dimension, eez_id) %>%
-  #   dplyr::summarise(score = weighted.mean(score, area_km2_rgn, na.rm=T)) %>%
-  #   ungroup() %>%
-  #   select(goal, dimension, score, region_id = eez_id)
-  #
-  # ## SUBBASINS
-  # scores_subbasin <- scores %>%
-  #
-  #   # filter only score, status, future dimensions, merge to the area (km2) of each region
-  #   dplyr::filter(dimension %in% c('score','status','future')) %>%
-  #   left_join(rgns, by = 'region_id') %>%
-  #
-  #   # calculate weighted mean by area
-  #   dplyr::group_by(goal, dimension, subbasin_id) %>%
-  #   dplyr::summarise(score = weighted.mean(score, area_km2_rgn, na.rm=T)) %>%
-  #   ungroup() %>%
-  #   select(goal, dimension, score, region_id = subbasin_id)
-  #
-  # ## combine scores with EEZ and SUBBASIN scores
-  # scores = bind_rows(scores, scores_eez, scores_subbasin)
-  #
-  #
-  # ## ---- Calculate EEZ AND SUBBASIN Index Scores using goal weights ----
-  # cat(sprintf('Calculating Index score for EEZs and SUBBASINs for supragoals using goal weights...\n'))
-  # supragoals = subset(conf$goals, is.na(parent), goal, drop=T); supragoals
-  #
-  # ## EEZs
-  # rgns_eez  <- rgns_complete %>%
-  #   filter(type == 'eez')
-  #
-  # index_eez <- scores %>%
-  #
-  #   # filter only supragoal scores, merge with supragoal weightings
-  #   dplyr::filter(dimension=='score',
-  #                 goal %in% supragoals,
-  #                 region_id %in% rgns_eez$rgn_id) %>%
-  #   merge(conf$goals %>%
-  #           select(goal, weight)) %>%
-  #
-  #   # calculate the weighted mean of supragoals, add goal and dimension column
-  #   dplyr::group_by(region_id) %>%
-  #   dplyr::summarise(score = weighted.mean(score, weight, na.rm=T)) %>%
-  #   dplyr::mutate(goal      = 'Index',
-  #                 dimension = 'score') %>%
-  #   data.frame()
-  #
-  # ## SUBBASINS
-  # rgns_subbasin  <- rgns_complete %>%
-  #   filter(type == 'subbasin')
-  #
-  # index_subbasin <- scores %>%
-  #
-  #   # filter only supragoal scores, merge with supragoal weightings
-  #   dplyr::filter(dimension=='score',
-  #                 goal %in% supragoals,
-  #                 region_id %in% rgns_subbasin$rgn_id) %>%
-  #   merge(conf$goals %>%
-  #           select(goal, weight)) %>%
-  #
-  #   # calculate the weighted mean of supragoals, add goal and dimension column
-  #   dplyr::group_by(region_id) %>%
-  #   dplyr::summarise(score = weighted.mean(score, weight, na.rm=T)) %>%
-  #   dplyr::mutate(goal      = 'Index',
-  #                 dimension = 'score') %>%
-  #   data.frame()
-  #
-  # ## combine scores with EEZ and SUBBASIN scores
-  # scores = bind_rows(scores, index_eez, index_subbasin)
-  #
-  #
-  # ## add NAs to missing combos (region_id, goal, dimension)
-  # rgns_aggregate = rgns_complete %>%
-  #   filter(!type %in% 'bhi')
-  #
-  # rgns_complete = rgns_complete %>%
-  #   mutate(rgn_id = as.integer(rgn_id))
-  #
-  # # d <- scores %>%
-  # #   tidyr::expand(goal, dimension, region_id) %>%
-  # #   filter(!(dimension %in% c('pressures','resilience','trend') & region_id %in% rgns_aggregate) &
-  # #            !(dimension %in% c('pressures','resilience','status','trend') & goal == 'Index'))
-  #
-  #
-  # d = expand.grid(list(score_NA  = NA,
-  #                      region_id = c(rgns_complete[,'rgn_id']),
-  #                      dimension = c('pressures','resilience','status','trend','future','score'),
-  #                      goal      = c(conf$goals$goal, 'Index')), stringsAsFactors = FALSE); head(d)
-  # d = d %>%
-  #   filter(!(dimension %in% c('pressures','resilience','trend') & region_id %in% rgns_aggregate) &
-  #            !(dimension %in% c('pressures','resilience','status','trend') & goal == 'Index'))
-  #
-  # scores = merge(scores, d, all=T)[,c('goal','dimension','region_id','score')]
-  #
-  # # order
-  # scores = arrange(scores, goal, dimension, region_id)
-  #
-  # # round scores
-  # scores$score = round(scores$score, 2)
-  #
-  # return(scores)
 }

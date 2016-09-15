@@ -16,7 +16,7 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
                             name_fig        = 'reports/figures/flower',
                             overwrite       = TRUE,
                             color_scheme    = 'new' ) {
-  # DEBUG: scores=read.csv('scores.csv'); rgn_names = read.csv('layers/rgn_global.csv'); goals = read.csv('conf/goals.csv'); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; path_figures = 'reports/figures'; overwrite = TRUE; color_scheme = 'new'
+  # DEBUG: scores=read.csv('scores.csv'); rgn_names = read.csv('layers/rgn_global.csv'); goals = read.csv('conf/goals.csv'); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; name_fig = 'reports/figures/flower'; overwrite = TRUE; color_scheme = 'new'
 
   ## setup ----
 
@@ -61,7 +61,7 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
 
   scores <- scores %>%
     dplyr::mutate(goal = as.character(goal)) %>%
-    dplyr::filter(region_id <= 250) %>%       # get rid of high seas regions
+    dplyr::filter(region_id <= 250 | region_id > 300) %>%  # remove high seas but keep above eg BHI aggregates
     dplyr::filter(region_id != 213)
 
 
@@ -69,14 +69,16 @@ PlotFlowerMulti <- function(scores          = read.csv('scores.csv'), # datafram
   rgn_names <- rgn_names %>%
     mutate(label = as.character(label)) %>%
     bind_rows(data_frame(rgn_id = as.integer(0), label = assessment_name)) %>%
-    distinct(rgn_id, label) # this will remove rgn_id 0 if was doubled up
+    distinct(rgn_id, label) %>% # this will remove rgn_id 0 if was doubled up
+    filter(rgn_id %in% rgns_to_plot)
+
 
   ## loop through regions
-  for (r in rgns_to_plot){  # r=0
+  for (r in rgns_to_plot){  # r=0 r=301
 
     # error if rgn_id is not listed in rgn_names variable
     if (!r %in% rgn_names$rgn_id){
-      stop(sprintf('Cannot plot rgn_id %s; this region is not found in the rgn_names variable', r))
+      stop(sprintf('Cannot plot rgn_id %s; this region is not found in the rgn_names variable\n', r))
     }
 
     ## region name for title
