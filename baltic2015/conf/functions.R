@@ -1384,7 +1384,7 @@ FinalizeScores = function(layers, conf, scores){
     dplyr::group_by(goal, dimension, eez_id) %>%
     dplyr::summarise(score = weighted.mean(score, area_km2_rgn, na.rm=TRUE)) %>%
     ungroup() %>%
-    select(goal, dimension, score, region_id = eez_id)
+    dplyr::select(goal, dimension, score, region_id = eez_id)
 
   ## SUBBASINS
   scores_subbasin <- scores %>%
@@ -1398,7 +1398,7 @@ FinalizeScores = function(layers, conf, scores){
     dplyr::group_by(goal, dimension, subbasin_id) %>%
     dplyr::summarise(score = weighted.mean(score, area_km2_rgn, na.rm=TRUE)) %>%
     ungroup() %>%
-    select(goal, dimension, score, region_id = subbasin_id)
+    dplyr::select(goal, dimension, score, region_id = subbasin_id)
 
   ## combine scores with EEZ and SUBBASIN scores
   scores = bind_rows(scores, scores_eez, scores_subbasin)
