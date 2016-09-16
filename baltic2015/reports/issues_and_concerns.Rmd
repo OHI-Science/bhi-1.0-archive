@@ -1,40 +1,13 @@
-# BHI data and code – server, database, github
+---
+title: "Ongoing Issues and Concerns"
+output: github_document
+---
 
--	BHI data are saved on the BHI server under ‘Input Data.’  Each data folder has three sub-folders: source, metadata, data.  
-  -	The source folder is for the data as formatted directly from the data source.  These data
-  -	may be transformed to remove non-English letters but should in most cases be relatively un-modified.  
-
-  -	The metadata contains information on the data source, date data were downloaded or received, any data selections made during the download process, and variable code information or other useful background information.
-
-  -	The data folder contains data that have be cleaned and updated from the source version. This maybe simply renaming columns or changing the file type, other times it is re-organizing an excel file or cleaning and transforming the data in R.
-
-- BHI database data
-  - Data files are stored in the database (with the exception of spatial files).
-
-  - Database Level 0 is the data in its most raw state.  These data could come from either the “source” or “data” folders for any given data.
-
-  - Database Level 1 contains data from the “data” folder if these are modified from “source” folder files that are included at Level 0.  Level 1 may also included datasets from “source” folders entered at Level 0 then join to a second dataset.
-
-  - Database Metadata contains code or lookup information that may come from either files in the “metadata” folder or the “data” folder.
-
-- BHI github data
-
-  - Data used in csv file format in github are whenever possible read in from the database.  This occurs in a script in each prep folder called “mygoal_prep_database_call.r”.  This script requires running your personal access to the database.  Then it extracts data from the database and saves in a folder in the same prep folder titled “mygoal_data_database”
-
-  - Data are then read into the .rmd prep file from this “mygoal_data_database” folder for data layer preparation.  
-
-  - This does not occur if data files are not yet included in the database.  In most cases, the folder “mygoal_data_database” has been created for the goal but files are manually copied in rather than sourced from the database by the script.  If this is later updated, users should check columns and column names carefully to see if the .rmd script needs to be modified.
-
-  - This may also not happen for a few goals that were prepped early on and prep scripts are not fully updated (eg. TRA, FIS) – it was simpler to leave their file structure as is.
-
-  - Spatial datafile source locations may need to be updated depending on who is running the script.  Scripts set up by NCEAS currently source the NCEAS server, while those set up by Jennifer source her desktop location.
-
-  # Ongoing Issues and Concerns for BHI
 
 Here is a list of ongoing issues regarding data, coding, things to think about:
 
 1.	Goals without status layers
-  - CS
+  - CS 
 
 2.	Goals/subgoals without trend layers – decide if keep NA or need to have proxy
   - BD
