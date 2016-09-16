@@ -41,6 +41,10 @@ rgns <- left_join(
   by = 'region_id') %>%
   select(region_id, region_name, area_km2_rgn, eez_id, eez_name, subbasin_id, subbasin_name)
 
+## save csv lookup
+write.csv(rgns, 'spatial/regions_lookup_complete_wide.csv', row.names=FALSE)
+
+
 
 ## Create csv lookup of all regions, with headers to match layers/rgn_labels.csv ----
 rgns_complete <- bind_rows(
