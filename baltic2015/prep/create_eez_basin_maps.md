@@ -1,9 +1,6 @@
 Create EEZ and SUBBASIN maps
 ================
 
-Create EEZ and SUBBASIN maps
-----------------------------
-
 This will be done using `maptools::unionSpatialPolygons` to 'dissolve' the boundaries between BHI regions. This function won't preserve the data frame because there's not the same number of rows.
 
 ``` r
@@ -103,7 +100,12 @@ writeOGR(obj    = bhi_eez,
          layer  = 'BHI_EEZ_regions',
          driver = 'ESRI Shapefile', overwrite=TRUE)
 
-## save SUBBASIN map
+
+## save SUBBASIN map (first shortening the column names so it will save nicely)
+bhi_subbasin@data <- bhi_subbasin@data %>%
+  dplyr::rename(basin_id = subbasin_id, 
+                basin_name = subbasin_name)
+
 writeOGR(obj    = bhi_subbasin,
          dsn    = dir_spatial,
          layer  = 'BHI_SUBBASIN_regions',
