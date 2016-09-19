@@ -73,6 +73,11 @@ plot(bhi_eez)
 ``` r
 ## recreate as SpatialPolygonsDataFrame. Note: writeOGR doesn't like tbl_dfs, only data.frames
 bhi_eez <- SpatialPolygonsDataFrame(bhi_eez,  as.data.frame(rgns_eez))
+
+## standardize dataframe
+bhi_eez@data <- bhi_eez@data %>%
+  dplyr::rename(rgn_id   = eez_id, 
+                rgn_name = eez_name)
 ```
 
 Map of 17 BHI SUBBASINS
@@ -91,6 +96,11 @@ plot(bhi_subbasin)
 ``` r
 ## recreate as SpatialPolygonsDataFrame. Note: writeOGR doesn't like tbl_dfs, only data.frames
 bhi_subbasin <- SpatialPolygonsDataFrame(bhi_subbasin,  as.data.frame(rgns_subbasin))
+
+## standardize dataframe
+bhi_subbasin@data <- bhi_subbasin@data %>%
+  dplyr::rename(rgn_id   = subbasin_id, 
+                rgn_name = subbasin_name)
 ```
 
 ``` r
@@ -101,11 +111,7 @@ writeOGR(obj    = bhi_eez,
          driver = 'ESRI Shapefile', overwrite=TRUE)
 
 
-## save SUBBASIN map (first shortening the column names so it will save nicely)
-bhi_subbasin@data <- bhi_subbasin@data %>%
-  dplyr::rename(basin_id = subbasin_id, 
-                basin_name = subbasin_name)
-
+## save SUBBASIN map
 writeOGR(obj    = bhi_subbasin,
          dsn    = dir_spatial,
          layer  = 'BHI_SUBBASIN_regions',
