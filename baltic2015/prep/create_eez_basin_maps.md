@@ -20,13 +20,13 @@ rgns <- read.csv(file.path(dir_spatial, 'regions_lookup_complete_wide.csv'), str
          subbasin_ID = subbasin_id - 500)
 
 rgns_eez <- rgns %>%
- group_by(eez_id, eez_name) %>%
-  summarize(area_km2_eez = sum(area_km2_rgn)) %>%
+  group_by(eez_id, eez_name) %>%
+  summarize(area_km2 = sum(area_km2_rgn)) %>%
   ungroup()
 
 rgns_subbasin <- rgns %>%
   group_by(subbasin_id, subbasin_name) %>%
-  summarize(area_km2_subbasin = sum(area_km2_rgn)) %>%
+  summarize(area_km2 = sum(area_km2_rgn)) %>%
   ungroup()
 ```
 
@@ -76,12 +76,6 @@ plot(bhi_eez)
 ``` r
 ## recreate as SpatialPolygonsDataFrame. Note: writeOGR doesn't like tbl_dfs, only data.frames
 bhi_eez <- SpatialPolygonsDataFrame(bhi_eez,  as.data.frame(rgns_eez))
-
-## save
-# writeOGR(obj    = bhi_eez,
-#          dsn    = dir_spatial,
-#          layer  = 'BHI_EEZ_regions',
-#          driver = 'ESRI Shapefile', overwrite=TRUE)
 ```
 
 Map of 17 BHI SUBBASINS
@@ -100,12 +94,20 @@ plot(bhi_subbasin)
 ``` r
 ## recreate as SpatialPolygonsDataFrame. Note: writeOGR doesn't like tbl_dfs, only data.frames
 bhi_subbasin <- SpatialPolygonsDataFrame(bhi_subbasin,  as.data.frame(rgns_subbasin))
+```
 
-## save
-# writeOGR(obj    = bhi_subbasin,
-#          dsn    = dir_spatial,
-#          layer  = 'BHI_SUBBASIN_regions',
-#          driver = 'ESRI Shapefile', overwrite=TRUE)
+``` r
+## save EEZ map
+writeOGR(obj    = bhi_eez,
+         dsn    = dir_spatial,
+         layer  = 'BHI_EEZ_regions',
+         driver = 'ESRI Shapefile', overwrite=TRUE)
+
+## save SUBBASIN map
+writeOGR(obj    = bhi_subbasin,
+         dsn    = dir_spatial,
+         layer  = 'BHI_SUBBASIN_regions',
+         driver = 'ESRI Shapefile', overwrite=TRUE)
 ```
 
 ### TECHNICAL NOTE:
