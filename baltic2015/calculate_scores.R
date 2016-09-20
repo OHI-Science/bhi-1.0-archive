@@ -45,7 +45,7 @@ PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id >
 
 ## Make Flower Plots ----
 source('PlotFlowerMulti.R')
-rgns_complete <- read.csv('spatial/regions_lookup_complete.csv') # %>% filter(type %in% c('eez', 'subbasin'))
+rgns_complete <- read.csv('spatial/regions_lookup_complete.csv')
 rgn_names <- read.csv('spatial/regions_lookup_complete.csv') %>%
   dplyr::rename(rgn_id = region_id)
 
