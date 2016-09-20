@@ -30,7 +30,7 @@ source('PlotMapMulti.r') # until added to ohicore
 ## BHI regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
              spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
-             path_figures = 'reports/figures')
+             path_figures = 'reports/figures/BHI')
 
 ## EEZ regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
@@ -57,7 +57,7 @@ rgns_to_plot <- rgns$region_id
 PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(rgn_id %in% rgns_to_plot),
                 rgns_to_plot    = rgns_to_plot,
                 rgn_names       = rgn_names,
-                name_fig        = 'reports/figures/flower',
+                name_fig        = 'reports/figures/BHI/flower',
                 assessment_name = 'Baltic')
 
 ## EEZ regions
