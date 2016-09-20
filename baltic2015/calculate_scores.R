@@ -22,23 +22,23 @@ scores = CalculateAll(conf, layers)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
-## Make maps of scores
+## Make Maps
 source('PrepSpatial.R')  # until added to ohicore
 source('PlotMap.r')      # until added to ohicore
 source('PlotMapMulti.r') # until added to ohicore
 
 ## BHI regions
-PlotMapMulti(scores       = read_csv('scores.csv') %>% filter(region_id < 300),
+PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
              spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
              path_figures = 'reports/figures')
 
 ## EEZ regions
-PlotMapMulti(scores       = read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
+PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
              spatial_poly = PrepSpatial('spatial/BHI_EEZ_regions.shp'),
              path_figures = 'reports/figures/EEZ')
 
 ## SUBBASIN regions
-PlotMapMulti(scores       = read_csv('scores.csv') %>% filter(region_id > 500),
+PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 500),
              spatial_poly = PrepSpatial('spatial/BHI_SUBBASIN_regions.shp'),
              path_figures = 'reports/figures/SUBBASIN')
 
@@ -46,12 +46,47 @@ PlotMapMulti(scores       = read_csv('scores.csv') %>% filter(region_id > 500),
 ## Make Flower Plots ----
 source('PlotFlowerMulti.R')
 rgns_complete <- read.csv('spatial/regions_lookup_complete.csv') # %>% filter(type %in% c('eez', 'subbasin'))
-rgns_to_plot <- rgns_complete$region_id
-
 rgn_names <- read.csv('spatial/regions_lookup_complete.csv') %>%
   dplyr::rename(rgn_id = region_id)
 
-PlotFlowerMulti(scores          = read.csv('scores.csv'),
+## BHI regions
+rgns <- rgns_complete %>%
+  filter(type %in% c('bhi'))
+rgns_to_plot <- rgns$region_id
+
+PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(rgn_id %in% rgns_to_plot),
                 rgns_to_plot    = rgns_to_plot,
                 rgn_names       = rgn_names,
+                name_fig        = 'reports/figures/flower',
                 assessment_name = 'Baltic')
+
+## EEZ regions
+rgns <- rgns_complete %>%
+  filter(type %in% c('eez'))
+rgns_to_plot <- rgns$region_id
+
+PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(region_id %in% rgns_to_plot),
+                rgns_to_plot    = rgns_to_plot,
+                rgn_names       = rgn_names,
+                name_fig        = 'reports/figures/EEZ/flower',
+                assessment_name = 'Baltic')
+
+## SUBBASIN regions
+rgns <- rgns_complete %>%
+  filter(type %in% c('subbasin'))
+rgns_to_plot <- rgns$region_id
+
+PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(region_id %in% rgns_to_plot),
+                rgns_to_plot    = rgns_to_plot,
+                rgn_names       = rgn_names,
+                name_fig        = 'reports/figures/SUBBASIN/flower',
+                assessment_name = 'Baltic')
+
+
+
+
+
+
+
+
+
