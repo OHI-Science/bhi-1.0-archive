@@ -22,18 +22,25 @@ scores = CalculateAll(conf, layers)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
-## plot maps of scores
+## Make maps of scores
 source('PrepSpatial.R')  # until added to ohicore
 source('PlotMap.r')      # until added to ohicore
 source('PlotMapMulti.r') # until added to ohicore
-PlotMapMulti(scores       = scores %>% filter(region_id < 300),
+
+## BHI regions
+PlotMapMulti(scores       = read_csv('scores.csv') %>% filter(region_id < 300),
              spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
              path_figures = 'reports/figures')
-PlotMapMulti(scores       = scores %>% filter(region_id > 300 & region_id < 500),
+
+## EEZ regions
+PlotMapMulti(scores       = read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
              spatial_poly = PrepSpatial('spatial/BHI_EEZ_regions.shp'),
              path_figures = 'reports/figures/EEZ')
 
-
+## SUBBASIN regions
+PlotMapMulti(scores       = read_csv('scores.csv') %>% filter(region_id > 500),
+             spatial_poly = PrepSpatial('spatial/BHI_SUBBASIN_regions.shp'),
+             path_figures = 'reports/figures/SUBBASIN')
 
 
 ## Make Flower Plots ----
