@@ -23,13 +23,17 @@ write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
 ## plot maps of scores
-source('PrepSpatial.r')  # until added to ohicore
+source('PrepSpatial.R')  # until added to ohicore
 source('PlotMap.r')      # until added to ohicore
 source('PlotMapMulti.r') # until added to ohicore
-PlotMapMulti(scores       = scores,
+PlotMapMulti(scores       = scores %>% filter(region_id < 300),
              spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
              path_figures = 'reports/figures')
-PlotMap(scores %>% filter(goal == 'CW'), fig_path = 'reports/figures/map_CW.png')
+PlotMapMulti(scores       = scores %>% filter(region_id > 300 & region_id < 500),
+             spatial_poly = PrepSpatial('spatial/BHI_EEZ_regions.shp'),
+             path_figures = 'reports/figures/EEZ')
+
+
 
 
 ## Make Flower Plots ----
