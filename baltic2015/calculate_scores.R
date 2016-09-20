@@ -31,7 +31,7 @@ PlotMapMulti(scores       = scores %>% filter(region_id < 300),
              path_figures = 'reports/figures')
 PlotMapMulti(scores       = scores %>% filter(region_id > 300 & region_id < 500),
              spatial_poly = PrepSpatial('spatial/BHI_EEZ_regions.shp'),
-             path_figures = 'reports/figures')
+             path_figures = 'reports/figures/EEZ')
 
 
 
