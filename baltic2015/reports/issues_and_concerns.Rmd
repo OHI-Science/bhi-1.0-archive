@@ -8,14 +8,20 @@ Here is a list of ongoing issues regarding data, coding, things to think about:
 
 1.	Goals without status layers
   - CS 
+    - > TB: TB will try to fix this with sediment data
+    - > Julie's TODO: look through what Global has done 
+
 
 2.	Goals/subgoals without trend layers – decide if keep NA or need to have proxy
   - BD
   - ICO
   - TRA
   - CS – because no status method, but NUT trend suggested to be used if data for status are available
+  - > TB:  What about ECO, LIV and TR goals – very high – unrealistic scores?
+  - > JSL/NJ: directly borrow from OHI-Global's trend scores
 
 3.	Goals where gapfilling versus NA use is an ongoing discussion
+
   - **AO**: Values calculated at the basin level (means that the major of regions would get scores) but then Jens Olsson suggested any BHI region without any monitoring samples should not receive the basin score – this substantially increases BHI regions with NA for score
 
   - **CON** (and 1 area for NUT):
@@ -34,6 +40,7 @@ Here is a list of ongoing issues regarding data, coding, things to think about:
   - LIV – no regional level data
   - TR – no regional level data
   - AO
+  -> JSL/NJ: give scores of NA 
 
 5.	Resilience layers and Russia
 
