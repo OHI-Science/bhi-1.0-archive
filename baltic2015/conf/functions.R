@@ -1355,7 +1355,7 @@ FinalizeScores = function(layers, conf, scores){
 
   ## Regions to aggregate as eezs and basins
 
-  source('~/github/bhi/baltic2015/prep/create_rgns_lookup.r')
+  source('prep/create_rgns_lookup.R')
 
   ## complete dataframe
   rgns_complete <- read.csv('spatial/regions_lookup_complete.csv', stringsAsFactors = FALSE); head(rgns_complete)
