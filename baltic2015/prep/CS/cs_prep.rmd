@@ -60,15 +60,10 @@ Read the file in from 'layers' and resave as the CS trend for layers.
 # knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = FALSE)
 
 ## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+library(tidyverse)
 library(RMySQL)
-library(stringr)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
-library(stringr) # install.packages("stringr")
 library(rgdal)
 
 # source
@@ -82,8 +77,6 @@ make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio
 
 
 dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
 
 dir_cs   = file.path(dir_prep, 'CS')
 
@@ -108,8 +101,6 @@ if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
 }
 
 dir_shp <- file.path(dir_M, 'git-annex/Baltic')
-
-
 ```
 
 ### 4.2 Explore and plot data
@@ -187,3 +178,60 @@ cs_with_wt = cs_bhi_data %>%
 # DT::datatable(cs_with_wt)
 
 ```
+
+## Explore Global CS scores for Baltic regions
+
+```{r, eval=FALSE}
+
+rgn_id_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-webapps/dev/custom/bhi/sc_studies_custom_bhi.csv')
+
+hab_trend_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez2016/layers/hab_trend.csv'); head(hab_trend_gl)
+
+## filter BHI EEZs
+hab_trend_bhi <- hab_trend_gl %>%
+  dplyr::rename(gl_rgn_id = rgn_id) %>%
+  left_join(rgn_id_gl %>%
+              select(gl_rgn_id,
+                     gl_rgn_name), by = 'gl_rgn_id') %>%
+  filter(gl_rgn_id %in% rgn_id_gl$gl_rgn_id) %>%
+  arrange(gl_rgn_name) %>%
+  select(gl_rgn_name, gl_rgn_id, habitat, trend)
+
+as.data.frame(hab_trend_bhi)
+
+#    gl_rgn_name gl_rgn_id          habitat         trend
+# 1      Denmark       175      soft_bottom  0.0479267225
+# 2      Denmark       175      seaice_edge  0.0784982935
+# 3      Denmark       175 seaice_shoreline  0.0384615385
+# 4      Estonia        70        saltmarsh  0.5000000000
+# 5      Estonia        70      soft_bottom  0.0000000000
+# 6      Estonia        70      seaice_edge -0.2884057971
+# 7      Estonia        70 seaice_shoreline -0.5269709544
+# 8      Finland       174      soft_bottom  0.0000000000
+# 9      Finland       174      seaice_edge -0.2682619647
+# 10     Finland       174 seaice_shoreline -0.5802707930
+# 11     Germany       176        saltmarsh  0.5000000000
+# 12     Germany       176      soft_bottom  0.0923876208
+# 13     Germany       176      seaice_edge -0.2184466019
+# 14     Germany       176 seaice_shoreline -0.0362903226
+# 15      Latvia        69        saltmarsh  0.0000000000
+# 16      Latvia        69      soft_bottom  0.0000000000
+# 17      Latvia        69      seaice_edge -0.2435064935
+# 18      Latvia        69 seaice_shoreline -0.3571428571
+# 19   Lithuania       189      soft_bottom  0.0000000000
+# 20   Lithuania       189      seaice_edge -0.6326530612
+# 21   Lithuania       189 seaice_shoreline -0.7058823529
+# 22      Poland       178        saltmarsh  0.0000000000
+# 23      Poland       178      soft_bottom  0.0002250377
+# 24      Poland       178      seaice_edge -1.0000000000
+# 25      Russia        73      soft_bottom  0.0012292280
+# 26      Russia        73      seaice_edge -0.0581167073
+# 27      Russia        73 seaice_shoreline  0.0062767475
+# 28      Sweden       222        saltmarsh  0.0000000000
+# 29      Sweden       222      soft_bottom  0.0017414934
+# 30      Sweden       222      seaice_edge -0.0657894737
+# 31      Sweden       222 seaice_shoreline -0.7022792023
+```
+
+
+
