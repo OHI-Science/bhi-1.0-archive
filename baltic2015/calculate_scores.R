@@ -54,7 +54,7 @@ rgns <- rgns_complete %>%
   filter(type %in% c('bhi'))
 rgns_to_plot <- rgns$region_id
 
-PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(rgn_id %in% rgns_to_plot),
+PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(region_id %in% rgns_to_plot),
                 rgns_to_plot    = rgns_to_plot,
                 rgn_names       = rgn_names,
                 name_fig        = 'reports/figures/BHI/flower',
