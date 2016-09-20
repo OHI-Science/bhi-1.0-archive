@@ -2,7 +2,11 @@
 
 These figures represent Baltic Health Index (BHI) scores as reported for different regions. 
 
-Scores were calculated for 42 BHI regions. Additionally, there are 9 EEZ aggregated regions and 17 SUBBASIN aggregated regions. Figures are within the `BHI_regions`, `EEZ` and `SUBBASIN` folders, respectively.
+Scores were calculated for 42 BHI regions and aggregated (using a weighted average) to create an overall score for the Baltic.
+
+Additionally, there are 9 EEZ aggregated regions and 17 SUBBASIN aggregated regions. 
+
+Figures are within the [`BHI_regions`](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/reports/figures/BHI_regions), [`EEZ`](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/reports/figures/EEZ) and [`SUBBASIN`](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/reports/figures/SUBBASIN) folders, respectively.
 
 All figures are created by `baltic2015/calculate_scores.r`
 
