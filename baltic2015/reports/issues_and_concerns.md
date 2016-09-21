@@ -6,6 +6,9 @@ Here is a list of ongoing issues regarding data, coding, things to think about:
 1.  Goals without status layers
 
 -   CS
+    -   TB: TB will try to fix this with sediment data
+
+    -   Julie's TODO: look through what Global has done
 
 1.  Goals/subgoals without trend layers – decide if keep NA or need to have proxy
 
@@ -13,6 +16,9 @@ Here is a list of ongoing issues regarding data, coding, things to think about:
 -   ICO
 -   TRA
 -   CS – because no status method, but NUT trend suggested to be used if data for status are available
+-   TB: What about ECO, LIV and TR goals – very high – unrealistic scores?
+
+-   JSL/NJ: directly borrow from OHI-Global's trend scores
 
 1.  Goals where gapfilling versus NA use is an ongoing discussion
 
@@ -34,7 +40,7 @@ Here is a list of ongoing issues regarding data, coding, things to think about:
 -   ECO – no regional level data
 -   LIV – no regional level data
 -   TR – no regional level data
--   AO
+-   AO -&gt; JSL/NJ: give scores of NA
 
 1.  Resilience layers and Russia
 
