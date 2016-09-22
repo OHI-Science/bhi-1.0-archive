@@ -1033,21 +1033,17 @@ SP = function(scores){
 
 NUT = function(layers){
   #####----------------------######
-  ## NUT Status - Secchi data
+  ## NUT Status - Secchi + Anoxia
   #####----------------------######
   ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
+  ## UPDATE Sep2-16 - Ning Jiang - Added Anoxia to NUT (Pressures/Anoxia prep)
 
-  ## NUT status and trend calculated in prep file because calculated for HOLAS basins
+  ## Secchi status and trend calculated in prep file because calculated for HOLAS basins
   ## Basin status and trend are then assigned to BHI regions
   ## Status is calculated for more recent year (prior to 2014). This is 2013 for most regions
   ## but not for all (some 2012,2011)
   ## Trend is calculated over a 10 year period with a minimum of 5 years of data
   ## expect slow response time in secchi observation so use longer time window for trend
-
-  ## Read in from csv to test
-  #cw_nu_status= read.csv('~github/bhi/baltic2015/layers/cw_nu_status_bhi2015.csv')
-  #cw_nu_trend= read.csv('~github/bhi/baltic2015/layers/cw_nu_trend_bhi2015.csv')
-
 
   secchi_status = SelectLayersData(layers, layers='cw_nut_secchi_status') %>%
     dplyr::select(rgn_id = id_num, sec_status = val_num)
