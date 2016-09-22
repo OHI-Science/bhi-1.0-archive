@@ -37,7 +37,7 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe w
   ## loop over each goal and subgoal ----
 
   goals <- unique(scores$goal)
-  for (g in goals){ # g ='BD'
+  for (g in goals){ # g ='AO'
 
     print(sprintf('Mapping %s . . .', g))
 

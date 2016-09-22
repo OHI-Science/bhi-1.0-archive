@@ -7,63 +7,36 @@ output:
 params: 
     datasource: csv
 ---
-```{r setup}
 
-## source common libraries, directories, functions, etc
-# Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-source('~/github/bhi/baltic2015/prep/common.r')
-dir_cw    = file.path(dir_prep, 'CW')
-dir_con    = file.path(dir_prep, 'CW/contaminants')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_con, 'contaminants_prep.rmd')
-
-```
 
 # Contaminant Data Prep
 
 ## 1. Indicators
-3 indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
+Three indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
 
-### 1.2 (1) PCB concentration indicator
+### (1) PCB concentration indicator
 
-#### 1.2.1 ICES-6 PCB
-Non-dioxin like PCBs: sum of congeners (28, 52, 101, 138, 153, 180) 75 μg/kg ww fish muscle  
+#### ICES-6 PCB
 
-This is similar to the ICES-7 except that PCB 118 is excluded (since it is metabolized by mammals).  
+Non-dioxin like PCBs: sum of congeners (28, 52, 101, 138, 153, 180). Target is set at the threshold of 75 μg/kg ww (wet weight) fish muscle.   
+
+This is similar to the ICES-7 except that PCB 118 is excluded, since it is metabolized by mammals.  
 
 75 ng/g wet weight is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF). This threshold was also agreed upon as GES boundary at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
 
 
-### 1.3 (2) TEQ value for PCBs and Dioxins
-Dioxin and dioxin-like compounds:0.0065 TEQ ug /kg ww fish, crustaceans or molluscs (source of target:EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC).  
+### (2) TEQ value for PCBs and Dioxins
+
+Dioxin and dioxin-like compounds. Target is set at 0.0065 TEQ ug /kg ww fish, crustaceans or molluscs (source of target: EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC).  
 
 This threshold was agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. *Recevied the draft report from Elisabeth Nyberg*  
 
-Thisis consistent with the [EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
+This is consistent with the [EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF)  
 
 TEQ values from the [World Health Organization 2005](http://www.who.int/ipcs/assessment/tef_values.pdf)  
 
+### (3) PFOS indicator
 
-### 1.4 (3) PFOS indicator
 "GES boundary is set to 9.1 μg/kg wet weight (or 9.1 ng/g ww) with the protection goal of human health"" according to [HELCOM PFOS core indicator document, p.3](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf).  
 
 "The GES boundary is an environmental quality standard (EQS), derived at EU level as a substance included on the list of priority substances under the Water Framework Directive (European Commission 2000, 2013). GES, in accordance with the MSFD is defined as 'concentrations of contaminants at levels not giving rise to pollution effects'. 
@@ -72,7 +45,8 @@ EQS are derived from ecotoxicological studies to protect freshwater and marine e
 **HELCOM core indicator report uses liver PFOS concentrations converted to muscle equivalent values** as in [Faxneld et al. 2014b](https://www.diva-portal.org/smash/get/diva2:767385/FULLTEXT01.pdf).  
  
 
-### 1.5 Additional references
+### Additional references
+
 [Faxneld et al. 2014a](http://www.diva-portal.org/smash/record.jsf?pid=diva2%3A728508&dswid=1554) Biological effects and environmental contaminants in herring and Baltic Sea top predators  
 
 [Faxneld et al. 2014b](https://www.diva-portal.org/smash/get/diva2:767385/FULLTEXT01.pdf)Distribution of PFAS in liver and muscle of herring, perch, cod, eelpout, arctic char, and pike from limnic and marine environments in Sweden. 
@@ -83,7 +57,7 @@ EQS are derived from ecotoxicological studies to protect freshwater and marine e
 
 ### 2.1 Data sources
 
-#### 2.1.1 PCB data
+#### PCB data
 **ICES**
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
 Downloaded 22 April 2016 by Jennifer Griffiths  
@@ -97,7 +71,7 @@ Reporting Laboratory = All
 Analytical laboratory = All  
 Geographical Areas = (HELCOM) ALL HELCOM Sub-basins  
 
-#### 2.1.2 Dioxins
+#### Dioxins
 **ICES**
 [ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)  
 Downloaded on 11 May 2016 by Jennifer Griffiths
@@ -111,7 +85,7 @@ Reporting Laboratory = All
 Analytical laboratory = All  
 Geographical Areas = (HELCOM) ALL HELCOM Sub-basins  
 
-#### 2.1.3 PFOS
+#### PFOS
 Download from [ICES DOME database](http://dome.ices.dk/views/ContaminantsBiota.aspx) on 15 July 2016 by Jennifer Griffiths.  
 
 Database selections:  
@@ -131,7 +105,7 @@ Downloaded 2 December 2015 by Cornelia Ludwig
 
 
 ### 2.2 Data prep prior to database
-#### 2.2.1 PCB
+#### PCB
 Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminants/raw_contaminants_data_prep`  
     - If duplicate measurements were made from the same sample, values were averaged (all were two measurement of LIPIDWT% per sample, all from 2014, Poland).  
     -  Data were standardized to the same unit ug/kg  
@@ -141,7 +115,7 @@ Raw data from ICES were prepared in `~/github/bhi/baltic2015/prep/CW/contaminant
 
 ## 3. Other Info 
 ### 3.1 Congers in ICES database  
-#### 3.1.1 PCB Congeners
+#### PCB Congeners
 CB101       2 2' 4 5 5'-pentachlorobiphenyl  
 CB105       2 3 3' 4 4'-pentachlorobiphenyl  
 CB118       2 3' 4 4' 5-pentachlorobiphenyl  
@@ -160,7 +134,7 @@ CB52          2 2' 5 5'-tetrachlorobiphenyl
 CB77          3 3' 4 4'-tetrachlorobiphenyl  
 
 
-#### 3.1.2 Dioxin Congeners
+#### Dioxin Congeners
 CDD1N         1 2 3 7 8-pentachlorodibenzo-p-dioxin  
 CDD4X        1 2 3 4 7 8-hexachlorodibenzo-p-dioxin  
 CDD6P     1 2 3 4 6 7 8-heptachlorodibenzo-p-dioxin  
@@ -183,8 +157,36 @@ TCDD   2 3 7 8-tetrachlorodibenzo-p-dioxin
 
 ### 4.1 Basic data cleaning and organization
 
-#### 4.1.1 Read in PCB data
-```{r read in data, echo=FALSE, message=FALSE}
+#### Data prep setup
+```{r setup, message = FALSE}
+
+## source common libraries, directories, functions, etc
+
+# Libraries
+library(tidyverse)
+library(RMySQL)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_cw    = file.path(dir_prep, 'CW')
+dir_con    = file.path(dir_prep, 'CW/contaminants')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_con, 'contaminants_prep.rmd')
+
+```
+
+#### Read in PCB data
+```{r read in data, message=FALSE}
 ## read in PCB data
 pcb1 = read.csv(file.path(dir_con, 'contaminants_data_database/ices_herring_pcb.csv'))
 dim(pcb1)
@@ -199,15 +201,22 @@ lookup_basins = read.csv(file.path(dir_con,'bhi_basin_country_lookup.csv'), sep=
 
 
 ## Read in station impact
-lookup_impact = read.csv(file.path(dir_con,'raw_prep/station_impact_cleaned.csv')) ## maybe move to database??
-
+lookup_impact = read_csv(file.path(dir_con, 'raw_prep/station_impact_cleaned.csv')) 
 
 ```
 
-#### 4.1.2 Organize
-Remove and rename columns, change column data types
-```{r organize data}
-str(pcb1)
+#### Organize
+
+Remove and rename columns, and change column data types. 
+
+We found two stations that were not assigned BHI ID. 
+
+  station      lat      lon
+1  Lagnoe 59.56520 18.83480
+2    LL3A 60.38333 26.71667
+
+```{r organize data, message = FALSE}
+# str(pcb1)
 
 #format date as date
 pcb2 = pcb1 %>% 
@@ -228,75 +237,81 @@ pcb2 = pcb1 %>%
 head(pcb2)
 
 ## check for missing BHI ID
-pcb2 %>% filter(is.na(bhi_id)) %>% select(station,lat,lon)%>% distinct()
+pcb2 %>% 
+  filter(is.na(bhi_id)) %>% 
+  select(station,lat,lon) %>% 
+  distinct()
 
-#Lagnoe 59.56520 18.83480  - BHI 29 (stockholm archipelago)
-# LL3A 60.38333 26.71667  - BHI 32 (Gulf of Finland)
-
-pcb2 = pcb2 %>%
-       mutate(bhi_id = ifelse(is.na(bhi_id) & station == "Lagnoe",29,
-                      ifelse(is.na(bhi_id) & station == "LL3A",32, bhi_id)))
- pcb2 %>% filter(is.na(bhi_id))%>% select(station, lat, lon)%>% distinct()
+pcb2 %>%
+  mutate(bhi_id = ifelse(is.na(bhi_id) & station == "Lagnoe",29,
+                      ifelse(is.na(bhi_id) & station == "LL3A",32, bhi_id))) %>% 
+  filter(is.na(bhi_id)) %>% 
+  select(station, lat, lon) %>% 
+  distinct()
 ```
 
-#### 4.1.3 Plot data
+#### Plot data
 Explore raw data.
 **Why are there unassigned BHI regions?**
-```{r plot data}
+```{r plot data, message = FALSE, cache = TRUE}
 
-ggplot(pcb2) + geom_point(aes(date,value, colour=congener)) +
+ggplot(pcb2) + 
+  geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~bhi_id)
 
 ```
 
-#### 4.1.4 Filter for ICES 6 PCBs
-```{r filter ices 6}
+#### Filter for ICES 6 PCBs
+```{r filter ices 6, message = FALSE, cache = TRUE}
 ices6pcb = c("CB28_ug/kg", "CB52_ug/kg", "CB101_ug/kg", "CB138_ug/kg",
             "CB153_ug/kg", "CB180_ug/kg")
   
 pcb3 = pcb2 %>% 
         filter(congener %in% ices6pcb)
 
-dim(pcb3); dim(pcb2)
+# dim(pcb3); dim(pcb2)
 
 ```
 
-#### 4.1.5 Plot data -ICES 6 pcbs
-```{r plot ices 6}
-ggplot(pcb3) + geom_point(aes(date,value, colour=congener)) +
+#### Plot data -ICES 6 pcbs
+```{r plot ices 6, cache = TRUE}
+ggplot(pcb3) + 
+  geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~bhi_id)
 ```
 
 
-#### 4.1.6 Join to HOLAS basins and evaluate data coverage
+#### Join to HOLAS basins and evaluate data coverage
 
-```{r join to HOLAS basins}
+```{r join to HOLAS basins, message = FALSE}
 pcb4 = full_join(select(lookup_basins, rgn_id, basin),
-                 pcb3, by= c("rgn_id"="bhi_id"))
+                 pcb3, 
+                 by= c("rgn_id"="bhi_id"))
 head(pcb4)
 
 pcb4 = pcb4 %>%
        dplyr::rename(basin_name =basin)
 
-
-
-
 ```
 
 
-#### 4.1.7 Plot by basin
-```{r plot by basin}
+#### Plot by basin
+```{r plot by basin, cache = TRUE}
 
-ggplot(pcb4) + geom_point(aes(date,value, colour=congener)) +
+ggplot(pcb4) + 
+  geom_point(aes(date,value, colour=congener)) +
   facet_wrap(~basin_name)
 
 ```
 
 ### 4.2 Evaluate sites sampled
-What are the site representing: baseline/reference conditions or local impact.  
 
-#### 4.2.1 Join PCB sites, station dictionary, and impact codes
+The sites are representing _baseline/reference conditions_ or _local impact_.  
+
+#### Join PCB sites, station dictionary, and impact codes
+
 Some sites have had the site type recorded in the ICES station dictionary (see below). It is important to know which sites are catagorized as:  
+
     1. *RH* = WFD R(HZ) - Representative of general conditions in terms of hazardous substances  
     2. *B* =  WFD B - Baseline/Reference station  
     3. Any of the codes containing "I" (IH, IH-A, IH-C, IH-D, IH-E, IH-F, IH-H, IH-I, IH-M, IH-O, IH-P, IH-S, IH-W, IP, IP-B, IP-N, IP-T) which refers to a specific type of impact at the site.  
@@ -304,15 +319,23 @@ Some sites have had the site type recorded in the ICES station dictionary (see b
 It appears that *only Swedish sites have this information entered* (see below),  Most are RH (19), while B  (4) and RP (1).  RP = WFD R(PHY) Representative of general conditions for nutrients/organic matter.  
 
 **Sites to Include/Exclude**  
-Given only Swedish sites have this information recorded, seems difficult to use this information to include or exclude sites.  
-```{r join sites with site info }
+
+Given only Swedish sites have this information recorded, it seems difficult to use this information to include or exclude sites.  
+
+From the station dictionary definitions:
+
+- All_Biota_Data: Data type (DTYPE) CF - all parameters - contaminants and biological effects of contaminants including disease in biota
+- Contaminant_parameters_in_biota: Data type (DTYPE) CF - Contaminant parameter groups
+
+```{r join sites with site info, message = FALSE }
 pcb_sites = pcb4 %>% 
             select(country, station,basin_name,lat,lon,rgn_id) %>%
             filter(!is.na(station)) %>%  ## These are NA because when joined to BHI regions, were no station
             mutate(station2 = tolower(station)) %>% ## station name all lower case to join with station_dictionary
             distinct(.)
-pcb_sites
-dim(pcb_sites) #[1] 55  7
+# pcb_sites
+# dim(pcb_sites) 
+#[1] 55  7 
 
 ## clean lookup table
 lookup_impact = lookup_impact %>%
@@ -320,73 +343,74 @@ lookup_impact = lookup_impact %>%
 
 
 ## join with station dictionary
-
 pcb_sites = pcb_sites %>% left_join(., lookup_impact, by=c("station2"="Station_Name2", "country"="Country"))
 dim(pcb_sites) # 55 26
 
-pcb_sites %>% select(country, station, basin_name, lat, lon, rgn_id,MSTAT,All_Biota_Data:impact_I) %>% arrange(impact_RH, impact_B, impact_I)
+pcb_sites = pcb_sites %>% 
+  select(country, station, basin_name, lat, lon, rgn_id,MSTAT,All_Biota_Data:impact_I) %>% 
+  arrange(impact_RH, impact_B, impact_I)
 
 ## many sites do not have purpose entered in ICES
 ## the Finnish sites with no station name could then not be found in the impact lookup
 ## Many of the sites have "FALSE" under 'Contaminant_parameters_in_biota'
 ## These sites are also "FALSE" under All_Biota_data 
 
-## from the station dictionary definitions:
-## All_Biota_Data: Data type (DTYPE) CF - all parameters - contaminants and biological effects of contaminants including disease in biota
-##Contaminant_parameters_in_biota: Data type (DTYPE) CF - Contaminant parameter groups
-
-
 ```
 
 
 ### 4.3 Data flagged for quality
 
-#### 4.3.1 Evaluate data with Qflags
+#### Evaluate data with Qflags
+
 Codes:  
-**<** = less than  
 
-**>** = greather than  
+- **<** = less than  
 
-**D** = reported value is less than the detection limit (detli)  
+- **>** = greather than  
 
-**Q** = reported value is less than the limit of quantification (lmqnt)  
+- **D** = reported value is less than the detection limit (detli)  
 
-**~** separates multiple flags  
+- **Q** = reported value is less than the limit of quantification (lmqnt)  
+
+- **~** separates multiple flags  
 
 No information is given for what **<** implies when is it is used alone (e.g. is it related to the detection limit?)
+
 **Values for detect_lim and quant_lim**: Remember these are in the original units (not standardized to ug_kg or to wet weight)
-```{r qflag eval}
 
-## what qflags are present
+```{r qflag eval, message = FALSE }
+
+## what qflags are presenting
 pcb4 %>% select(qflag) %>% distinct(.) 
-##1      
-##2     D
-##3  <NA>
-##4     <
-##5     Q
-##6   <~D
-
 
 ## "~"  separates multiple flags
 
 ## which entries use '<'
-pcb4%>% 
-  filter(.,grepl('<', qflag)) %>% select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% head()
+pcb4 %>% 
+  filter(.,grepl('<', qflag)) %>% 
+  select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% 
+  head()
 
-## appears to be variable usage of '<', values are not always provided for detect_lim when used, values of detect_lim are in original units so are not always comparable to the value column
+## appears to be variable usage of '<'. values are not always provided for detect_lim when used. values of detect_lim are in original units so they are not always comparable to the value column
 
 ## which entries use "D"
 pcb4 %>% 
   filter(.,grepl('D', qflag)) %>%
-select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% head()
+  select(country,station,date,sub_samp_ref,qflag,detect_lim,congener,value) %>% 
+  head()
 
 
 ```
 
-#### 4.3.2 New qflag column
-Create second qflag column with "yes" if any symbol used to flag the data, and "no" if not
+#### New qflag column
 
-```{r new qflag column}
+Create second qflag column with 
+
+- "yes" if any symbol used to flag the data
+- "no" if not. 
+
+```{r new qflag column, message = FALSE }
+
 pcb5 = pcb4 %>%
       mutate(qflag = as.character(qflag))%>%
       mutate(qflag2 = ifelse(qflag == "", "no",
@@ -404,9 +428,11 @@ pcb5 %>% filter(is.na(qflag)) %>% select(qflag,qflag2) %>% distinct(.)
 
 ```
 
-#### 4.3.3 Plot data with qflag 
+#### Plot data with qflag 
+
 Plot each congener separately. CB 52, and CB 28 in particular have many flagged congeners.
-```{r}
+
+```{r plot qflag data, message = FALSE }
 ## congeners to plot
 # 1 CB101_ug/kg
 # 2 CB138_ug/kg
@@ -452,22 +478,23 @@ ggplot(filter(pcb5, congener =="CB52_ug/kg")) +
    ggtitle("CB52_ug/kg")
 
 
-
 ```
 
 #### 4.3.4 Number of observations w/ and w/o qflag
-*2123* samples (not unique sample dates) where all 6 congeners measured; only *1031* have no qflagged congeners.  
-```{r obs }
+
+*2123* samples (not unique sample dates) where all 6 congeners measured; only *1031* have no qflagged congeners.
+
+```{r obs, message = FALSE }
 ## number of C153 observations
 ## including qflag observations
-pcb5 %>% filter(congener=="CB153_ug/kg")%>%nrow()
-##2199
+pcb5 %>% 
+  filter(congener=="CB153_ug/kg") %>%
+  nrow()
 
 ## w/o qflag observatons
-pcb5 %>% filter(congener=="CB153_ug/kg" & qflag2 =="no")%>%nrow()
-##2129
-
-
+pcb5 %>% 
+  filter(congener=="CB153_ug/kg" & qflag2 =="no") %>% 
+  nrow()
 
 ## number of observations with all ICES 6
 ices6_obs = pcb5 %>% 
@@ -475,12 +502,13 @@ ices6_obs = pcb5 %>%
   filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
   group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, report_institute,station,
            lat,lon, helcom_id ,helcom_coastal_code,ices_area,date, monit_year, year, month,
-            day,doy,species, sub_samp_ref,sub_samp_id,samp_id, num_indiv_subsample, bulk_id)%>%
+            day,doy,species, sub_samp_ref,sub_samp_id,samp_id, num_indiv_subsample, bulk_id) %>%
   spread(congener, value) %>%
   ungroup() %>%
   mutate(sum_ices6 =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`)) %>%  ## sum all the congeners, if any are NA, result is NA
   filter(!is.na(sum_ices6))
-ices6_obs %>% nrow() #2123
+
+# ices6_obs %>% nrow() #2123
 
 ## Number of observations without qflagged data
 ices6_obs_noq = pcb5 %>% 
@@ -496,13 +524,14 @@ ices6_obs_noq = pcb5 %>%
   mutate(sum_ices6 =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`)) %>%  ## sum all the congeners, if any are NA, result is NA
   filter(!is.na(sum_ices6))
 
-  ices6_obs_noq %>% nrow()  #1031
+ # ices6_obs_noq %>% nrow()  #1031
   
   
 ```
 
 #### 4.3.5 Second value column with qflag adjustment
-If the data have any qflag, apply LOD/2.  However, LOD (eg. detect_lim column) value is not always provided and values are in original units.  Instead, apply transformation to the reported data value.
+
+If the data have any qflag, apply LOD/2.  However, LOD (eg. detect_lim column) value is not always provided and values are in original units. Instead, apply transformation to the reported data value.
 
 ```{r ajdust for qflag}
  pcb6 = pcb5 %>%
@@ -511,88 +540,131 @@ If the data have any qflag, apply LOD/2.  However, LOD (eg. detect_lim column) v
 ```
 
 #### 4.3.5 Plot qflag adjusted values and not adjusted values
-Each congener plotted in separate plot.  
+
+Each congener is plotted in separate plot.  
 
 **CB101**  
-Plot 1. First both raw values (red) and adjusted (black).  
-Plot 2 .Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+Plot 1. Both raw values (red) and adjusted (black).  
+ 
 ```{r plot adjusted values CB101}
-ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
+
+gg = ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
-   geom_point(aes(date,value2), color="black",shape=1)+
+   geom_point(aes(date,value2), color="black", shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
-  ggtitle("Plot 1. CB101_ug/kg")
+  ggtitle("Plot 1. CB101 concentration: raw & adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
+
+```
+
+Plot 2. Only adjusted values where blue trianges are those where LOD/2 applied. 
+
+```{r plot adjusted only, message = FALSE}
 
 ggplot(filter(pcb6, congener =="CB101_ug/kg")) +
-   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+  geom_point(aes(date,value2, color=qflag2, shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
-  scale_shape_manual(values=c(1,2))+
-  ggtitle("Plot 2. CB101_ug/kg")
+  scale_shape_manual(values=c(1, 2))+
+  ggtitle("Plot 2. CB101 concentration: adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
 
 ```
 
 **CB138**  
-Plot 1.First both raw values (red) and adjusted (black).  
-Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.  
 
-```{r plot adjusted values CB138}
+Plot 1. Both raw values (red) and adjusted (black).  
+
+```{r plot CB138 raw and adjusted values}
 ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
-  ggtitle("Plot 1. CB138_ug/kg")
+  ggtitle("Plot 2. CB138 concentration: raw & adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
+
+```
+
+Plot 2. Only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot CB138 adjusted}
 
 ggplot(filter(pcb6, congener =="CB138_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
-  ggtitle("Plot 2. CB138_ug/kg")
+  ggtitle("Plot 2. CB138 concentration: adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
 
 
 ```
 
 **CB153**  
-Plot 1.First both raw values (red) and adjusted (black).  
-Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.  
 
-```{r plot adjusted values CB153}
+Plot 1. Both raw values (red) and adjusted (black).  
+
+```{r plot CB153 raw and adjusted}
+
 ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
-  ggtitle("Plot 1. CB153_ug/kg")
+  ggtitle("Plot 1. CB153 concentration: raw and adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
+
+```
+
+Plot 2. Only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot CB 153 adjusted}
 
 ggplot(filter(pcb6, congener =="CB153_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
-  ggtitle("Plot 2.CB153_ug/kg")
-
+  ggtitle("Plot 2. CB153 concentration: adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
 
 ```
 
 **CB180**  
-Plot 1.First both raw values (red) and adjusted (black).  
-Plot 2.Second, only adjusted values where blue trianges are those where LOD/2 applied.  
 
-```{r plot adjusted values CB180}
+Plot 1. Both raw values (red) and adjusted (black).  
+
+```{r plot CB180 raw and adjusted}
+
 ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
-  ggtitle("Plot 1. CB180_ug/kg")
+  ggtitle("Plot 2. CB180 concentration: raw and adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
+```
+
+Plot 2. Only adjusted values where blue trianges are those where LOD/2 applied. 
+
+```{r plot CB180 adjusted}
 
 ggplot(filter(pcb6, congener =="CB180_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
-  ggtitle("Plot 2. CB180_ug/kg")
+  ggtitle("Plot 2. CB180 concentration: adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
 
 ```
 
 **CB28**  
-Plot 1. First both raw values (red) and adjusted (black).  
-Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+Plot 1. Both raw values (red) and adjusted (black).  
 
 ```{r plot adjusted values CB28}
 
@@ -600,42 +672,60 @@ ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
-  ggtitle("Plot 1. CB28_ug/kg")
+  ggtitle("Plot 2. CB28 concentration: raw and adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
+```
+
+Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied. 
+
+```{r plot CB28 adjusted}
 
 ggplot(filter(pcb6, congener =="CB28_ug/kg")) +
-   geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
+   geom_point(aes(date,value2, color=qflag2,shape=qflag2)) +
   facet_wrap(~basin_name, scales="free_y") +
-  scale_shape_manual(values=c(1,2))+
-  ggtitle("Plot 2. CB28_ug/kg")
-
+  scale_shape_manual(values=c(1,2)) +
+  ggtitle("Plot 2. CB28 concentration: adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
 ```
 
 **CB52**  
-Plot 1. First both raw values (red) and adjusted (black).  
-Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied.  
 
-```{r plot adjusted values CB52}
+Plot 1. First both raw values (red) and adjusted (black).  
+
+```{r plot CB52 raw and adjusted}
 ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
   geom_point(aes(date,value), color="red", shape=19) + 
    geom_point(aes(date,value2), color="black",shape=1)+
   facet_wrap(~basin_name, scales="free_y") +
-  ggtitle("Plot 1. CB52_ug/kg")
+  ggtitle("Plot 2. CB52 concentration: raw and adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
+```
+
+Plot 2. Second, only adjusted values where blue trianges are those where LOD/2 applied.  
+
+```{r plot CB52 adjusted}
 
 ggplot(filter(pcb6, congener =="CB52_ug/kg")) +
    geom_point(aes(date,value2, color=qflag2,shape=qflag2))+
   facet_wrap(~basin_name, scales="free_y") +
   scale_shape_manual(values=c(1,2))+
-  ggtitle("Plot 2. CB52_ug/kg")
-
+  ggtitle("Plot 2. CB52 concentration: adjusted (2000 - 2015)") +
+  labs(x = "year", 
+       y = "Concentration (ug/kg)")
 
 ```
 
 #### 4.4 ICES6 PCB
 
-#### 4.4.1 ICES6 PCB sum
-1. Sum only samples with all 6 PCBs observed.  
-2. Sum1 = sum value2 (qflag adjusted)
-3. Sum2 = sum only observation with no qflag values
+#### ICES6 PCB sum
+
+- 1. Sum only samples with all 6 PCBs observed.  
+- 2. Sum1 = sum value2 (qflag adjusted)
+- 3. Sum2 = sum only observation with no qflag values
+
 ```{r ices6 sum}
 
 ices6_1 =pcb6 %>%
@@ -644,7 +734,7 @@ ices6_1 =pcb6 %>%
         group_by(rgn_id, basin_name ,country,monit_program,monit_purpose, 
                  report_institute,station,lat,lon,helcom_id,helcom_coastal_code,
                  ices_area,date, monit_year, year, month,day,doy,species,sub_samp_ref,
-                 sub_samp_id,samp_id, num_indiv_subsample, bulk_id)%>%
+                 sub_samp_id,samp_id, num_indiv_subsample, bulk_id) %>%
         spread(congener, value2) %>%
         ungroup() %>%
         mutate(sum_ices6_ug_kg =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`)) %>%
@@ -654,7 +744,7 @@ ices6_1 =pcb6 %>%
 dim(ices6_1) #[1] 2123   31
 
 
-ices6_2 =pcb6 %>%
+ices6_2 = pcb6 %>%
         select(rgn_id:bulk_id,qflag2,congener,value2) %>%
         filter(!is.na(congener)) %>% ## this is for bhi_regions with no data
         filter(qflag2 == "no") %>%  ## filter for only data not flagged
@@ -665,14 +755,15 @@ ices6_2 =pcb6 %>%
                  sub_samp_id,samp_id, num_indiv_subsample, bulk_id)%>%
         spread(congener, value2) %>%
         ungroup() %>%
-        mutate(sum_ices6_ug_kg =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`))    %>%
-        filter(!is.na(sum_ices6_ug_kg)) %>% ## remove any observations with NA (eg not all congeners observed)            
+        mutate(sum_ices6_ug_kg =  (`CB101_ug/kg` + `CB138_ug/kg` + `CB153_ug/kg` + `CB180_ug/kg` + `CB28_ug/kg` + `CB52_ug/kg`)) %>%
+        filter(!is.na(sum_ices6_ug_kg)) %>% ## remove any observations with NA (eg not all congeners observed)    
         arrange(country,station,date,sub_samp_ref)
 
 dim(ices6_2)#1031   31
 
 
 ## THIS IS FOR VISUALIZATION OF THE FINAL PRODUCT ##
+
 ##time series
 ### save ices6_1 (sum ices6 for each sub_samp_ref) for visualization
 con_pcb_time_data = ices6_1 %>%
@@ -682,7 +773,7 @@ con_pcb_time_data = ices6_1 %>%
                            unit= "ug/kg",
                            data_descrip = "ICES6 PCB concentration unique samples")
 
-write.csv(con_pcb_time_data,file.path(dir_baltic, 'visualize/con_pcb_time_data.csv'),row.names=FALSE)
+write.csv(con_pcb_time_data, file.path(dir_baltic, 'visualize/con_pcb_time_data.csv'), row.names=FALSE)
 
 ## space
 con_pcb_space_data = ices6_1 %>%
@@ -731,7 +822,8 @@ ggplot(ices6_2) +
 
 
 #### 4.4.3 ICES6 mean value by date and location
-Take the mean value by date, do for both qflag-adjusted and no-qflag dataset
+
+Take the mean value by date. Do for both qflag-adjusted and no-qflag dataset. 
 
 ```{r mean ices 6 by date}
 

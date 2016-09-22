@@ -10,66 +10,23 @@ params:
 
 # ECO subgoal data preparation
 
-```{r setup}
-
-## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
-source('~/github/bhi/baltic2015/prep/common.r')
-
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-
-dir_eco    = file.path(dir_prep, 'ECO')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_eco, 'eco_prep.rmd')
-
-```
-
 ## 1. Background
 
 ## 2. Data
 
 ### 2.1 Regional Data
-Eurostat regional (NUTS3) GDP
-Data downloaded on 12 May 2016 from Eurostat database [nama_10r_3gdp](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp)  
 
-Nominal GDP data in millions of Euros.
+Eurostat regional (NUTS3) GDP. Nominal GDP data in millions of Euros.
+
+Data downloaded on 12 May 2016 from Eurostat database [nama_10r_3gdp](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp)  
 
 No data for Russia regions.  
 
 ### 2.2 Country Level data
-Eurostat Country GDP data
-Data downloaded 22 March 2016 from Eurostat Database [nama_10_gdp](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp)  
 
-Nominal GDP in millions of Euros.  
+Eurostat Country GDP data. Nominal GDP in millions of Euros.  
+
+Data downloaded 22 March 2016 from Eurostat Database [nama_10_gdp](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp)  
 
 Data does not include Russia
 
@@ -79,7 +36,7 @@ Eurostat database [naida_10_gdp](http://ec.europa.eu/eurostat/web/products-datas
 
 [Metadata link](http://ec.europa.eu/eurostat/cache/metadata/en/naid_10_esms.htm)  
 
-Download criteria:  
+_Download criteria_:  
 Russia; Gross domestic product at market prices; CP_MEUR (Current prices, million euro ); 2000-2014
 
 
@@ -92,13 +49,16 @@ Year of data = 2005. Data were a 5' resolution. Erik Smedberg with the Baltic Se
 
 Population density within a 25km buffer from the coast will be used.
 
-References:
+_References_:
+
 Klein Goldewijk, K. , A. Beusen, M. de Vos and G. van Drecht (2011). The HYDE 3.1 spatially explicit database of human induced land use change over the past 12,000 years, Global Ecology and Biogeography20(1): 73-86. DOI: 10.1111/j.1466-8238.2010.00587.x.
 
 Klein Goldewijk, K. , A. Beusen, and P. Janssen (2010). Long term dynamic modeling of global population and built-up area in a spatially explicit way, HYDE 3 .1. The Holocene20(4):565-573. http://dx.doi.org/10.1177/0959683609356587
 
 #### 2.4.2 National
+
 **EU countries**  
+
 Downloaded on March 31 2016 from Eurostat database [demo_gind](http://ec.europa.eu/eurostat/data/database?p_auth=whAQQAX7&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=demo_gind)  
 
 Variables:  
@@ -108,42 +68,49 @@ Population on Jan1
 [Metadata Link](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)  
 
 *Population on 1 January:*  
-Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
+
+Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the '_usual resident population_' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
 
 
 **Russia**  
-Downloaded on 10 June 2016 from Eurostat database:   [naida_10_pe](http://ec.europa.eu/eurostat/web/products-datasets/-/naida_10_pe)  
-population (thousands of people)  
-employment (thousands of people) *need to exclude this*  
+
+Downloaded on 10 June 2016 from Eurostat database: 
+[naida_10_pe](http://ec.europa.eu/eurostat/web/products-datasets/-/naida_10_pe)  
+
+- population (thousands of people)  
+- employment (thousands of people) *need to exclude this*  
  
 
 ### 2.5 Aligning BHI regions with NUTS3 regions and population density
-NEED TO ADD LINK to MARC methods  
- 
-[NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013.  Believe 2006 was used by Marc to join with BHI shapefile.  NEED TO HAVE MARC CONFIRM. This may lead to some NUTS3 naming discrepancies between the shapefile associations and the GDP data. See more in Section 4.2.2  
 
+TODO: NEED TO ADD LINK to MARC methods  
+ 
+[NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013.  I believe 2006 was used by Marc to join with BHI shapefile.  NEED TO HAVE MARC CONFIRM. This may lead to some NUTS3 naming discrepancies between the shapefile associations and the GDP data. See more in Section 4.2.2  
 
 NUTS3 GDP data is joined in the database to the area and population density information associated with that NUTS3 and BHI region.
 
-#### 2.5.1 Guide to column names in regional GDP associated with population density and area:  
-PopTot = total population in the BHI region's 25km buffer overlapping with a NUTS3 region  
-PopUrb = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region  
-PopRur = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region  
-PopTot_density_in_buffer_per_km2" = total population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
-PopUrb_density_in_buffer_per_km2 = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
-PopRur_density_in_buffer_per_km2 = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
-NUTS3_area_in_BHI_buffer_km2 = area of a NUTS3 region associated with the 25km buffer of a BHI region  
+#### 2.5.1 Guide to column names in regional GDP associated with population density and area: 
 
-
+- PopTot = total population in the BHI region's 25km buffer overlapping with a NUTS3 region  
+- PopUrb = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region  
+- PopRur = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region  
+- PopTot_density_in_buffer_per_km2" = total population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
+- PopUrb_density_in_buffer_per_km2 = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
+- PopRur_density_in_buffer_per_km2 = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region  population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region  
+- NUTS3_area_in_BHI_buffer_km2 = area of a NUTS3 region associated with the 25km buffer of a BHI region  
 
 ## 3. Goal Model
 ### 3.1 Status
 Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r)  
+
 c = current year, r=reference year  
-reference point is a moving window (single year value)  
+
+reference point is a moving window (single year value) 
+
 Region is the BHI region which is comprised of GDP data from the associated NUTS3 regions
-data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out) 
-each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region  
+
+Data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out). Each BHI region is composed by one or more NUTS3 regions. These are allocated by population density from each NUTS3 region associated with a given BHI region. 
+
 Data are in per capita GDP in millions of euro, using only population size from 2005 for all years.  
 
 ### 3.2 Trend
@@ -172,35 +139,62 @@ No GDP data for the following German NUTS3 regions: DE80H, DE805,DE80D, DE801,DE
 
 (3) Finnish NUTS3 regions also changed for those associated with BHI region 32:old names FI1A3, FI1A2, FI1A1 but new names appear to be in the same locations (new names FI1D7, FI1D6, FI1D5). These are also fixed in 5.1.5  
 
-(3) No data assigned to BHI 21 - this appears to be an error associated with the assignment of NUTS3 PL634 - unclear why this happens and is not fixed.  
+(4) No data assigned to BHI 21 - this appears to be an error associated with the assignment of NUTS3 PL634 - unclear why this happens and is not fixed.  
 
 #### 4.2.3 GDP used is for entire NUTS3 -
 Population data was not extracted for the entire NUTS3 area, only for the buffer area.  Therefore, the entire GDP for the NUTS3 is allocated among BHI regions, rather than only the GDP associated with the population in the buffer.
-
-
 
 
 ## 5. Regional GDP prep
 
 ### 5.1 Data organization
 
+Data prep setup. 
+```{r setup}
+
+## Libraries
+library(RMySQL)
+library(tidyverse)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+dir_eco    = file.path(dir_prep, 'ECO')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_eco, 'eco_prep.rmd')
+
+```
+
 #### 5.1.1 Read in data
-This should be check and updated when data are updated in database. Data should be extract from database by ´eco_prep_database_call.r´ and saved to folder ´eco_data_database´
+This should be checked and updated when data are updated in database. Data should be extracted from database by ´eco_prep_database_call.r´ and saved to folder ´eco_data_database´.
 
 ```{r read in regional gdp}
 regional_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nuts3_gdp.csv'))
 
-dim(regional_gdp) #21375    18
+# dim(regional_gdp) #21375    18
 
-str(regional_gdp)
+# str(regional_gdp)
 ```
 
 #### 5.1.2 clean data object
+
 ```{r clean regional gdp object}
 unique(regional_gdp$UNIT) ## Million euro 
 
 regional_gdp = regional_gdp %>%
-               select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2,-HELCOM_ID)%>% ## remove data not needed
+              select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2,-HELCOM_ID) %>% ## remove data not needed
               dplyr::rename(year = TIME, nuts3 = GEO, nuts3_name = GEO_LABEL,
                             unit = UNIT, value = Value, flag_notes = Flag_and_Footnotes,
                             rgn_id = BHI_ID,pop = PopTot,pop_km2 = PopTot_density_in_buffer_per_km2,
@@ -213,30 +207,32 @@ regional_gdp = regional_gdp %>%
                      country = as.character(country),
                      basin = as.character(basin))
 
-str(regional_gdp)
-
-
+# str(regional_gdp)
 
 ```
 
 #### 5.1.3 Find NUTS3 regions assigned to incorrect BHI region
-Due to small differences in the shapefiles, some NUTS3 regions assigned to a BHI region belonging to a different country.  
+Due to small differences in the shapefiles, some NUTS3 regions assigned to a BHI region belong to a different country.  
+
 ```{r}
 ## find mis-assigned NUTS and BHI regions
-mis_assigned =regional_gdp %>% 
-  filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia",country)) %>% ## include Russia because some mis-assigned
-select(country,country_abb, rgn_id,nuts3) %>% distinct() %>% arrange(rgn_id,country) %>%
+mis_assigned = regional_gdp %>% 
+  filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia", country)) %>% ## include Russia because some mis-assigned
+  select(country,country_abb, rgn_id, nuts3) %>%
+  distinct() %>% 
+  arrange(rgn_id,country) %>%
   dplyr::rename(BHI_ID = rgn_id,
                 country_bhi = country,
                 country_abb_nuts = country_abb)
 #write to csv
-#write.csv(mis_assigned, file.path(dir_eco,"mis_assigned_bhi_nuts3.csv"),row.names = FALSE)
+#write.csv(mis_assigned, file.path(dir_eco,"mis_assigned_bhi_nuts3.csv"), row.names = FALSE)
 ```
 
 #### 5.1.4 Manually fix NUTS3 regions assigned to incorrect BHI region
+
 ```{r fix mis-assigned NUTS3 regions}
 ## upload corrected files - the file exported in 5.1.3 was reviewed and corrected manually
-correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"),sep=";", stringsAsFactors = FALSE)
+correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";", stringsAsFactors = FALSE)
 str(correct_assign)
 
 regional_gdp1 = full_join(regional_gdp,correct_assign,
@@ -253,9 +249,11 @@ regional_gdp1 = regional_gdp1 %>%
 ```
 
 #### 5.1.5 Correct error with Finnish name change  
-Finnish name changes to NUTS regions around the Gulf of Finland (minor fraction also Aland Sea) as well as round the Bothnian Sea result in mismatches between names in the GDP data (new names) and the shapefiles (old names).  
-![New Finnish NUTS3 names](new_FI_nuts3.png?raw=TRUE)
-![Old Finnish NUTS3 names](BHI_regions_NUTS3_plot.png?raw=TRUE)
+Finnish name changes to NUTS regions around the Gulf of Finland (minor fraction also Aland Sea) as well as round the Bothnian Sea result in mismatches between names in the GDP data (new names) and the shapefiles (old names). 
+
+- ![New Finnish NUTS3 names](new_FI_nuts3.png?raw=TRUE)
+- ![Old Finnish NUTS3 names](BHI_regions_NUTS3_plot.png?raw=TRUE)
+
 ```{r fix error with Finnish Name change}
 new_fi_nuts3 = c("FI1C4","FI1B1", "FI1D7","FI1D6","FI1D5")
 old_fi_nuts3 = c("FI186","FI182","FI181", "FI1A3","FI1A2","FI1A1")
@@ -364,7 +362,9 @@ regional_gdp1 %>%
 
 ### 5.2 Data associations with Baltic and BHI
 #### 5.2.1 Filter for Baltic countries
+
 Only NUTS3 regions associated with a BHI ID have a country name, so this effectively selects the NUTS3 regions on the Baltic Coast  
+
 ```{r filter for baltic countries}
 ## read in EU country abbreviations and names
 ##eu_lookup = read.csv(file.path(dir_eco, 'EUcountrynames.csv'), sep=";")  
@@ -381,7 +381,7 @@ unique(regional_gdp2$country_abb)
 ```
 
 #### 5.2.2 Remove 2014
-Only 2 countries have data
+Only 2 countries have data in 2014. 
 ```{r remove 2014 from regional data}
 regional_gdp2 = regional_gdp2 %>%
                 filter(year < 2014)
@@ -396,7 +396,6 @@ ggplot(regional_gdp2) +
   geom_point(aes(year, value, col=nuts3))+
   facet_wrap(~country)+
   ylab("GDP (million euro)")+
-  #guides(color="none")+
   ggtitle("regional GDP by countries")
 
 
@@ -411,6 +410,7 @@ ggplot(regional_gdp2) +
 
 #### 5.2.3 Check data flags
 ```{r check regional data data flags}
+
 regional_gdp2 %>% filter(!is.na(flag_notes))
 ## no data flags
 

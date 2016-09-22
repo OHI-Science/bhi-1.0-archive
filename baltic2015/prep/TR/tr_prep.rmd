@@ -41,7 +41,7 @@ Download Date: 10 Feb 2016, Download By: Jennifer Griffiths
 
 Selected all Geographic areas (includes NUTS0, NUTS1, NUTS2)  
 
-Selected all accommodation categories combined:Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks  
+Selected all accommodation categories combined: Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks  
 
 Selected Total, and split between Coastal & non-coastal regions  
 
@@ -55,21 +55,20 @@ Missing data indicated by colon (:)
 
 ### 3.1 Status Calculation
 
-Xtr = a_r / a_ref_r  
-a_r =  number of nights spent in coastal accommodations in BHI region r  
-a_ref_r = a_r - 5  
+Xtr = a_r / a_ref_r
 
-r = BHI region  
-a_r = (proportion population in 25km buffer in nuts2 association with r) x a_c  
-n = NUTS2 region  
-a_c = coastal accommodation stays in NUTS2 region n  
-a_c = a_n x c_n1  
-a_n = accomodation stays in NUTS2 region_n  
-c_n1 = mean proportion of accommodations stays that are coastal at the NUTS1 level  
+- a_r =  number of nights spent in coastal accommodations in BHI region r  
+- a_ref_r = a_r - 5  
+- r = BHI region  
+- a_r = (proportion population in 25km buffer in nuts2 association with r) x a_c  
+- n = NUTS2 region  
+- a_c = coastal accommodation stays in NUTS2 region n  
+- a_c = a_n x c_n1  
+- a_n = accomodation stays in NUTS2 region_n  
+- c_n1 = mean proportion of accommodations stays that are coastal at the NUTS1 level  
 
 ### 3.2 Trend calculation
 Linear regression fit to the most recent 5 status years.  
-
 
 ## 4. Data Layer Preparation 
 
@@ -144,6 +143,7 @@ eu_names = read.csv(file.path(dir_prep,"EUcountrynames.csv"),sep=";", stringsAsF
 #### 4.1.2 Clean Data 
 
 ##### 4.1.2.1 Acommodation stays time series 
+
 ```{r clean data Acommodation stays time series}
 
 ## Acommodation stays time series
@@ -182,12 +182,17 @@ accom1 = accom1 %>%
 ```
 
 ##### 4.1.2.2  Coastal / non-coastal data 
+
 Clean to get NUTS1 - higher resolution available for some areas (parts of Finland, German, Poland) but is not consistent.  However, NUTS1 does differ among countries. In Denmark, Estonia, Latvia, and Lithuania: NUTS1 is the entire country. *Note for Denmark this means non-Baltic coast is included*  
+
 In Finland, Aland is one region and the rest of the country is another.  
+
 In Sweden there are 3 regions in the entire country, and 1 region includes non-Baltic coast, all have substantial inland area.  
+
 Germany and Poland each have 2 regions that are NUTS1 that border the Baltic.  
 
 ![See NUTS1 locations here](nuts1_regions_eurostat_image.png?raw=true)
+
 ```{r clean data  Coastal  non-coastal data}
 
 ## Coastal / non-coastal data
@@ -243,6 +248,7 @@ head(accom_coast2)
 ```
 
 ##### 4.1.2.3 NUTS2 population data 
+
 ```{r clean data}
 ## nuts2 population data
 str(nuts2_pop_area)
@@ -263,8 +269,11 @@ str(nuts2_pop_area1)
 ```
 
 #### 4.1.3 Check NUTS2 names from Finland 
+
 Shapefiles have names from 2006, check accom1 and accom_coast1 to see if the names have been updated, will need to fix. 
-![Map of old NUTS2 names for GUlf of Finland](BHI_regions_NUTS2_plot.png?raw=true)  
+
+![Map of old NUTS2 names for GUlf of Finland](BHI_regions_NUTS2_plot.png?raw=true) 
+
 ![Map of new NUTS2 names for GUlf of Finland](new_FI_nuts2.png?raw=true)  
 ```{r check fi nuts2 names}
 
@@ -290,7 +299,9 @@ nuts2_pop_area1 %>% filter(grepl("FI",nuts2))%>% select(nuts2)%>% distinct()
 ```
 
 #### 4.1.4 Check for incorrectly assigned NUTS2 regions to BHI regions and fix 
+
 Note - (as in NUTS3 assignment issues see ECO), BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
+
 ```{r check for incorrectly assigned NUTS2 regions}
 ## write to csv, fix manually, re-import csv
 misassigned_nuts2 = nuts2_pop_area1 %>% select(nuts2,country,rgn_id)
@@ -325,7 +336,8 @@ str(nuts2_pop_area2)
 
 ### 4.2 Join datasets 
 
-#### 4.2.1 Join accom times series with nuts pop and area 
+#### 4.2.1 Join accom times series with nuts pop and area
+
 Join data with inner join, this will exclude Finland areas with name mismatches. Fix Finnish data and add back into the dataset
 ```{r join accom1 with nuts_pop_area1}
 accom_nuts1 = inner_join(accom1, nuts2_pop_area2,
@@ -336,7 +348,7 @@ dim(accom1)##11250     8
 dim(nuts2_pop_area2) ## 60 8
 dim(accom_nuts1) ##1400  14
 
-str(accom_nuts1) ## this is now missing the Finnish data where there are name discrepancies
+# str(accom_nuts1) ## this is now missing the Finnish data where there are name discrepancies
 
 
 ## Get Finnish data renamed so that accommodating and population data match
