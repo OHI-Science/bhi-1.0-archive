@@ -160,10 +160,8 @@ library(rprojroot) # install.packages('rprojroot')
 
 source('~/github/bhi/baltic2015/prep/common.r')
 
-
 ## rprojroot
 root <- rprojroot::is_rstudio_project
-
 
 ## make_path() function to 
 make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
@@ -215,6 +213,7 @@ regional_gdp = regional_gdp %>%
 Due to small differences in the shapefiles, some NUTS3 regions assigned to a BHI region belong to a different country.  
 
 ```{r}
+
 ## find mis-assigned NUTS and BHI regions
 mis_assigned = regional_gdp %>% 
   filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia", country)) %>% ## include Russia because some mis-assigned
@@ -230,12 +229,25 @@ mis_assigned = regional_gdp %>%
 
 #### 5.1.4 Manually fix NUTS3 regions assigned to incorrect BHI region
 
-```{r fix mis-assigned NUTS3 regions}
-## upload corrected files - the file exported in 5.1.3 was reviewed and corrected manually
-correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";", stringsAsFactors = FALSE)
-str(correct_assign)
+The file saved above "mis_assigned_bhi_nuts3.csv" was manually corrected and saved as "mis_assigned_bhi_nuts3_corrected_manually.csv". This work is done outside of this prep file. Here we are going to use this new file to correct the regions misassigned in the regional gdp file. 
 
-regional_gdp1 = full_join(regional_gdp,correct_assign,
+```{r fix mis-assigned NUTS3 regions}
+
+## upload corrected files - the file exported in 5.1.3 was reviewed and corrected manually, which excluded region 21
+correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";",       stringsAsFactors = FALSE) 
+  
+## region 21 was misassigned 17 & 18 but wasn't sure of this until Marc provided updated NUTS/BHI shapefiles in Sep 2016. Attaching this new information to correct_assign.
+nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv')) %>%
+ filter(BHI_ID == '21')
+#   country BHI_ID nuts3 country_abb
+# 1  Poland     21 PL631          PL
+# 2  Poland     21 PL634          PL
+## but only PL634 was included in the GDP data and was assigned BHI_ID of 17 & 18 incorrectly
+
+correct_assign_PL = correct_assign %>% 
+  mutate(correct_BHI_ID = ifelse(nuts3 == 'PL634', '21', correct_BHI_ID))
+
+regional_gdp1 = full_join(regional_gdp, correct_assign_PL,
                           by=c("country"="country_bhi", "country_abb"="country_abb_nuts",
                                "rgn_id"="BHI_ID", "nuts3"))
 
@@ -1183,3 +1195,34 @@ ggplot(plot_eco)+
 
 ```
 
+#### 8. explore updated NUTS shapefile 22.9.2016
+
+Udpated NUTS shape file was received from Marc to correct region misassignment. This section is checking if they match corrected assignments done by Jennifer in section 5.1.4. 
+
+```{r updated NUTS shape file explore}
+
+# load Jennifer's manually corrected BHI and NUTS3 region assignment list
+correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";",       stringsAsFactors = FALSE) %>% 
+  dplyr::select(country = country_bhi, 
+                BHI_ID, 
+                nuts3) # 96 obs, excluding BHI_ID 21
+
+# load updated assignment list
+nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv')) %>%
+  unique(.) 
+# 133 obs
+
+# write a funtion to check if each row of one data frame is contained within another data frame
+rowcheck  <- function(df1, df2){
+      xx <- apply(df1, 1, paste, collapse = "")
+      yy <- apply(df2, 1, paste, collapse = "")
+      zz <- xx %in% yy
+      return(zz)
+  }
+
+# check if each row of correct_assign_simple is contained in the updated nuts3 region map
+rowcheck(correct_assign_simple, nuts3_updated) 
+## all TRUE
+
+# this means the updated NTUS3 spatial file matches what Jennifer has manually corrected. can use the updated NUTS3 spatial file to correct misassignments directly, which also includes BHI_ID 21. 
+```
