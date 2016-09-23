@@ -1025,3 +1025,33 @@ This is done for both the regional and the national datasets.
 ### 8.5 Short Danish timeseries
 Danish regional time series are shorter. Data begin in 2007. Because data from 5 years prevous are need to calculated the regional/ref value, only three status years can be calculated.  This also means that no trend is calculated because 5 years is required.
 
+
+### 9. Update region assignment 
+
+Marc updated the NUTS regions shape files. 
+
+
+```{r read updated NUTS3 shp file}
+
+nuts3 = readOGR(dsn = path.expand(file.path(dir_liv, 'liv_data_database/NUTS_2006_shp_file_updated_9.2016')),
+                layer = 'NUTS_2006_Level_3_reprojected_BHI_shapefile_25km_intersect')
+
+data_nuts3 = nuts3@data %>% 
+  dplyr::select(country = Country, 
+                BHI_ID,
+                nuts3 = NUTS_ID)
+
+write_csv(data_nuts3, file.path(dir_liv, 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv'))
+
+
+nuts2 = readOGR(dsn = path.expand(file.path(dir_liv, 'liv_data_database/NUTS_2006_shp_file_updated_9.2016')),
+                layer = 'NUTS_2006_Level_2_reprojected_BHI_shapefile_25km_intersect')
+
+data_nuts2 = nuts2@data %>% 
+  dplyr::select(country = Country, 
+                BHI_ID, 
+                nuts2 = NUTS_ID)
+
+write_csv(data_nuts2, file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv'))
+
+```
