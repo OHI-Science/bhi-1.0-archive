@@ -1051,6 +1051,7 @@ nuts2 = readOGR(dsn = path.expand(file.path(dir_liv, 'liv_data_database/NUTS_200
 
 data_nuts2 = nuts2@data %>% 
   dplyr::select(country = Country, 
+                country_abb = CNTR_CODE,
                 BHI_ID, 
                 nuts2 = NUTS_ID)
 
