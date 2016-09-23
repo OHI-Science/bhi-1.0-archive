@@ -124,6 +124,7 @@ library(RMySQL)
 library(tidyverse)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
+library(rgdal) 
 
 source('~/github/bhi/baltic2015/prep/common.r')
 
@@ -1028,10 +1029,10 @@ Danish regional time series are shorter. Data begin in 2007. Because data from 5
 
 ### 9. Update region assignment 
 
-Marc updated the NUTS regions shape files. 
+Marc sent the updated NUTS regions shape files for 2006 (9/2016). 
 
 
-```{r read updated NUTS3 shp file}
+```{r read updated NUTS3 shp file, eval = FALSE}
 
 nuts3 = readOGR(dsn = path.expand(file.path(dir_liv, 'liv_data_database/NUTS_2006_shp_file_updated_9.2016')),
                 layer = 'NUTS_2006_Level_3_reprojected_BHI_shapefile_25km_intersect')
@@ -1039,7 +1040,8 @@ nuts3 = readOGR(dsn = path.expand(file.path(dir_liv, 'liv_data_database/NUTS_200
 data_nuts3 = nuts3@data %>% 
   dplyr::select(country = Country, 
                 BHI_ID,
-                nuts3 = NUTS_ID)
+                nuts3 = NUTS_ID, 
+                country_abb = CNTR_CODE)
 
 write_csv(data_nuts3, file.path(dir_liv, 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv'))
 
