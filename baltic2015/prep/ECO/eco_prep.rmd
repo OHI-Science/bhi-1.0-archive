@@ -85,7 +85,7 @@ Downloaded on 10 June 2016 from Eurostat database:
 
 TODO: NEED TO ADD LINK to MARC methods  
  
-[NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013.  I believe 2006 was used by Marc to join with BHI shapefile.  NEED TO HAVE MARC CONFIRM. This may lead to some NUTS3 naming discrepancies between the shapefile associations and the GDP data. See more in Section 4.2.2  
+[NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013. 2006 was used to join with BHI shapefile.  This led to some NUTS3 naming discrepancies between the shapefile associations and the GDP data, which has been manually corrected in section 5.1.4. 
 
 NUTS3 GDP data is joined in the database to the area and population density information associated with that NUTS3 and BHI region.
 
@@ -101,7 +101,8 @@ NUTS3 GDP data is joined in the database to the area and population density info
 
 ## 3. Goal Model
 ### 3.1 Status
-Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r)  
+
+Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r) 
 
 c = current year, r=reference year  
 
@@ -238,14 +239,15 @@ correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_ma
   
 ## region 21 was misassigned 17 & 18 but wasn't sure of this until Marc provided updated NUTS/BHI shapefiles in Sep 2016. Attaching this new information to correct_assign.
 nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv')) %>%
- filter(BHI_ID == '21')
-#   country BHI_ID nuts3 country_abb
-# 1  Poland     21 PL631          PL
-# 2  Poland     21 PL634          PL
-## but only PL634 was included in the GDP data and was assigned BHI_ID of 17 & 18 incorrectly
+ filter(nuts3 == 'PL634')
+#  country BHI_ID nuts3 country_abb
+#   Poland     21 PL634          PL
+#   Poland     18 PL634          PL
+#   Poland     18 PL634          PL
+## in original data, PL634 was assigned BHI_ID of 17 & 18 incorrectly
 
 correct_assign_PL = correct_assign %>% 
-  mutate(correct_BHI_ID = ifelse(nuts3 == 'PL634', '21', correct_BHI_ID))
+  mutate(correct_BHI_ID = ifelse(nuts3 == 'PL634' & BHI_ID == '17', '21', correct_BHI_ID))
 
 regional_gdp1 = full_join(regional_gdp, correct_assign_PL,
                           by=c("country"="country_bhi", "country_abb"="country_abb_nuts",
