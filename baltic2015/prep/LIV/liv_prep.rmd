@@ -11,12 +11,11 @@ params:
 #LIV subgoal data preparation
 
 ## 1. Background
+
 "This sub-goal describes livelihood quantity and quality for people living on the coast.  
 Ideally, this sub-goal would speak to the quality and quantity of marine jobs in an area. It would encompass all the marine sectors that supply jobs and wages to coastal communities, incorporating information on the sustainability of different sectors while also telling about the working conditions and job satisfaction. "  
 
 [Reference](http://ohi-science.org/goals/#livelihoods-and-economies)
-
-
 
 ## 2. Data
 
@@ -55,6 +54,7 @@ The EU-LFS is designed to give accurate quarterly information at national level 
 ### 2.2 Russian data
 
 #### 2.2.1 Regional data
+
 HAVE NOT OBTAINED
 
 #### 2.2.2 Country level data
@@ -111,8 +111,6 @@ Xliv = (Employment_Region_c/Employment_Region_r)/(Employment_Country_c/Employmen
    * NUTS2 employment percentage multipled by the by population in the 25km inland buffer associated with a BHI region.  Sum across all associated with a BHI region to get the total employed people in the BHI region.
 * For Country data, need to also get population size so can have total number of people employed, not percent employed
 
-
-
 ## 5. Regional data prep
 
 ### 5.1 Data organization
@@ -142,9 +140,9 @@ dir_liv    = file.path(dir_prep, 'LIV')
 create_readme(dir_liv, 'liv_prep.rmd')
 ```
 
-#### 5.1.1 read in data
+#### Read in employment and population data
 
-```{r read in regional data}
+```{r read in regional data, message = FALSE}
 ## read in
 regional_employ = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_employ.csv'), stringsAsFactors = FALSE)
 
@@ -156,7 +154,8 @@ nuts2_pop_area = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_pop_area.c
 # str(nuts2_pop_area)
 ```
 
-#### 5.1.2 Clean Regional employment data object
+#### Clean Regional employment data object
+
 ```{r clean regional data object, message = FALSE}
 regional_employ1 = regional_employ %>%
                   select(-TIME_LABEL,-SEX,-AGE) %>%
@@ -242,6 +241,9 @@ misassigned_nuts2 = nuts2_pop_area1 %>% select(nuts2, country, rgn_id)
 ## read in corrected assignments - same file as used for TR
 
 corrected_nuts2 = read.csv(file.path(dir_liv,"misassigned_nuts2_manually_corrected.csv"), sep=";", stringsAsFactors = FALSE)
+
+corrected_nuts2_new = read_csv(file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv')) %>% 
+  
 
 ## join nuts2_pop_area1 with corrected data and fix
 
