@@ -96,13 +96,13 @@ Downloaded on 10 June 2016 from Eurostat database:   [naida_10_pe](http://ec.eur
 population (thousands of people)  
 employment (thousands of people) *need to exclude this*  
 
-### 2.4 Aligning BHI regions with NUTS3 regions and population density
+### 2.4 Aligning BHI regions with NUTS2 regions and population density
 
 UPDATE with Marc's methods or link
 
 ## 3. Goal model
 
-Xliv = (Employment_Region_c/Employment_Region_r)/(Employment_Country_c/Employment_Country_r)  
+Xliv = ${\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}/{\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}$
 
 * c = current year, r=reference year  
 * reference point is a moving window (single year value)  
@@ -212,10 +212,15 @@ Shapefiles have names from 2006, check accom1 and accom_coast1 to see if the nam
 
 ```{r check fi nuts2 names, message = FALSE}
 
-regional_employ1 %>% filter(grepl("FI", nuts2)) %>% select(nuts2, nuts2_name) %>% distinct()
+check1 = regional_employ1 %>% filter(grepl("FI", nuts2)) %>% 
+  select(nuts2, nuts2_name) %>% 
+  distinct()
 ## These are the newer region names : FI1B, FI1C, FI1D
 
-nuts2_pop_area1 %>% filter(grepl("FI", nuts2)) %>% select(nuts2) %>% distinct()
+check2 = nuts2_pop_area1 %>% 
+  filter(grepl("FI", nuts2)) %>% 
+  select(nuts2) %>% 
+  distinct()
 ## These are the older region names: FI18, FI1A
 
 ## Challenge because of coasts
@@ -230,6 +235,7 @@ nuts2_pop_area1 %>% filter(grepl("FI", nuts2)) %>% select(nuts2) %>% distinct()
 ```
 
 #### 4.1.4 Check for incorrectly assigned NUTS2 regions to BHI regions and fix 
+
 Note - (as in NUTS3 assignment issues see ECO), BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
 
 ```{r check for incorrectly assigned NUTS2 regions, message = FALSE}
@@ -242,7 +248,7 @@ misassigned_nuts2 = nuts2_pop_area1 %>% select(nuts2, country, rgn_id)
 
 corrected_nuts2 = read.csv(file.path(dir_liv,"misassigned_nuts2_manually_corrected.csv"), sep=";", stringsAsFactors = FALSE)
 
-corrected_nuts2_new = read_csv(file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv')) %>% 
+corrected_nuts2_new = read_csv(file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv')) 
   
 
 ## join nuts2_pop_area1 with corrected data and fix
