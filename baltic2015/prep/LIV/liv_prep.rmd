@@ -149,9 +149,9 @@ regional_employ = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_employ.cs
 # dim(regional_employ) #[1] 5344    9
 # str(regional_employ)
 
-nuts2_pop_area = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_pop_area.csv'), stringsAsFactors = FALSE)
-# dim(nuts2_pop_area)
-# str(nuts2_pop_area)
+## 9.27.2016 - updated PopDensity 
+nuts2_pop_density = read_csv(file.path(dir_liv, 'liv_data_database/NUTS2_BHI_ID_Pop_density_in_buffer.csv'))
+
 ```
 
 #### Clean Regional employment data object
@@ -187,20 +187,17 @@ regional_employ1 = regional_employ1 %>%
 
 ```{r clean nuts pop area data, message = FALSE}
 ## nuts2 population data
-str(nuts2_pop_area)
 
-nuts2_pop_area1 = nuts2_pop_area %>%
-                  select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2, -HELCOM_ID) %>%
+nuts2_pop_area1 = nuts2_pop_density %>%
+                  select(-PopUrb,-PopRur,-PopUrb_density_in_NUTS2_buffer_per_km2,-PopRur_density_in_NUTS2_buffer_per_km2, -HELCOM_ID) %>%
                   dplyr::rename(rgn_id = BHI_ID,
                                 nuts2 = NUTS_ID,
                                 pop = PopTot,
-                                pop_km2 = PopTot_density_in_buffer_per_km2,
+                                pop_km2 = PopTot_density_in_NUTS2_buffer_per_km2,
                                 country_abb= CNTR_CODE,
                                 country = rgn_nam,
                                 basin = Subbasin,
-                                area = NUTS3_area_in_BHI_buffer_km2) ## this last column has NUTS3 in name, but is for NUTS2 data
-
-# str(nuts2_pop_area1)
+                                area = NUTS2_area_in_BHI_buffer_km2)
 
 ```
 
@@ -236,20 +233,18 @@ check2 = nuts2_pop_area1 %>%
 
 #### 4.1.4 Check for incorrectly assigned NUTS2 regions to BHI regions and fix 
 
-Note - (as in NUTS3 assignment issues see ECO), BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
+Note - (as in NUTS3 assignment issues see ECO). 
 
 ```{r check for incorrectly assigned NUTS2 regions, message = FALSE}
 ## write to csv, fix manually, re-import csv
 misassigned_nuts2 = nuts2_pop_area1 %>% select(nuts2, country, rgn_id)
 
-## write.csv(misassigned_nuts2 , file.path(dir_liv, "misassigned_nuts2.csv"), row.names=FALSE)
-
 ## read in corrected assignments - same file as used for TR
 
-corrected_nuts2 = read.csv(file.path(dir_liv,"misassigned_nuts2_manually_corrected.csv"), sep=";", stringsAsFactors = FALSE)
-
-corrected_nuts2_new = read_csv(file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv')) 
-  
+# add BHI rgn 21 to the previously corrected file. 9.28.2016. 
+corrected_nuts2 = read.csv(file.path(dir_liv,"misassigned_nuts2_manually_corrected.csv"), sep=";", stringsAsFactors = FALSE) %>%       rbind(c("PL63","Poland", as.integer(21),NA,NA, "", as.integer(21), 'Poland')) %>%
+      mutate(rgn_id = as.integer((rgn_id)),
+             X.correct_BH_ID = as.integer(X.correct_BH_ID))
 
 ## join nuts2_pop_area1 with corrected data and fix
 
@@ -267,6 +262,7 @@ nuts2_pop_area2 = nuts2_pop_area1 %>%
                   ungroup()
 
 str(nuts2_pop_area2)
+
 ```
 
 ### 5.2 Join datasets

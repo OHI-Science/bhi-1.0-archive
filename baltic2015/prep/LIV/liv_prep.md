@@ -7,7 +7,7 @@ liv\_prep
         -   [2.1 NUTS0 (country) and NUTS2 region Employment rate](#nuts0-country-and-nuts2-region-employment-rate)
         -   [2.2 Russian data](#russian-data)
         -   [2.3 Population density data](#population-density-data)
-        -   [2.4 Aligning BHI regions with NUTS3 regions and population density](#aligning-bhi-regions-with-nuts3-regions-and-population-density)
+        -   [2.4 Aligning BHI regions with NUTS2 regions and population density](#aligning-bhi-regions-with-nuts2-regions-and-population-density)
     -   [3. Goal model](#goal-model)
     -   [5. Regional data prep](#regional-data-prep)
         -   [5.1 Data organization](#data-organization)
@@ -36,6 +36,7 @@ liv\_prep
         -   [8.3 No Russian regional data](#no-russian-regional-data)
         -   [8.4 Employment data for EU transformed from percent to number of people using 2005 population data for all years](#employment-data-for-eu-transformed-from-percent-to-number-of-people-using-2005-population-data-for-all-years)
         -   [8.5 Short Danish timeseries](#short-danish-timeseries)
+        -   [9. Update region assignment](#update-region-assignment)
 
 LIV subgoal data preparation
 ============================
@@ -127,14 +128,14 @@ Downloaded on 10 June 2016 from Eurostat database: [naida\_10\_pe](http://ec.eur
 population (thousands of people)
 employment (thousands of people) *need to exclude this*
 
-### 2.4 Aligning BHI regions with NUTS3 regions and population density
+### 2.4 Aligning BHI regions with NUTS2 regions and population density
 
 UPDATE with Marc's methods or link
 
 3. Goal model
 -------------
 
-Xliv = (Employment\_Region\_c/Employment\_Region\_r)/(Employment\_Country\_c/Employment\_Country\_r)
+Xliv = \({\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}/{\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}\)
 
 -   c = current year, r=reference year
 -   reference point is a moving window (single year value)
@@ -154,6 +155,7 @@ library(RMySQL)
 library(tidyverse)
 library(tools)
 library(rprojroot) # install.packages('rprojroot')
+library(rgdal) 
 
 source('~/github/bhi/baltic2015/prep/common.r')
 
@@ -171,7 +173,7 @@ dir_liv    = file.path(dir_prep, 'LIV')
 create_readme(dir_liv, 'liv_prep.rmd')
 ```
 
-#### 5.1.1 read in data
+#### Read in employment and population data
 
 ``` r
 ## read in
@@ -180,12 +182,11 @@ regional_employ = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_employ.cs
 # dim(regional_employ) #[1] 5344    9
 # str(regional_employ)
 
-nuts2_pop_area = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_pop_area.csv'), stringsAsFactors = FALSE)
-# dim(nuts2_pop_area)
-# str(nuts2_pop_area)
+## 9.27.2016 - updated PopDensity 
+nuts2_pop_density = read_csv(file.path(dir_liv, 'liv_data_database/NUTS2_BHI_ID_Pop_density_in_buffer.csv'))
 ```
 
-#### 5.1.2 Clean Regional employment data object
+#### Clean Regional employment data object
 
 ``` r
 regional_employ1 = regional_employ %>%
@@ -216,37 +217,17 @@ regional_employ1 = regional_employ1 %>%
 
 ``` r
 ## nuts2 population data
-str(nuts2_pop_area)
-```
 
-    ## 'data.frame':    72 obs. of  13 variables:
-    ##  $ BHI_ID                          : int  1 1 2 2 2 2 3 3 3 4 ...
-    ##  $ NUTS_ID                         : chr  "SE22" "SE23" "DK01" "DK02" ...
-    ##  $ PopTot                          : int  116851 702394 266145 355373 175718 270701 413955 962944 605097 226701 ...
-    ##  $ PopUrb                          : int  90965 657250 205041 275556 119983 225142 355931 856951 555111 150569 ...
-    ##  $ PopRur                          : int  25886 45142 61102 79811 55739 45557 58027 105995 49991 76131 ...
-    ##  $ PopTot_density_in_buffer_per_km2: num  10.04 2.42 18.31 10.96 4.3 ...
-    ##  $ PopUrb_density_in_buffer_per_km2: num  7.82 2.26 14.1 8.5 2.94 ...
-    ##  $ PopRur_density_in_buffer_per_km2: num  2.225 0.155 4.203 2.461 1.364 ...
-    ##  $ CNTR_CODE                       : chr  "SE" "SE" "DK" "DK" ...
-    ##  $ rgn_nam                         : chr  "Sweden" "Sweden" "Denmark" "Denmark" ...
-    ##  $ Subbasin                        : chr  "Kattegat" "Kattegat" "Kattegat" "Kattegat" ...
-    ##  $ HELCOM_ID                       : chr  "SEA-001" "SEA-001" "SEA-001" "SEA-001" ...
-    ##  $ NUTS3_area_in_BHI_buffer_km2    : num  11636 290554 14538 32425 40858 ...
-
-``` r
-nuts2_pop_area1 = nuts2_pop_area %>%
-                  select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2, -HELCOM_ID) %>%
+nuts2_pop_area1 = nuts2_pop_density %>%
+                  select(-PopUrb,-PopRur,-PopUrb_density_in_NUTS2_buffer_per_km2,-PopRur_density_in_NUTS2_buffer_per_km2, -HELCOM_ID) %>%
                   dplyr::rename(rgn_id = BHI_ID,
                                 nuts2 = NUTS_ID,
                                 pop = PopTot,
-                                pop_km2 = PopTot_density_in_buffer_per_km2,
+                                pop_km2 = PopTot_density_in_NUTS2_buffer_per_km2,
                                 country_abb= CNTR_CODE,
                                 country = rgn_nam,
                                 basin = Subbasin,
-                                area = NUTS3_area_in_BHI_buffer_km2) ## this last column has NUTS3 in name, but is for NUTS2 data
-
-# str(nuts2_pop_area1)
+                                area = NUTS2_area_in_BHI_buffer_km2)
 ```
 
 #### 4.1.3 Check NUTS2 names from Finland
@@ -257,29 +238,15 @@ Shapefiles have names from 2006, check accom1 and accom\_coast1 to see if the na
 -   ![Map of new NUTS2 names for GUlf of Finland](new_FI_nuts2.png?raw=true "fig:")
 
 ``` r
-regional_employ1 %>% filter(grepl("FI", nuts2)) %>% select(nuts2, nuts2_name) %>% distinct()
-```
-
-    ##   nuts2               nuts2_name
-    ## 1  FI19           L\xe4nsi-Suomi
-    ## 2  FI1B         Helsinki-Uusimaa
-    ## 3  FI1C           Etel\xe4-Suomi
-    ## 4  FI1D Pohjois- ja It\xe4-Suomi
-    ## 5  FI20                 \xc5land
-
-``` r
+check1 = regional_employ1 %>% filter(grepl("FI", nuts2)) %>% 
+  select(nuts2, nuts2_name) %>% 
+  distinct()
 ## These are the newer region names : FI1B, FI1C, FI1D
 
-nuts2_pop_area1 %>% filter(grepl("FI", nuts2)) %>% select(nuts2) %>% distinct()
-```
-
-    ##   nuts2
-    ## 1  FI18
-    ## 2  FI20
-    ## 3  FI19
-    ## 4  FI1A
-
-``` r
+check2 = nuts2_pop_area1 %>% 
+  filter(grepl("FI", nuts2)) %>% 
+  select(nuts2) %>% 
+  distinct()
 ## These are the older region names: FI18, FI1A
 
 ## Challenge because of coasts
@@ -294,17 +261,18 @@ nuts2_pop_area1 %>% filter(grepl("FI", nuts2)) %>% select(nuts2) %>% distinct()
 
 #### 4.1.4 Check for incorrectly assigned NUTS2 regions to BHI regions and fix
 
-Note - (as in NUTS3 assignment issues see ECO), BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
+Note - (as in NUTS3 assignment issues see ECO).
 
 ``` r
 ## write to csv, fix manually, re-import csv
 misassigned_nuts2 = nuts2_pop_area1 %>% select(nuts2, country, rgn_id)
 
-## write.csv(misassigned_nuts2 , file.path(dir_liv, "misassigned_nuts2.csv"), row.names=FALSE)
-
 ## read in corrected assignments - same file as used for TR
 
-corrected_nuts2 = read.csv(file.path(dir_liv,"misassigned_nuts2_manually_corrected.csv"), sep=";", stringsAsFactors = FALSE)
+# add BHI rgn 21 to the previously corrected file. 9.28.2016. 
+corrected_nuts2 = read.csv(file.path(dir_liv,"misassigned_nuts2_manually_corrected.csv"), sep=";", stringsAsFactors = FALSE) %>%       rbind(c("PL63","Poland", as.integer(21),NA,NA, "", as.integer(21), 'Poland')) %>%
+      mutate(rgn_id = as.integer((rgn_id)),
+             X.correct_BH_ID = as.integer(X.correct_BH_ID))
 
 ## join nuts2_pop_area1 with corrected data and fix
 
@@ -324,15 +292,15 @@ nuts2_pop_area2 = nuts2_pop_area1 %>%
 str(nuts2_pop_area2)
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    59 obs. of  8 variables:
-    ##  $ rgn_id     : int  1 1 2 2 2 2 3 3 3 4 ...
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    73 obs. of  8 variables:
+    ##  $ rgn_id     : int  1 1 2 2 2 2 3 3 3 3 ...
     ##  $ nuts2      : chr  "SE22" "SE23" "DK01" "DK02" ...
     ##  $ country    : chr  "Sweden" "Sweden" "Denmark" "Denmark" ...
-    ##  $ country_abb: chr  "SE" "SE" "DK" "DK" ...
+    ##  $ country_abb: chr  "SWE" "SWE" "DNK" "DNK" ...
     ##  $ basin      : chr  "Kattegat" "Kattegat" "Kattegat" "Kattegat" ...
-    ##  $ pop        : int  116851 702394 266145 355373 175718 270701 413955 1000216 605097 226701 ...
-    ##  $ pop_km2    : num  10.04 2.42 18.31 10.96 4.3 ...
-    ##  $ area       : num  11636 290554 14538 32425 40858 ...
+    ##  $ pop        : num  55875 550191 134723 163813 89600 ...
+    ##  $ pop_km2    : num  81.6 140.1 166.8 131.4 61.4 ...
+    ##  $ area       : num  684 3926 808 1247 1459 ...
 
 ### 5.2 Join datasets
 
@@ -344,40 +312,12 @@ Join data with inner join, this will exclude Finland areas with name mismatches.
 employ_nuts1 = inner_join(regional_employ1, nuts2_pop_area2,
                          by=c("nuts2"))
 
-dim(regional_employ1)## 5344    5
+# dim(regional_employ1) ## 5344    5
+# dim(nuts2_pop_area2) ## 60 8
+# dim(employ_nuts1) ## 896  12
+
+# str(employ_nuts1) ## this is now missing the Finnish data where there are name discrepancies
 ```
-
-    ## [1] 5344    5
-
-``` r
-dim(nuts2_pop_area2) ## 60 8
-```
-
-    ## [1] 59  8
-
-``` r
-dim(employ_nuts1) ##896  12
-```
-
-    ## [1] 880  12
-
-``` r
-str(employ_nuts1) ## this is now missing the Finnish data where there are name discrepancies
-```
-
-    ## 'data.frame':    880 obs. of  12 variables:
-    ##  $ year       : int  1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...
-    ##  $ nuts2      : chr  "DK01" "DK01" "DK01" "DK01" ...
-    ##  $ nuts2_name : chr  "Hovedstaden" "Hovedstaden" "Hovedstaden" "Hovedstaden" ...
-    ##  $ unit       : chr  "Percentage" "Percentage" "Percentage" "Percentage" ...
-    ##  $ value      : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ rgn_id     : int  2 6 12 15 2 3 7 9 12 3 ...
-    ##  $ country    : chr  "Denmark" "Denmark" "Denmark" "Denmark" ...
-    ##  $ country_abb: chr  "DK" "DK" "DK" "DK" ...
-    ##  $ basin      : chr  "Kattegat" "The Sound" "Arkona Basin" "Bornholm Basin" ...
-    ##  $ pop        : int  266145 1245898 1136201 44406 355373 413955 14518 24841 499769 1000216 ...
-    ##  $ pop_km2    : num  18.31 106.16 201.2 5.91 10.96 ...
-    ##  $ area       : num  14538 11736 5647 7517 32425 ...
 
 #### 5.2.2 Get Finnish data that was excluded
 
@@ -513,19 +453,9 @@ head(fi_employ_newnuts1) ## there are NA but were NA for all regions in those ye
 fi_nuts_oldnuts = nuts2_pop_area2 %>%
                   filter(nuts2 %in% c("FI18","FI1A"))
 
-fi_nuts_oldnuts
-```
+# fi_nuts_oldnuts
 
-    ## # A tibble: 4 x 8
-    ##   rgn_id nuts2 country country_abb           basin     pop     pop_km2
-    ##    <int> <chr>   <chr>       <chr>           <chr>   <int>       <dbl>
-    ## 1     32  FI18 Finland          FI Gulf of Finland 1421112  236.949480
-    ## 2     36  FI18 Finland          FI       Aland Sea  410642    1.114912
-    ## 3     38  FI18 Finland          FI    Bothnian Sea    6305    1.672771
-    ## 4     42  FI1A Finland          FI    Bothnian Bay  367526 2839.664384
-    ## # ... with 1 more variables: area <dbl>
 
-``` r
 ## join fi employ to fi pop and area
 
 fi_employ_correct_nuts = full_join(fi_employ_newnuts1, fi_nuts_oldnuts,
@@ -535,22 +465,8 @@ fi_employ_correct_nuts = full_join(fi_employ_newnuts1, fi_nuts_oldnuts,
                                  pop_km2,area)
 
 
-str(fi_employ_correct_nuts)
+# str(fi_employ_correct_nuts)
 ```
-
-    ## 'data.frame':    64 obs. of  12 variables:
-    ##  $ year       : int  1999 1999 1999 1999 2000 2000 2000 2000 2001 2001 ...
-    ##  $ nuts2      : chr  "FI18" "FI18" "FI18" "FI1A" ...
-    ##  $ nuts2_name : chr  "old region" "old region" "old region" "Pohjois- ja It\xe4-Suomi" ...
-    ##  $ unit       : chr  "Percentage" "Percentage" "Percentage" "Percentage" ...
-    ##  $ value      : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ rgn_id     : int  32 36 38 42 32 36 38 42 32 36 ...
-    ##  $ country    : chr  "Finland" "Finland" "Finland" "Finland" ...
-    ##  $ country_abb: chr  "FI" "FI" "FI" "FI" ...
-    ##  $ basin      : chr  "Gulf of Finland" "Aland Sea" "Bothnian Sea" "Bothnian Bay" ...
-    ##  $ pop        : int  1421112 410642 6305 367526 1421112 410642 6305 367526 1421112 410642 ...
-    ##  $ pop_km2    : num  236.95 1.11 1.67 2839.66 236.95 ...
-    ##  $ area       : num  1163861 368318 3769 837482 1163861 ...
 
 #### 5.2.3 Join Finnish data to other regional data
 
@@ -588,9 +504,9 @@ ggplot(employ_nuts2)+
   ggtitle("Time series Percent Employed NUTS2")
 ```
 
-    ## Warning: Removed 128 rows containing missing values (geom_point).
+    ## Warning: Removed 148 rows containing missing values (geom_point).
 
-    ## Warning: Removed 128 rows containing missing values (geom_path).
+    ## Warning: Removed 148 rows containing missing values (geom_path).
 
 ![](liv_prep_files/figure-markdown_github/Plot%20and%20check%20regional%20employment%20time%20series-1.png)
 
@@ -602,6 +518,12 @@ employ_nuts3 = employ_nuts2 %>%
 ```
 
 ### 5.3 Are BHI regions missing?
+
+Expected missing:
+
+-   19,22, and 33 from Russia
+-   21 from Poland because not assigned
+-   30 has no coastline
 
 ``` r
 employ_nuts3 %>% select(rgn_id)%>%distinct()%>%arrange(rgn_id)
@@ -627,33 +549,30 @@ employ_nuts3 %>% select(rgn_id)%>%distinct()%>%arrange(rgn_id)
     ## 17     17
     ## 18     18
     ## 19     20
-    ## 20     23
-    ## 21     24
-    ## 22     25
-    ## 23     26
-    ## 24     27
-    ## 25     28
-    ## 26     29
-    ## 27     31
-    ## 28     32
-    ## 29     34
-    ## 30     35
-    ## 31     36
-    ## 32     37
-    ## 33     38
-    ## 34     39
-    ## 35     40
-    ## 36     41
-    ## 37     42
+    ## 20     21
+    ## 21     23
+    ## 22     24
+    ## 23     25
+    ## 24     26
+    ## 25     27
+    ## 26     28
+    ## 27     29
+    ## 28     31
+    ## 29     32
+    ## 30     34
+    ## 31     35
+    ## 32     36
+    ## 33     37
+    ## 34     38
+    ## 35     39
+    ## 36     40
+    ## 37     41
+    ## 38     42
 
 ``` r
 ## there are 37 regions
 
-##missing: 19,21, 22,30,33
-
-## expected missing - 19,22, and 33 from Russia
-## 21 from Poland because not assigned
-## 30 has no coastline
+## missing: 19,21, 22,30,33
 ```
 
 ### 5.4 Calculate number of employed people and allocation to BHI regions
@@ -679,7 +598,7 @@ ggplot(employ_nuts4)+
   ggtitle("Time series Number of People Employed in NUTS2 (25km buffer) by BHI region")
 ```
 
-    ## Warning: Removed 111 rows containing missing values (geom_point).
+    ## Warning: Removed 128 rows containing missing values (geom_point).
 
 ![](liv_prep_files/figure-markdown_github/plot%20number%20of%20nuts3%20employed%20by%20bhi%20region-1.png)
 
@@ -704,7 +623,7 @@ ggplot(employ_nuts5)+
   ggtitle("Time series Number of People Employed BHI region (25km buffer)")
 ```
 
-    ## Warning: Removed 69 rows containing missing values (geom_point).
+    ## Warning: Removed 86 rows containing missing values (geom_point).
 
 ![](liv_prep_files/figure-markdown_github/plot%20number%20of%20BHI%20employed-1.png)
 
@@ -1252,20 +1171,20 @@ Status and trend are calculated in functions.r but code is tested and explored h
   liv_regional_employ
 ```
 
-    ## # A tibble: 555 x 3
+    ## # A tibble: 765 × 3
     ##    rgn_id  year employ_pop_bhi
     ##     <int> <int>          <dbl>
-    ## 1       1  2000       589513.6
-    ## 2       1  2001       611515.1
-    ## 3       1  2002       615027.0
-    ## 4       1  2003       613857.2
-    ## 5       1  2004       606134.8
-    ## 6       1  2005       595012.0
-    ## 7       1  2006       604141.8
-    ## 8       1  2007       609171.6
-    ## 9       1  2008       608701.6
-    ## 10      1  2009       586697.6
-    ## # ... with 545 more rows
+    ## 1       1  2000       437489.2
+    ## 2       1  2001       453582.1
+    ## 3       1  2002       456333.1
+    ## 4       1  2003       455559.4
+    ## 5       1  2004       450152.1
+    ## 6       1  2005       441190.0
+    ## 7       1  2006       448127.5
+    ## 8       1  2007       451389.9
+    ## 9       1  2008       450736.5
+    ## 10      1  2009       434213.7
+    ## # ... with 755 more rows
 
 ``` r
   liv_national_employ 
@@ -1934,21 +1853,21 @@ Status and trend are calculated in functions.r but code is tested and explored h
 head( liv_region)
 ```
 
-    ## # A tibble: 6 x 3
+    ## # A tibble: 6 × 3
     ##   rgn_id  year rgn_value
     ##    <int> <int>     <dbl>
-    ## 1      1  2009 0.9679326
-    ## 2      1  2010 0.9940912
-    ## 3      1  2011 1.0011584
-    ## 4      1  2012 0.9971206
-    ## 5      1  2013 1.0017341
-    ## 6      1  2014 1.0524732
+    ## 1      1  2009 0.9645933
+    ## 2      1  2010 0.9923031
+    ## 3      1  2011 1.0002685
+    ## 4      1  2012 0.9976671
+    ## 5      1  2013 1.0025463
+    ## 6      1  2014 1.0546335
 
 ``` r
 dim(liv_region) ##222 3
 ```
 
-    ## [1] 222   3
+    ## [1] 306   3
 
 ``` r
 ## LIV country
@@ -1968,7 +1887,7 @@ dim(liv_region) ##222 3
   head(liv_country)
 ```
 
-    ## # A tibble: 6 x 3
+    ## # A tibble: 6 × 3
     ##   rgn_id  year cntry_value
     ##    <int> <int>       <dbl>
     ## 1      1  2009   0.9972376
@@ -1995,21 +1914,21 @@ dim(liv_region) ##222 3
   head(liv_status_calc)
 ```
 
-    ## # A tibble: 6 x 6
+    ## # A tibble: 6 × 6
     ##   rgn_id  year rgn_value cntry_value      Xliv    status
     ##    <int> <int>     <dbl>       <dbl>     <dbl>     <dbl>
-    ## 1      1  2009 0.9679326   0.9972376 0.9706138 0.9706138
-    ## 2      1  2010 0.9940912   0.9944828 0.9996062 0.9996062
-    ## 3      1  2011 1.0011584   1.0068399 0.9943570 0.9943570
-    ## 4      1  2012 0.9971206   0.9946092 1.0025250 1.0000000
-    ## 5      1  2013 1.0017341   1.0013459 1.0003876 1.0000000
-    ## 6      1  2014 1.0524732   1.0373961 1.0145336 1.0000000
+    ## 1      1  2009 0.9645933   0.9972376 0.9672653 0.9672653
+    ## 2      1  2010 0.9923031   0.9944828 0.9978083 0.9978083
+    ## 3      1  2011 1.0002685   1.0068399 0.9934732 0.9934732
+    ## 4      1  2012 0.9976671   0.9946092 1.0030745 1.0000000
+    ## 5      1  2013 1.0025463   1.0013459 1.0011988 1.0000000
+    ## 6      1  2014 1.0546335   1.0373961 1.0166160 1.0000000
 
 ``` r
   dim(liv_status_calc) ## 222 6
 ```
 
-    ## [1] 222   6
+    ## [1] 306   6
 
 #### 7.3.3 Extract most recent year status
 
@@ -2031,10 +1950,10 @@ head(liv_status)
     ##   region_id score dimension
     ## 1         1   100    status
     ## 2         2   100    status
-    ## 3         3   100    status
-    ## 4         4   100    status
-    ## 5         5    98    status
-    ## 6         6   100    status
+    ## 3         3     0    status
+    ## 4         3   100    status
+    ## 5         4   100    status
+    ## 6         5    98    status
 
 ``` r
 ## what is max year
@@ -2046,7 +1965,7 @@ max_year_status= liv_status_calc%>%
 max_year_status %>% select(year)%>% distinct() ## all final years are 2014
 ```
 
-    ## # A tibble: 1 x 1
+    ## # A tibble: 1 × 1
     ##    year
     ##   <int>
     ## 1  2014
@@ -2067,10 +1986,9 @@ liv_status %>% filter(is.na(score)) #19,21,22,30,33
 
     ##   region_id score dimension
     ## 1        19    NA    status
-    ## 2        21    NA    status
-    ## 3        22    NA    status
-    ## 4        30    NA    status
-    ## 5        33    NA    status
+    ## 2        22    NA    status
+    ## 3        30    NA    status
+    ## 4        33    NA    status
 
 ### 7.3.1 Plot status
 
@@ -2091,7 +2009,7 @@ ggplot(liv_status_calc)+
   ggtitle("LIV status time series")
 ```
 
-    ## Warning: Removed 25 rows containing missing values (geom_point).
+    ## Warning: Removed 21 rows containing missing values (geom_point).
 
 ![](liv_prep_files/figure-markdown_github/plot%20liv%20status-1.png)
 
@@ -2108,7 +2026,7 @@ ggplot(liv_status_calc)+
   ggtitle("LIV status time series - different y-axis range")
 ```
 
-    ## Warning: Removed 25 rows containing missing values (geom_point).
+    ## Warning: Removed 92 rows containing missing values (geom_point).
 
 ![](liv_prep_files/figure-markdown_github/plot%20liv%20status-2.png)
 
@@ -2123,7 +2041,7 @@ ggplot(liv_status)+
   ggtitle("LIV status score in 2014")
 ```
 
-    ## Warning: Removed 5 rows containing missing values (geom_point).
+    ## Warning: Removed 4 rows containing missing values (geom_point).
 
 ![](liv_prep_files/figure-markdown_github/plot%20liv%20status-3.png)
 
@@ -2169,11 +2087,21 @@ liv_trend %>% filter(is.na(score)) ## 2,3,6,7,9,12,15,19,21,22,30,33
     ## 5          9     trend    NA
     ## 6         12     trend    NA
     ## 7         15     trend    NA
-    ## 8         19     trend    NA
-    ## 9         21     trend    NA
-    ## 10        22     trend    NA
-    ## 11        30     trend    NA
-    ## 12        33     trend    NA
+    ## 8         16     trend    NA
+    ## 9         17     trend    NA
+    ## 10        18     trend    NA
+    ## 11        19     trend    NA
+    ## 12        22     trend    NA
+    ## 13        23     trend    NA
+    ## 14        24     trend    NA
+    ## 15        27     trend    NA
+    ## 16        28     trend    NA
+    ## 17        30     trend    NA
+    ## 18        32     trend    NA
+    ## 19        33     trend    NA
+    ## 20        34     trend    NA
+    ## 21        41     trend    NA
+    ## 22        42     trend    NA
 
 #### 7.4.3 Plot trend
 
@@ -2187,7 +2115,7 @@ ggplot(liv_trend)+
   ggtitle("LIV 5 yr trend score")
 ```
 
-    ## Warning: Removed 12 rows containing missing values (geom_point).
+    ## Warning: Removed 22 rows containing missing values (geom_point).
 
 ![](liv_prep_files/figure-markdown_github/plot%20liv%20trend-1.png)
 
@@ -2203,7 +2131,7 @@ ggplot(plot_liv)+
   ggtitle("LIV Status and Trend")
 ```
 
-    ## Warning: Removed 17 rows containing missing values (geom_point).
+    ## Warning: Removed 26 rows containing missing values (geom_point).
 
 ![](liv_prep_files/figure-markdown_github/plot%20liv%20trend%20and%20status%20together-1.png)
 
@@ -2239,3 +2167,32 @@ This is done for both the regional and the national datasets.
 ### 8.5 Short Danish timeseries
 
 Danish regional time series are shorter. Data begin in 2007. Because data from 5 years prevous are need to calculated the regional/ref value, only three status years can be calculated. This also means that no trend is calculated because 5 years is required.
+
+### 9. Update region assignment
+
+Marc sent the updated NUTS regions shape files for 2006 (9/2016).
+
+``` r
+nuts3 = readOGR(dsn = path.expand(file.path(dir_liv, 'liv_data_database/NUTS_2006_shp_file_updated_9.2016')),
+                layer = 'NUTS_2006_Level_3_reprojected_BHI_shapefile_25km_intersect')
+
+data_nuts3 = nuts3@data %>% 
+  dplyr::select(country = Country, 
+                BHI_ID,
+                nuts3 = NUTS_ID, 
+                country_abb = CNTR_CODE)
+
+write_csv(data_nuts3, file.path(dir_liv, 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv'))
+
+
+nuts2 = readOGR(dsn = path.expand(file.path(dir_liv, 'liv_data_database/NUTS_2006_shp_file_updated_9.2016')),
+                layer = 'NUTS_2006_Level_2_reprojected_BHI_shapefile_25km_intersect')
+
+data_nuts2 = nuts2@data %>% 
+  dplyr::select(country = Country, 
+                country_abb = CNTR_CODE,
+                BHI_ID, 
+                nuts2 = NUTS_ID)
+
+write_csv(data_nuts2, file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv'))
+```
