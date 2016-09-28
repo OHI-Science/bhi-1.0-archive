@@ -1,42 +1,35 @@
 Preparation of Mariculture (MAR) subgoal data layer
 ================
 
--   [Background](#background)
--   [Data](#data)
-    -   [Data sources](#data-sources)
-    -   [Production regions and BHI assignments](#production-regions-and-bhi-assignments)
-        -   [HELCOM map of coastal aquaculture](#helcom-map-of-coastal-aquaculture)
--   [Data Layer Preparation](#data-layer-preparation)
-    -   [Read in data](#read-in-data)
-    -   [Plot the data by country's mar\_region](#plot-the-data-by-countrys-mar_region)
-    -   [FAO data](#fao-data)
-        -   [FAO data organization](#fao-data-organization)
-        -   [Plot FAO data for countries with data 2005-2014](#plot-fao-data-for-countries-with-data-2005-2014)
-        -   [Select Germany rainbow trout timeseries](#select-germany-rainbow-trout-timeseries)
-        -   [Combined country production data and FAO data for Germany](#combined-country-production-data-and-fao-data-for-germany)
-        -   [Plot combined data by country](#plot-combined-data-by-country)
-    -   [Use mar\_lookup to allocate production among BHI regions](#use-mar_lookup-to-allocate-production-among-bhi-regions)
-        -   [Plot production per BHI region](#plot-production-per-bhi-region)
-    -   [Save layers in /layers folder as layers .csv's](#save-layers-in-layers-folder-as-layers-.csvs)
+-   [1. Background](#background)
+-   [2. Data](#data)
+    -   [2.1 Data sources](#data-sources)
+    -   [2.2 Production regions and BHI assignments](#production-regions-and-bhi-assignments)
+-   [3. Data Layer Preparation](#data-layer-preparation)
+    -   [3.1 Read in data](#read-in-data)
+    -   [3.1 Plot the data by country's mar\_region](#plot-the-data-by-countrys-mar_region)
+    -   [3.2 FAO data](#fao-data)
+    -   [4.3 Combined country production data and FAO data for Germany](#combined-country-production-data-and-fao-data-for-germany)
+    -   [4.4 Use mar\_lookup to allocate production among BHI regions](#use-mar_lookup-to-allocate-production-among-bhi-regions)
+    -   [4.5 Save layers in /layers folder as layers .csv's](#save-layers-in-layers-folder-as-layers-.csvs)
     -   [Population density data](#population-density-data)
 -   [MAR Goal Model](#mar-goal-model)
-    -   [Calculate MAR status and trend](#calculate-mar-status-and-trend)
-    -   [Plot status and trend](#plot-status-and-trend)
-    -   [Plot MAR status time series](#plot-mar-status-time-series)
-    -   [Plot status as a map](#plot-status-as-a-map)
+-   [Calculate MAR status and trend](#calculate-mar-status-and-trend)
+-   [Plot status and trend](#plot-status-and-trend)
+-   [Plot MAR status time series](#plot-mar-status-time-series)
+-   [Plot status as a map](#plot-status-as-a-map)
 
-Background
-==========
+1. Background
+-------------
 
 Mariculture (farming fish and shellfish in the ocean) is not a huge industry in the Baltic, but it does provide some food production. Data were available for parts of Denmark, Sweden, Germany, and Finland. All other BHI regions are scored as NA, and thus MAR will not contribute to the overall FP goal score. A counter argument could be made that some of these regions have the capacity for production, therefore they should receive a score of zero when having no production.
 
-Data
-====
+2. Data
+-------
 
 Rainbow trout production. Data were compiled primarily by Ginnette Flores Carmenate.
 
-Data sources
-------------
+### 2.1 Data sources
 
 **Tonnes of mariculture production data from country databases or reports:**
 
@@ -58,19 +51,18 @@ The SMI is the average of the three subindices traditionally used in the OHI fra
 
 <sup>1</sup>Trujillo, P., (2008). Using a mariculture sustainability index to rank countries’ performance. Pp. 28-56 In: Alder, J. and D. Pauly (eds.). 2008. A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries’ Exclusive Economic Zones.’ Fisheries Centre Research Reports. Fisheries Centre, University of British Columbia
 
-Production regions and BHI assignments
---------------------------------------
+### 2.2 Production regions and BHI assignments
 
 BHI regions were assigned to the country production reporting regions by Ginnette visually linking the two for Sweden, Denmark, and Finland.
 
 Production for Germany was split equally among all German BHI regions.
 
-### HELCOM map of coastal aquaculture
+#### 2.2.1 HELCOM map of coastal aquaculture
 
 [HELCOM Map Service Baltic Sea Pressures and Human activities](http://maps.helcom.fi/website/Pressures/index.html) has a data layer showing coastal aquaculture sites (under 'Pressures','Land-based pollution', 'Coastal Aquaculture'). This appears to be outdated as Denmark say is has no marine aquaculture, Latvia has no reported brackish aquaculture to the FAO for several decades, and no German sites are shown (although minimal brackish water aquaculture is reported).
 
-Data Layer Preparation
-======================
+3. Data Layer Preparation
+-------------------------
 
 Data are stored in the BHI database.
 `mar_prep_database_call.r` extracts data files from the database and stores data as csv files in folder mar\_data\_database
@@ -90,8 +82,7 @@ dir_mar    = file.path(dir_prep, 'MAR')
 create_readme(dir_mar, 'mar_prep.rmd')
 ```
 
-Read in data
-------------
+### 3.1 Read in data
 
 ``` r
 ## Read in data
@@ -105,8 +96,7 @@ fao = read.csv(file.path(dir_mar, 'mar_data_database/all_baltic_fao_cleaned.csv'
 # head(fao)
 ```
 
-Plot the data by country's mar\_region
---------------------------------------
+### 3.1 Plot the data by country's mar\_region
 
 Data from country databases (DK, FI, SE). This is the scale of data reported.
 
@@ -119,14 +109,13 @@ facet_wrap(~mar_region, scales="free_y")
 
 ![](mar_prep_files/figure-markdown_github/plot%20raw%20data-1.png)
 
-FAO data
---------
+### 3.2 FAO data
 
 Evaluate FAO data for countries without data from country specific databases.
 1. Is there brackish production between 2005 - 2014?
 2. Is it rainbow trout or similar?
 
-### FAO data organization
+#### 3.2.1 FAO data organization
 
 ``` r
 ## filter country and environment
@@ -180,7 +169,7 @@ fao3 = fao2 %>%
       arrange(country, year, species_ASFIS)
 ```
 
-### Plot FAO data for countries with data 2005-2014
+#### 3.2.2 Plot FAO data for countries with data 2005-2014
 
 ``` r
 ggplot(fao3)+
@@ -193,7 +182,7 @@ ggplot(fao3)+
 
 ![](mar_prep_files/figure-markdown_github/plot%20fao%20data%20raw-1.png)
 
-### Select Germany rainbow trout timeseries
+#### 4.2.3 Select Germany rainbow trout timeseries
 
 ``` r
 fao_de = fao3 %>%
@@ -206,7 +195,7 @@ fao_de = fao3 %>%
 # str(fao_de)
 ```
 
-### Combined country production data and FAO data for Germany
+### 4.3 Combined country production data and FAO data for Germany
 
 ``` r
 ## select only production columns (no BHI_ID columns)
@@ -260,7 +249,7 @@ production2 = bind_rows(production1, fao_de)
     ## Warning in bind_rows_(x, .id): binding factor and character vector,
     ## coercing into character vector
 
-### Plot combined data by country
+#### 4.3.1 Plot combined data by country
 
 ``` r
 ggplot(production2)+
@@ -289,8 +278,7 @@ mar_countryrgn_time_data = production2 %>%
 write.csv(mar_countryrgn_time_data, file.path(dir_baltic, 'visualize/mar_countryrgn_time_data.csv'),row.names = FALSE)
 ```
 
-Use mar\_lookup to allocate production among BHI regions
---------------------------------------------------------
+### 4.4 Use mar\_lookup to allocate production among BHI regions
 
 Allocate data equally from mar\_region to all associated BHI region.
 Do not have any additional information that would allow us to make this allocation based on known production distribution.
@@ -320,7 +308,7 @@ prod_allot = full_join(lookup, production2, by=c("country","mar_region"))%>%
     ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
     ## character vector and factor, coercing into character vector
 
-### Plot production per BHI region
+#### 4.4.1 Plot production per BHI region
 
 ``` r
 ggplot(prod_allot)+
@@ -346,8 +334,7 @@ mar_rgn_time_data = prod_allot %>%
 write.csv(mar_rgn_time_data, file.path(dir_baltic, 'visualize/mar_rgn_time_data.csv'),row.names = FALSE)
 ```
 
-Save layers in /layers folder as layers .csv's
-----------------------------------------------
+### 4.5 Save layers in /layers folder as layers .csv's
 
 3 layers: `mar_harvest_tonnes`, `mar_harvest_species`, `mar_sustainability_score`.
 
@@ -424,13 +411,12 @@ write.csv(mar_sustainability_score,
                  file.path(dir_layers, "mar_sustainability_score_bhi2015.csv"),row.names=FALSE)
 ```
 
-Population density data
------------------------
+### Population density data
 
 MAR code from OHI uses production/per capita. A coastal population layer was created in ArcGIS by Marc; functions.r is where the decision is made whether or not to use it.
 
 MAR Goal Model
-==============
+--------------
 
 `Xmar =  Current_value /ref_point`
 
