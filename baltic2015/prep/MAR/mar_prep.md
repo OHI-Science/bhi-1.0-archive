@@ -573,7 +573,7 @@ ggplot(filter(mar_status_score, !is.na(status))) +
 Plot status as a map
 --------------------
 
-Note: not currently mapped. Can use `bhi/PlotMap()` instead.
+Note: not currently mapped. Can use `bhi/baltic2015/PlotMap()` instead.
 
 **Note that areas recieve a score of zero where there is no production**
 
