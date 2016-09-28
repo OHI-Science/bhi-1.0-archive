@@ -111,7 +111,8 @@ accom_coast = read.csv(file.path(dir_tr, "tr_data_database/accom_coast.csv"), st
 # dim(accom_coast)
 
 ## NUTS2 population and area by BHI region fraction
-nuts2_pop_area = read.csv(file.path(dir_tr, "tr_data_database/nuts2_pop_area.csv"), stringsAsFactors = FALSE)
+nuts2_pop_area = read_csv(file.path(dir_tr, "tr_data_database/NUTS2_BHI_ID_Pop_density_in_buffer.csv"))
+
 # dim(nuts2_pop_area)
 
 ## european country names and abbreviations
@@ -228,19 +229,21 @@ accom_coast2 = accom_coast2 %>%
 ##### NUTS2 population data 
 
 ```{r clean data}
+
 ## nuts2 population data
-str(nuts2_pop_area)
+#str(nuts2_pop_area)
 
 nuts2_pop_area1 = nuts2_pop_area %>%
-                  select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2, -HELCOM_ID) %>%
+                  select(-PopUrb,-PopRur,-PopUrb_density_in_NUTS2_buffer_per_km2,-PopRur_density_in_NUTS2_buffer_per_km2, -HELCOM_ID) %>%
                   dplyr::rename(rgn_id = BHI_ID,
                                 nuts2 = NUTS_ID,
                                 pop = PopTot,
-                                pop_km2 = PopTot_density_in_buffer_per_km2,
+                                pop_km2 = PopTot_density_in_NUTS2_buffer_per_km2,
                                 country_abb= CNTR_CODE,
                                 country = rgn_nam,
                                 basin = Subbasin,
-                                area = NUTS3_area_in_BHI_buffer_km2) ## this last column has NUTS3 in name, but is for NUTS2 data
+                                area = NUTS2_area_in_BHI_buffer_km2) %>% 
+                  mutate(country_abb = substr(nuts2, 1, 2)) #change three letter code to two letter code 
 
 # str(nuts2_pop_area1)
 
@@ -278,7 +281,7 @@ nuts2_pop_area1 %>% filter(grepl("FI", nuts2)) %>% select(nuts2) %>% distinct()
 
 #### 4.1.4 Check for incorrectly assigned NUTS2 regions to BHI regions and fix 
 
-Note - (as in NUTS3 assignment issues see ECO), BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
+Note - (as in NUTS3 assignment issues see ECO)
 
 ```{r check for incorrectly assigned NUTS2 regions, message = FALSE}
 ## write to csv, fix manually, re-import csv
@@ -288,7 +291,9 @@ misassigned_nuts2 = nuts2_pop_area1 %>% select(nuts2,country,rgn_id)
 
 ## read in corrected assignments
 
-corrected_nuts2 = read.csv(file.path(dir_tr,"misassigned_nuts2_manually_corrected.csv"),sep=";",stringsAsFactors = FALSE)
+corrected_nuts2 = read.csv(file.path(dir_tr,"misassigned_nuts2_manually_corrected.csv"),sep=";",stringsAsFactors = FALSE) %>%       rbind(c("PL63","Poland", as.integer(21),NA,NA, "", as.integer(21), 'Poland')) %>%
+      mutate(rgn_id = as.integer((rgn_id)),
+             X.correct_BH_ID = as.integer(X.correct_BH_ID))
 
 ## join nuts2_pop_area1 with corrected data and fix
 
@@ -306,7 +311,7 @@ nuts2_pop_area2 = nuts2_pop_area1 %>%
                   ungroup()
 
 
-str(nuts2_pop_area2)
+# str(nuts2_pop_area2)
 ```
 
 
@@ -394,10 +399,9 @@ ggplot(accom_nuts2) +
 
 ## there are 37 regions
 
-##missing: 19, 21, 22, 30, 33
+##missing: 19, 22, 30, 33
 
 ## expected missing - 19,22, and 33 from Russia
-## 21 from Poland because not assigned
 ## 30 has no coastline
 
 ```
@@ -423,13 +427,11 @@ accom_coast_nuts =  inner_join(accom_coast2, nuts2_pop_area3,
 ## are there BHI regions missing?
 #  accom_coast_nuts %>% select(rgn_id) %>% distinct() %>% arrange(rgn_id)
 
-## 37 regions
+## 38 regions
 
-##missing are:
+## missing are:
 
 ## Russia 19, 22,33
-
-## Poland no data assigned 21
 
 ## No coastal area 30
 
