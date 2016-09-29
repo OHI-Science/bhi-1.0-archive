@@ -1,45 +1,41 @@
-tr\_prep.rmd
+Prepare Data Layers for Tourism & Recreation (TR) Goal
 ================
 
--   [Prepare Data Layers for Tourism and Recreation (TR) Goal](#prepare-data-layers-for-tourism-and-recreation-tr-goal)
-    -   [1. Background](#background)
-    -   [2. Data](#data)
-        -   [Regional Accommodation Stays Data](#regional-accommodation-stays-data)
-        -   [Regional Accommodation Stays Coastal/Non-Coastal Data](#regional-accommodation-stays-coastalnon-coastal-data)
-    -   [3. Goal Model](#goal-model)
-        -   [3.1 Status Calculation](#status-calculation)
-        -   [3.2 Trend calculation](#trend-calculation)
-    -   [4. Data Layer Preparation](#data-layer-preparation)
-        -   [4.1 Data cleaning and organizing](#data-cleaning-and-organizing)
-        -   [4.2 Join datasets](#join-datasets)
-        -   [4.3 Proportion coastal stays at the NUTS1 level](#proportion-coastal-stays-at-the-nuts1-level)
-        -   [4.4 Apply proportion coastal to NUTS2 time series data](#apply-proportion-coastal-to-nuts2-time-series-data)
-        -   [4.5 Determine NUTS2 population allocation among BHI regions](#determine-nuts2-population-allocation-among-bhi-regions)
-    -   [5. Prepare and Save Data Layers](#prepare-and-save-data-layers)
-        -   [5.1 Prepare layer](#prepare-layer)
-        -   [5.2 Write layer to csv](#write-layer-to-csv)
-    -   [6. Explore Status and Trend calculation](#explore-status-and-trend-calculation)
-        -   [6.2 Set Parameters](#set-parameters)
-        -   [6.3 Calculate status](#calculate-status)
-        -   [Status calculation alternative - higher reference point](#status-calculation-alternative---higher-reference-point)
-        -   [6.4 Plot Status](#plot-status)
-        -   [Plot Status alternative: higher reference point](#plot-status-alternative-higher-reference-point)
-        -   [6.5 Calculate Trend](#calculate-trend)
-        -   [Trend calculation - alternative 1 with higher ref point](#trend-calculation---alternative-1-with-higher-ref-point)
-        -   [6.6 Plot trend](#plot-trend)
-        -   [6.7Plot trend and status together](#plot-trend-and-status-together)
-    -   [7. Issues or Concerns](#issues-or-concerns)
-        -   [7.1 Shapefile assignment issues](#shapefile-assignment-issues)
-        -   [7.2 Name discrepancies between datasets](#name-discrepancies-between-datasets)
-        -   [7.3 Spatial resolution of coastal allocation.](#spatial-resolution-of-coastal-allocation.)
-
-Prepare Data Layers for Tourism and Recreation (TR) Goal
-========================================================
+-   [1. Background](#background)
+-   [2. Data](#data)
+    -   [Regional Accommodation Stays Data](#regional-accommodation-stays-data)
+    -   [Regional Accommodation Stays Coastal/Non-Coastal Data](#regional-accommodation-stays-coastalnon-coastal-data)
+-   [3. Goal Model](#goal-model)
+    -   [3.1 Status Calculation](#status-calculation)
+    -   [3.2 Trend calculation](#trend-calculation)
+-   [4. Data Layer Preparation](#data-layer-preparation)
+    -   [4.1 Data cleaning and organizing](#data-cleaning-and-organizing)
+    -   [4.2 Join datasets](#join-datasets)
+    -   [4.3 Proportion coastal stays at the NUTS1 level](#proportion-coastal-stays-at-the-nuts1-level)
+    -   [4.4 Apply proportion coastal to NUTS2 time series data](#apply-proportion-coastal-to-nuts2-time-series-data)
+    -   [4.5 Determine NUTS2 population allocation among BHI regions](#determine-nuts2-population-allocation-among-bhi-regions)
+-   [5. Prepare and Save Data Layers](#prepare-and-save-data-layers)
+    -   [5.1 Prepare layer](#prepare-layer)
+    -   [5.2 Write layer to csv](#write-layer-to-csv)
+-   [6. Explore Status and Trend calculation](#explore-status-and-trend-calculation)
+    -   [6.2 Set Parameters](#set-parameters)
+    -   [6.3 Calculate status](#calculate-status)
+    -   [Status calculation alternative - higher reference point](#status-calculation-alternative---higher-reference-point)
+    -   [6.4 Plot Status](#plot-status)
+    -   [Plot Status alternative: higher reference point](#plot-status-alternative-higher-reference-point)
+    -   [6.5 Calculate Trend](#calculate-trend)
+    -   [Trend calculation - alternative 1 with higher ref point](#trend-calculation---alternative-1-with-higher-ref-point)
+    -   [6.6 Plot trend](#plot-trend)
+    -   [6.7Plot trend and status together](#plot-trend-and-status-together)
+-   [7. Issues or Concerns](#issues-or-concerns)
+    -   [7.1 Shapefile assignment issues](#shapefile-assignment-issues)
+    -   [7.2 Name discrepancies between datasets](#name-discrepancies-between-datasets)
+    -   [7.3 Spatial resolution of coastal allocation.](#spatial-resolution-of-coastal-allocation.)
 
 1. Background
 -------------
 
-Tourism and recreation in coastal areas is a major component of thriving coastal communities and a measure of how much people value ocean systems, i.e. by traveling to coastal and ocean areas. This goal is not about the revenue or livelihoods that are generated by tourism and recreation (that is captured in the livelihoods goal, section 6F above) but instead captures the value that people have for experiencing and enjoying coastal areas. Here we are using regional data on nights spent at tourist accommodation establishments to represent how much people value and enjoy the coastal regions.
+Tourism and recreation in coastal areas is a major component of thriving coastal communities and a measure of how much people value ocean systems, i.e. by traveling to coastal and ocean areas. This goal is not about the revenue or livelihoods that are generated by tourism and recreation (that is captured in the livelihoods goal) but instead captures the value that people have for experiencing and enjoying coastal areas. Here we are using regional data on nights spent at tourist accommodation establishments to represent how much people value and enjoy the coastal regions.
 
 2. Data
 -------
@@ -82,7 +78,7 @@ Missing data indicated by colon (:)
 
 ### 3.1 Status Calculation
 
-Xtr = \(\frac{a_r}{\texttt{a\_ref}_r}\)
+Xtr = a\_r/a\_ref\_r
 
 -   a\_r = number of nights spent in coastal accommodations in BHI region r
 -   a\_ref\_r = a\_r - 5
@@ -103,45 +99,15 @@ Linear regression fit to the most recent 5 status years.
 -------------------------
 
 ``` r
-## Libraries
+## libraries
 library(RMySQL)
-```
-
-    ## Loading required package: DBI
-
-``` r
 library(tidyverse)
-```
-
-    ## Loading tidyverse: ggplot2
-    ## Loading tidyverse: tibble
-    ## Loading tidyverse: tidyr
-    ## Loading tidyverse: readr
-    ## Loading tidyverse: purrr
-    ## Loading tidyverse: dplyr
-
-    ## Conflicts with tidy packages ----------------------------------------------
-
-    ## filter(): dplyr, stats
-    ## lag():    dplyr, stats
-
-``` r
 library(tools)
-library(rprojroot) # install.packages('rprojroot')
 
 source('~/github/bhi/baltic2015/prep/common.r')
+dir_tr = file.path(dir_prep, 'TR')
 
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-dir_tr    = file.path(dir_prep, 'TR')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory 
 create_readme(dir_tr, 'tr_prep.rmd') 
 ```
 
@@ -150,7 +116,6 @@ create_readme(dir_tr, 'tr_prep.rmd')
 #### 4.1.1 Read in data
 
 ``` r
-## read in data...
 ## accomodation stays time series by NUTS region
 accom = read.csv(file.path(dir_tr, "tr_data_database/accom.csv"), stringsAsFactors = FALSE)
 # dim(accom)
@@ -501,69 +466,8 @@ Germany and Poland each have 2 regions that are NUTS1 that border the Baltic.
 ## need to rename columns
 ## these data are at multiple spatial resolutions, need to figure out finest scale resolution, export and do manually.  Differs by country. Also differs within Germany.
 
-str(accom_coast)
-```
+# str(accom_coast)
 
-    ## 'data.frame':    4050 obs. of  57 variables:
-    ##  $ TERRTYPO          : chr  "TOTAL" "TOTAL" "TOTAL" "TOTAL" ...
-    ##  $ TERRTYPO_LABEL    : chr  "Total" "Total" "Total" "Total" ...
-    ##  $ GEO               : chr  "HR" "HR0" "HR03" "HR04" ...
-    ##  $ GEO_LABEL         : chr  "Croatia" "Hrvatska" "Jadranska Hrvatska" "Kontinentalna Hrvatska" ...
-    ##  $ INDIC_TO          : chr  "B006" "B006" "B006" "B006" ...
-    ##  $ INDIC_TO_LABEL    : chr  "Nights spent, total" "Nights spent, total" "Nights spent, total" "Nights spent, total" ...
-    ##  $ UNIT              : chr  "NR" "NR" "NR" "NR" ...
-    ##  $ UNIT_LABEL        : chr  "Number" "Number" "Number" "Number" ...
-    ##  $ NACE_R2           : chr  "I551-I553" "I551-I553" "I551-I553" "I551-I553" ...
-    ##  $ NACE_R2_LABEL     : chr  "Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks" "Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks" "Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks" "Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks" ...
-    ##  $ TIME              : int  2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...
-    ##  $ TIME_LABEL        : int  2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...
-    ##  $ Value             : chr  "62183925" "62183925" "59855870" "2328055" ...
-    ##  $ Flag.and.Footnotes: chr  "b" "b" "b" "b" ...
-    ##  $ BHI_relevant      : chr  NA NA NA NA ...
-    ##  $ BHI_ID_1          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_2          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_3          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_4          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_5          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_6          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_7          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_8          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_9          : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_10         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_11         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_12         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_13         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_14         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_15         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_16         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_17         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_18         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_19         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_20         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_21         : num  NA NA NA NA NA ...
-    ##  $ BHI_ID_22         : num  NA NA NA NA NA ...
-    ##  $ BHI_ID_23         : num  NA NA NA NA NA ...
-    ##  $ BHI_ID_24         : num  NA NA NA NA NA ...
-    ##  $ BHI_ID_25         : num  NA NA NA NA NA ...
-    ##  $ BHI_ID_26         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_27         : num  NA NA NA NA NA ...
-    ##  $ BHI_ID_28         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_29         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_30         : logi  NA NA NA NA NA NA ...
-    ##  $ BHI_ID_31         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_32         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_33         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_34         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_35         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_36         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_37         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_38         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_39         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_40         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_41         : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_42         : num  NA NA NA NA NA NA NA NA NA NA ...
-
-``` r
 accom_coast1 = accom_coast %>%
          select(-contains("BHI"), -TERRTYPO, - TIME_LABEL, -UNIT, -INDIC_TO, -NACE_R2 ) %>% ## remove BHI related columns, and other columns that are not needed
          dplyr::rename(year = TIME,
