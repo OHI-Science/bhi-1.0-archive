@@ -1,5 +1,5 @@
 ---
-title: "eco_prep.rmd"
+title: "Economies (ECO) Subgoal Data Preparation"
 output:
   github_document:
     toc: true
@@ -7,8 +7,6 @@ output:
 params: 
     datasource: csv
 ---
-
-# ECO subgoal data preparation
 
 ## 1. Background
 
@@ -151,29 +149,12 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 ### 5.1 Data organization
 
 Data prep setup. 
-```{r setup}
-
-## Libraries
-library(RMySQL)
-library(tidyverse)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
+```{r setup, message=FALSE}
 source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
 dir_eco    = file.path(dir_prep, 'ECO')
 
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory
 create_readme(dir_eco, 'eco_prep.rmd')
-
 ```
 
 #### 5.1.1 Read in data
@@ -255,10 +236,11 @@ regional_gdp1 = full_join(regional_gdp, correct_assign_PL,
 
 ## replace the country and rgn_id with the "corrected column"
 regional_gdp1 = regional_gdp1 %>%
-                select(-country,-rgn_id,-MISASSIGNED,-BHI_ID_manual,-country_manual)%>%
-                dplyr::rename(rgn_id = correct_BHI_ID,
-                              country= correct_country) %>%
-                arrange(nuts3)
+  select(-country,-rgn_id,-MISASSIGNED,-BHI_ID_manual,-country_manual)%>%
+  mutate(rgn_id = as.integer(correct_BHI_ID)) %>%
+  dplyr::rename(country= correct_country) %>%
+  select(-correct_BHI_ID) %>%
+  arrange(nuts3)
 
 ```
 
@@ -323,12 +305,12 @@ old_pop = old_pop %>%
 updated_fi = full_join(old_pop,gdp_new,
                        by=c("new_nuts3"="nuts3"))
 
-head(updated_fi)
-str(updated_fi)
+# head(updated_fi)
+# str(updated_fi)
 
 updated_fi = updated_fi %>%
              dplyr::rename(nuts3 = new_nuts3)%>%
-             select(year,nuts3, nuts3_name,unit, value,flag_notes,
+             dplyr::select(year,nuts3, nuts3_name,unit, value,flag_notes,
                     pop,pop_km2,country_abb , basin ,area_nuts3_in_bhi_buffer,
                     rgn_id,country)
 ##check colnames order matches with regional_gdp1
@@ -354,7 +336,7 @@ regional_gdp1 %>%
   left_join(.,select(regional_gdp1, country_abb,year,value,nuts3,rgn_id),
             by=c("country_abb","max_year"="year"))%>%
   filter(!is.na(rgn_id))%>%
-  print(n=100)%>%
+  # print(n=100)%>%
   filter(!is.na(value))%>%
   select(country_abb)%>%
   distinct()
@@ -1223,7 +1205,7 @@ rowcheck  <- function(df1, df2){
   }
 
 # check if each row of correct_assign_simple is contained in the updated nuts3 region map
-rowcheck(correct_assign_simple, nuts3_updated) 
+# rowcheck(correct_assign_simple, nuts3_updated) # JSL commented out; correct_assign_simple does not exist
 ## all TRUE
 
 # this means the updated NTUS3 spatial file matches what Jennifer has manually corrected. can use the updated NUTS3 spatial file to correct misassignments directly, which also includes BHI_ID 21. 

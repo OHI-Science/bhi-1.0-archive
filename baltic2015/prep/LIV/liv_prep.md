@@ -146,12 +146,6 @@ Xliv = (Employment\_Region\_c/Employment\_Region\_r) / (Employment\_Region\_c/Em
 ### 5.1 Data organization
 
 ``` r
-## Libraries
-library(RMySQL)
-library(tidyverse)
-library(tools)
-library(rgdal) 
-
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_liv    = file.path(dir_prep, 'LIV')
 

@@ -1,128 +1,39 @@
-eco\_prep.rmd
+Economies (ECO) Subgoal Data Preparation
 ================
 
--   [ECO subgoal data preparation](#eco-subgoal-data-preparation)
-    -   [1. Background](#background)
-    -   [2. Data](#data)
-        -   [2.1 Regional Data](#regional-data)
-        -   [2.2 Country Level data](#country-level-data)
-        -   [2.3 Russian country level data](#russian-country-level-data)
-        -   [2.4 Population density data](#population-density-data)
-        -   [2.5 Aligning BHI regions with NUTS3 regions and population density](#aligning-bhi-regions-with-nuts3-regions-and-population-density)
-    -   [3. Goal Model](#goal-model)
-        -   [3.1 Status](#status)
-        -   [3.2 Trend](#trend)
-    -   [4. Other](#other)
-        -   [4.1 Interpreting NA and zero](#interpreting-na-and-zero)
-        -   [4.2 Data issues](#data-issues)
-    -   [5. Regional GDP prep](#regional-gdp-prep)
-        -   [5.1 Data organization](#data-organization)
-        -   [5.2 Data associations with Baltic and BHI](#data-associations-with-baltic-and-bhi)
-        -   [5.3 BHI region GDP](#bhi-region-gdp)
-        -   [5.4 Data layer for layers](#data-layer-for-layers)
-        -   [5.4.2](#section)
-    -   [6.Country GDP prep](#country-gdp-prep)
-        -   [6.1 Organize data](#organize-data)
-        -   [6.2 Baltic regions](#baltic-regions)
-        -   [6.4 Per capita national gdp](#per-capita-national-gdp)
-        -   [6.5 Per capita National GDP](#per-capita-national-gdp-1)
-        -   [6.6 Join BHI regions on countries](#join-bhi-regions-on-countries)
-        -   [6.7 Natioanl GDP Data layer for layers](#natioanl-gdp-data-layer-for-layers)
-    -   [7. Status and Trend Calculation](#status-and-trend-calculation)
-        -   [7.1 Assign data layer](#assign-data-layer)
-        -   [7.2 Set parameters](#set-parameters)
-        -   [7.3 Status calculation](#status-calculation)
-        -   [7.3.4 Which BHI regions have no status](#which-bhi-regions-have-no-status)
-        -   [7.3.1 Plot status](#plot-status)
-        -   [7.4 Trend calculation](#trend-calculation)
-
-ECO subgoal data preparation
-============================
-
-``` r
-## Libraries
-library(readr)
-```
-
-    ## Warning: package 'readr' was built under R version 3.2.4
-
-``` r
-library(dplyr)
-```
-
-    ## Warning: package 'dplyr' was built under R version 3.2.5
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
-library(tidyr)
-```
-
-    ## Warning: package 'tidyr' was built under R version 3.2.5
-
-``` r
-library(ggplot2)
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.2.4
-
-``` r
-library(RMySQL)
-```
-
-    ## Warning: package 'RMySQL' was built under R version 3.2.5
-
-    ## Loading required package: DBI
-
-    ## Warning: package 'DBI' was built under R version 3.2.5
-
-``` r
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-```
-
-    ## Warning: package 'rprojroot' was built under R version 3.2.4
-
-``` r
-source('~/github/bhi/baltic2015/prep/common.r')
-
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-
-dir_eco    = file.path(dir_prep, 'ECO')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_eco, 'eco_prep.rmd')
-```
+-   [1. Background](#background)
+-   [2. Data](#data)
+    -   [2.1 Regional Data](#regional-data)
+    -   [2.2 Country Level data](#country-level-data)
+    -   [2.3 Russian country level data](#russian-country-level-data)
+    -   [2.4 Population density data](#population-density-data)
+    -   [2.5 Aligning BHI regions with NUTS3 regions and population density](#aligning-bhi-regions-with-nuts3-regions-and-population-density)
+-   [3. Goal Model](#goal-model)
+    -   [3.1 Status](#status)
+    -   [3.2 Trend](#trend)
+-   [4. Other](#other)
+    -   [4.1 Interpreting NA and zero](#interpreting-na-and-zero)
+    -   [4.2 Data issues](#data-issues)
+-   [5. Regional GDP prep](#regional-gdp-prep)
+    -   [5.1 Data organization](#data-organization)
+    -   [5.2 Data associations with Baltic and BHI](#data-associations-with-baltic-and-bhi)
+    -   [5.3 BHI region GDP](#bhi-region-gdp)
+    -   [5.4 Data layer for layers](#data-layer-for-layers)
+    -   [5.4.2](#section)
+-   [6.Country GDP prep](#country-gdp-prep)
+    -   [6.1 Organize data](#organize-data)
+    -   [6.2 Baltic regions](#baltic-regions)
+    -   [6.4 Per capita national gdp](#per-capita-national-gdp)
+    -   [6.5 Per capita National GDP](#per-capita-national-gdp-1)
+    -   [6.6 Join BHI regions on countries](#join-bhi-regions-on-countries)
+    -   [6.7 Natioanl GDP Data layer for layers](#natioanl-gdp-data-layer-for-layers)
+-   [7. Status and Trend Calculation](#status-and-trend-calculation)
+    -   [7.1 Assign data layer](#assign-data-layer)
+    -   [7.2 Set parameters](#set-parameters)
+    -   [7.3 Status calculation](#status-calculation)
+    -   [7.3.4 Which BHI regions have no status](#which-bhi-regions-have-no-status)
+    -   [7.3.1 Plot status](#plot-status)
+    -   [7.4 Trend calculation](#trend-calculation)
 
 1. Background
 -------------
@@ -132,17 +43,17 @@ create_readme(dir_eco, 'eco_prep.rmd')
 
 ### 2.1 Regional Data
 
-Eurostat regional (NUTS3) GDP Data downloaded on 12 May 2016 from Eurostat database [nama\_10r\_3gdp](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp)
+Eurostat regional (NUTS3) GDP. Nominal GDP data in millions of Euros.
 
-Nominal GDP data in millions of Euros.
+Data downloaded on 12 May 2016 from Eurostat database [nama\_10r\_3gdp](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp)
 
 No data for Russia regions.
 
 ### 2.2 Country Level data
 
-Eurostat Country GDP data Data downloaded 22 March 2016 from Eurostat Database [nama\_10\_gdp](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp)
+Eurostat Country GDP data. Nominal GDP in millions of Euros.
 
-Nominal GDP in millions of Euros.
+Data downloaded 22 March 2016 from Eurostat Database [nama\_10\_gdp](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp)
 
 Data does not include Russia
 
@@ -152,7 +63,7 @@ Eurostat database [naida\_10\_gdp](http://ec.europa.eu/eurostat/web/products-dat
 
 [Metadata link](http://ec.europa.eu/eurostat/cache/metadata/en/naid_10_esms.htm)
 
-Download criteria:
+*Download criteria*:
 Russia; Gross domestic product at market prices; CP\_MEUR (Current prices, million euro ); 2000-2014
 
 ### 2.4 Population density data
@@ -165,13 +76,16 @@ Year of data = 2005. Data were a 5' resolution. Erik Smedberg with the Baltic Se
 
 Population density within a 25km buffer from the coast will be used.
 
-References: Klein Goldewijk, K. , A. Beusen, M. de Vos and G. van Drecht (2011). The HYDE 3.1 spatially explicit database of human induced land use change over the past 12,000 years, Global Ecology and Biogeography20(1): 73-86. DOI: 10.1111/j.1466-8238.2010.00587.x.
+*References*:
+
+Klein Goldewijk, K. , A. Beusen, M. de Vos and G. van Drecht (2011). The HYDE 3.1 spatially explicit database of human induced land use change over the past 12,000 years, Global Ecology and Biogeography20(1): 73-86. DOI: 10.1111/j.1466-8238.2010.00587.x.
 
 Klein Goldewijk, K. , A. Beusen, and P. Janssen (2010). Long term dynamic modeling of global population and built-up area in a spatially explicit way, HYDE 3 .1. The Holocene20(4):565-573. <http://dx.doi.org/10.1177/0959683609356587>
 
 #### 2.4.2 National
 
 **EU countries**
+
 Downloaded on March 31 2016 from Eurostat database [demo\_gind](http://ec.europa.eu/eurostat/data/database?p_auth=whAQQAX7&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=demo_gind)
 
 Variables:
@@ -180,30 +94,33 @@ Variables:
 [Metadata Link](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)
 
 *Population on 1 January:*
-Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
+
+Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the '*usual resident population*' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
 
 **Russia**
+
 Downloaded on 10 June 2016 from Eurostat database: [naida\_10\_pe](http://ec.europa.eu/eurostat/web/products-datasets/-/naida_10_pe)
-population (thousands of people)
-employment (thousands of people) *need to exclude this*
+
+-   population (thousands of people)
+-   employment (thousands of people) *need to exclude this*
 
 ### 2.5 Aligning BHI regions with NUTS3 regions and population density
 
-NEED TO ADD LINK to MARC methods
+TODO: NEED TO ADD LINK to MARC methods
 
-[NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013. Believe 2006 was used by Marc to join with BHI shapefile. NEED TO HAVE MARC CONFIRM. This may lead to some NUTS3 naming discrepancies between the shapefile associations and the GDP data. See more in Section 4.2.2
+[NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013. 2006 was used to join with BHI shapefile. This led to some NUTS3 naming discrepancies between the shapefile associations and the GDP data, which has been manually corrected in section 5.1.4.
 
 NUTS3 GDP data is joined in the database to the area and population density information associated with that NUTS3 and BHI region.
 
 #### 2.5.1 Guide to column names in regional GDP associated with population density and area:
 
-PopTot = total population in the BHI region's 25km buffer overlapping with a NUTS3 region
-PopUrb = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region
-PopRur = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region
-PopTot\_density\_in\_buffer\_per\_km2" = total population in the BHI region's 25km buffer overlapping with a NUTS3 region population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region
-PopUrb\_density\_in\_buffer\_per\_km2 = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region
-PopRur\_density\_in\_buffer\_per\_km2 = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region
-NUTS3\_area\_in\_BHI\_buffer\_km2 = area of a NUTS3 region associated with the 25km buffer of a BHI region
+-   PopTot = total population in the BHI region's 25km buffer overlapping with a NUTS3 region
+-   PopUrb = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region
+-   PopRur = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region
+-   PopTot\_density\_in\_buffer\_per\_km2" = total population in the BHI region's 25km buffer overlapping with a NUTS3 region population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region
+-   PopUrb\_density\_in\_buffer\_per\_km2 = urban population in the BHI region's 25km buffer overlapping with a NUTS3 region population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region
+-   PopRur\_density\_in\_buffer\_per\_km2 = rural population in the BHI region's 25km buffer overlapping with a NUTS3 region population in the BHI region's 25km buffer overlapping with a NUTS3 region divided by the area within that buffer and NUTS3 region
+-   NUTS3\_area\_in\_BHI\_buffer\_km2 = area of a NUTS3 region associated with the 25km buffer of a BHI region
 
 3. Goal Model
 -------------
@@ -211,9 +128,15 @@ NUTS3\_area\_in\_BHI\_buffer\_km2 = area of a NUTS3 region associated with the 2
 ### 3.1 Status
 
 Xeco = (GDP\_Region\_c/GDP\_Region\_r)/(GDP\_Country\_c/GDP\_Country\_r)
+
 c = current year, r=reference year
+
 reference point is a moving window (single year value)
-Region is the BHI region which is comprised of GDP data from the associated NUTS3 regions data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out) each BHI region is composed by one or more NUTS3 regions, these are allocated by population density from each NUTS3 region associated with a given BHI region
+
+Region is the BHI region which is comprised of GDP data from the associated NUTS3 regions
+
+Data can be in nominal GDP because is a ratio value (adjusting by a deflator would cancel out). Each BHI region is composed by one or more NUTS3 regions. These are allocated by population density from each NUTS3 region associated with a given BHI region.
+
 Data are in per capita GDP in millions of euro, using only population size from 2005 for all years.
 
 ### 3.2 Trend
@@ -258,41 +181,27 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 
 ### 5.1 Data organization
 
+Data prep setup.
+
+``` r
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_eco    = file.path(dir_prep, 'ECO')
+
+## add a README.md to the prep directory
+create_readme(dir_eco, 'eco_prep.rmd')
+```
+
 #### 5.1.1 Read in data
 
-This should be check and updated when data are updated in database. Data should be extract from database by ´eco\_prep\_database\_call.r´ and saved to folder ´eco\_data\_database´
+This should be checked and updated when data are updated in database. Data should be extracted from database by ´eco\_prep\_database\_call.r´ and saved to folder ´eco\_data\_database´.
 
 ``` r
 regional_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nuts3_gdp.csv'))
 
-dim(regional_gdp) #21375    18
+# dim(regional_gdp) #21375    18
+
+# str(regional_gdp)
 ```
-
-    ## [1] 21375    18
-
-``` r
-str(regional_gdp)
-```
-
-    ## 'data.frame':    21375 obs. of  18 variables:
-    ##  $ TIME                            : int  2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 ...
-    ##  $ GEO                             : Factor w/ 1384 levels "01-dec","02-dec",..: 43 44 45 46 47 48 49 50 51 52 ...
-    ##  $ GEO_LABEL                       : Factor w/ 1371 levels "A Coruña","Aberdeen City and Aberdeenshire",..: 65 59 80 96 72 78 94 58 66 69 ...
-    ##  $ UNIT                            : Factor w/ 1 level "Million euro": 1 1 1 1 1 1 1 1 1 1 ...
-    ##  $ Value                           : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ Flag_and_Footnotes              : logi  NA NA NA NA NA NA ...
-    ##  $ BHI_ID                          : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ PopTot                          : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ PopUrb                          : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ PopRur                          : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ PopTot_density_in_buffer_per_km2: num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ PopUrb_density_in_buffer_per_km2: num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ PopRur_density_in_buffer_per_km2: num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ CNTR_CODE                       : Factor w/ 8 levels "DE","DK","EE",..: NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ rgn_nam                         : Factor w/ 9 levels "Denmark","Estonia",..: NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ Subbasin                        : Factor w/ 18 levels "Aland Sea","Arkona Basin",..: NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ HELCOM_ID                       : Factor w/ 17 levels "SEA-001","SEA-002",..: NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ NUTS3_area_in_BHI_buffer_km2    : num  NA NA NA NA NA NA NA NA NA NA ...
 
 #### 5.1.2 clean data object
 
@@ -305,7 +214,7 @@ unique(regional_gdp$UNIT) ## Million euro
 
 ``` r
 regional_gdp = regional_gdp %>%
-               select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2,-HELCOM_ID)%>% ## remove data not needed
+              select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2,-HELCOM_ID) %>% ## remove data not needed
               dplyr::rename(year = TIME, nuts3 = GEO, nuts3_name = GEO_LABEL,
                             unit = UNIT, value = Value, flag_notes = Flag_and_Footnotes,
                             rgn_id = BHI_ID,pop = PopTot,pop_km2 = PopTot_density_in_buffer_per_km2,
@@ -318,76 +227,77 @@ regional_gdp = regional_gdp %>%
                      country = as.character(country),
                      basin = as.character(basin))
 
-str(regional_gdp)
+# str(regional_gdp)
 ```
-
-    ## 'data.frame':    21375 obs. of  13 variables:
-    ##  $ year                    : int  2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 ...
-    ##  $ nuts3                   : chr  "BE100" "BE211" "BE212" "BE213" ...
-    ##  $ nuts3_name              : chr  "Arr. de Bruxelles-Capitale / Arr. van Brussel-Hoofdstad" "Arr. Antwerpen" "Arr. Mechelen" "Arr. Turnhout" ...
-    ##  $ unit                    : chr  "Million euro" "Million euro" "Million euro" "Million euro" ...
-    ##  $ value                   : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ flag_notes              : logi  NA NA NA NA NA NA ...
-    ##  $ rgn_id                  : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ pop                     : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ pop_km2                 : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ country_abb             : chr  NA NA NA NA ...
-    ##  $ country                 : chr  NA NA NA NA ...
-    ##  $ basin                   : chr  NA NA NA NA ...
-    ##  $ area_nuts3_in_bhi_buffer: num  NA NA NA NA NA NA NA NA NA NA ...
 
 #### 5.1.3 Find NUTS3 regions assigned to incorrect BHI region
 
-Due to small differences in the shapefiles, some NUTS3 regions assigned to a BHI region belonging to a different country.
+Due to small differences in the shapefiles, some NUTS3 regions assigned to a BHI region belong to a different country.
 
 ``` r
 ## find mis-assigned NUTS and BHI regions
-mis_assigned =regional_gdp %>% 
-  filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia",country)) %>% ## include Russia because some mis-assigned
-select(country,country_abb, rgn_id,nuts3) %>% distinct() %>% arrange(rgn_id,country) %>%
+mis_assigned = regional_gdp %>% 
+  filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia", country)) %>% ## include Russia because some mis-assigned
+  select(country,country_abb, rgn_id, nuts3) %>%
+  distinct() %>% 
+  arrange(rgn_id,country) %>%
   dplyr::rename(BHI_ID = rgn_id,
                 country_bhi = country,
                 country_abb_nuts = country_abb)
 #write to csv
-#write.csv(mis_assigned, file.path(dir_eco,"mis_assigned_bhi_nuts3.csv"),row.names = FALSE)
+#write.csv(mis_assigned, file.path(dir_eco,"mis_assigned_bhi_nuts3.csv"), row.names = FALSE)
 ```
 
 #### 5.1.4 Manually fix NUTS3 regions assigned to incorrect BHI region
 
+The file saved above "mis\_assigned\_bhi\_nuts3.csv" was manually corrected and saved as "mis\_assigned\_bhi\_nuts3\_corrected\_manually.csv". This work is done outside of this prep file. Here we are going to use this new file to correct the regions misassigned in the regional gdp file.
+
 ``` r
-## upload corrected files - the file exported in 5.1.3 was reviewed and corrected manually
-correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"),sep=";", stringsAsFactors = FALSE)
-str(correct_assign)
+## upload corrected files - the file exported in 5.1.3 was reviewed and corrected manually, which excluded region 21
+correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";",       stringsAsFactors = FALSE) 
+  
+## region 21 was misassigned 17 & 18 but wasn't sure of this until Marc provided updated NUTS/BHI shapefiles in Sep 2016. Attaching this new information to correct_assign.
+nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv')) %>%
+ filter(nuts3 == 'PL634')
 ```
 
-    ## 'data.frame':    96 obs. of  9 variables:
-    ##  $ country_bhi     : chr  "Germany" "Germany" "Germany" "Germany" ...
-    ##  $ country_abb_nuts: chr  "DE" "DE" "DE" "DE" ...
-    ##  $ BHI_ID          : int  10 4 8 10 10 8 10 8 8 4 ...
-    ##  $ nuts3           : chr  "DE803" "DEF01" "DEF02" "DEF03" ...
-    ##  $ MISASSIGNED     : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ BHI_ID_manual   : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ country_manual  : chr  "" "" "" "" ...
-    ##  $ correct_BHI_ID  : int  10 4 8 10 10 8 10 8 8 4 ...
-    ##  $ correct_country : chr  "Germany" "Germany" "Germany" "Germany" ...
+    ## Parsed with column specification:
+    ## cols(
+    ##   country = col_character(),
+    ##   BHI_ID = col_integer(),
+    ##   nuts3 = col_character(),
+    ##   country_abb = col_character()
+    ## )
 
 ``` r
-regional_gdp1 = full_join(regional_gdp,correct_assign,
+#  country BHI_ID nuts3 country_abb
+#   Poland     21 PL634          PL
+#   Poland     18 PL634          PL
+#   Poland     18 PL634          PL
+## in original data, PL634 was assigned BHI_ID of 17 & 18 incorrectly
+
+correct_assign_PL = correct_assign %>% 
+  mutate(correct_BHI_ID = ifelse(nuts3 == 'PL634' & BHI_ID == '17', '21', correct_BHI_ID))
+
+regional_gdp1 = full_join(regional_gdp, correct_assign_PL,
                           by=c("country"="country_bhi", "country_abb"="country_abb_nuts",
                                "rgn_id"="BHI_ID", "nuts3"))
 
 ## replace the country and rgn_id with the "corrected column"
 regional_gdp1 = regional_gdp1 %>%
-                select(-country,-rgn_id,-MISASSIGNED,-BHI_ID_manual,-country_manual)%>%
-                dplyr::rename(rgn_id = correct_BHI_ID,
-                              country= correct_country) %>%
-                arrange(nuts3)
+  select(-country,-rgn_id,-MISASSIGNED,-BHI_ID_manual,-country_manual)%>%
+  mutate(rgn_id = as.integer(correct_BHI_ID)) %>%
+  dplyr::rename(country= correct_country) %>%
+  select(-correct_BHI_ID) %>%
+  arrange(nuts3)
 ```
 
 #### 5.1.5 Correct error with Finnish name change
 
 Finnish name changes to NUTS regions around the Gulf of Finland (minor fraction also Aland Sea) as well as round the Bothnian Sea result in mismatches between names in the GDP data (new names) and the shapefiles (old names).
-![New Finnish NUTS3 names](new_FI_nuts3.png?raw=TRUE) ![Old Finnish NUTS3 names](BHI_regions_NUTS3_plot.png?raw=TRUE)
+
+-   ![New Finnish NUTS3 names](new_FI_nuts3.png?raw=TRUE)
+-   ![Old Finnish NUTS3 names](BHI_regions_NUTS3_plot.png?raw=TRUE "fig:")
 
 ``` r
 new_fi_nuts3 = c("FI1C4","FI1B1", "FI1D7","FI1D6","FI1D5")
@@ -444,45 +354,12 @@ old_pop = old_pop %>%
 updated_fi = full_join(old_pop,gdp_new,
                        by=c("new_nuts3"="nuts3"))
 
-head(updated_fi)
-```
+# head(updated_fi)
+# str(updated_fi)
 
-    ## Source: local data frame [6 x 13]
-    ## 
-    ##   rgn_id country_abb country           basin new_nuts3     pop  pop_km2
-    ##    <dbl>       <chr>   <chr>           <chr>     <chr>   <int>    <dbl>
-    ## 1     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
-    ## 2     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
-    ## 3     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
-    ## 4     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
-    ## 5     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
-    ## 6     32          FI Finland Gulf of Finland     FI1B1 2713362 2874.323
-    ## Variables not shown: area_nuts3_in_bhi_buffer <dbl>, year <int>,
-    ##   nuts3_name <chr>, unit <chr>, value <int>, flag_notes <lgl>.
-
-``` r
-str(updated_fi)
-```
-
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    90 obs. of  13 variables:
-    ##  $ rgn_id                  : num  32 32 32 32 32 32 32 32 32 32 ...
-    ##  $ country_abb             : chr  "FI" "FI" "FI" "FI" ...
-    ##  $ country                 : chr  "Finland" "Finland" "Finland" "Finland" ...
-    ##  $ basin                   : chr  "Gulf of Finland" "Gulf of Finland" "Gulf of Finland" "Gulf of Finland" ...
-    ##  $ new_nuts3               : chr  "FI1B1" "FI1B1" "FI1B1" "FI1B1" ...
-    ##  $ pop                     : int  2713362 2713362 2713362 2713362 2713362 2713362 2713362 2713362 2713362 2713362 ...
-    ##  $ pop_km2                 : num  2874 2874 2874 2874 2874 ...
-    ##  $ area_nuts3_in_bhi_buffer: num  788775 788775 788775 788775 788775 ...
-    ##  $ year                    : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
-    ##  $ nuts3_name              : chr  "Helsinki-Uusimaa" "Helsinki-Uusimaa" "Helsinki-Uusimaa" "Helsinki-Uusimaa" ...
-    ##  $ unit                    : chr  "Million euro" "Million euro" "Million euro" "Million euro" ...
-    ##  $ value                   : int  50242 53814 54465 55017 57714 60178 64105 69676 72791 69997 ...
-    ##  $ flag_notes              : logi  NA NA NA NA NA NA ...
-
-``` r
 updated_fi = updated_fi %>%
              dplyr::rename(nuts3 = new_nuts3)%>%
-             select(year,nuts3, nuts3_name,unit, value,flag_notes,
+             dplyr::select(year,nuts3, nuts3_name,unit, value,flag_notes,
                     pop,pop_km2,country_abb , basin ,area_nuts3_in_bhi_buffer,
                     rgn_id,country)
 ##check colnames order matches with regional_gdp1
@@ -494,8 +371,8 @@ colnames(regional_gdp1);colnames(updated_fi)
     ##  [5] "value"                    "flag_notes"              
     ##  [7] "pop"                      "pop_km2"                 
     ##  [9] "country_abb"              "basin"                   
-    ## [11] "area_nuts3_in_bhi_buffer" "rgn_id"                  
-    ## [13] "country"
+    ## [11] "area_nuts3_in_bhi_buffer" "country"                 
+    ## [13] "rgn_id"
 
     ##  [1] "year"                     "nuts3"                   
     ##  [3] "nuts3_name"               "unit"                    
@@ -524,120 +401,13 @@ regional_gdp1 %>%
   left_join(.,select(regional_gdp1, country_abb,year,value,nuts3,rgn_id),
             by=c("country_abb","max_year"="year"))%>%
   filter(!is.na(rgn_id))%>%
-  print(n=100)%>%
+  # print(n=100)%>%
   filter(!is.na(value))%>%
   select(country_abb)%>%
   distinct()
 ```
 
-    ## Source: local data frame [102 x 5]
-    ## 
-    ##     country_abb max_year value nuts3 rgn_id
-    ##           <chr>    <int> <int> <chr>  <dbl>
-    ## 1            DE     2014    NA DE803     10
-    ## 2            DE     2014    NA DEF01      4
-    ## 3            DE     2014    NA DEF02      8
-    ## 4            DE     2014    NA DEF03     10
-    ## 5            DE     2014    NA DEF06     10
-    ## 6            DE     2014    NA DEF08      8
-    ## 7            DE     2014    NA DEF08     10
-    ## 8            DE     2014    NA DEF0A      8
-    ## 9            DE     2014    NA DEF0B      8
-    ## 10           DE     2014    NA DEF0C      4
-    ## 11           DE     2014    NA DEF0C      8
-    ## 12           DE     2014    NA DEF0D     10
-    ## 13           DE     2014    NA DEF0F     10
-    ## 14           DK     2014 48028 DK011      6
-    ## 15           DK     2014 48028 DK011     12
-    ## 16           DK     2014 36356 DK012      6
-    ## 17           DK     2014 36356 DK012     12
-    ## 18           DK     2014 16414 DK013      2
-    ## 19           DK     2014 16414 DK013      6
-    ## 20           DK     2014 16414 DK013     12
-    ## 21           DK     2014  1355 DK014     15
-    ## 22           DK     2014  7633 DK021      2
-    ## 23           DK     2014  7633 DK021     12
-    ## 24           DK     2014 18242 DK022      2
-    ## 25           DK     2014 18242 DK022      3
-    ## 26           DK     2014 18242 DK022      7
-    ## 27           DK     2014 18242 DK022      9
-    ## 28           DK     2014 18242 DK022     12
-    ## 29           DK     2014 17317 DK031      3
-    ## 30           DK     2014 32468 DK032      3
-    ## 31           DK     2014 32468 DK032      4
-    ## 32           DK     2014 19136 DK041      3
-    ## 33           DK     2014 33787 DK042      2
-    ## 34           DK     2014 33787 DK042      3
-    ## 35           DK     2014 23028 DK050      2
-    ## 36           EE     2014 12434 EE001     34
-    ## 37           EE     2014  1405 EE004     25
-    ## 38           EE     2014  1405 EE004     28
-    ## 39           EE     2014  1405 EE004     28
-    ## 40           EE     2014  1405 EE004     31
-    ## 41           EE     2014  1405 EE004     34
-    ## 42           EE     2014  1153 EE006     34
-    ## 43           EE     2014  1567 EE007     34
-    ## 44           EE     2014  1567 EE007     34
-    ## 45           FI     2014    NA FI194     38
-    ## 46           FI     2014    NA FI194     40
-    ## 47           FI     2014    NA FI195     38
-    ## 48           FI     2014    NA FI195     40
-    ## 49           FI     2014    NA FI195     42
-    ## 50           FI     2014    NA FI196     38
-    ## 51           FI     2014    NA FI200     36
-    ## 52           FI     2014    NA FI200     38
-    ## 53           FI     2014    NA FI1B1     32
-    ## 54           FI     2014    NA FI1C4     32
-    ## 55           FI     2014    NA FI1B1     36
-    ## 56           FI     2014    NA FI1D5     42
-    ## 57           FI     2014    NA FI1D6     42
-    ## 58           FI     2014    NA FI1D7     42
-    ## 59           LT     2014    NA LT003     23
-    ## 60           LT     2014    NA LT003     23
-    ## 61           LT     2014    NA LT003     23
-    ## 62           LV     2014    NA LV003     24
-    ## 63           LV     2014    NA LV003     24
-    ## 64           LV     2014    NA LV003     27
-    ## 65           LV     2014    NA LV006     27
-    ## 66           LV     2014    NA LV007     27
-    ## 67           LV     2014    NA LV007     27
-    ## 68           LV     2014    NA LV009     27
-    ## 69           PL     2014    NA PL424     17
-    ## 70           PL     2014    NA PL621     18
-    ## 71           PL     2014    NA PL621     18
-    ## 72           PL     2014    NA PL622     18
-    ## 73           PL     2014    NA PL633     18
-    ## 74           PL     2014    NA PL634     17
-    ## 75           PL     2014    NA PL634     18
-    ## 76           SE     2014    NA SE110     29
-    ## 77           SE     2014    NA SE110     35
-    ## 78           SE     2014    NA SE121     35
-    ## 79           SE     2014    NA SE121     37
-    ## 80           SE     2014    NA SE122     29
-    ## 81           SE     2014    NA SE123     26
-    ## 82           SE     2014    NA SE123     29
-    ## 83           SE     2014    NA SE212     14
-    ## 84           SE     2014    NA SE213     14
-    ## 85           SE     2014    NA SE213     26
-    ## 86           SE     2014    NA SE214     20
-    ## 87           SE     2014    NA SE214     26
-    ## 88           SE     2014    NA SE221     14
-    ## 89           SE     2014    NA SE221     26
-    ## 90           SE     2014    NA SE224      1
-    ## 91           SE     2014    NA SE224      5
-    ## 92           SE     2014    NA SE224     11
-    ## 93           SE     2014    NA SE224     14
-    ## 94           SE     2014    NA SE231      1
-    ## 95           SE     2014    NA SE232      1
-    ## 96           SE     2014    NA SE313     37
-    ## 97           SE     2014    NA SE321     37
-    ## 98           SE     2014    NA SE331     37
-    ## 99           SE     2014    NA SE331     39
-    ## 100          SE     2014    NA SE331     41
-    ## ..          ...      ...   ...   ...    ...
-
-    ## Source: local data frame [2 x 1]
-    ## 
+    ## # A tibble: 2 × 1
     ##   country_abb
     ##         <chr>
     ## 1          DK
@@ -699,8 +469,8 @@ str(regional_gdp2)
     ##  $ country_abb             : chr  "DE" "DE" "DE" "DE" ...
     ##  $ basin                   : chr  "Bay of Mecklenburg" "Bay of Mecklenburg" "Bay of Mecklenburg" "Bay of Mecklenburg" ...
     ##  $ area_nuts3_in_bhi_buffer: num  1685 1685 1685 1685 1685 ...
-    ##  $ rgn_id                  : num  10 10 10 10 10 10 10 10 10 10 ...
     ##  $ country                 : chr  "Germany" "Germany" "Germany" "Germany" ...
+    ##  $ rgn_id                  : num  10 10 10 10 10 10 10 10 10 10 ...
 
 ``` r
 unique(regional_gdp2$country)
@@ -717,7 +487,7 @@ unique(regional_gdp2$country_abb)
 
 #### 5.2.2 Remove 2014
 
-Only 2 countries have data
+Only 2 countries have data in 2014.
 
 ``` r
 regional_gdp2 = regional_gdp2 %>%
@@ -733,7 +503,6 @@ ggplot(regional_gdp2) +
   geom_point(aes(year, value, col=nuts3))+
   facet_wrap(~country)+
   ylab("GDP (million euro)")+
-  #guides(color="none")+
   ggtitle("regional GDP by countries")
 ```
 
@@ -760,8 +529,8 @@ regional_gdp2 %>% filter(!is.na(flag_notes))
     ##  [5] value                    flag_notes              
     ##  [7] pop                      pop_km2                 
     ##  [9] country_abb              basin                   
-    ## [11] area_nuts3_in_bhi_buffer rgn_id                  
-    ## [13] country                 
+    ## [11] area_nuts3_in_bhi_buffer country                 
+    ## [13] rgn_id                  
     ## <0 rows> (or 0-length row.names)
 
 ``` r
@@ -818,8 +587,7 @@ nuts3_bhi_join2 = nuts3_bhi_join %>%
 nuts3_bhi_join2 %>% select(nuts3, country,pop_nuts3, pop,bhi_pop_prop)%>%distinct()%>%arrange(nuts3)
 ```
 
-    ## Source: local data frame [102 x 5]
-    ## 
+    ## # A tibble: 102 × 5
     ##    nuts3 country pop_nuts3    pop bhi_pop_prop
     ##    <chr>   <chr>     <int>  <int>        <dbl>
     ## 1  DE803 Germany    200699 200699    1.0000000
@@ -832,7 +600,7 @@ nuts3_bhi_join2 %>% select(nuts3, country,pop_nuts3, pop,bhi_pop_prop)%>%distinc
     ## 8  DEF0A Germany    380586 380586    1.0000000
     ## 9  DEF0B Germany    397202 397202    1.0000000
     ## 10 DEF0C Germany    285337 226701    0.7945026
-    ## ..   ...     ...       ...    ...          ...
+    ## # ... with 92 more rows
 
 #### 5.3.5 Plot the population fraction and GDP fraction from each NUTS3 associated with each BHI region
 
@@ -869,7 +637,7 @@ bhi_gdp = nuts3_bhi_join2 %>%
 str(bhi_gdp)
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    490 obs. of  5 variables:
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    504 obs. of  5 variables:
     ##  $ rgn_id            : num  1 1 1 1 1 1 1 1 1 1 ...
     ##  $ year              : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
     ##  $ bhi_pop           : int  844828 844828 844828 844828 844828 844828 844828 844828 844828 844828 ...
@@ -1655,8 +1423,7 @@ Status and trend are calculated in functions.r but code is tested and explored h
 head( eco_region)
 ```
 
-    ## Source: local data frame [6 x 3]
-    ## 
+    ## # A tibble: 6 × 3
     ##   rgn_id  year rgn_value
     ##    <dbl> <int>     <dbl>
     ## 1      1  2008  1.189080
@@ -1670,7 +1437,7 @@ head( eco_region)
 dim(eco_region) ##210 3
 ```
 
-    ## [1] 210   3
+    ## [1] 216   3
 
 ``` r
 ## ECO country
@@ -1689,8 +1456,7 @@ dim(eco_region) ##210 3
   head(eco_country)
 ```
 
-    ## Source: local data frame [6 x 3]
-    ## 
+    ## # A tibble: 6 × 3
     ##   rgn_id  year cntry_value
     ##    <int> <int>       <dbl>
     ## 1      1  2008    1.200626
@@ -1717,8 +1483,7 @@ dim(eco_region) ##210 3
   head(eco_status_calc)
 ```
 
-    ## Source: local data frame [6 x 6]
-    ## 
+    ## # A tibble: 6 × 6
     ##   rgn_id  year rgn_value cntry_value      Xeco    status
     ##    <dbl> <int>     <dbl>       <dbl>     <dbl>     <dbl>
     ## 1      1  2008  1.189080    1.200626 0.9903833 0.9903833
@@ -1732,7 +1497,7 @@ dim(eco_region) ##210 3
   dim(eco_status_calc) ## 210 6
 ```
 
-    ## [1] 210   6
+    ## [1] 216   6
 
 #### 7.3.3 Extract most recent year status
 
@@ -1769,8 +1534,7 @@ max_year_status= eco_status_calc%>%
 max_year_status %>% select(year)%>% distinct() ## all final years are 2013
 ```
 
-    ## Source: local data frame [1 x 1]
-    ## 
+    ## # A tibble: 1 × 1
     ##    year
     ##   <int>
     ## 1  2013
@@ -1795,61 +1559,67 @@ eco_status %>% filter(is.na(score)) #13,16,19,21,22,30,33
     ## 1        13    NA    status
     ## 2        16    NA    status
     ## 3        19    NA    status
-    ## 4        21    NA    status
-    ## 5        22    NA    status
-    ## 6        30    NA    status
-    ## 7        33    NA    status
+    ## 4        22    NA    status
+    ## 5        30    NA    status
+    ## 6        33    NA    status
 
 ``` r
 eco_status_calc %>% filter(rgn_id == 13)
 ```
 
-    ## Source: local data frame [0 x 6]
-    ## 
-    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>,
-    ##   cntry_value <dbl>, Xeco <dbl>, status <dbl>.
+    ## # A tibble: 0 × 6
+    ## # ... with 6 variables: rgn_id <dbl>, year <int>, rgn_value <dbl>,
+    ## #   cntry_value <dbl>, Xeco <dbl>, status <dbl>
 
 ``` r
 eco_region %>% filter(rgn_id == 13) ## No data for associated German NUTS3 DE80H, DE805, DE80D
 ```
 
-    ## Source: local data frame [0 x 3]
-    ## 
-    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>.
+    ## # A tibble: 0 × 3
+    ## # ... with 3 variables: rgn_id <dbl>, year <int>, rgn_value <dbl>
 
 ``` r
 eco_status_calc %>% filter(rgn_id == 16)
 ```
 
-    ## Source: local data frame [0 x 6]
-    ## 
-    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>,
-    ##   cntry_value <dbl>, Xeco <dbl>, status <dbl>.
+    ## # A tibble: 0 × 6
+    ## # ... with 6 variables: rgn_id <dbl>, year <int>, rgn_value <dbl>,
+    ## #   cntry_value <dbl>, Xeco <dbl>, status <dbl>
 
 ``` r
 eco_region %>% filter(rgn_id == 16)## no data for associated German NUTS3 DE80F, DE80I
 ```
 
-    ## Source: local data frame [0 x 3]
-    ## 
-    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>.
+    ## # A tibble: 0 × 3
+    ## # ... with 3 variables: rgn_id <dbl>, year <int>, rgn_value <dbl>
 
 ``` r
 eco_status_calc %>% filter(rgn_id == 21)
 ```
 
-    ## Source: local data frame [0 x 6]
-    ## 
-    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>,
-    ##   cntry_value <dbl>, Xeco <dbl>, status <dbl>.
+    ## # A tibble: 6 × 6
+    ##   rgn_id  year rgn_value cntry_value     Xeco status
+    ##    <dbl> <int>     <dbl>       <dbl>    <dbl>  <dbl>
+    ## 1     21  2008  2.045481    1.891526 1.081392      1
+    ## 2     21  2009  1.771577    1.536209 1.153213      1
+    ## 3     21  2010  1.623557    1.477581 1.098794      1
+    ## 4     21  2011  1.484444    1.390461 1.067592      1
+    ## 5     21  2012  1.347976    1.241091 1.086122      1
+    ## 6     21  2013  1.180479    1.084989 1.088010      1
 
 ``` r
 eco_region %>% filter(rgn_id == 21)  ## based on Eurostat nuts3 map (http://ec.europa.eu/eurostat/statistical-atlas/gis/viewer/#) should be associated with PL634. PL634 assigned to 17 and 18.  This appears to be an error!!
 ```
 
-    ## Source: local data frame [0 x 3]
-    ## 
-    ## Variables not shown: rgn_id <dbl>, year <int>, rgn_value <dbl>.
+    ## # A tibble: 6 × 3
+    ##   rgn_id  year rgn_value
+    ##    <dbl> <int>     <dbl>
+    ## 1     21  2008  2.045481
+    ## 2     21  2009  1.771577
+    ## 3     21  2010  1.623557
+    ## 4     21  2011  1.484444
+    ## 5     21  2012  1.347976
+    ## 6     21  2013  1.180479
 
 ### 7.3.1 Plot status
 
@@ -1898,7 +1668,7 @@ ggplot(eco_status)+
   ggtitle("ECO status score in 2013")
 ```
 
-    ## Warning: Removed 7 rows containing missing values (geom_point).
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
 ![](eco_prep_files/figure-markdown_github/plot%20eco%20status-3.png)
 
@@ -1938,10 +1708,9 @@ eco_trend %>% filter(is.na(score)) ## 13,16,19,21,22,30,33
     ## 1        13     trend    NA
     ## 2        16     trend    NA
     ## 3        19     trend    NA
-    ## 4        21     trend    NA
-    ## 5        22     trend    NA
-    ## 6        30     trend    NA
-    ## 7        33     trend    NA
+    ## 4        22     trend    NA
+    ## 5        30     trend    NA
+    ## 6        33     trend    NA
 
 #### 7.4.3 Plot trend
 
@@ -1955,7 +1724,7 @@ ggplot(eco_trend)+
   ggtitle("ECO 5 yr trend score")
 ```
 
-    ## Warning: Removed 7 rows containing missing values (geom_point).
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
 ![](eco_prep_files/figure-markdown_github/plot%20eco%20trend-1.png)
 
@@ -1971,6 +1740,48 @@ ggplot(plot_eco)+
   ggtitle("ECO Status and Trend")
 ```
 
-    ## Warning: Removed 14 rows containing missing values (geom_point).
+    ## Warning: Removed 12 rows containing missing values (geom_point).
 
 ![](eco_prep_files/figure-markdown_github/plot%20eco%20trend%20and%20status%20together-1.png)
+
+#### 8. explore updated NUTS shapefile 22.9.2016
+
+Udpated NUTS shape file was received from Marc to correct region misassignment. This section is checking if they match corrected assignments done by Jennifer in section 5.1.4.
+
+``` r
+# load Jennifer's manually corrected BHI and NUTS3 region assignment list
+correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";",       stringsAsFactors = FALSE) %>% 
+  dplyr::select(country = country_bhi, 
+                BHI_ID, 
+                nuts3) # 96 obs, excluding BHI_ID 21
+
+# load updated assignment list
+nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv')) %>%
+  unique(.) 
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   country = col_character(),
+    ##   BHI_ID = col_integer(),
+    ##   nuts3 = col_character(),
+    ##   country_abb = col_character()
+    ## )
+
+``` r
+# 133 obs
+
+# write a funtion to check if each row of one data frame is contained within another data frame
+rowcheck  <- function(df1, df2){
+      xx <- apply(df1, 1, paste, collapse = "")
+      yy <- apply(df2, 1, paste, collapse = "")
+      zz <- xx %in% yy
+      return(zz)
+  }
+
+# check if each row of correct_assign_simple is contained in the updated nuts3 region map
+# rowcheck(correct_assign_simple, nuts3_updated) # JSL commented out; correct_assign_simple does not exist
+## all TRUE
+
+# this means the updated NTUS3 spatial file matches what Jennifer has manually corrected. can use the updated NUTS3 spatial file to correct misassignments directly, which also includes BHI_ID 21. 
+```
