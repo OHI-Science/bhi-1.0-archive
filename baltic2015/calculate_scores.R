@@ -23,8 +23,6 @@ write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
 ## source until added to ohicore
-
-
 source('PrepSpatial.R')
 source('PlotMap.r')
 source('PlotMapMulti.r')
