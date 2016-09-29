@@ -1,22 +1,18 @@
-tra\_prep.rmd
+Trash (TRA) Subgoal Data Preparation
 ================
 
--   [Preparation of TRA (trash) data layer](#preparation-of-tra-trash-data-layer)
-    -   [1. Background](#background)
-    -   [2. Data](#data)
-        -   [2.1 Data storage](#data-storage)
-        -   [2.2 Data Info](#data-info)
-    -   [3. Goal model Potential path forward:](#goal-model-potential-path-forward)
-    -   [4. Data layer preparation](#data-layer-preparation)
-        -   [4.1 Read in data](#read-in-data)
-        -   [4.2 Filter Baltic data](#filter-baltic-data)
-        -   [4.3 Modeled Mismanaged plastic waste 2010](#modeled-mismanaged-plastic-waste-2010)
-        -   [4.4 Modeled Mismanaged plastic waste 2025](#modeled-mismanaged-plastic-waste-2025)
-        -   [4.5 Prepare data layer for Toolbox](#prepare-data-layer-for-toolbox)
-        -   [4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025](#plot-exploring-ref-point-as-max-of-europe-including-russia-in-2010-v.-2025)
-
-Preparation of TRA (trash) data layer
-=====================================
+-   [1. Background](#background)
+-   [2. Data](#data)
+    -   [2.1 Data storage](#data-storage)
+    -   [2.2 Data Info](#data-info)
+-   [3. Goal model Potential path forward:](#goal-model-potential-path-forward)
+-   [4. Data layer preparation](#data-layer-preparation)
+    -   [4.1 Read in data](#read-in-data)
+    -   [4.2 Filter Baltic data](#filter-baltic-data)
+    -   [4.3 Modeled Mismanaged plastic waste 2010](#modeled-mismanaged-plastic-waste-2010)
+    -   [4.4 Modeled Mismanaged plastic waste 2025](#modeled-mismanaged-plastic-waste-2025)
+    -   [4.5 Prepare data layer for Toolbox](#prepare-data-layer-for-toolbox)
+    -   [4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025](#plot-exploring-ref-point-as-max-of-europe-including-russia-in-2010-v.-2025)
 
 1. Background
 -------------
@@ -28,9 +24,9 @@ Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from la
 
 **the Jambeck et al method includes:**
 
--   1.  the mass of waste generated per capita annually;
--   1.  the percentage of waste that is plastic; and
--   1.  the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic.
+1.  the mass of waste generated per capita annually;
+2.  the percentage of waste that is plastic; and
+3.  the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic.
 
 ### 2.1 Data storage
 
@@ -58,93 +54,11 @@ Footnotes from .xls file column headers 1 - Based upon 2010 Gross National Incom
 **Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal.
 
 ``` r
-## Libraries
-library(readr)
-```
-
-    ## Warning: package 'readr' was built under R version 3.2.4
-
-``` r
-library(dplyr)
-```
-
-    ## Warning: package 'dplyr' was built under R version 3.2.5
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
-library(tidyr)
-```
-
-    ## Warning: package 'tidyr' was built under R version 3.2.5
-
-``` r
-library(ggplot2)
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.2.4
-
-``` r
-library(RMySQL)
-```
-
-    ## Warning: package 'RMySQL' was built under R version 3.2.5
-
-    ## Loading required package: DBI
-
-    ## Warning: package 'DBI' was built under R version 3.2.5
-
-``` r
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-```
-
-    ## Warning: package 'rprojroot' was built under R version 3.2.4
-
-``` r
 library(readxl) # install.packages('readxl')
-```
-
-    ## Warning: package 'readxl' was built under R version 3.2.5
-
-``` r
 source('~/github/bhi/baltic2015/prep/common.r')
-
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-
 dir_tra    = file.path(dir_prep, 'CW/trash')
 
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory
 create_readme(dir_tra, 'tra_prep.rmd')
 ```
 
@@ -161,7 +75,15 @@ trash_file = '1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
 
 ## lookup table
 baltic_lookup = read_csv(file.path(dir_prep, 'country_id.csv'))
+```
 
+    ## Parsed with column specification:
+    ## cols(
+    ##   country_id = col_character(),
+    ##   country_name = col_character()
+    ## )
+
+``` r
 ## read in data, remove Total and footnotes (NAs in Country column)
 data_raw = read_excel(file.path(dir_raw, trash_file)) %>%
   filter(!is.na(Country));  #head(data_raw); summary(data_raw)

@@ -1,5 +1,5 @@
 ---
-title: "tra_prep.rmd"
+title: "Trash (TRA) Subgoal Data Preparation"
 output:
   github_document:
     toc: true
@@ -7,9 +7,6 @@ output:
 params: 
     datasource: csv
 ---
-
-# Preparation of TRA (trash) data layer
-
 
 ## 1. Background
 
@@ -19,9 +16,9 @@ Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from la
 
 **the Jambeck et al method includes:** 
 
-- (i) the mass of waste generated per capita annually; 
-- (ii) the percentage of waste that is plastic; and 
-- (iii) the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic.
+1. the mass of waste generated per capita annually; 
+2. the percentage of waste that is plastic; and 
+3. the percentage of plastic waste that is mismanaged and, therefore, has the potential to enter the ocean as marine debris (12) (data S1). By applying a range of conversion rates from mismanaged waste to marine debris, we estimated the mass of plastic waste entering the ocean from each country in 2010, used population growth data (13) to project the increase in mass to 2025, and predicted growth in the percentage of waste that is plastic.
 
 ### 2.1 Data storage
 
@@ -59,49 +56,15 @@ Footnotes from .xls file column headers
 **Ref pt**: maximum for Europe in 2010 or 2025 (explored below)  
 **Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal.
 
-```{r setup}
-
-## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
+```{r setup, message=FALSE}
 library(readxl) # install.packages('readxl')
-
 source('~/github/bhi/baltic2015/prep/common.r')
-
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-
 dir_tra    = file.path(dir_prep, 'CW/trash')
 
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory
 create_readme(dir_tra, 'tra_prep.rmd')
-
 ```
+
 ## 4. Data layer preparation
 
 ### 4.1 Read in data
