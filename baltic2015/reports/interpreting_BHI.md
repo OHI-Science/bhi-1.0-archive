@@ -4,7 +4,7 @@ The **Ocean Health Index (OHI)** is a systematic approach for measuring overall 
 
 The **Baltic Health Index (BHI)** assesses 9 goals: Clean Waters (subgoals: Nutrients, Trash, Contaminants), Food Provision (subgoals: Fisheries, Mariculture), Natural Products, Artisanal Fishing Opportunity, Tourism & Recreation, Coastal Livelihoods & Economies (subgoals: Livelihoods, Economies), Biodiversity, Sense of Place (subgoals: Iconic Species, Lasting Special Places), and Carbon Storage. 
 
-**Reference points**, or targets, are required for each goal so that the data modeled to represent these diverse goals can be combined and compared. Reference points are informed by science when possible, but are ultimately a decision to be made. BHI reference points are set with existing targets and science when possible. When not possible, they are set with expert judgment using SMART principles^1^ (Specific to the management goal, Measurable, Ambitious, Realistic, and Time-bound). This is the first BHI assessment using these goals and reference points; it should be considered a starting point from which to improve in future years with additional knowledge and data availability. 
+**Reference points**, or targets, are required for each goal so that the data modeled to represent these diverse goals can be combined and compared. Reference points are informed by science when possible, but are ultimately a decision to be made. BHI reference points are set with existing targets and science when possible. When not possible, they are set with expert judgment using SMART principles* (Specific to the management goal, Measurable, Ambitious, Realistic, and Time-bound). This is the first BHI assessment using these goals and reference points; it should be considered a starting point from which to improve in future years with additional knowledge and data availability. 
 
 ### Nutrients (subgoal of Clean Waters)
 
@@ -127,4 +127,4 @@ In the Baltic area, carbon is stored in coastal seagrasses as well as sediments.
 
 ----
 
-^1^ Samhouri J. F., S. E. Lester, E. R. Selig, B. S. Halpern, M. J. Fogarty, C. Longo, and K. L. McLeod. 2012. Sea sick? Setting targets to assess ocean health and ecosystem services. Ecosphere 3(5):41. http://dx.doi.org/10.1890/ES11-00366.1
+*Samhouri J. F., S. E. Lester, E. R. Selig, B. S. Halpern, M. J. Fogarty, C. Longo, and K. L. McLeod. 2012. Sea sick? Setting targets to assess ocean health and ecosystem services. Ecosphere 3(5):41. http://dx.doi.org/10.1890/ES11-00366.1
