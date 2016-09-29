@@ -15,7 +15,9 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' # example call after clone BHI repo and setwd('~/github/bhi/baltic2015')
+#' @examples PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id < 300), spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'), path_figures = 'reports/figures/BHI_regions')
+
 PlotMapMulti <- function(scores          = read.csv('scores.csv'),
                          spatial_poly    = PrepSpatial('spatial/regions_gcs.geojson'),
                          fld_value_id    = 'region_id',
