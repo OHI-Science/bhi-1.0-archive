@@ -1,5 +1,5 @@
 ---
-title: "liv_prep"
+title: "Livelihoods (LIV) Subgoal Data Preparation"
 output:
   github_document:
     toc: true
@@ -7,8 +7,6 @@ output:
 params: 
     datasource: csv
 ---
-
-#LIV subgoal data preparation
 
 ## 1. Background
 
@@ -72,7 +70,7 @@ _References_:
 
 Klein Goldewijk, K. , A. Beusen, M. de Vos and G. van Drecht (2011). The HYDE 3.1 spatially explicit database of human induced land use change over the past 12,000 years, Global Ecology and Biogeography20(1): 73-86. DOI: 10.1111/j.1466-8238.2010.00587.x.
 
-Klein Goldewijk, K. , A. Beusen, and P. Janssen (2010). Long term dynamic modeling of global population and built-up area in a spatially explicit way, HYDE 3 .1. The Holocene20(4):565-573. http://dx.doi.org/10.1177/0959683609356587
+Klein Goldewijk, K. , A. Beusen, and P. Janssen (2010). Long term dynamic modeling of global population and built-up area in a spatially explicit way, HYDE 3.1. The Holocene20(4):565-573. http://dx.doi.org/10.1177/0959683609356587
 
 #### 2.3.2 National
 
@@ -88,7 +86,7 @@ _Variables_:
 [Metadata Link](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)  
 
 *Population on 1 January:*  
-Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
+Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December. However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
 
 
 **Russia**  
@@ -102,14 +100,14 @@ UPDATE with Marc's methods or link
 
 ## 3. Goal model
 
-Xliv = ${\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}/{\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}$
+Xliv = (Employment_Region_c/Employment_Region_r) / (Employment_Region_c/Employment_Region_r)
 
-* c = current year, r=reference year  
-* reference point is a moving window (single year value)  
-* Region is the BHI region - number of employed persons associated in the BHI region 
-* Each BHI region is composed by one or more NUTS2 regions.  
-   * NUTS2 employment percentage multipled by the by population in the 25km inland buffer associated with a BHI region.  Sum across all associated with a BHI region to get the total employed people in the BHI region.
-* For Country data, need to also get population size so can have total number of people employed, not percent employed
+- c = current year, r=reference year  
+- reference point is a moving window (single year value)  
+- Region is the BHI region - number of employed persons associated in the BHI region 
+- Each BHI region is composed by one or more NUTS2 regions.  
+   - NUTS2 employment percentage multipled by the by population in the 25km inland buffer associated with a BHI region.  Sum across all associated with a BHI region to get the total employed people in the BHI region.
+- For country data, need to also get population size so can have total number of people employed, not percent employed
 
 ## 5. Regional data prep
 
@@ -121,22 +119,12 @@ Xliv = ${\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}/{\fr
 library(RMySQL)
 library(tidyverse)
 library(tools)
-library(rprojroot) # install.packages('rprojroot')
 library(rgdal) 
 
 source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
 dir_liv    = file.path(dir_prep, 'LIV')
 
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory 
 create_readme(dir_liv, 'liv_prep.rmd')
 ```
 
@@ -151,7 +139,6 @@ regional_employ = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_employ.cs
 
 ## 9.27.2016 - updated PopDensity 
 nuts2_pop_density = read_csv(file.path(dir_liv, 'liv_data_database/NUTS2_BHI_ID_Pop_density_in_buffer.csv'))
-
 ```
 
 #### Clean Regional employment data object
@@ -179,7 +166,6 @@ regional_employ1 = regional_employ %>%
 ## remove flags_notes
 regional_employ1 = regional_employ1 %>%
                    select(-flag_notes)
-
 ```
 
 
@@ -198,17 +184,15 @@ nuts2_pop_area1 = nuts2_pop_density %>%
                                 country = rgn_nam,
                                 basin = Subbasin,
                                 area = NUTS2_area_in_BHI_buffer_km2)
-
 ```
 
 #### 4.1.3 Check NUTS2 names from Finland 
 Shapefiles have names from 2006, check accom1 and accom_coast1 to see if the names have been updated, will need to fix. 
 
-- ![Map of old NUTS2 names for GUlf of Finland](BHI_regions_NUTS2_plot.png?raw=true)  
-- ![Map of new NUTS2 names for GUlf of Finland](new_FI_nuts2.png?raw=true)  
+- ![Map of old NUTS2 names for Gulf of Finland](BHI_regions_NUTS2_plot.png?raw=true)  
+- ![Map of new NUTS2 names for Gulf of Finland](new_FI_nuts2.png?raw=true)  
 
 ```{r check fi nuts2 names, message = FALSE}
-
 check1 = regional_employ1 %>% filter(grepl("FI", nuts2)) %>% 
   select(nuts2, nuts2_name) %>% 
   distinct()
@@ -228,7 +212,6 @@ check2 = nuts2_pop_area1 %>%
 ## old FI1A seems to be the same along the coast as the new FI1D but new FI1D covers inland areas previously in FI13
 
 ## Do this after joining accom and accom_coast with the nuts2_pop_area data, will have to add these regions back in.
-
 ```
 
 #### 4.1.4 Check for incorrectly assigned NUTS2 regions to BHI regions and fix 
@@ -297,7 +280,7 @@ FI1D (new name) areas match old FIA1 areas - so this is a straight-forward fix.
 ## Get Finnish data renamed so that employmodating and population data match
 fi_employ_newnuts = regional_employ1 %>%
                    filter(nuts2 %in% c("FI1C","FI1B", "FI1D"))
-fi_employ_newnuts
+# fi_employ_newnuts
 
 ## compare the employment percentage between FI1C and FI1B which used to be one region
 ggplot(fi_employ_newnuts)+
@@ -329,7 +312,7 @@ fi_employ_newnuts1 = fi_employ_newnuts1 %>%
                     dplyr::rename(nuts2=nuts_old,
                                   nuts2_name = nuts2_name_old)
                         
-head(fi_employ_newnuts1) ## there are NA but were NA for all regions in those years
+# head(fi_employ_newnuts1) ## there are NA but were NA for all regions in those years
 
 ## Get population data associated with old nuts names
 fi_nuts_oldnuts = nuts2_pop_area2 %>%
@@ -348,7 +331,6 @@ fi_employ_correct_nuts = full_join(fi_employ_newnuts1, fi_nuts_oldnuts,
 
 
 # str(fi_employ_correct_nuts)
-
 ```
 
 #### 5.2.3 Join Finnish data to other regional data
@@ -838,9 +820,6 @@ dim(liv_region) ##222 3
   head(liv_country)
   dim(liv_country) ## 252  3
   
-
-
-
 ```
 
 #### 7.3.2 Calculate status time series
