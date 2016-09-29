@@ -1,5 +1,5 @@
 ---
-title: "secchi_prep"
+title: "Nutrient (NUT) Subgoal Data Preparation - Secchi data"
 output:
   github_document:
     toc: true
@@ -8,21 +8,10 @@ params:
     datasource: csv
 ---
 
-# Nutrient subgoal data layer prep - Secchi data
-
-```{r setup}
-## source common libraries, directories, functions, etc
-source('~/github/bhi/baltic2015/prep/common.r')
-dir_cw    = file.path(dir_prep, 'CW')
-dir_secchi    = file.path(dir_prep, 'CW/secchi')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_secchi, 'secchi_prep.rmd')
-```
-
 ## 1. Background on using Secchi
 
 [HELCOM Water Clarity Core Indicator](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity)  Mean Summer Secchi (June-September)  
+
 **HELCOM Good Environmental Status**
 "Good environmental status is measured in relation to scientifically based and commonly agreed sub-basin-wise target levels.  
 
@@ -70,6 +59,17 @@ Prelimary filtering to remove duplicate values within datasets (eg profiles) and
     - Check of initial smhi and ices datasets for observations from BHI regions 5 & 6 (The Sound) - region 5 all have a coastal designation. ICES data for region 6 includes both coastal and offshore but only 3 data points offshore from 2000- present. SMHI data contains no observations from region 6.
 
 Some data points do not have a BHI ID assigned. Appears that almost all have a coastal code that != 0. If they are very close to the coast - they may fall outside the BHI shapefile. Because we exclude all sites that are coastal - only one site will have to have BHI added manually.
+
+```{r setup, message=FALSE}
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_cw    = file.path(dir_prep, 'CW')
+dir_secchi    = file.path(dir_prep, 'CW/secchi')
+
+## add a README.md to the prep directory 
+create_readme(dir_secchi, 'secchi_prep.rmd')
+```
+
 ```{r data load}
 ## read in secchi data
 data1 = readr::read_csv(file.path(dir_secchi, 'secchi_data_database/ices_secchi.csv'))
@@ -424,7 +424,7 @@ ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
 ```
 
 
-## 4. Status and Trend explostatusn
+## 4. Status and Trend exploration
 
 ### 4.1 Goal Model & Trend
 **The Goal Model is how the status is calculated**  
