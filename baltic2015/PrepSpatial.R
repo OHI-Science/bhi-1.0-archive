@@ -1,16 +1,20 @@
-## PrepSpatial.R
-## This function takes a dataframe of scores and plots them to appropriate OHI regions.
-## 'scores' is a data frame with unique rows of variables rgn_id and score
-## TODO: also enable optional land .shp
-## TODO: consider downres-ing shapefiles like downres_polygons.r: https://github.com/OHI-Science/ohiprep/blob/9daf812e910b80cf3042b24fcb458cf62e359b1a/globalprep/spatial/downres_polygons.R
+#' PrepSpatial.R
+#' This function turns a .shp or .geogjson file into a data frame that can be plotted with ggplot2
+#'
+#' @param mapfile_path is the local filepath of a .shp or .geojson file
+#'
+#' @return dataframe of spatial information
+#' @export
+#'
+#' @examples PrepSpatial('mapfile_path = 'spatial/regions_gcs.geojson')
 
 
+##### temporary (until added to ohicore)
 library(maptools) # install.packages('maptools')
 library(broom) # install.packages('broom')
 library(rgdal) # install.packages('rgdal')
 
 PrepSpatial <- function(mapfile_path = 'subcountry2014/spatial/rgn_offshore_gcs.shp') {
-  # can be .geojson or .shp #debug:: mapfile_path = 'spatial/regions_gcs.geojson'
 
   ## identify spatial file type ----
 

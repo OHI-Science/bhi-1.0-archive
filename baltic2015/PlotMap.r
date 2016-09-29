@@ -1,18 +1,36 @@
-## PlotMap plots data frame values onto a map with region identifiers, and saves output
-## If there are multiple goals, will loop through and map all
+#' PlotMap
+#' Plots static maps of OHI scores.
+#'
+#' @param scores dataframe with at least 2 columns: rgn_id and values.Must have the same length as the number of regions to map
+#' @param rgn_poly dataframe of spatial boundaries; prepared by PrepSpatial()
+#' @param map_title optional title for map
+#' @param include_land whether or not to map land behind OHI regions. SEE TODOs BELOW
+#' @param fld_rgn usually rgn_id or region_id; default 'region_id'
+#' @param fld_score column name of value to plot; default 'score'
+#' @param scale_label default to 'score' TODO: necessary?
+#' @param scale_limits default to c(0, 100)
+#' @param print_fig logical to print to display; default TRUE
+#' @param fig_path file path to save png; default NULL
+#'
+#' @return (invisible) ggplot object
+#' @export
+#'
+#' @examples
+#'
+#'
 
-## see: https://github.com/hadley/ggplot2/wiki/plotting-polygon-shapefiles
-
-
+##### temporary (until added to ohicore)
 library(ggplot2) # install.packages('ggplot2')
 library(RColorBrewer) # install.packages('RColorBrewer')
 library(dplyr)
 library(tidyr)
-# library(plotly) # plotly not working yet; would add an active_plotly = TRUE argument to call
 
-PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id and scores/values.
-                    rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'), # default for OHI+
+## see: https://github.com/hadley/ggplot2/wiki/plotting-polygon-shapefiles
+
+PlotMap <- function(scores,
+                    rgn_poly        = PrepSpatial('spatial/regions_gcs.geojson'),
                     map_title       = element_blank(),
+                    include_land    = TRUE,
                     fld_rgn         = 'region_id',
                     fld_score       = 'score',
                     scale_label     = 'score',
@@ -54,6 +72,16 @@ PlotMap <- function(scores,         # dataframe with at least 2 columns: rgn_id 
                          name = scale_label) +
     geom_polygon(color = 'gray80', size = 0.1) +
     labs(title = map_title)
+
+  if(include_land) {
+
+    ## TODO: plot optional land .shp
+    ## consider:
+      ## - downres-ing shapefiles like downres_polygons.r: https://github.com/OHI-Science/ohiprep/blob/9daf812e910b80cf3042b24fcb458cf62e359b1a/globalprep/spatial/downres_polygons.R; see calls from https://github.com/OHI-Science/ohi-global/blob/draft/global2015/Reporting/map_fxns.R
+      ## - Hadleys' ggmap tiles that work with ggplot2 https://github.com/dkahle/ggmap#ggmap
+      ## translating this whole function to tmap
+
+  }
 
   if(print_fig) {
     print(df_plot)
