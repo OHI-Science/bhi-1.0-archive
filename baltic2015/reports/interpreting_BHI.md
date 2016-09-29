@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Interpreting Baltic Health Index goals and reference points
 
 The **Ocean Health Index (OHI)** is a systematic approach for measuring overall condition of marine ecosystems that treats nature and people as integrated parts of a healthy system. Assessments using the OHI framework aim to transparently balance multiple competing and potentially conflicting public goals and connect human development with the ocean’s capacity to sustain progress. OHI assessments typically have ten goals (some with subgoals) that are important benefits delivered to humans, and each goal is modeled and scored on a scale from 0-100. While each goal individually is important, the OHI helps demonstrate how and where it fits into a broader context; this can help transform the dialogue on how we manage our interactions with the ocean to a more holistic approach.
