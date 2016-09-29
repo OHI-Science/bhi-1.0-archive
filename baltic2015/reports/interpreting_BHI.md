@@ -43,20 +43,49 @@ The reference point is the maximum sustainable yield for each stock, after penal
 
 ### Carbon Storage
 
-Carbon is stored in coastal seagrasses as well as sediments. However, data are not available at spatial and temporal scales to develop a goal model, therefore scores from the OHI Global assessment will be used as a placeholder 
+In the Baltic area, carbon is stored in coastal seagrasses as well as sediments. However, data are not available at spatial and temporal scales to fully model this goal, therefore scores from the OHI Global assessment will be used as a placeholder. 
 
-**BHI 2.0 considerations:** develop a BHI-specific goal model
+**BHI 2.0 considerations:** develop a BHI-specific goal model.
 
 ### Tourism & Recreation
 
-The reference point is in progress: it will be set based on the EU's Blue Economy document. Currently, as a placeholder, it is set as the highest value a 5-year window.
+Goal model uses nights spent at tourist accommodation establishments per capita; this is an indirect way to to represent how much people value and enjoy the coastal regions by assuming tourists enjoying the coast stay in hotels. These data are available for most BHI regions. 
+
+The reference point is in progress: it will be set based on the EU's Blue Economy document. Currently, as a placeholder, it is set as the highest value a 5-year window; this low reference point resulted in high status scores across all countries. 
+
+To set a more ambitious goal, we will use the 110% of the highest "coastal_stays_per_cap" within the past five years (ie. max(coastal_stays_per_cap)*110%) as the reference point.
+
+**BHI 2.0 considerations:** Coastal tourism activies vary across the Baltic, as do data available to represent these activites. See if it is possible to combine these different data sets in a way similar to the way habitats are combined in Global assessments (i.e. there is a list of habitat types and each region score is calculated using only those types within the region)
 
 ### Coastal Livelihoods & Economies
+
 #### Livelihoods
+
+Goal model uses coastal employment rates (from NUTS2 level data within 25km to the coastline) to represent the quality and quantity of satisfaction in jobs. 
+
+The reference point is set as a 5-year moving window; an increasing trend will result in a high score.
+
+**BHI 2.0 considerations:** employment rates for only Baltic-related sectors would be preferred; see if possible to acquire better data for Russia.
+
 #### Economies
+
+Goal model uses coastal GDP per capita (from NUTS2 level data within 25km to the coastline) to represent the quality and quantity of satisfaction in jobs. 
+
+The reference point is set as a 5-year moving window; an increasing trend will result in a high score.
+
+**BHI 2.0 considerations:** employment rates for only Baltic-related sectors would be preferred; see if possible to acquire better data for Russia.
+
 ### Sense of Place
+
 #### Iconic Species
+
 #### Lasting Special Places
+
+Goal model uses HELCOM's Marine Protected Area (MPA) Map Service for MPA boundaries and MPA management status. This model assumes that special places are represented by MPAs, and management status (designated, 
+designated and partly managed, or designated and managed) for each MPA is assigned a numeric score.
+
+The reference point is that 10% of the area in a country's EEZ is designated as an MPA and is 100% managed.
+
 ### Clean Waters
 #### Nutrients
 #### Trash
