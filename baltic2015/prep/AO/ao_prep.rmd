@@ -72,7 +72,7 @@ GES = 1, subGES = 0.2
 ### 2.4 Regions with no data
 Assign value of NA to these regions. Stocks were not assessed.
 
-```{r setup, echo=FALSE}
+```{r setup, message=FALSE}
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_ao = file.path(dir_prep,'AO')

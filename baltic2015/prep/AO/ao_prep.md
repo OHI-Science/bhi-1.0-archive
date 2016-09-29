@@ -93,19 +93,14 @@ Alternative methods are explored in data prep. This method was selected GES = 1,
 
 Assign value of NA to these regions. Stocks were not assessed.
 
-    ## Loading tidyverse: ggplot2
-    ## Loading tidyverse: tibble
-    ## Loading tidyverse: tidyr
-    ## Loading tidyverse: readr
-    ## Loading tidyverse: purrr
-    ## Loading tidyverse: dplyr
+``` r
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_ao = file.path(dir_prep,'AO')
 
-    ## Conflicts with tidy packages ----------------------------------------------
-
-    ## filter(): dplyr, stats
-    ## lag():    dplyr, stats
-
-    ## Loading required package: DBI
+## add a README.md to the prep directory
+create_readme(dir_ao, 'ao_prep.rmd')
+```
 
 3.Data layer preparation
 ------------------------
