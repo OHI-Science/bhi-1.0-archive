@@ -23,7 +23,6 @@ goal_beta = 0.67       # The relative importance of trend vs. pressure/resilienc
 default_trend = 0
 
 # spatial configuration (used by shiny app and future ohicore mapping functions that use leaflet)
-map_lat=0; map_lon=0; map_zoom=3
 geojson = 'spatial/regions_gcs.geojson'
 
 # extra descriptions not covered by goals.description or layers.description, used in ohigui
