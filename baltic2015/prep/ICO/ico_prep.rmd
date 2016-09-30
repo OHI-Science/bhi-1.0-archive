@@ -1,5 +1,5 @@
 ---
-title: "ico_prep"
+title: "Iconic Species (ICO) Data Preparation for Sense of Place (SP) goal"
 output:
   github_document:
     toc: true
@@ -8,60 +8,19 @@ params:
     datasource: csv
 ---
 
-#Prepare Iconic Species data layer for goal Sense of Place
-```{r setup}
-
-## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
-## source common libraries, directories, functions, etc
-source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-dir_ico    = file.path(dir_prep, 'ICO')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_ico, 'ico_prep.rmd')
-
-```
-
 ## 1. Background
 
 ## 2. Data
 ### 2.1 Data sources  
 HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria.  
+
 *Pros for using these data:*  
+
 Much more representative set of species included for Baltic Sea biodiversity.  
+
 *Cons for using these data:*  
-Distribution is provided for most taxa groups at the basin scale - coaser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.  
+
+Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.  
 
 [HELCOM species checklists](http://helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) (see bottom right of page for links to excel sheets) were downloaded on 14 June 2016
 
@@ -97,26 +56,30 @@ Iconic fish and mammals species have been selected to represent ICO. When bird s
 
 **Threat categories**
 *Evaluated species*
-Extinct (EX)  
-Regionally Extinct (RE)  
-Extinct in the Wild (EW)  
-Critically Endangered (CR)
-Endangered (EN)  
-Vulnerable (VU)  
-Near Threatened (NT)  
-Least Concern (LC)
-Data Deficient (DD)
-Not Applicable (NA)  
+
+- Extinct (EX)  
+- Regionally Extinct (RE)  
+- Extinct in the Wild (EW)  
+- Critically Endangered (CR)
+- Endangered (EN)  
+- Vulnerable (VU)  
+- Near Threatened (NT)  
+- Least Concern (LC)
+- Data Deficient (DD)
+- Not Applicable (NA)  
+
 *Not-evaluated species*
-Not Evaluated (NE)
+
+- Not Evaluated (NE)
 
 ## 3. Goal model
 This goal model is similar to the SPP goal model, but for the select group of ICO species.
 
 Xico_basin = 1- sum[wi]/R  
 
-wi = threat weights for each species i present in each basin
-R = total number of species in each basin  
+- wi = threat weights for each species i present in each basin
+- R = total number of species in each basin  
+
 (eg. score equals 1 when all species i have wi of LC)  
 
 
@@ -125,13 +88,14 @@ Scale min value = score is 0 when 75% of species are extinct.*
 0 when 75% species are extinct, a level comparable to the five documented mass extinctions"  
 
 wi from Halpern et al 2012, SI
-EX = 1.0  
-CR = 0.8  
-EN = 0.6  
-VU = 0.4  
-NT = 0.2  
-LC = 0
-DD = not included, "We did not include the Data Deficient classification as assessed species following previously published guidelines for a mid-point approach"  
+
+- EX = 1.0  
+- CR = 0.8  
+- EN = 0.6  
+- VU = 0.4  
+- NT = 0.2  
+- LC = 0
+- DD = not included, "We did not include the Data Deficient classification as assessed species following previously published guidelines for a mid-point approach"  
 
 
 ## 4. Prepare ICO data layer
@@ -139,6 +103,16 @@ DD = not included, "We did not include the Data Deficient classification as asse
 ### 4.1 Data organization
 
 #### 4.1.1 Read in Data
+
+```{r setup, message=FALSE}
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_ico    = file.path(dir_prep, 'ICO')
+
+## add a README.md to the prep directory 
+create_readme(dir_ico, 'ico_prep.rmd')
+```
+
 ```{r read in data}
 ## read in data...
 spp_dist_vuln = read.csv(file.path(dir_ico,'data_database/checklist_redlist_data_for_status.csv'), stringsAsFactors = FALSE)
@@ -225,7 +199,7 @@ ico_status_basin = full_join(sum_wi_basin,sum_spp_basin, by="basin") %>%
 ```
 
 ##### 4.2.2 Scale lower end to zero if 75% extinct
-Currently, species are labled regionally extinct 
+Currently, species are labeled regionally extinct 
 
 ```{r scale for 75 percent extinct for basin}
 ## calculate percent extinct in each region
@@ -287,9 +261,6 @@ ggplot(ico_status_basin)+
   scale_size(breaks =c(10,11,12), labels=c("10","11","12"), range=c(2,4))+
   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y =  element_text(colour="grey20",size=6))+
   ggtitle("ICO status by Basin, n= species richness")
-
-
-
 ```
 
 ### 4.3 Apply basin status to BHI regions
@@ -302,8 +273,6 @@ basin_lookup = read.csv(file.path(dir_ico,'bhi_basin_country_lookup.csv'),sep=";
                 select(Subbasin,BHI_ID)%>%
                 dplyr::rename(basin = Subbasin,
                               rgn_id = BHI_ID)
-
-
 ```
 
 #### 4.3.2 Join lookup to status
@@ -315,9 +284,7 @@ ico_status = ico_status_basin %>%
 ico_status = ico_status %>%
              select(rgn_id,status,n)
 
-dim(ico_status)
-
-
+# dim(ico_status)
 ```
 
 #### 4.3.3 Plot BHI region status
@@ -349,6 +316,5 @@ ico_status = ico_status %>%
 
 ## write csv to layers
 write.csv(ico_status, file.path(dir_layers,'ico_status_bhi2015.csv'),row.names=FALSE)
-
 ```
 

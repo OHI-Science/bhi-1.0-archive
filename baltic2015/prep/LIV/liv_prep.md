@@ -1,45 +1,41 @@
-liv\_prep
+Livelihoods (LIV) Subgoal Data Preparation
 ================
 
--   [LIV subgoal data preparation](#liv-subgoal-data-preparation)
-    -   [1. Background](#background)
-    -   [2. Data](#data)
-        -   [2.1 NUTS0 (country) and NUTS2 region Employment rate](#nuts0-country-and-nuts2-region-employment-rate)
-        -   [2.2 Russian data](#russian-data)
-        -   [2.3 Population density data](#population-density-data)
-        -   [2.4 Aligning BHI regions with NUTS2 regions and population density](#aligning-bhi-regions-with-nuts2-regions-and-population-density)
-    -   [3. Goal model](#goal-model)
-    -   [5. Regional data prep](#regional-data-prep)
-        -   [5.1 Data organization](#data-organization)
-        -   [5.2 Join datasets](#join-datasets)
-        -   [5.3 Are BHI regions missing?](#are-bhi-regions-missing)
-        -   [5.4 Calculate number of employed people and allocation to BHI regions](#calculate-number-of-employed-people-and-allocation-to-bhi-regions)
-        -   [5.5 Data layer for layers](#data-layer-for-layers)
-        -   [6. Country data prep](#country-data-prep)
-        -   [6.1 Organize data](#organize-data)
-        -   [6.2 Transform EU data in number of people employed](#transform-eu-data-in-number-of-people-employed)
-        -   [6.3 Join EU and Russian data](#join-eu-and-russian-data)
-        -   [6.3.1 Join EU and Russian data](#join-eu-and-russian-data-1)
-        -   [6.3.3. Restrict to Final year 2014](#restrict-to-final-year-2014)
-        -   [6.4 National data by BHI regions](#national-data-by-bhi-regions)
-        -   [6.5 Prepare national data layer for layer](#prepare-national-data-layer-for-layer)
-    -   [7. Status and Trend calculation exploration](#status-and-trend-calculation-exploration)
-        -   [7.1 Assign data layer](#assign-data-layer)
-        -   [7.2 Set parameters](#set-parameters)
-        -   [7.3 Status calculation](#status-calculation)
-        -   [7.3.4 Which BHI regions have no status](#which-bhi-regions-have-no-status)
-        -   [7.3.1 Plot status](#plot-status)
-        -   [7.4 Trend calculation](#trend-calculation)
-    -   [8. Data issues and concerns](#data-issues-and-concerns)
-        -   [8.1 Shapefile incorrect assignments](#shapefile-incorrect-assignments)
-        -   [8.2 Finnish NUTS2 name discrepancies](#finnish-nuts2-name-discrepancies)
-        -   [8.3 No Russian regional data](#no-russian-regional-data)
-        -   [8.4 Employment data for EU transformed from percent to number of people using 2005 population data for all years](#employment-data-for-eu-transformed-from-percent-to-number-of-people-using-2005-population-data-for-all-years)
-        -   [8.5 Short Danish timeseries](#short-danish-timeseries)
-        -   [9. Update region assignment](#update-region-assignment)
-
-LIV subgoal data preparation
-============================
+-   [1. Background](#background)
+-   [2. Data](#data)
+    -   [2.1 NUTS0 (country) and NUTS2 region Employment rate](#nuts0-country-and-nuts2-region-employment-rate)
+    -   [2.2 Russian data](#russian-data)
+    -   [2.3 Population density data](#population-density-data)
+    -   [2.4 Aligning BHI regions with NUTS2 regions and population density](#aligning-bhi-regions-with-nuts2-regions-and-population-density)
+-   [3. Goal model](#goal-model)
+-   [5. Regional data prep](#regional-data-prep)
+    -   [5.1 Data organization](#data-organization)
+    -   [5.2 Join datasets](#join-datasets)
+    -   [5.3 Are BHI regions missing?](#are-bhi-regions-missing)
+    -   [5.4 Calculate number of employed people and allocation to BHI regions](#calculate-number-of-employed-people-and-allocation-to-bhi-regions)
+    -   [5.5 Data layer for layers](#data-layer-for-layers)
+    -   [6. Country data prep](#country-data-prep)
+    -   [6.1 Organize data](#organize-data)
+    -   [6.2 Transform EU data in number of people employed](#transform-eu-data-in-number-of-people-employed)
+    -   [6.3 Join EU and Russian data](#join-eu-and-russian-data)
+    -   [6.3.1 Join EU and Russian data](#join-eu-and-russian-data-1)
+    -   [6.3.3. Restrict to Final year 2014](#restrict-to-final-year-2014)
+    -   [6.4 National data by BHI regions](#national-data-by-bhi-regions)
+    -   [6.5 Prepare national data layer for layer](#prepare-national-data-layer-for-layer)
+-   [7. Status and Trend calculation exploration](#status-and-trend-calculation-exploration)
+    -   [7.1 Assign data layer](#assign-data-layer)
+    -   [7.2 Set parameters](#set-parameters)
+    -   [7.3 Status calculation](#status-calculation)
+    -   [7.3.4 Which BHI regions have no status](#which-bhi-regions-have-no-status)
+    -   [7.3.1 Plot status](#plot-status)
+    -   [7.4 Trend calculation](#trend-calculation)
+-   [8. Data issues and concerns](#data-issues-and-concerns)
+    -   [8.1 Shapefile incorrect assignments](#shapefile-incorrect-assignments)
+    -   [8.2 Finnish NUTS2 name discrepancies](#finnish-nuts2-name-discrepancies)
+    -   [8.3 No Russian regional data](#no-russian-regional-data)
+    -   [8.4 Employment data for EU transformed from percent to number of people using 2005 population data for all years](#employment-data-for-eu-transformed-from-percent-to-number-of-people-using-2005-population-data-for-all-years)
+    -   [8.5 Short Danish timeseries](#short-danish-timeseries)
+    -   [9. Update region assignment](#update-region-assignment)
 
 1. Background
 -------------
@@ -105,7 +101,7 @@ Population density within a 25km buffer from the coast will be used.
 
 Klein Goldewijk, K. , A. Beusen, M. de Vos and G. van Drecht (2011). The HYDE 3.1 spatially explicit database of human induced land use change over the past 12,000 years, Global Ecology and Biogeography20(1): 73-86. DOI: 10.1111/j.1466-8238.2010.00587.x.
 
-Klein Goldewijk, K. , A. Beusen, and P. Janssen (2010). Long term dynamic modeling of global population and built-up area in a spatially explicit way, HYDE 3 .1. The Holocene20(4):565-573. <http://dx.doi.org/10.1177/0959683609356587>
+Klein Goldewijk, K. , A. Beusen, and P. Janssen (2010). Long term dynamic modeling of global population and built-up area in a spatially explicit way, HYDE 3.1. The Holocene20(4):565-573. <http://dx.doi.org/10.1177/0959683609356587>
 
 #### 2.3.2 National
 
@@ -121,7 +117,7 @@ Downloaded on March 31 2016 from Eurostat database [demo\_gind](http://ec.europa
 [Metadata Link](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)
 
 *Population on 1 January:*
-Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
+Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December. However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.
 
 **Russia**
 Downloaded on 10 June 2016 from Eurostat database: [naida\_10\_pe](http://ec.europa.eu/eurostat/web/products-datasets/-/naida_10_pe)
@@ -135,14 +131,14 @@ UPDATE with Marc's methods or link
 3. Goal model
 -------------
 
-Xliv = \({\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}/{\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}\)
+Xliv = (Employment\_Region\_c/Employment\_Region\_r) / (Employment\_Region\_c/Employment\_Region\_r)
 
 -   c = current year, r=reference year
 -   reference point is a moving window (single year value)
 -   Region is the BHI region - number of employed persons associated in the BHI region
 -   Each BHI region is composed by one or more NUTS2 regions.
 -   NUTS2 employment percentage multipled by the by population in the 25km inland buffer associated with a BHI region. Sum across all associated with a BHI region to get the total employed people in the BHI region.
--   For Country data, need to also get population size so can have total number of people employed, not percent employed
+-   For country data, need to also get population size so can have total number of people employed, not percent employed
 
 5. Regional data prep
 ---------------------
@@ -150,26 +146,10 @@ Xliv = \({\frac{\texttt{Employment_Region}_c}{\texttt{Employment_Region}_r}}/{\f
 ### 5.1 Data organization
 
 ``` r
-## Libraries
-library(RMySQL)
-library(tidyverse)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-library(rgdal) 
-
 source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
 dir_liv    = file.path(dir_prep, 'LIV')
 
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory 
 create_readme(dir_liv, 'liv_prep.rmd')
 ```
 
@@ -234,8 +214,8 @@ nuts2_pop_area1 = nuts2_pop_density %>%
 
 Shapefiles have names from 2006, check accom1 and accom\_coast1 to see if the names have been updated, will need to fix.
 
--   ![Map of old NUTS2 names for GUlf of Finland](BHI_regions_NUTS2_plot.png?raw=true)
--   ![Map of new NUTS2 names for GUlf of Finland](new_FI_nuts2.png?raw=true "fig:")
+-   ![Map of old NUTS2 names for Gulf of Finland](BHI_regions_NUTS2_plot.png?raw=true)
+-   ![Map of new NUTS2 names for Gulf of Finland](new_FI_nuts2.png?raw=true "fig:")
 
 ``` r
 check1 = regional_employ1 %>% filter(grepl("FI", nuts2)) %>% 
@@ -333,60 +313,8 @@ FI1D (new name) areas match old FIA1 areas - so this is a straight-forward fix.
 ## Get Finnish data renamed so that employmodating and population data match
 fi_employ_newnuts = regional_employ1 %>%
                    filter(nuts2 %in% c("FI1C","FI1B", "FI1D"))
-fi_employ_newnuts
-```
+# fi_employ_newnuts
 
-    ##    year nuts2               nuts2_name       unit value
-    ## 1  1999  FI1B         Helsinki-Uusimaa Percentage    NA
-    ## 2  1999  FI1C           Etel\xe4-Suomi Percentage    NA
-    ## 3  1999  FI1D Pohjois- ja It\xe4-Suomi Percentage    NA
-    ## 4  2000  FI1B         Helsinki-Uusimaa Percentage    NA
-    ## 5  2000  FI1C           Etel\xe4-Suomi Percentage    NA
-    ## 6  2000  FI1D Pohjois- ja It\xe4-Suomi Percentage    NA
-    ## 7  2001  FI1B         Helsinki-Uusimaa Percentage    NA
-    ## 8  2001  FI1C           Etel\xe4-Suomi Percentage    NA
-    ## 9  2001  FI1D Pohjois- ja It\xe4-Suomi Percentage    NA
-    ## 10 2002  FI1B         Helsinki-Uusimaa Percentage    NA
-    ## 11 2002  FI1C           Etel\xe4-Suomi Percentage    NA
-    ## 12 2002  FI1D Pohjois- ja It\xe4-Suomi Percentage    NA
-    ## 13 2003  FI1B         Helsinki-Uusimaa Percentage    NA
-    ## 14 2003  FI1C           Etel\xe4-Suomi Percentage    NA
-    ## 15 2003  FI1D Pohjois- ja It\xe4-Suomi Percentage    NA
-    ## 16 2004  FI1B         Helsinki-Uusimaa Percentage    NA
-    ## 17 2004  FI1C           Etel\xe4-Suomi Percentage    NA
-    ## 18 2004  FI1D Pohjois- ja It\xe4-Suomi Percentage    NA
-    ## 19 2005  FI1B         Helsinki-Uusimaa Percentage  74.3
-    ## 20 2005  FI1C           Etel\xe4-Suomi Percentage  68.3
-    ## 21 2005  FI1D Pohjois- ja It\xe4-Suomi Percentage  62.8
-    ## 22 2006  FI1B         Helsinki-Uusimaa Percentage  75.1
-    ## 23 2006  FI1C           Etel\xe4-Suomi Percentage  69.1
-    ## 24 2006  FI1D Pohjois- ja It\xe4-Suomi Percentage  63.7
-    ## 25 2007  FI1B         Helsinki-Uusimaa Percentage  75.7
-    ## 26 2007  FI1C           Etel\xe4-Suomi Percentage  69.9
-    ## 27 2007  FI1D Pohjois- ja It\xe4-Suomi Percentage  63.9
-    ## 28 2008  FI1B         Helsinki-Uusimaa Percentage  76.5
-    ## 29 2008  FI1C           Etel\xe4-Suomi Percentage  70.7
-    ## 30 2008  FI1D Pohjois- ja It\xe4-Suomi Percentage  65.4
-    ## 31 2009  FI1B         Helsinki-Uusimaa Percentage  74.3
-    ## 32 2009  FI1C           Etel\xe4-Suomi Percentage  68.0
-    ## 33 2009  FI1D Pohjois- ja It\xe4-Suomi Percentage  63.1
-    ## 34 2010  FI1B         Helsinki-Uusimaa Percentage  73.5
-    ## 35 2010  FI1C           Etel\xe4-Suomi Percentage  66.7
-    ## 36 2010  FI1D Pohjois- ja It\xe4-Suomi Percentage  63.5
-    ## 37 2011  FI1B         Helsinki-Uusimaa Percentage  74.3
-    ## 38 2011  FI1C           Etel\xe4-Suomi Percentage  67.4
-    ## 39 2011  FI1D Pohjois- ja It\xe4-Suomi Percentage  64.5
-    ## 40 2012  FI1B         Helsinki-Uusimaa Percentage  74.1
-    ## 41 2012  FI1C           Etel\xe4-Suomi Percentage  68.8
-    ## 42 2012  FI1D Pohjois- ja It\xe4-Suomi Percentage  64.5
-    ## 43 2013  FI1B         Helsinki-Uusimaa Percentage  73.4
-    ## 44 2013  FI1C           Etel\xe4-Suomi Percentage  67.0
-    ## 45 2013  FI1D Pohjois- ja It\xe4-Suomi Percentage  65.3
-    ## 46 2014  FI1B         Helsinki-Uusimaa Percentage  73.0
-    ## 47 2014  FI1C           Etel\xe4-Suomi Percentage  66.4
-    ## 48 2014  FI1D Pohjois- ja It\xe4-Suomi Percentage  65.2
-
-``` r
 ## compare the employment percentage between FI1C and FI1B which used to be one region
 ggplot(fi_employ_newnuts)+
   geom_point(aes(year,value, colour=nuts2, shape=nuts2))+
@@ -437,18 +365,8 @@ fi_employ_newnuts1 = fi_employ_newnuts1 %>%
                     dplyr::rename(nuts2=nuts_old,
                                   nuts2_name = nuts2_name_old)
                         
-head(fi_employ_newnuts1) ## there are NA but were NA for all regions in those years
-```
+# head(fi_employ_newnuts1) ## there are NA but were NA for all regions in those years
 
-    ##   year       unit value nuts2               nuts2_name
-    ## 1 1999 Percentage    NA  FI18               old region
-    ## 2 1999 Percentage    NA  FI1A Pohjois- ja It\xe4-Suomi
-    ## 3 2000 Percentage    NA  FI18               old region
-    ## 4 2000 Percentage    NA  FI1A Pohjois- ja It\xe4-Suomi
-    ## 5 2001 Percentage    NA  FI18               old region
-    ## 6 2001 Percentage    NA  FI1A Pohjois- ja It\xe4-Suomi
-
-``` r
 ## Get population data associated with old nuts names
 fi_nuts_oldnuts = nuts2_pop_area2 %>%
                   filter(nuts2 %in% c("FI18","FI1A"))

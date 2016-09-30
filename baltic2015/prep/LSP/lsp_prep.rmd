@@ -1,5 +1,5 @@
 ---
-title: "lsp_prep"
+title: "Lasting Special Places (LSP) Data Preparation"
 output:
   github_document:
     toc: true
@@ -7,10 +7,10 @@ output:
 params: 
     datasource: csv
 ---
-#Preparation of Data Layers for Lasting Special Places (LSP)
-**Lasting Special Places is a subgoal of Sense of Place (SP)**  
 
 ## 1. Background
+**Lasting Special Places is a subgoal of Sense of Place (SP)**  
+
 "This sub-goal focuses on those geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected. Ideally, you would be able to survey everyone in your region and produce a list of all the places they consider special, and then assess how well they are protected relative to a desired state. How well they are protected could be the percentage of area protected, and you could also find how well they are protected using other data. This sub-goal could also be based on the extent to which people participate in spiritual or religious activities in an area" [Reference](http://ohi-science.org/goals/#sense-of-place)  
 
 ### 1.1 Why use MPAs? 
@@ -31,9 +31,10 @@ Shapefiles also provide an MPA status (e.g. designated or managed)
 Data were downloaded from the [MPAs tab](http://mpas.helcom.fi/apex/f?p=103:5::::::) on the HELCOM MPA website.  
 Downloaded on Downloaded 9 June 2016. Status updates on the website are given for 2016.  
 There are three categories of MPA status: 
-(1) designated  
-(2) designated and partly managed  
-(3) designated and managed  
+
+1. designated  
+2. designated and partly managed  
+3. designated and managed  
 
 These MPA status levels depend upon the existence of implemented management plans for the MPA areas (see 2.1.3 below for more information).  
 
@@ -41,8 +42,10 @@ This status is based upon self-reporting to HELCOM by each country.
 
 #### 2.1.3 Additional data not currently used.
 **Management plan status csv**
+
 The status of the management plans associated with each MPA were downloaded from HELCOM's [MPA database](http://mpas.helcom.fi/apex/f?p=103:40::::::) under the *Management Plans* tab.  Data were downloaded on 15 April 2016.  
-    - Key columns in this csv file are "Site name" (MPA name) and "Management Plan status"  
+
+- Key columns in this csv file are "Site name" (MPA name) and "Management Plan status"  
 
 There are three levels of management plan status that can be assigned to each MPA: *No plan*, *In development*, *Implemented*.  
 
@@ -52,13 +55,13 @@ A challenge is that each MPA can have multiple management plans associated with 
 [Baltic Sea Environment Proceedings NO. 124B Towards an ecologically coherent network of well-managed Marine Protected Areas](http://www.helcom.fi/lists/publications/bsep124b.pdf).  
 
 
-
 ## 3. LSP goal model overview
 ### 3.1 Status  
 Status is calculated by country and a country's status is applied to all BHI regions associated with that country.  
 
 
 #### 3.1.1 Alternative 1  
+
 Xlsp_country =  sum(w_i * MPA area)_m / Reference_pt_country  
 
 - Numerator is the sum over all MPAs within a country's EEZ of the MPA area weighted by the management status.  
@@ -77,8 +80,9 @@ Reference_pt_country = 10% of the area in a country's EEZ is designated as an MP
 
 #### 3.1.2 Alternative 2 (similar to Alt 1 but different weights (w_i)
 Xlsp_country =  sum(w_i * MPA area)_m / Reference_pt_country  
-    - Numerator is the sum over all MPAs within a country's EEZ of the MPA area weighted by the management status.  
-    - w_i = value between 0 -1   
+
+- Numerator is the sum over all MPAs within a country's EEZ of the MPA area weighted by the management status.  
+- w_i = value between 0 -1   
 
 w_i are based upon management status.
 
@@ -87,7 +91,8 @@ w_i are based upon management status.
 - 1.0 designated and managed  
 
 Reference_pt_country = 10% of the area in a country's EEZ is designated as an MPA and is 100% managed = 10% area country's EEZ  
-    - This is based on the Convention on Biodiversity [target](https://www.cbd.int/sp/targets/rationale/target-11/)  
+
+- This is based on the Convention on Biodiversity [target](https://www.cbd.int/sp/targets/rationale/target-11/)  
     
 **Problem with this approach, if a country designates more than 10% area but does not fully managed the MPA, can still achieve a score of 100.  However, because the weight for "designated" is lower than in Alternative 1, it is more difficult to acheive a score of 100 without also having managed MPAs**  
 
@@ -99,11 +104,13 @@ Xlsp_country_mpa_area_score = pmin(1,MPA_area_country / area_10percent_eez_count
 
 - MPA_area_country = total MPA area in each country
 - area_10percent_eez_country = area that is 10% of a country's EEZ  
+
 *score cannot excede 1.0*  
 
 Xlsp_country_mpa_management_score =sum(w_i * MPA area)_m / Reference_pt_country  
 
-w_i are based upon management status, must be managed to count  
+w_i is based upon management status, must be managed to count  
+
 0 = designated  
 0.6 = designated and partly managed  
 1.0 designated and managed  
@@ -157,47 +164,14 @@ mgmt_csv: MPA status from data file; mgmt_shape: MPA status from dbf file
 The logic here is straightforward, however, the criteria for management status in those two data sets were unclear. It would be hard to justify using two data sets that don't have the same grading criteria. 
 
 ```{r setup, echo = FALSE, message = FALSE}
-
-## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-library(stringr) # install.packages("stringr")
 library(rgdal)  # install.packages('rgdal')
 library(raster) # install.packages('raster')
 library(rgeos)  # install.packages('rgeos')
 
-# source
 source('~/github/bhi/baltic2015/prep/common.r') #for create_readme() function
+dir_lsp   = file.path(dir_prep, 'LSP')
 
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-dir_prep = make_path('baltic2015/prep') # replaces  file.path(dir_baltic, 'layers')
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-# NOT used?
- dir_lsp   = file.path(dir_prep, 'LSP')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory
 create_readme(dir_lsp, 'lsp_prep.rmd') 
 ```
 
@@ -228,7 +202,6 @@ Also, get them in the same coordinate reference system for the Baltic.
 The MPA file is in the [LAEA coordinate reference system](http://spatialreference.org/ref/epsg/etrs89-etrs-laea/). 
 
 ```{r read in shapefiles, echo=FALSE, message=FALSE}
-
 ## inspect BHI regions ----
 bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
                       layer = 'BHI_MCG_11052016')  

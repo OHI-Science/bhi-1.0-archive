@@ -5,10 +5,7 @@
 
 
 ## Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+library(tidyverse) # install.packages('tidyverse') # installs dplyr, tidyr, ggplot2 and more
 library(RMySQL)
 library(stringr)
 library(tools)

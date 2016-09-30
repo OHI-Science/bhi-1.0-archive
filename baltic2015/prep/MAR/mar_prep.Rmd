@@ -1,5 +1,5 @@
 ---
-title: "mar_rep"
+title: "Preparation of Mariculture (MAR) subgoal data layer"
 output:
   github_document:
     toc: true
@@ -7,72 +7,40 @@ output:
 params: 
     datasource: csv
 ---
-# Preparation of Mariculture (MAR) subgoal data layer
-
-```{r setup}
-
-## source common libraries, directories, functions, etc
-# Libraries
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(RMySQL)
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-source('~/github/bhi/baltic2015/prep/common.r')
-dir_mar    = file.path(dir_prep, 'MAR')
-
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_mar, 'mar_prep.rmd')
-
-```
-
 
 ## 1. Background
-
+Mariculture (farming fish and shellfish in the ocean) is not a huge industry in the Baltic, but it does provide some food production. Data were available for parts of Denmark, Sweden, Germany, and Finland. All other BHI regions are scored as NA, and thus MAR will not contribute to the overall FP goal score. A counter argument could be made that some of these regions have the capacity for production, therefore they should receive a score of zero when having no production.
 
 ## 2. Data
-Rainbow trout production  
-Date were compiled primarily by Ginnette Flores Carmenate
+Rainbow trout production. Data were compiled primarily by Ginnette Flores Carmenate. 
 
 ### 2.1 Data sources
-Data from country databases or reports  
-**Sweden**
-[Jorbruksverket] (http://www.scb.se/sv_/Hitta-statistik/Statistik-efter-amne/Jord--och-skogsbruk-fiske/Vattenbruk/Vattenbruk/)  
 
-**Denmark**
-[Danish Agrifish Agency (Ministry of Environment and Food of Denmark)]( http://agrifish.dk/fisheries/fishery-statistics/aquaculture-statistics/#c32851)  
+**Tonnes of mariculture production data from country databases or reports:**  
 
-__On locations from NaturErhvervstyrelsen__  The North Sea is very rough, hence there is no sea farms located in the North Sea side of Denmark, and the data on our home page only includes farms placed in the waters you are interested in. There is a map in this [report](http://www.akvakultur.dk/akvakultur%20i%20DK.htm) showing sea farms in Denmark. It’s a bit old (2003), but area wise it haven’t changed much.
+- **Sweden**
+[Jorbruksverket](http://www.scb.se/sv_/Hitta-statistik/Statistik-efter-amne/Jord--och-skogsbruk-fiske/Vattenbruk/Vattenbruk/)  
 
-Finland
+- **Denmark**
+[Danish Agrifish Agency (Ministry of Environment and Food of Denmark)](http://agrifish.dk/fisheries/fishery-statistics/aquaculture-statistics/#c32851)  
+
+    - **On locations from NaturErhvervstyrelsen**: The North Sea is very rough, hence there is no sea farms located in the North Sea side of Denmark, and the data on our home page only includes farms placed in the waters you are interested in. There is a map in this [report](http://www.akvakultur.dk/akvakultur%20i%20DK.htm) showing sea farms in Denmark. It’s a bit old (2003), but area wise it haven’t changed much.
+
+- **Finland**
 [Natural Resources Institute](http://statdb.luke.fi/PXWeb/pxweb/fi/LUKE/LUKE__06%20Kala%20ja%20riista__02%20Rakenne%20ja%20tuotanto__10%20Vesiviljely/?tablelist=true&rxid=5211d344-451e-490d-8651-adb38df626e1)  
+    - Data were available as total marine production by region.  Data were also available as total production per fish species.  Rainbow trout dominated the total fish production.  Ginnette converted the total production by region to rainbow trout production by region by using the country wide percent rainbow trout of the marine production in each year.  (The other minor contributions to total production were European whitefish, Trout, other species, Roe of rainbow trout, roe of european whitefish).  
 
---Data were available as total marine production by region.  Data were also available as total production per fish species.  Rainbow trout dominated the total fish production.  Ginnette converted the total production by region to rainbow trout production by region by using the country wide percent rainbow trout of the marine production in each year.  (The other minor contributions to total production were European whitefish, Trout, other species, Roe of rainbow trout, roe of european whitefish).  
-
-**All other**
+- **All other**
 Production data for Germany were obtained from the [FAO FishStatJ](http://www.fao.org/fishery/statistics/software/fishstatj/en#downlApp) Global workspace, Aquaculture Production (Quantities and values) 1950-2014 (Release date: March 2016).  
 Download 15 June 2016
 
 Data were downloaded for all nine Baltic countries. The Baltic sea falls within the [aquaculture area to 'Atlantic, Northeast'](http://www.fao.org/fishery/cwp/handbook/h/en). The environment type was required to be *Brackish* to be considered Baltic Sea production.
 
-Sustainability Coefficient 
-The SMI is the average of the three subindices traditionally used in the OHI framework. Trujillo's study included 13 subindices in total but only 3 of them are relevant for assessing the sustainability of mariculture : waster water treatment, usage of fishmeal and hatchery vs wild origin of seeds. Since Rainbow trout SMI is only included for Sweden. The mean value 5.3 was rescaled between 0-1 to 0.53. This value is then applied to Denmark and Finland.
+**Sustainability Coefficient** 
 
-Trujillo, P., (2008). Using a mariculture sustainability index to rank countries’ performance. Pp. 28-56 In: Alder, J. and D. Pauly (eds.). 2008.  A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries’ Exclusive Economic Zones.’ Fisheries Centre Research Reports. Fisheries Centre, University of British Columbia
+The SMI is the average of the three subindices traditionally used in the OHI framework. Trujillo's study^1^ included 13 subindices in total but only 3 of them are relevant for assessing the sustainability of mariculture : waster water treatment, usage of fishmeal and hatchery vs wild origin of seeds. Since Rainbow trout SMI is only included for Sweden. The mean value 5.3 was rescaled between 0-1 to 0.53. This value is then applied to Denmark and Finland.
+
+^1^Trujillo, P., (2008). Using a mariculture sustainability index to rank countries’ performance. Pp. 28-56 In: Alder, J. and D. Pauly (eds.). 2008.  A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries’ Exclusive Economic Zones.’ Fisheries Centre Research Reports. Fisheries Centre, University of British Columbia
 
 ### 2.2 Production regions and BHI assignments
 BHI regions were assigned to the country production reporting regions by Ginnette visually linking the two for Sweden, Denmark, and Finland. 
@@ -80,40 +48,47 @@ BHI regions were assigned to the country production reporting regions by Ginnett
 Production for Germany was split equally among all German BHI regions.
 
 #### 2.2.1 HELCOM map of coastal aquaculture
-[HELCOM Map Service Baltic Sea Pressures and Human activities](http://maps.helcom.fi/website/Pressures/index.html) has a data layer showing coastal aquaculture sites (under 'Pressures','Land-based pollution', 'Coastal Aquaculture'). This appears to be outdated as Denmark say is has no marine aquaculture, Latvia has no reported brackish aquaculture to the FAO for several decades, and no German sites are shown (although minimal brackish water aquaculture is reported)
-
-
+[HELCOM Map Service Baltic Sea Pressures and Human activities](http://maps.helcom.fi/website/Pressures/index.html) has a data layer showing coastal aquaculture sites (under 'Pressures','Land-based pollution', 'Coastal Aquaculture'). This appears to be outdated as Denmark say is has no marine aquaculture, Latvia has no reported brackish aquaculture to the FAO for several decades, and no German sites are shown (although minimal brackish water aquaculture is reported).
 
 ## 3. Data Layer Preparation
-Data are stored in the BHI database  
+Data are stored in the BHI database.  
 `mar_prep_database_call.r` extracts data files from the database and stores data as csv files in folder mar_data_database  
 __Need to make sure csv files are rewritten if database updated!!__
 
+```{r setup, message=FALSE}
+## source common libraries, directories, functions, etc
+library(tidyverse)
+library(RMySQL)
+library(stringr)
+library(tools)
+
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_mar    = file.path(dir_prep, 'MAR')
+
+## add a README.md to the prep directory
+create_readme(dir_mar, 'mar_prep.rmd')
+```
+
 ### 3.1 Read in data
 ```{r read in data}
-
-##-------------------------##
 ## Read in data
-
 lookup =  read.csv(file.path(dir_mar, 'mar_data_database/mar_data_lookuptable.csv'), sep=";")
-head(lookup)
+# head(lookup)
 
 production = read.csv(file.path(dir_mar,'mar_data_database/mar_data_production.csv'))
- head(production)
+# head(production)
 
 fao = read.csv(file.path(dir_mar, 'mar_data_database/all_baltic_fao_cleaned.csv'), sep=";")
-head(fao)
-
+# head(fao)
 ```
 
 ### 3.1 Plot the data by country's mar_region
-Data from country databases (DK, FI, SE)  
-This is the scale of data reported
+Data from country databases (DK, FI, SE). 
+This is the scale of data reported.
 
 ```{r plot raw data, echo=TRUE}
 ggplot(production)+geom_point(aes(year, production)) +
 facet_wrap(~mar_region, scales="free_y")
-
 ```
 
 ### 3.2 FAO data
@@ -123,7 +98,6 @@ Evaluate FAO data for countries without data from country specific databases.
 
 #### 3.2.1 FAO data organization
 ```{r fao data organization}
-
 ## filter country and environment
 fao1 = fao %>%
         filter(country != "Sweden" & country != "Finland" & country != "Denmark")%>% ## filter out countries with national data
@@ -154,8 +128,6 @@ fao3 = fao2 %>%
       mutate(year =str_replace(year,"X",""),
              year= as.numeric(year))%>% ## remove x from year and make numeric
       arrange(country, year, species_ASFIS)
-       
-
 ```
 
 #### 3.2.2 Plot FAO data for countries with data 2005-2014
@@ -164,8 +136,6 @@ ggplot(fao3)+
   geom_point(aes(year,production, colour= species_ASFIS))+
   facet_wrap(~country)+
   ggtitle("FAO Brackish water production (tons) 2005-2014")
-
-
 ```
 
 #### 4.2.3 Select Germany rainbow trout timeseries
@@ -177,8 +147,7 @@ fao_de = fao3 %>%
                aquaculture_area_FAO_major_fishing_area = as.character(aquaculture_area_FAO_major_fishing_area),
                environment = as.character(environment),
                unit = as.character(unit))
-str(fao_de)
-
+# str(fao_de)
 ```
 
 
@@ -204,14 +173,10 @@ fao_de = fao_de %>%
                 Sust_coeff = 0.53)%>%
         select(country, mar_region,year, production,unit,latin_name,common_name,
                ISSCAAP_FAO, TAXOCODE_FAO,X3A_CODE_FAO,country_spp_code,Sust_coeff )
-str(fao_de)
-
+# str(fao_de)
 
 ### bind_rows of production and fao_de
-
 production2 = bind_rows(production1, fao_de)
-
-
 ```
 
 #### 4.3.1 Plot combined data by country
@@ -232,7 +197,6 @@ mar_countryrgn_time_data = production2 %>%
                                   data_descrip = "Rainbow trout production by country region")
 
 write.csv(mar_countryrgn_time_data, file.path(dir_baltic, 'visualize/mar_countryrgn_time_data.csv'),row.names = FALSE)
-
 ```
 
 
@@ -241,13 +205,12 @@ Allocate data equally from mar_region to all associated BHI region.
 Do not have any additional information that would allow us to make this allocation based on known production distribution.
 
 ```{r allocated data by bhi region, echo=TRUE}
-
 ## create a conversion factor for each mar_region
 lookup = lookup%>%
          group_by(mar_region)%>%
          mutate(rgn_factor = round((1/n_distinct(BHI)),2))%>%
          ungroup()
-lookup
+# lookup
 
 ## join lookup to production
 
@@ -258,7 +221,6 @@ prod_allot = full_join(lookup, production2, by=c("country","mar_region"))%>%
             group_by(BHI,year,common_name,ISSCAAP_FAO, Sust_coeff)%>%
             summarise(prod_tot = sum(prod_allot,na.rm=TRUE))%>%  #get production per BHI region - more than one
             ungroup()
-
 ```
 
 #### 4.4.1 Plot production per BHI region
@@ -281,13 +243,12 @@ mar_rgn_time_data = prod_allot %>%
                                   data_descrip = "Rainbow trout production allocated to BHI region")
 
 write.csv(mar_rgn_time_data, file.path(dir_baltic, 'visualize/mar_rgn_time_data.csv'),row.names = FALSE)
-
 ```
 
 
 
-### 4.5 Create objects to save to put in layers, save a csv
-3 layers: mar_harvest_tonnes, mar_harvest_species,mar_sustainability_score  
+### 4.5 Save layers in /layers folder as layers .csv's
+3 layers: `mar_harvest_tonnes`, `mar_harvest_species`, `mar_sustainability_score`.  
 
 Regions with no data - BHI regions not associated with Sweden, Finland, Denmark, Germany have no data.  This is because there is no production.  
 
@@ -303,8 +264,6 @@ is.na(mar_harvest_tonnes$tonnes)
 write.csv(mar_harvest_tonnes, 
                  file.path(dir_layers, "mar_harvest_tonnes_bhi2015.csv"),row.names=FALSE)
 
-
-
 ## mar_harvest_species
 mar_harvest_species= prod_allot %>%select(ISSCAAP_FAO,common_name)%>%
                     distinct(ISSCAAP_FAO,common_name)%>%
@@ -314,8 +273,6 @@ mar_harvest_species= prod_allot %>%select(ISSCAAP_FAO,common_name)%>%
 write.csv(mar_harvest_species, 
                  file.path(dir_layers, "mar_harvest_species_bhi2015.csv"),row.names=FALSE)
 
-
-
 ## mar_sustainability_score
 mar_sustainability_score = prod_allot %>% select(BHI,common_name,Sust_coeff)%>%
                           mutate(common_name=as.character(common_name))%>%
@@ -324,38 +281,15 @@ mar_sustainability_score = prod_allot %>% select(BHI,common_name,Sust_coeff)%>%
 
 write.csv(mar_sustainability_score,
                  file.path(dir_layers, "mar_sustainability_score_bhi2015.csv"),row.names=FALSE)
-
 ```
 
 
 ### Population density data
-
-MAR code from OHI uses production/per capita  
-This code creates a csv of the population density data (2005) from 25km inland buffer.  
-Code in functions.r is where the decision is made whether or not to use it.
-```{r population density, echo=TRUE}
-
-bhi_pop = readr::read_csv(file.path(dir_mar,'mar_data_database/pop_density.csv'))
-# head(bhi_pop)
-
-  
-## clean up and save layer
-bhi_pop =bhi_pop %>%
-  dplyr::select(rgn_id = BHI_ID, 
-                popsum = `Total Population in 25km Buffer`)
-bhi_pop
-
-## write to layers folder to use in the function
-readr::write_csv(bhi_pop, 
-                 file.path(dir_layers, "mar_coastalpopn2005_inland25km_bhi2015.csv"))
-
-```
-
-
+MAR code from OHI uses production/per capita. A coastal population layer was created in ArcGIS by Marc; functions.r is where the decision is made whether or not to use it.
 
 ## MAR Goal Model
 
-Xmar =  Current_value /ref_point
+`Xmar =  Current_value /ref_point`
 
 - Data are allocated to BHI region by taking the production from a country production region and dividing it equally among associated BHI regions.  
 - In goal calculation, data are taken as 4 year running mean
@@ -367,7 +301,6 @@ Xmar =  Current_value /ref_point
 Calculate MAR status and trend to get feedback.  Code here is copied from functions.r
 
 ```{r status and trend}
-
 ##data
   harvest_tonnes = mar_harvest_tonnes
   harvest_species = mar_harvest_species
@@ -463,16 +396,14 @@ Calculate MAR status and trend to get feedback.  Code here is copied from functi
                score     = trend_score) %>%
         mutate(dimension = 'trend')) %>%
     mutate(goal='MAR')
-  scores
-
+#scores
 ```
 
-## Plot status and trend as a figure
+## Plot status and trend
 **Status** is a value between 0 and 100.    
 **Trend** is a value between -1 and 1.  
 
 ```{r plot status, trend}
-
 par(mfrow=c(1,2), mar=c(1,2.5,1,1), oma=c(2,2,2,2), mgp=c(1.5,.5,0))
 plot(score~rgn_id, data=mar_status,cex=1, pch=19,
      xlim=c(0,43), ylim=c(0,102),
@@ -494,28 +425,23 @@ Each years status is based on a 4 year running mean of production and a referenc
 
 ```{r plot status time series}
 # Plot MAR status over time
-
 ggplot(filter(mar_status_score, !is.na(status))) + 
   geom_point(aes(year,status*100))+
   facet_wrap(~rgn_id)+
   theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
   ggtitle("MAR Status 5 Years by BHI region (exclude regions with NA status")
-
 ```
 
 
 ## Plot status as a map
+Note: not currently mapped. Can use `bhi/baltic2015/PlotMap()` instead.
 ```{r source the shape file, echo=FALSE}
-
-library(rgdal)
-#BHI shapefile
-BHIshp = readOGR("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/March2016WkshpPlots/shapefiles", "BHI_regions_plus_buffer_25km")
-BHIshp2 = spTransform(BHIshp, CRS("+proj=longlat +init=epsg:4326"))
-print(proj4string(BHIshp2))
-
+# library(rgdal)
+# #BHI shapefile
+# BHIshp = readOGR("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/March2016WkshpPlots/shapefiles", "BHI_regions_plus_buffer_25km")
+# BHIshp2 = spTransform(BHIshp, CRS("+proj=longlat +init=epsg:4326"))
+# print(proj4string(BHIshp2))
 ```
-
-
 **Note that areas recieve a score of zero where there is no production**
 
 ```{r Current status map}
@@ -525,30 +451,29 @@ print(proj4string(BHIshp2))
 ## 50 - 74
 ## 75 - 100
 
-mar_status_colors = mar_status %>% 
-                        mutate(cols = ifelse(is.na(score) == TRUE, "grey",
-                                      ifelse(score == 0, "red",
-                                      ifelse(score > 0 & score < 25, "orange1",
-                                      ifelse(score >= 25 & score < 50, "yellow2",
-                                      ifelse(score >= 50 & score < 75, "light blue",
-                                      ifelse(score >= 75 & score <=100, "blue", "grey")))))))
-
-
-
-
-BHIshp2@data = BHIshp2@data %>% full_join(.,mar_status_colors, by=c("BHI_ID"= "rgn_id"))
-head(BHIshp2@data)
-
-## PLOT
-par(mfrow=c(1,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
-  
-plot(BHIshp2, col=BHIshp2@data$cols, main = "score 1")
- plot(c(1,2,3),c(1,2,3), type='n', fg="white",bg="white", xaxt='n',yaxt='n')
-  legend("center", 
-         legend=c("0", "1 - 24", "25 - 49", "50 - 74", "75 -100"), 
-         fill=c("red","orange1","yellow2","light blue", "blue"), bty='n', cex=1.5)
-
-    mtext("MAR Current Status", side = 3, outer=TRUE, line=1.5)
+# mar_status_colors = mar_status %>% 
+#                         mutate(cols = ifelse(is.na(score) == TRUE, "grey",
+#                                       ifelse(score == 0, "red",
+#                                       ifelse(score > 0 & score < 25, "orange1",
+#                                       ifelse(score >= 25 & score < 50, "yellow2",
+#                                       ifelse(score >= 50 & score < 75, "light blue",
+#                                       ifelse(score >= 75 & score <=100, "blue", "grey")))))))
+# 
+# 
+# 
+# 
+# BHIshp2@data = BHIshp2@data %>% full_join(.,mar_status_colors, by=c("BHI_ID"= "rgn_id"))
+# head(BHIshp2@data)
+# 
+# ## PLOT
+# par(mfrow=c(1,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
+#   
+# plot(BHIshp2, col=BHIshp2@data$cols, main = "score 1")
+#  plot(c(1,2,3),c(1,2,3), type='n', fg="white",bg="white", xaxt='n',yaxt='n')
+#   legend("center", 
+#          legend=c("0", "1 - 24", "25 - 49", "50 - 74", "75 -100"), 
+#          fill=c("red","orange1","yellow2","light blue", "blue"), bty='n', cex=1.5)
+# 
+#     mtext("MAR Current Status", side = 3, outer=TRUE, line=1.5)
 
 ```
-

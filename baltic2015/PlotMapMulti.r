@@ -1,11 +1,28 @@
-## PlotMapMulti
-## Loops through multiple goals and map all calling PlotMap
+#' PlotMapMulti
+#' Creates multiple static maps by calling PlotMap() by looping through listed goals in the input dataframe
+#'
+#' @param scores dataframe with regions, goals, dimensions, scores
+#' @param spatial_poly dataframe of spatial boundaries; prepared by PrepSpatial()
+#' @param fld_value_id usually rgn_id or region_id; default 'region_id'
+#' @param fld_value_score column name of value to plot; default 'score'
+#' @param dim_choice dimension to plot; default 'score'
+#' @param print_fig default FALSE
+#' @param save_fig default TRUE
+#' @param path_figures # default 'reports/figures'
+#' @param scale_label # default 'score' TODO: necessary?
+#' @param scale_limits # default c(0, 100)
+#'
+#' @return
+#' @export
+#'
+#' # example call after clone BHI repo and setwd('~/github/bhi/baltic2015')
+#' @examples PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id < 300), spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'), path_figures = 'reports/figures/BHI_regions')
 
-PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe with regions, goals, dimensions, scores
+PlotMapMulti <- function(scores          = read.csv('scores.csv'),
                          spatial_poly    = PrepSpatial('spatial/regions_gcs.geojson'),
-                         fld_value_id    = 'region_id', # header of scores variable; likely 'rgn_id' or 'region_id'
-                         fld_value_score = 'score', # header of scores variable; likely 'score' or 'value'
-                         dim_choice      = 'score', # header of scores variable; likely "future", "pressures", "resilience", "score", "status", "trend"
+                         fld_value_id    = 'region_id',
+                         fld_value_score = 'score',
+                         dim_choice      = 'score',
                          print_fig       = FALSE,
                          save_fig        = TRUE,
                          # active_plotly   = FALSE, ## takes too long, causes RStudio to crash
@@ -13,7 +30,6 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'), # dataframe w
                          scale_label     = 'score',
                          scale_limits    = c(0, 100)) {
                          # TODO: interactive = FALSE
-  # DEBUG: scores=read.csv('scores.csv'); spatial_poly = readOGR(dsn = normalizePath(mapfile_path), "OGRGeoJSON"); fld_value_id = 'region_id'; fld_value_score = 'score';dim_choice = 'score'; print_fig = TRUE; save_fig = TRUE; path_figures = 'reports/figures'; map_title= element_blank();  scale_label = 'score';  scale_limits = c(0, 100)
 
   ## setup ----
 

@@ -1,110 +1,20 @@
-ico\_prep
+Iconic Species (ICO) Data Preparation for Sense of Place (SP) goal
 ================
 
--   [Prepare Iconic Species data layer for goal Sense of Place](#prepare-iconic-species-data-layer-for-goal-sense-of-place)
-    -   [1. Background](#background)
-    -   [2. Data](#data)
-        -   [2.1 Data sources](#data-sources)
-        -   [2.2 Data folder for raw data](#data-folder-for-raw-data)
-        -   [2.3 Data for ICO](#data-for-ico)
-        -   [2.4 Selecting ICO species](#selecting-ico-species)
-        -   [References for Redlist criteria / threat levels](#references-for-redlist-criteria-threat-levels)
-    -   [3. Goal model](#goal-model)
-    -   [4. Prepare ICO data layer](#prepare-ico-data-layer)
-        -   [4.1 Data organization](#data-organization)
-        -   [4.2 Calculate status](#calculate-status)
-        -   [4.3 Apply basin status to BHI regions](#apply-basin-status-to-bhi-regions)
-    -   [5. ICO trend](#ico-trend)
-    -   [6. Data layers for layers folder](#data-layers-for-layers-folder)
-
-Prepare Iconic Species data layer for goal Sense of Place
-=========================================================
-
-``` r
-## Libraries
-library(readr)
-```
-
-    ## Warning: package 'readr' was built under R version 3.2.4
-
-``` r
-library(dplyr)
-```
-
-    ## Warning: package 'dplyr' was built under R version 3.2.5
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
-library(tidyr)
-```
-
-    ## Warning: package 'tidyr' was built under R version 3.2.5
-
-``` r
-library(ggplot2)
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.2.4
-
-``` r
-library(RMySQL)
-```
-
-    ## Warning: package 'RMySQL' was built under R version 3.2.5
-
-    ## Loading required package: DBI
-
-    ## Warning: package 'DBI' was built under R version 3.2.5
-
-``` r
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-```
-
-    ## Warning: package 'rprojroot' was built under R version 3.2.4
-
-``` r
-## source common libraries, directories, functions, etc
-source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-
-dir_ico    = file.path(dir_prep, 'ICO')
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_ico, 'ico_prep.rmd')
-```
+-   [1. Background](#background)
+-   [2. Data](#data)
+    -   [2.1 Data sources](#data-sources)
+    -   [2.2 Data folder for raw data](#data-folder-for-raw-data)
+    -   [2.3 Data for ICO](#data-for-ico)
+    -   [2.4 Selecting ICO species](#selecting-ico-species)
+    -   [References for Redlist criteria / threat levels](#references-for-redlist-criteria-threat-levels)
+-   [3. Goal model](#goal-model)
+-   [4. Prepare ICO data layer](#prepare-ico-data-layer)
+    -   [4.1 Data organization](#data-organization)
+    -   [4.2 Calculate status](#calculate-status)
+    -   [4.3 Apply basin status to BHI regions](#apply-basin-status-to-bhi-regions)
+-   [5. ICO trend](#ico-trend)
+-   [6. Data layers for layers folder](#data-layers-for-layers-folder)
 
 1. Background
 -------------
@@ -115,10 +25,14 @@ create_readme(dir_ico, 'ico_prep.rmd')
 ### 2.1 Data sources
 
 HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria.
-*Pros for using these <data:*>
+
+\*Pros for using these <data:*>
+
 Much more representative set of species included for Baltic Sea biodiversity.
-*Cons for using these <data:*>
-Distribution is provided for most taxa groups at the basin scale - coaser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.
+
+\*Cons for using these <data:*>
+
+Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.
 
 [HELCOM species checklists](http://helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) (see bottom right of page for links to excel sheets) were downloaded on 14 June 2016
 
@@ -154,14 +68,22 @@ Iconic fish and mammals species have been selected to represent ICO. When bird s
 
 [HELCOM Red List](http://www.helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) based on [IUCN criteria.](http://www.iucnredlist.org/technical-documents/categories-and-criteria).
 
-**Threat categories** *Evaluated species* Extinct (EX)
-Regionally Extinct (RE)
-Extinct in the Wild (EW)
-Critically Endangered (CR) Endangered (EN)
-Vulnerable (VU)
-Near Threatened (NT)
-Least Concern (LC) Data Deficient (DD) Not Applicable (NA)
-*Not-evaluated species* Not Evaluated (NE)
+**Threat categories** *Evaluated species*
+
+-   Extinct (EX)
+-   Regionally Extinct (RE)
+-   Extinct in the Wild (EW)
+-   Critically Endangered (CR)
+-   Endangered (EN)
+-   Vulnerable (VU)
+-   Near Threatened (NT)
+-   Least Concern (LC)
+-   Data Deficient (DD)
+-   Not Applicable (NA)
+
+*Not-evaluated species*
+
+-   Not Evaluated (NE)
 
 3. Goal model
 -------------
@@ -170,18 +92,23 @@ This goal model is similar to the SPP goal model, but for the select group of IC
 
 Xico\_basin = 1- sum\[wi\]/R
 
-wi = threat weights for each species i present in each basin R = total number of species in each basin
+-   wi = threat weights for each species i present in each basin
+-   R = total number of species in each basin
+
 (eg. score equals 1 when all species i have wi of LC)
 
 Scale min value = score is 0 when 75% of species are extinct.\*
 \*From Halpern et al 2012, SI. "We scaled the lower end of the biodiversity goal to be 0 when 75% species are extinct, a level comparable to the five documented mass extinctions"
 
-wi from Halpern et al 2012, SI EX = 1.0
-CR = 0.8
-EN = 0.6
-VU = 0.4
-NT = 0.2
-LC = 0 DD = not included, "We did not include the Data Deficient classification as assessed species following previously published guidelines for a mid-point approach"
+wi from Halpern et al 2012, SI
+
+-   EX = 1.0
+-   CR = 0.8
+-   EN = 0.6
+-   VU = 0.4
+-   NT = 0.2
+-   LC = 0
+-   DD = not included, "We did not include the Data Deficient classification as assessed species following previously published guidelines for a mid-point approach"
 
 4. Prepare ICO data layer
 -------------------------
@@ -189,6 +116,15 @@ LC = 0 DD = not included, "We did not include the Data Deficient classification 
 ### 4.1 Data organization
 
 #### 4.1.1 Read in Data
+
+``` r
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_ico    = file.path(dir_prep, 'ICO')
+
+## add a README.md to the prep directory 
+create_readme(dir_ico, 'ico_prep.rmd')
+```
 
 ``` r
 ## read in data...
@@ -311,7 +247,7 @@ ico_status_basin = full_join(sum_wi_basin,sum_spp_basin, by="basin") %>%
 
 ##### 4.2.2 Scale lower end to zero if 75% extinct
 
-Currently, species are labled regionally extinct
+Currently, species are labeled regionally extinct
 
 ``` r
 ## calculate percent extinct in each region
@@ -412,10 +348,8 @@ ico_status = ico_status_basin %>%
 ico_status = ico_status %>%
              select(rgn_id,status,n)
 
-dim(ico_status)
+# dim(ico_status)
 ```
-
-    ## [1] 42  3
 
 #### 4.3.3 Plot BHI region status
 
