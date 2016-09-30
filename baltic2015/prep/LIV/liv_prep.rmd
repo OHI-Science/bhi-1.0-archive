@@ -100,7 +100,7 @@ UPDATE with Marc's methods or link
 
 ## 3. Goal model
 
-Xliv = (Employment_Region_c/Employment_Region_r) / (Employment_Region_c/Employment_Region_r)
+Xliv = (Employment_Region_c/Employment_Region_r) / (Employment_Country_c/Employment_Country_r)
 
 - c = current year, r=reference year  
 - reference point is a moving window (single year value)  
@@ -140,7 +140,7 @@ nuts2_pop_density = read_csv(file.path(dir_liv, 'liv_data_database/NUTS2_BHI_ID_
 regional_employ1 = regional_employ %>%
                   select(-TIME_LABEL,-SEX,-AGE) %>%
                   dplyr::rename(year = TIME, nuts2 = GEO, nuts2_name = GEO_LABEL,
-                                unit=UNIT, value = Value, flag_notes = Flag.and.Footnotes)%>%
+                                unit=UNIT, value = Value, flag_notes = Flag.and.Footnotes) %>%
                   mutate(nuts2 = as.character(nuts2),
                          nuts2_name = as.character(nuts2_name),
                          unit = as.character(unit),
@@ -151,7 +151,7 @@ regional_employ1 = regional_employ %>%
 # str(regional_employ1)
 
 ## check dataflags
-# regional_employ1 %>% select(flag_notes)%>% distinct()
+# regional_employ1 %>% select(flag_notes) %>% distinct()
 # regional_employ1 %>% filter(flag_notes =="low reliability" ) #not Baltic country
 # regional_employ1 %>% filter(flag_notes =="break in timeseries and low reliability" ) #not Baltic country
 # regional_employ1 %>% filter(flag_notes =="break in timeseries") ## this is not such a concern
@@ -168,15 +168,15 @@ regional_employ1 = regional_employ1 %>%
 ## nuts2 population data
 
 nuts2_pop_area1 = nuts2_pop_density %>%
-                  select(-PopUrb,-PopRur,-PopUrb_density_in_NUTS2_buffer_per_km2,-PopRur_density_in_NUTS2_buffer_per_km2, -HELCOM_ID) %>%
+                  select(-PopUrb,-PopRur,-PopUrb_density_in_NUTS2_buffer_per_km2,-PopRur_density_in_NUTS2_buffer_per_km2, -HELCOM_ID, - CNTR_CODE) %>%
                   dplyr::rename(rgn_id = BHI_ID,
                                 nuts2 = NUTS_ID,
                                 pop = PopTot,
                                 pop_km2 = PopTot_density_in_NUTS2_buffer_per_km2,
-                                country_abb= CNTR_CODE,
                                 country = rgn_nam,
                                 basin = Subbasin,
-                                area = NUTS2_area_in_BHI_buffer_km2)
+                                area = NUTS2_area_in_BHI_buffer_km2) %>% 
+                  mutate(country_abb = substr(nuts2, 1, 2))
 ```
 
 #### 4.1.3 Check NUTS2 names from Finland 
@@ -237,7 +237,7 @@ nuts2_pop_area2 = nuts2_pop_area1 %>%
                             area = sum(area)) %>% ## some regions occurr twice because of correcting the assignment, sum to get single value for each region
                   ungroup()
 
-str(nuts2_pop_area2)
+# str(nuts2_pop_area2)
 
 ```
 
@@ -276,13 +276,13 @@ fi_employ_newnuts = regional_employ1 %>%
 # fi_employ_newnuts
 
 ## compare the employment percentage between FI1C and FI1B which used to be one region
-ggplot(fi_employ_newnuts)+
-  geom_point(aes(year,value, colour=nuts2, shape=nuts2))+
+ggplot(fi_employ_newnuts) +
+  geom_point(aes(year,value, colour=nuts2, shape=nuts2)) +
   ggtitle("Comparison of Finnish Region NUTS2 Employment percentage")
 
 ## difference between FI1B and FI1C
 fi_employ_newnuts %>% 
-  select(-nuts2_name)%>%
+  select(-nuts2_name) %>%
   spread(nuts2,value) %>%
   mutate(diff_1b_1c = FI1B - FI1C) %>%
   filter(!is.na(diff_1b_1c))
@@ -300,8 +300,8 @@ fi_employ_newnuts1 = fi_employ_newnuts %>%
 fi_employ_newnuts1 = fi_employ_newnuts1 %>%
                     mutate(nuts_old = ifelse(nuts2 == "FI1B", "FI18",
                                       ifelse(nuts2 == "FI1D", "FI1A","")),
-                           nuts2_name_old= ifelse(nuts2 == "FI1B","old region",nuts2_name ))%>%
-                    select(-nuts2, -nuts2_name)%>%
+                           nuts2_name_old= ifelse(nuts2 == "FI1B","old region",nuts2_name )) %>%
+                    select(-nuts2, -nuts2_name) %>%
                     dplyr::rename(nuts2=nuts_old,
                                   nuts2_name = nuts2_name_old)
                         
@@ -317,7 +317,7 @@ fi_nuts_oldnuts = nuts2_pop_area2 %>%
 ## join fi employ to fi pop and area
 
 fi_employ_correct_nuts = full_join(fi_employ_newnuts1, fi_nuts_oldnuts,
-                          by=c("nuts2"))%>%
+                          by=c("nuts2")) %>%
                           select(year,nuts2,nuts2_name,unit,
                                  value,rgn_id,country,country_abb,basin, pop,
                                  pop_km2,area)
@@ -329,23 +329,23 @@ fi_employ_correct_nuts = full_join(fi_employ_newnuts1, fi_nuts_oldnuts,
 #### 5.2.3 Join Finnish data to other regional data
 ```{r Join Finnish data to other regional data, message = FALSE}
 ### bind to rest of data
-colnames(fi_employ_correct_nuts)
-colnames(employ_nuts1)
+# colnames(fi_employ_correct_nuts)
+# colnames(employ_nuts1)
 
 
-employ_nuts2 = bind_rows(employ_nuts1, fi_employ_correct_nuts)%>%
-              dplyr::rename(employ_rate =value)
+employ_nuts2 = bind_rows(employ_nuts1, fi_employ_correct_nuts) %>%
+              dplyr::rename(employ_rate = value)
 ```
 
 
 #### 5.2.4 Plot and check regional employment time series 
 ```{r  Plot and check regional employment time series }
-ggplot(employ_nuts2)+
-  geom_point(aes(year,employ_rate, colour=nuts2))+
-  geom_line(aes(year,employ_rate, colour=nuts2))+
-  facet_wrap(~country, scale="free_y")+
+ggplot(employ_nuts2) +
+  geom_point(aes(year,employ_rate, colour=nuts2)) +
+  geom_line(aes(year,employ_rate, colour=nuts2)) +
+  facet_wrap(~country, scale="free_y") +
    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                   hjust=.5, vjust=.5, face = "plain"))+
+                                   hjust=.5, vjust=.5, face = "plain")) +
   ggtitle("Time series Percent Employed NUTS2")
 
 
@@ -364,15 +364,14 @@ employ_nuts3 = employ_nuts2 %>%
 Expected missing:
 
 - 19,22, and 33 from Russia
-- 21 from Poland because not assigned
 - 30 has no coastline
 
 ```{r are bhi regions missing from regional employ and pop join, message = FALSE}
-employ_nuts3 %>% select(rgn_id)%>%distinct()%>%arrange(rgn_id)
+employ_nuts3 %>% select(rgn_id) %>%distinct() %>%arrange(rgn_id)
 
-## there are 37 regions
+## there are 38 regions
 
-## missing: 19,21, 22,30,33
+## missing: 19, 22,30,33
 
 ```
 
@@ -384,46 +383,45 @@ Use population within the 25km buffer and employment percentage to get the numbe
 
 ```{r calculate number of regionally employed, message = FALSE}
 
-
 employ_nuts4 = employ_nuts3 %>%
                mutate(employ_pop = (employ_rate/100) * pop)
-                
 
 ```
 
 #### 5.4.2 Plot the number of people employed in each BHI region by NUTS2 region
 ```{r plot number of nuts3 employed by bhi region, message = FALSE}
 
-ggplot(employ_nuts4)+
-  geom_point(aes(year,employ_pop, colour=nuts2),size=.6)+
-  facet_wrap(~rgn_id, scale="free_y")+
-  guides(colour="none")+
+ggplot(employ_nuts4) +
+  geom_point(aes(year,employ_pop, colour=nuts2),size=.6) +
+  facet_wrap(~rgn_id, scale="free_y") +
+  guides(colour="none") +
    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                   hjust=.5, vjust=.5, face = "plain"))+
+                                   hjust=.5, vjust=.5, face = "plain")) +
   ggtitle("Time series Number of People Employed in NUTS2 (25km buffer) by BHI region")
 
 ```
-
 
 
 #### 5.4.3 Calculate total employed by BHI region
 ```{r jCalculate total employed by BHI region, message = FALSE}
 
 employ_nuts5 = employ_nuts4 %>%
-               select(country,country_abb,rgn_id,year,employ_pop)%>%
-               group_by(country,country_abb,rgn_id,year)%>%
+               select(country,country_abb,rgn_id,year,employ_pop) %>%
+               group_by(country,country_abb,rgn_id,year) %>%
                summarise(employ_pop_bhi = sum(employ_pop)) %>%
                ungroup()
+
 ```
 
 #### 5.4.4 Plot Number of BHI employed
 
 ```{r plot number of BHI employed, message = FALSE}
-ggplot(employ_nuts5)+
-  geom_point(aes(year,employ_pop_bhi, colour=country),size=.6)+
-  facet_wrap(~rgn_id, scale="free_y")+
+
+ggplot(employ_nuts5) +
+  geom_point(aes(year,employ_pop_bhi, colour=country),size=.6) +
+  facet_wrap(~rgn_id, scale="free_y") +
    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                   hjust=.5, vjust=.5, face = "plain"))+
+                                   hjust=.5, vjust=.5, face = "plain")) +
   ggtitle("Time series Number of People Employed BHI region (25km buffer)")
 
 
@@ -434,14 +432,14 @@ ggplot(employ_nuts5)+
 #### 5.5.1 Prepare object for csv
 ```{r prepare regional liv object for csv, message = FALSE}
 liv_regional_employ = employ_nuts5 %>%
-                     select(rgn_id, year, employ_pop_bhi)%>%
+                     select(rgn_id, year, employ_pop_bhi) %>%
                      arrange(rgn_id, year)
 
 
 ## save also for visualize
 ### SAVE also for VISUALIZE
 liv_rgn_time_data = employ_nuts5 %>%
-                    dplyr::rename(value = employ_pop_bhi)%>%
+                    dplyr::rename(value = employ_pop_bhi) %>%
                     mutate(unit= "employed people",
                            bhi_goal="LIV",
                            data_descrip = "NUTS2 Employment rate allocated to BHI region buffer population")
@@ -489,7 +487,7 @@ eu_lookup = read.csv(file.path(dir_liv, 'EUcountrynames.csv'), sep=";")
 
 ## read in BHI look up table
 bhi_lookup = read.csv(file.path(dir_liv, "bhi_basin_country_lookup.csv"), sep=";",stringsAsFactors = FALSE) %>%
-            select(rgn_nam, BHI_ID)%>%
+            select(rgn_nam, BHI_ID) %>%
             dplyr::rename(country= rgn_nam,
                           rgn_id = BHI_ID)
 
@@ -501,7 +499,7 @@ bhi_lookup = read.csv(file.path(dir_liv, "bhi_basin_country_lookup.csv"), sep=";
 nat_employ1 = nat_employ %>%
                   select(-TIME_LABEL,-SEX,-AGE) %>%
                   dplyr::rename(year = TIME, country_abb = GEO, country = GEO_LABEL,
-                                unit=UNIT, value = Value, flag_notes = Flag.and.Footnotes)%>%
+                                unit=UNIT, value = Value, flag_notes = Flag.and.Footnotes) %>%
                   mutate(country_abb = as.character(country_abb),
                          country = as.character(country),
                          unit = as.character(unit),
@@ -511,7 +509,7 @@ head(nat_employ1)
 
 
 ### check data flags
-nat_employ1 %>% select(flag_notes)%>% distinct()
+nat_employ1 %>% select(flag_notes) %>% distinct()
 nat_employ1 %>% filter(flag_notes == "break in timeseries") # not a major concern
 
 ### remove flag_notes
@@ -529,8 +527,8 @@ nat_employ2 = nat_employ1 %>%
 nat_employ2 %>% select(country) %>% distinct()
 
 ### plot employment by country
-ggplot(nat_employ2)+
-  geom_point(aes(year, value))+
+ggplot(nat_employ2) +
+  geom_point(aes(year, value)) +
   facet_wrap(~country) +
   ggtitle("Percent employed ")
 
@@ -552,28 +550,28 @@ ru_data = ru_data %>%
                         value = Value,
                          flag_notes = Flag.and.Footnotes)
 
-ru_data %>% select(unit, dat_descrip)%>% distinct()
+ru_data %>% select(unit, dat_descrip) %>% distinct()
 
 ru_pop = ru_data %>%
-         filter(dat_descrip == "Total population national concept")%>%
+         filter(dat_descrip == "Total population national concept") %>%
          mutate(ru_pop = value *1000) %>% ##transform into total number of people from thousands of people
          select(-value)
 
 ru_employ = ru_data %>%
-         filter(dat_descrip == "Total employment domestic concept")%>%
+         filter(dat_descrip == "Total employment domestic concept") %>%
           mutate(ru_employ = value *1000) %>% ##transform into total number of people from thousands of people
          select(-value)
 
 
 ## check flags
 
-ru_pop %>% select(flag_notes)%>% distinct()
+ru_pop %>% select(flag_notes) %>% distinct()
 ru_pop %>% filter(flag_notes == 'b' | flag_notes == 'e') ## estimated in 2012, 2013, 1989 break in time seires
 
 ru_pop = ru_pop %>%
          select(-flag_notes)
 
-ru_employ %>% select(flag_notes)%>% distinct() ## none flagged
+ru_employ %>% select(flag_notes) %>% distinct() ## none flagged
 ru_employ = ru_employ %>%
             select(-flag_notes)
 
@@ -589,8 +587,8 @@ ru_employ= ru_employ %>%
 ## Plot data
 ## plop Russia employment
 ggplot(ru_employ) +
-  geom_point(aes(year, ru_employ))+
-  ylab("Number of people")+
+  geom_point(aes(year, ru_employ)) +
+  ylab("Number of people") +
   ggtitle("Number of People Employed - Russia")
 
 ```
@@ -604,14 +602,14 @@ Population on 1 January: Eurostat aims at collecting from the EU-28's Member Sta
 ```{r clean national population data, message = FALSE}
 ## EU countries
 eu_pop2 = eu_pop %>%
-          select(-TIME_LABEL)%>%
+          select(-TIME_LABEL) %>%
           dplyr::rename(year = TIME,
                         country_abb = GEO,
                         country= GEO_LABEL,
                         unit = INDIC_DE,
                         value = Value,
-                        flag_notes = Flag.and.Footnotes)%>%
-          filter(unit == "Population on 1 January - total " )%>% # select this meauresure of population size
+                        flag_notes = Flag.and.Footnotes) %>%
+          filter(unit == "Population on 1 January - total " ) %>% # select this meauresure of population size
           mutate(value = ifelse(value== ":", NA, value),
                 value= as.numeric(value))
 
@@ -620,7 +618,7 @@ eu_pop2 = eu_pop %>%
 eu_pop3 = eu_pop2 %>%
           mutate(country = ifelse(country =="Germany (until 1990 former territory of the FRG)","Germany",country),
                  country = ifelse(country =="Germany (including former GDR)","Germany",country),
-                 country_abb = ifelse(country_abb == "DE_TOT","DE",country_abb))%>%
+                 country_abb = ifelse(country_abb == "DE_TOT","DE",country_abb)) %>%
           filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country)) %>%
           filter(year >=2000)
 
@@ -634,7 +632,7 @@ dim(eu_pop3) ##129 6
 str(eu_pop3)           
 
 ## check data flags
-eu_pop3 %>% select(flag_notes)%>%distinct()
+eu_pop3 %>% select(flag_notes) %>%distinct()
 eu_pop3 %>% filter(flag_notes == "b")  ## b = break in time series -- this should be fine
 
 eu_pop3 = eu_pop3 %>%
@@ -652,7 +650,7 @@ However, because there is no regional Russian data, there is no Russian status c
 ```{r join eu nat employ percent eu_pop3, message = FALSE}
 nat_pop_2005 = eu_pop3 %>%
                filter(year==2005) %>%
-               dplyr::rename(pop_2005 = value)%>%
+               dplyr::rename(pop_2005 = value) %>%
                select(country, pop_2005)
 
 nat_employ3 = full_join(nat_employ2,nat_pop_2005,
@@ -674,7 +672,7 @@ colnames(nat_employ3)
 
 ## modify ru object
 ru_employ = ru_employ %>%
-            select(-dat_descrip)%>%
+            select(-dat_descrip) %>%
             dplyr::rename(employ_pop = ru_employ)
 
 
@@ -687,9 +685,9 @@ nat_employ4 = bind_rows(nat_employ3, ru_employ)
 #### 6.3.2 Plot joined EU and Russian employment data
 ```{r plot joined EU and russian employment data, message = FALSE}
 ggplot(nat_employ4) +
-  geom_point(aes(year, employ_pop, colour = country))+
-  geom_line(aes(year, employ_pop, colour = country))+
-  ylab("Number of people")+
+  geom_point(aes(year, employ_pop, colour = country)) +
+  geom_line(aes(year, employ_pop, colour = country)) +
+  ylab("Number of people") +
   ggtitle("Number of People Employed")
 
 ```
@@ -715,9 +713,9 @@ rgn_nat_employ =  full_join(bhi_lookup,nat_employ4,
 
 #### 6.4.2 Plot national data by BHI region
 ```{r plot national data by BHI region, message = FALSE}
-ggplot(rgn_nat_employ)+
-  geom_point(aes(year,employ_pop,colour=country),size=.7)+
-  facet_wrap(~rgn_id, scales="free_y")+
+ggplot(rgn_nat_employ) +
+  geom_point(aes(year,employ_pop,colour=country),size=.7) +
+  facet_wrap(~rgn_id, scales="free_y") +
   ggtitle("Number People Employed Nationally for each BHI region")
 
 ```
@@ -729,14 +727,14 @@ ggplot(rgn_nat_employ)+
 ```{r prepare national object for layers, message = FALSE}
 
 liv_national_employ = rgn_nat_employ %>%
-                     select(rgn_id, year, employ_pop)%>%
+                     select(rgn_id, year, employ_pop) %>%
                      arrange(rgn_id, year)
 
 
 
 ### SAVE also for VISUALIZE
 liv_nat_time_data = rgn_nat_employ %>%
-                    select(rgn_id,year,value = employ_pop)%>%
+                    select(rgn_id,year,value = employ_pop) %>%
                     mutate(unit= "employed people",
                            bhi_goal="ECO",
                            data_descrip = "National number of people employed (2005 pop size)")
@@ -783,11 +781,11 @@ Status and trend are calculated in functions.r but code is tested and explored h
   liv_region = liv_regional_employ %>%
     dplyr::rename(employ = employ_pop_bhi) %>%
     filter(!is.na(employ)) %>%
-    group_by(rgn_id)%>%
+    group_by(rgn_id) %>%
     mutate(year_ref = lag(year, lag_win, order_by=year),
            ref_val = lag(employ, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year)%>%
-    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    arrange(year) %>%
+    filter(year>= max(year)- lag_win) %>% #select only the previous 5 years from the max year
     ungroup() %>%
     mutate(rgn_value = employ/ref_val) %>% #calculate rgn_value per year, numerator of score function
     select(rgn_id,year,rgn_value) %>%
@@ -800,11 +798,11 @@ dim(liv_region) ##222 3
   liv_country =   liv_national_employ %>%
     dplyr::rename(employ = employ_pop) %>%
     filter(!is.na(employ)) %>%
-    group_by(rgn_id)%>%
+    group_by(rgn_id) %>%
     mutate(year_ref = lag(year, lag_win, order_by=year),
            ref_val = lag(employ, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year)%>%
-    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    arrange(year) %>%
+    filter(year>= max(year)- lag_win) %>% #select only the previous 5 years from the max year
     ungroup() %>%
     mutate(cntry_value = employ/ref_val) %>% #calculate rgn_value per year, numerator of score function
     select(rgn_id,year,cntry_value) %>%
@@ -818,8 +816,8 @@ dim(liv_region) ##222 3
 #### 7.3.2 Calculate status time series
 ```{r calc liv status time series, message = FALSE}
 ## calculate status
-  liv_status_calc = inner_join(liv_region,liv_country, by=c("rgn_id","year"))%>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
-               mutate(Xliv = rgn_value/cntry_value)%>% #calculate status
+  liv_status_calc = inner_join(liv_region,liv_country, by=c("rgn_id","year")) %>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
+               mutate(Xliv = rgn_value/cntry_value) %>% #calculate status
                mutate(status = pmin(1, Xliv)) # status calculated cannot exceed 1
 
   head(liv_status_calc)
@@ -830,12 +828,12 @@ dim(liv_region) ##222 3
 #### 7.3.3 Extract most recent year status
 ```{r extract liv most recent year status, message = FALSE}
 liv_status = liv_status_calc%>%
-              group_by(rgn_id)%>%
-              filter(year== max(year))%>%       #select status as most recent year
-              ungroup()%>%
-              full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
+              group_by(rgn_id) %>%
+              filter(year== max(year)) %>%       #select status as most recent year
+              ungroup() %>%
+              full_join(bhi_rgn, .,by="rgn_id") %>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
               mutate(score=round(status*100),   #scale to 0 to 100
-                     dimension = 'status')%>%
+                     dimension = 'status') %>%
               select(region_id = rgn_id,score, dimension) #%>%
               ##mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
                                     ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
@@ -845,11 +843,11 @@ head(liv_status)
 
 ## what is max year
 max_year_status= liv_status_calc%>%
-              group_by(rgn_id)%>%
-              filter(year== max(year))%>%       #select status as most recent year
-              ungroup()%>%
+              group_by(rgn_id) %>%
+              filter(year== max(year)) %>%       #select status as most recent year
+              ungroup() %>%
               select(rgn_id,year)
-max_year_status %>% select(year)%>% distinct() ## all final years are 2014
+max_year_status %>% select(year) %>% distinct() ## all final years are 2014
 ```
 
 
@@ -873,35 +871,35 @@ There are no values for Russia because we do not have regional GDP data.
 Status values for the most recent year (2014 for all regions) are transformed to value between 0 and 100
 ```{r plot liv status, message = FALSE}
 ## plot liv status time series
-ggplot(liv_status_calc)+
-  geom_point(aes(year,status))+
-  facet_wrap(~rgn_id)+
-  ylim(0,1)+
-  ylab("Status")+
+ggplot(liv_status_calc) +
+  geom_point(aes(year,status)) +
+  facet_wrap(~rgn_id) +
+  ylim(0,1) +
+  ylab("Status") +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain"),
-        axis.text.y = element_text(size=6))+
+        axis.text.y = element_text(size=6)) +
   ggtitle("LIV status time series")
 
 ## plot liv status time series, less range on y-axis
-ggplot(liv_status_calc)+
-  geom_point(aes(year,status))+
-  facet_wrap(~rgn_id)+
-  ylim(.8,1)+
-  ylab("Status")+
+ggplot(liv_status_calc) +
+  geom_point(aes(year,status)) +
+  facet_wrap(~rgn_id) +
+  ylim(.8,1) +
+  ylab("Status") +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain"),
-        axis.text.y = element_text(size=6))+
+        axis.text.y = element_text(size=6)) +
   ggtitle("LIV status time series - different y-axis range")
 
 
 ## plot final year (2014) status
 
-ggplot(liv_status)+
-  geom_point(aes(region_id,score), size=2)+
-  ylim(0,100)+
-  ylab("Status score")+
-  xlab("BHI region")+
+ggplot(liv_status) +
+  geom_point(aes(region_id,score), size=2) +
+  ylim(0,100) +
+  ylab("Status score") +
+  xlab("BHI region") +
   ggtitle("LIV status score in 2014")
 
 ```
@@ -915,16 +913,16 @@ ggplot(liv_status)+
   ## calculate trend for 5 years (5 data points)
   ## years are filtered in liv_region and liv_country, so not filtered for here
       liv_trend = liv_status_calc %>%
-        filter(year >= max(year - trend_yr))%>%                #select five years of data for trend
+        filter(year >= max(year - trend_yr)) %>%                #select five years of data for trend
         filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
         group_by(rgn_id) %>%
-        mutate(regr_length = n())%>%                            #get the number of status years available for greggion
-        filter(regr_length == (trend_yr + 1))%>%                   #only do the regression for regions that have 5 data points
+        mutate(regr_length = n()) %>%                            #get the number of status years available for greggion
+        filter(regr_length == (trend_yr + 1)) %>%                   #only do the regression for regions that have 5 data points
           do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
             summarize(rgn_id = rgn_id,
-                      score = coef(mdl)['year'] * lag_win)%>%
+                      score = coef(mdl)['year'] * lag_win) %>%
         ungroup() %>%
-        full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
+        full_join(bhi_rgn, .,by="rgn_id") %>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
         mutate(score = round(score, 2),
                dimension = "trend") %>%
         select(region_id = rgn_id, dimension, score) %>%
@@ -948,12 +946,12 @@ liv_trend %>% filter(is.na(score)) ## 2,3,6,7,9,12,15,19,21,22,30,33
 
 ```{r plot liv trend, message = FALSE}
 
-ggplot(liv_trend)+
-  geom_point(aes(region_id,score), size=2)+
-  geom_hline(yintercept = 0)+
-  ylim(-1,1)+
-  ylab("Status score")+
-  xlab("BHI region")+
+ggplot(liv_trend) +
+  geom_point(aes(region_id,score), size=2) +
+  geom_hline(yintercept = 0) +
+  ylim(-1,1) +
+  ylab("Status score") +
+  xlab("BHI region") +
   ggtitle("LIV 5 yr trend score")
 
 ```
@@ -965,10 +963,10 @@ ggplot(liv_trend)+
 
 plot_liv = bind_rows(liv_status,liv_trend)
 
-ggplot(plot_liv)+
-  geom_point(aes(region_id,score),size=2.5)+
-  facet_wrap(~dimension, scales = "free_y")+
-  ylab("Score")+
+ggplot(plot_liv) +
+  geom_point(aes(region_id,score),size=2.5) +
+  facet_wrap(~dimension, scales = "free_y") +
+  ylab("Score") +
   ggtitle("LIV Status and Trend")
 
 
