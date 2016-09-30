@@ -1,5 +1,5 @@
 ---
-title: "contaminants_prep"
+title: "Contaminants - Clean Water Subgoal data prep"
 output:
   github_document:
     toc: true
@@ -8,6 +8,29 @@ params:
     datasource: csv
 ---
 
+The following document detailed how this subgoal was prepared. However, experts are discussing whether to exclude or modify this goal as it is difficult to represent with just a few indicators. As for now, we will leave Contaminants scores as NA's. 
+
+```{r NA place holder, eval = FALSE}
+
+# status
+status = data.frame(region_id = full_seq(1:42, 1), 
+                    goal = "CON",
+                    score = NA,
+                    dimension = "status")
+
+write_csv(status, file.path(dir_layers, 'cw_con_status_placeholder_NA.csv'))
+
+# trend
+trend = data.frame(region_id = full_seq(1:42, 1), 
+                   goal = "CON",
+                   score = NA,
+                   dimension = "trend")
+
+write_csv(trend, file.path(dir_layers, 'cw_con_trend_placeholder_NA.csv'))
+
+
+
+```
 
 # Contaminant Data Prep
 

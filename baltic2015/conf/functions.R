@@ -1139,6 +1139,18 @@ TRA = function(layers){
 } ## END TRA function
 
 CON = function(layers){
+  ## UPDATE 30Sep2016 - Ning Jiang -NCEAS ##
+  ## As experts discuss whether to exclude or modify this goal, we will use NA placeholders for this subgoal
+  ## Original data prep and goal function are preserved but commented out for now
+
+  status = layers$data[['cw_con_status_NA']]
+  trend = layers$data[['cw_con_trend_NA']]
+
+  scores = rbind(status, trend) %>%
+    dplyr::select(-layer)
+
+  return(scores)
+
   #####----------------------######
   ## Contaminants
   #####----------------------######
@@ -1152,88 +1164,88 @@ CON = function(layers){
 
   ## Function to deal with cases where want to take the arithmetic mean of a vector of NA values, will return NA instead of NaN
 
-  mean_NAall = function(x){
-
-    if(sum(is.na(x))==length(x)){mean_val = NA
-    }else{mean_val =mean(x,na.rm=TRUE) }
-    return(mean_val)
-  }
-
-
-  ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
-
-  ## 3 indicators will be averaged (arithmetic mean) for status and trend (if trend for more than ICES6)
-
-  ## ICES6
-
-  cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
-    mutate(dimension = as.character(dimension))
-
-  cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
-    mutate(dimension = as.character(dimension))
-
-  ##Join ICES6
-  cw_con_ices6 = cw_con_ices6_status %>%
-    rbind(cw_con_ices6_trend) %>%
-    dplyr::rename(region_id = rgn_id)%>%
-    mutate(indicator = "ices6")
-
-  ##Dioxin
-  cw_con_dioxin_status   = SelectLayersData(layers, layers='cw_con_dioxin_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-    mutate(dimension = as.character(dimension))
-
-  cw_con_dioxin_trend  = SelectLayersData(layers, layers='cw_con_dioxin_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-    mutate(dimension = as.character(dimension))
-
-  ##Join dioxin
-  cw_con_dioxin = full_join(cw_con_dioxin_status,cw_con_dioxin_trend, by = c('rgn_id','dimension','score')) %>%
-    dplyr::rename(region_id = rgn_id)%>%
-    mutate(indicator = "dioxin")
-
-  ##PFOS
-  cw_con_pfos_status   = SelectLayersData(layers, layers='cw_con_pfos_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-    mutate(dimension = as.character(dimension))
-
-  cw_con_pfos_trend  = SelectLayersData(layers, layers='cw_con_pfos_trend') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
-    mutate(dimension = as.character(dimension))
-
-  ##Join pfos
-  cw_con_pfos = full_join(cw_con_pfos_status,cw_con_pfos_trend, by = c('rgn_id','dimension','score')) %>%
-    dplyr::rename(region_id = rgn_id)%>%
-    mutate(indicator = "pfos")
-
-
-
-  ##Join all indicators
-  cw_con = bind_rows(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
-
-
-  ## Average CON indicators for Status and Trend
-  cw_con = cw_con %>%
-    select(-indicator) %>%
-    group_by(region_id,dimension)%>%
-    summarise(score = mean_NAall(score))%>% ## If there is an NA, skip over now, if all are NA, NA not NaN returned
-    ungroup() %>%
-    mutate(subcom = 'CON')%>%
-    arrange(dimension,region_id)
-
-  ## create scores variable
-  scores = cw_con %>%
-    mutate(goal = 'CON') %>%
-    dplyr::select(goal,
-                  dimension,
-                  region_id,
-                  score) %>%
-    arrange(dimension,region_id)
-
-
-  return(scores)
+  # mean_NAall = function(x){
+  #
+  #   if(sum(is.na(x))==length(x)){mean_val = NA
+  #   }else{mean_val =mean(x,na.rm=TRUE) }
+  #   return(mean_val)
+  # }
+  #
+  #
+  # ## 3 Indicators for contaminants: ICES6, Dioxin, PFOS
+  #
+  # ## 3 indicators will be averaged (arithmetic mean) for status and trend (if trend for more than ICES6)
+  #
+  # ## ICES6
+  #
+  # cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
+  #   dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
+  #   mutate(dimension = as.character(dimension))
+  #
+  # cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
+  #   dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
+  #   mutate(dimension = as.character(dimension))
+  #
+  # ##Join ICES6
+  # cw_con_ices6 = cw_con_ices6_status %>%
+  #   rbind(cw_con_ices6_trend) %>%
+  #   dplyr::rename(region_id = rgn_id)%>%
+  #   mutate(indicator = "ices6")
+  #
+  # ##Dioxin
+  # cw_con_dioxin_status   = SelectLayersData(layers, layers='cw_con_dioxin_status') %>%
+  #   dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+  #   mutate(dimension = as.character(dimension))
+  #
+  # cw_con_dioxin_trend  = SelectLayersData(layers, layers='cw_con_dioxin_trend') %>%
+  #   dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+  #   mutate(dimension = as.character(dimension))
+  #
+  # ##Join dioxin
+  # cw_con_dioxin = full_join(cw_con_dioxin_status,cw_con_dioxin_trend, by = c('rgn_id','dimension','score')) %>%
+  #   dplyr::rename(region_id = rgn_id)%>%
+  #   mutate(indicator = "dioxin")
+  #
+  # ##PFOS
+  # cw_con_pfos_status   = SelectLayersData(layers, layers='cw_con_pfos_status') %>%
+  #   dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+  #   mutate(dimension = as.character(dimension))
+  #
+  # cw_con_pfos_trend  = SelectLayersData(layers, layers='cw_con_pfos_trend') %>%
+  #   dplyr::select(rgn_id = id_num, dimension=category, score = val_num)%>%
+  #   mutate(dimension = as.character(dimension))
+  #
+  # ##Join pfos
+  # cw_con_pfos = full_join(cw_con_pfos_status,cw_con_pfos_trend, by = c('rgn_id','dimension','score')) %>%
+  #   dplyr::rename(region_id = rgn_id)%>%
+  #   mutate(indicator = "pfos")
+  #
+  #
+  #
+  # ##Join all indicators
+  # cw_con = bind_rows(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
+  #
+  #
+  # ## Average CON indicators for Status and Trend
+  # cw_con = cw_con %>%
+  #   select(-indicator) %>%
+  #   group_by(region_id,dimension)%>%
+  #   summarise(score = mean_NAall(score))%>% ## If there is an NA, skip over now, if all are NA, NA not NaN returned
+  #   ungroup() %>%
+  #   mutate(subcom = 'CON')%>%
+  #   arrange(dimension,region_id)
+  #
+  # ## create scores variable
+  # scores = cw_con %>%
+  #   mutate(goal = 'CON') %>%
+  #   dplyr::select(goal,
+  #                 dimension,
+  #                 region_id,
+  #                 score) %>%
+  #   arrange(dimension,region_id)
+  #
+  #
+  # return(scores)
 
 }  ## END CON Function
 
