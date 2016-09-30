@@ -12,6 +12,8 @@ params:
 
 ## 1. Background
 
+Economies captures the economic value associated with marine industries using revenue from marine sectors. Due to a lack data from specific sectors, here the goal is measured by per capita GDP of each region, relative to the national per capita GDP. 
+
 ## 2. Data
 
 ### 2.1 Regional Data
@@ -114,6 +116,16 @@ Data can be in nominal GDP because is a ratio value (adjusting by a deflator wou
 
 Data are in per capita GDP in millions of euro, using only population size from 2005 for all years.  
 
+
+### 3.1.2 Status Alternative
+
+Calculate instead the relative importance or contribution of Coastal GDP per capita towards the Country's GDP per capita. The higher the proportion, the higher the status. 
+
+Xeco = (GDP_per_cap_Coastal / GDP_per_cap_Country)_c / (GDP_per_cap_Coastal / GDP_per_cap_Country)_r
+
+r = (the highest ratio of the past five years) * 110%
+
+
 ### 3.2 Trend
 Trend will be calculated based on the last 5 status years by fitting a linear model.
 
@@ -180,31 +192,33 @@ create_readme(dir_eco, 'eco_prep.rmd')
 This should be checked and updated when data are updated in database. Data should be extracted from database by ´eco_prep_database_call.r´ and saved to folder ´eco_data_database´.
 
 ```{r read in regional gdp}
-regional_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nuts3_gdp.csv'))
+
+ regional_gdp_raw = read_csv(file.path(dir_eco, 'eco_data_database/nama_10r_3gdp_1_Data_download05_12_2016_joined.csv')) 
 
 # dim(regional_gdp) #21375    18
 
 # str(regional_gdp)
+
 ```
 
 #### 5.1.2 clean data object
 
 ```{r clean regional gdp object}
-unique(regional_gdp$UNIT) ## Million euro 
 
-regional_gdp = regional_gdp %>%
-              select(-PopUrb,-PopRur,-PopUrb_density_in_buffer_per_km2,-PopRur_density_in_buffer_per_km2,-HELCOM_ID) %>% ## remove data not needed
-              dplyr::rename(year = TIME, nuts3 = GEO, nuts3_name = GEO_LABEL,
-                            unit = UNIT, value = Value, flag_notes = Flag_and_Footnotes,
-                            rgn_id = BHI_ID,pop = PopTot,pop_km2 = PopTot_density_in_buffer_per_km2,
-                            country_abb = CNTR_CODE,country=rgn_nam, basin= Subbasin,
-                            area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)%>%
-              mutate(nuts3 = as.character(nuts3), 
-                     nuts3_name = as.character(nuts3_name),
-                     unit = as.character(unit),
-                     country_abb=as.character(country_abb),
-                     country = as.character(country),
-                     basin = as.character(basin))
+regional_gdp = regional_gdp_raw %>%
+  dplyr::select(-PopUrb, -PopRur, -PopUrb_density_in_NUTS2_buffer_per_km2,
+                -PopRur_density_in_NUTS2_buffer_per_km2, -HELCOM_ID) %>%
+  dplyr::rename(year = TIME, nuts3 = GEO, nuts3_name = GEO_LABEL,
+                unit = UNIT, value = Value, flag_notes = Flag_and_Footnotes,
+                rgn_id = BHI_ID, pop = PopTot, pop_km2 = PopTot_density_in_NUTS2_buffer_per_km2,
+                country_abb = CNTR_CODE, country=rgn_nam, basin= Subbasin,
+                area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2) %>%
+  mutate(country_abb = substr(nuts3, 1, 2),
+         rgn_id = as.integer(rgn_id),
+         pop = as.numeric(pop), 
+         pop_km2 = as.numeric(pop_km2),
+         area_nuts3_in_bhi_buffer = as.numeric(area_nuts3_in_bhi_buffer)) %>% 
+  mutate(value = str_replace_all(value, "NULL", "")) 
 
 # str(regional_gdp)
 
@@ -213,17 +227,18 @@ regional_gdp = regional_gdp %>%
 #### 5.1.3 Find NUTS3 regions assigned to incorrect BHI region
 Due to small differences in the shapefiles, some NUTS3 regions assigned to a BHI region belong to a different country.  
 
-```{r}
+```{r find NUT3, eval = FALSE}
 
 ## find mis-assigned NUTS and BHI regions
 mis_assigned = regional_gdp %>% 
-  filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia", country)) %>% ## include Russia because some mis-assigned
+  # filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden|Russia", country)) %>% ## include Russia because some mis-assigned
   select(country,country_abb, rgn_id, nuts3) %>%
   distinct() %>% 
   arrange(rgn_id,country) %>%
   dplyr::rename(BHI_ID = rgn_id,
                 country_bhi = country,
                 country_abb_nuts = country_abb)
+
 #write to csv
 #write.csv(mis_assigned, file.path(dir_eco,"mis_assigned_bhi_nuts3.csv"), row.names = FALSE)
 ```
@@ -236,7 +251,7 @@ The file saved above "mis_assigned_bhi_nuts3.csv" was manually corrected and sav
 
 ## upload corrected files - the file exported in 5.1.3 was reviewed and corrected manually, which excluded region 21
 correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";",       stringsAsFactors = FALSE) 
-  
+
 ## region 21 was misassigned 17 & 18 but wasn't sure of this until Marc provided updated NUTS/BHI shapefiles in Sep 2016. Attaching this new information to correct_assign.
 nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv')) %>%
  filter(nuts3 == 'PL634')
@@ -246,19 +261,23 @@ nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rg
 #   Poland     18 PL634          PL
 ## in original data, PL634 was assigned BHI_ID of 17 & 18 incorrectly
 
+## udpate correct_assign with the correct Poland BHI_ID - swtich 17 to 21
 correct_assign_PL = correct_assign %>% 
-  mutate(correct_BHI_ID = ifelse(nuts3 == 'PL634' & BHI_ID == '17', '21', correct_BHI_ID))
+  mutate(BHI_ID = ifelse(nuts3 == 'PL634' & BHI_ID == '17', 21, BHI_ID),
+         correct_BHI_ID = ifelse(nuts3 == 'PL634' & BHI_ID == '21', 21, correct_BHI_ID))
 
-regional_gdp1 = full_join(regional_gdp, correct_assign_PL,
-                          by=c("country"="country_bhi", "country_abb"="country_abb_nuts",
-                               "rgn_id"="BHI_ID", "nuts3"))
+regional_gdp1 = left_join(regional_gdp, 
+                          correct_assign_PL,
+                          by=c("country"="country_bhi", 
+                               "country_abb"="country_abb_nuts",
+                               "rgn_id"="BHI_ID", "nuts3") )
 
 ## replace the country and rgn_id with the "corrected column"
 regional_gdp1 = regional_gdp1 %>%
-                select(-country,-rgn_id,-MISASSIGNED,-BHI_ID_manual,-country_manual)%>%
+                dplyr::select(-country, -rgn_id, -MISASSIGNED, -BHI_ID_manual, -country_manual) %>%
                 dplyr::rename(rgn_id = correct_BHI_ID,
-                              country= correct_country) %>%
-                arrange(nuts3)
+                              country = correct_country) %>%
+                arrange(nuts3) 
 
 ```
 
@@ -287,20 +306,20 @@ gdp_new = gdp_new %>%
 old_pop = old_pop %>%
           select(BHI_ID, NUTS_ID, PopTot,
                  PopTot_density_in_buffer_per_km2,CNTR_CODE,rgn_nam,
-                 Subbasin,NUTS3_area_in_BHI_buffer_km2)%>%
+                 Subbasin,NUTS3_area_in_BHI_buffer_km2) %>%
           dplyr::rename(rgn_id = BHI_ID, nuts3 = NUTS_ID,
                         pop = PopTot, 
                         pop_km2 = PopTot_density_in_buffer_per_km2,
                         country_abb = CNTR_CODE,country=rgn_nam, basin= Subbasin,
-                        area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2)%>%
+                        area_nuts3_in_bhi_buffer= NUTS3_area_in_BHI_buffer_km2) %>%
           mutate(rgn_id = ifelse(rgn_id == 41 & nuts3 == "FI1A3",42,rgn_id),
-                 country = ifelse(country == "Sweden" & nuts3 == "FI1A3", "Finland", country ))%>% ## FI1A3 (old name) miss-assigned to Sweden's BHI 41, fix rgn_id and country
-          group_by(rgn_id,nuts3,country_abb,country,basin)%>%
+                 country = ifelse(country == "Sweden" & nuts3 == "FI1A3", "Finland", country )) %>% ## FI1A3 (old name) miss-assigned to Sweden's BHI 41, fix rgn_id and country
+          group_by(rgn_id,nuts3,country_abb,country,basin) %>%
           summarise(pop = sum(pop),
                     pop_km2 = sum(pop_km2),
                     area_nuts3_in_bhi_buffer = sum(area_nuts3_in_bhi_buffer)) %>%  ## sum because multiple entries for same region due to mis-label
           ungroup()
-                  
+
 
 old_pop = old_pop %>%
           mutate(new_nuts3 = ifelse(rgn_id == 32 & nuts3 == "FI181","FI1B1",
@@ -309,12 +328,12 @@ old_pop = old_pop %>%
                              ifelse(rgn_id == 32 & nuts3 == "FI186","FI1C4",
                              ifelse(rgn_id == 42 & nuts3 == "FI1A1","FI1D5",
                              ifelse(rgn_id == 42 & nuts3 == "FI1A2","FI1D6",
-                             ifelse(rgn_id == 42 & nuts3 == "FI1A3","FI1D7",""))))))))%>%
+                             ifelse(rgn_id == 42 & nuts3 == "FI1A3","FI1D7","")))))))) %>%
           mutate(new_pop = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop),pop),
                  new_pop_km2 = ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(pop_km2),pop_km2),
-                 new_area_in_buffer =ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(area_nuts3_in_bhi_buffer),area_nuts3_in_bhi_buffer) )%>% ## need to make a single object associated with 32 and FI1B1 so GDP not assigned in duplicate
-          select(-nuts3,-pop,-pop_km2,-area_nuts3_in_bhi_buffer)%>%
-          distinct()%>%
+                 new_area_in_buffer =ifelse(rgn_id == 32 & new_nuts3 == "FI1B1", sum(area_nuts3_in_bhi_buffer),area_nuts3_in_bhi_buffer) ) %>% ## need to make a single object associated with 32 and FI1B1 so GDP not assigned in duplicate
+          select(-nuts3,-pop,-pop_km2,-area_nuts3_in_bhi_buffer) %>%
+          distinct() %>%
           dplyr::rename(pop = new_pop,
                         pop_km2 = new_pop_km2,
                         area_nuts3_in_bhi_buffer= new_area_in_buffer)
@@ -323,51 +342,45 @@ old_pop = old_pop %>%
 updated_fi = full_join(old_pop,gdp_new,
                        by=c("new_nuts3"="nuts3"))
 
-head(updated_fi)
-str(updated_fi)
+# head(updated_fi)
+# str(updated_fi)
 
 updated_fi = updated_fi %>%
-             dplyr::rename(nuts3 = new_nuts3)%>%
-             select(year,nuts3, nuts3_name,unit, value,flag_notes,
+             dplyr::rename(nuts3 = new_nuts3) %>%
+             dplyr::select(year,nuts3, nuts3_name,unit, value,flag_notes,
                     pop,pop_km2,country_abb , basin ,area_nuts3_in_bhi_buffer,
                     rgn_id,country)
 ##check colnames order matches with regional_gdp1
 colnames(regional_gdp1);colnames(updated_fi)
-
-
-## remove FI NUTS that had no associated population and replace with the updated
-regional_gdp1 = regional_gdp1 %>%
-                filter(!nuts3 %in% new_fi_nuts3) %>%
-                bind_rows(.,updated_fi)
 ```
 
 
 
 #### 5.1.6 check NA in final years
-```{r check NA in 2014}
-##check 2014 - is max year?
+```{r check NA in 2014, eval = FALSE}
+##check 2014 - is max year? 
 regional_gdp1 %>% 
-  select(country_abb,year,value)%>%
-  group_by(country_abb)%>%
-  summarise(max_year = max(year))%>%
-  ungroup()%>%
+  select(country_abb,year,value) %>%
+  group_by(country_abb) %>%
+  summarise(max_year = max(year)) %>%
+  ungroup() %>%
   left_join(.,select(regional_gdp1, country_abb,year,value,nuts3,rgn_id),
-            by=c("country_abb","max_year"="year"))%>%
-  filter(!is.na(rgn_id))%>%
-  print(n=100)%>%
-  filter(!is.na(value))%>%
-  select(country_abb)%>%
+            by=c("country_abb","max_year"="year")) %>%
+  filter(!is.na(rgn_id)) %>%
+  print(n=100) %>%
+  filter(!is.na(value)) %>%
+  select(country_abb) %>%
   distinct()
 
 ## only Estonia and Denmark provide 2014 data
 
 ## check 2013
 regional_gdp1 %>% 
-  select(country_abb,year,value,rgn_id,nuts3)%>%
+  select(country_abb,year,value,rgn_id,nuts3) %>%
   filter(year == 2013) %>%
-  filter(!is.na(rgn_id))%>%
-  filter(!is.na(value))%>%
-  select(country_abb)%>%
+  filter(!is.na(rgn_id)) %>%
+  filter(!is.na(value)) %>%
+  select(country_abb) %>%
   distinct()
 ## all countries have 2013 data
 
@@ -387,9 +400,12 @@ Only NUTS3 regions associated with a BHI ID have a country name, so this effecti
 regional_gdp2 = regional_gdp1 %>%
                filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country))
                
-str(regional_gdp2)
-unique(regional_gdp2$country)
-unique(regional_gdp2$country_abb)
+# str(regional_gdp2)
+# unique(regional_gdp2$country)
+# [1] "Germany"   "Denmark"   "Estonia"   "Finland"   "Lithuania" "Latvia"    "Poland"    "Sweden"   
+# 
+# unique(regional_gdp2$country_abb)
+# [1] "DE" "DK" "EE" "FI" "LT" "LV" "PL" "SE"
 
 
 ```
@@ -404,28 +420,31 @@ regional_gdp2 = regional_gdp2 %>%
 
 
 #### 5.2.2 Plot regional GDP, divide by country
+
 Check to make sure each BHI region is only associated with NUTS regions from a single country
 ```{r plot regional gdp raw}
+
 ggplot(regional_gdp2) +
-  geom_point(aes(year, value, col=nuts3))+
-  facet_wrap(~country)+
-  ylab("GDP (million euro)")+
+  geom_point(aes(year, value, col=nuts3)) +
+  facet_wrap(~country) +
+  ylab("GDP (million euro)") +
   ggtitle("regional GDP by countries")
 
 
 ggplot(regional_gdp2) +
-  geom_point(aes(year, value, col=country),size=.7)+
-  facet_wrap(~rgn_id, scales="free_y")+
-  ylab("GDP (million euro)")+
+  geom_point(aes(year, value, col=country),size=.7) +
+  facet_wrap(~rgn_id, scales="free_y") +
+  ylab("GDP (million euro)") +
   ggtitle("NUTS3 GDP by BHI region")
 
 
 ```
 
 #### 5.2.3 Check data flags
-```{r check regional data data flags}
 
-regional_gdp2 %>% filter(!is.na(flag_notes))
+```{r check regional data data flags, eval = FALSE}
+
+# regional_gdp2 %>% filter(!is.na(flag_notes))
 ## no data flags
 
 regional_gdp2 = regional_gdp2 %>%
@@ -442,7 +461,7 @@ Currently the population of the entire NUTS3 region is not extracted so the tota
 #### 5.3.1 NUTS3 - BHI region lookup
 ```{r nuts3 and bhi region lookup}
 nuts3_bhi_lookup = regional_gdp2 %>%
-                   select(rgn_id,nuts3)%>%
+                   select(rgn_id,nuts3) %>%
                    distinct()
 
 ```
@@ -453,12 +472,14 @@ Sum across BHI regions associated with a NUTS3. This is the same for all years a
 
 ```{r NUTS3 population in the buff }
 
-nuts3_buffer_pop= regional_gdp2 %>%
-                  select(nuts3,pop,area_nuts3_in_bhi_buffer)%>%
-                  distinct()%>% ## because duplicated for each year
-                  group_by(nuts3)%>%
+nuts3_buffer_pop = regional_gdp2 %>%
+                  select(nuts3, pop, area_nuts3_in_bhi_buffer) %>%
+                  distinct() %>% ## because duplicated for each year
+                  # mutate(pop = as.numeric(pop), 
+                  #        area_nuts3_in_bhi_buffer = as.numeric(area_nuts3_in_bhi_buffer)) %>% 
+                  group_by(nuts3) %>%
                   summarise(pop_nuts3 = sum(pop),
-                            area_nuts3 = sum(area_nuts3_in_bhi_buffer))%>%
+                            area_nuts3 = sum(area_nuts3_in_bhi_buffer)) %>%
                   ungroup()
 
 
@@ -479,26 +500,26 @@ nuts3_bhi_join  = nuts3_buffer_pop %>%
 ```{r calculation GDP fraction based on population fraction}
 nuts3_bhi_join2 = nuts3_bhi_join %>%
                   mutate(bhi_pop_prop = pop / pop_nuts3,
-                         bhi_gdp_prop = value * bhi_pop_prop) %>%
+                         bhi_gdp_prop = as.numeric(value) * bhi_pop_prop) %>%
                   arrange(rgn_id, year)
 
-
-nuts3_bhi_join2 %>% select(nuts3, country,pop_nuts3, pop,bhi_pop_prop)%>%distinct()%>%arrange(nuts3)
+nuts3_bhi_join2 %>% select(nuts3, country,pop_nuts3, pop,bhi_pop_prop) %>% distinct() %>% arrange(nuts3)
   
 ```
 
 #### 5.3.5 Plot the population fraction and GDP fraction from each NUTS3 associated with each BHI region
 ```{r plot pop and gdp fraction in each bhi}
-ggplot(nuts3_bhi_join2)+
-  geom_point(aes(rgn_id,bhi_pop_prop,colour=nuts3))+
-  facet_wrap(~country)+
-  ylim(0,1)+
+
+ggplot(nuts3_bhi_join2) +
+  geom_point(aes(rgn_id,bhi_pop_prop,colour=nuts3)) +
+  facet_wrap(~country) +
+  ylim(0,1) +
   ggtitle("Population Fraction of NUTS3 regions for each BHI region")
   
-ggplot(nuts3_bhi_join2)+
-  geom_point(aes(year,bhi_gdp_prop,colour=nuts3),size=.8)+
-  facet_wrap(~rgn_id, scales="free_y")+
-  guides(colour="none")+
+ggplot(nuts3_bhi_join2) +
+  geom_point(aes(year,bhi_gdp_prop,colour=nuts3),size=.8) +
+  facet_wrap(~rgn_id, scales="free_y") +
+  guides(colour="none") +
   ggtitle("NUTS3 GDP allocated to each BHI region based on population")
   
 
@@ -508,35 +529,39 @@ ggplot(nuts3_bhi_join2)+
 ```{r calculate bhi region pop and gdp}
 
 bhi_gdp = nuts3_bhi_join2 %>%
-          group_by(rgn_id,year)%>%
+          mutate(pop = as.numeric(pop), 
+                 bhi_gdp_prop = as.numeric(bhi_gdp_prop)) %>% 
+          group_by(rgn_id, year) %>%
           summarise(bhi_pop = sum(pop),
-                    bhi_gdp = sum(bhi_gdp_prop))%>%
-          ungroup()%>%
+                    bhi_gdp = sum(bhi_gdp_prop)) %>%
+          ungroup() %>%
           mutate(bhi_gdp_per_capita = bhi_gdp/bhi_pop)
 
-str(bhi_gdp)
+# str(bhi_gdp)
 
 ```
 
 #### 5.3.7 Plot Total GDP per BHI region
 ```{r plot total gdp per BHI region}
-ggplot(bhi_gdp)+
-  geom_point(aes(year,bhi_gdp),size=1)+
-  facet_wrap(~rgn_id, scales="free_y")+
-  ylab("GDP (million euro)")+
+
+ggplot(bhi_gdp) +
+  geom_point(aes(year,bhi_gdp),size=1) +
+  facet_wrap(~rgn_id, scales="free_y") +
+  ylab("GDP (million euro)") +
   ggtitle("BHI region GDP")
 
 ```
 
 #### 5.3.7 Plot GDP per capita (population in the 25km buffer) by BHI region
 ```{r plot per capita gdp per BHI region}
-ggplot(bhi_gdp)+
-  geom_point(aes(year,bhi_gdp_per_capita),size=1)+
-  facet_wrap(~rgn_id, scales="free_y")+
-  ylab("GDP per capita (million euro)")+
+
+ggplot(bhi_gdp) +
+  geom_point(aes(year,bhi_gdp_per_capita),size=1) +
+  facet_wrap(~rgn_id, scales="free_y") +
+  ylab("GDP per capita (million euro)") +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain"),
-        axis.text.y = element_text(size=6))+
+        axis.text.y = element_text(size=6)) +
   ggtitle("BHI region per capita GDP")
 
 ```
@@ -546,23 +571,27 @@ Will export per capita GDP. This value only changes because of changes in GDP si
 ### 5.4.1 Prepare object for csv
 ```{r prepare regional bhi gdp for layers}
 bhi_gdp_layer = bhi_gdp %>%
-                select(rgn_id,year,bhi_gdp_per_capita)
+                select(rgn_id, 
+                       year,
+                       bhi_gdp_per_capita)
 
 
 ```
-### 5.4.2
+
+### 5.4.2 Save data layers
 
 ```{r write regional gdp bhi layer}
-write.csv(bhi_gdp_layer, file.path(dir_layers, "le_gdp_region_bhi2015.csv"),row.names=FALSE)
+
+write.csv(bhi_gdp_layer, file.path(dir_layers, "le_gdp_region_bhi2015.csv"), row.names=FALSE)
 
 ### SAVE also for VISUALIZE
 eco_rgn_time_data = bhi_gdp_layer %>%
-                    dplyr::rename(value = bhi_gdp_per_capita)%>%
+                    dplyr::rename(value = bhi_gdp_per_capita) %>%
                     mutate(unit= "GDP per capita",
                            bhi_goal="ECO",
                            data_descrip = "NUTS3 GDP allocated to BHI regions")
 
-write.csv(eco_rgn_time_data, file.path(dir_baltic,'visualize/eco_rgn_time_data.csv'),row.names=FALSE)
+write.csv(eco_rgn_time_data, file.path(dir_baltic,'visualize/eco_rgn_time_data.csv'), row.names=FALSE)
 ```
 
 
@@ -573,16 +602,17 @@ write.csv(eco_rgn_time_data, file.path(dir_baltic,'visualize/eco_rgn_time_data.c
 #### 6.1.1 Read in data
 
 ```{r read in country gdp}
+
 ## read EU national GDP
 country_gdp = read.csv(file.path(dir_eco, 'eco_data_database/nuts0_gdp.csv'))
- dim(country_gdp) #[1] 4428    8
- str(country_gdp)
+ # dim(country_gdp) #[1] 4428    8
+ # str(country_gdp)
  
 ## read in Russian national GDP
 russian_nat_gdp = read.csv(file.path(dir_eco, 'eco_data_database/ru_nat_gdp.csv'))
 
-dim(russian_nat_gdp) #16 6
-str(russian_nat_gdp)
+# dim(russian_nat_gdp) #16 6
+# str(russian_nat_gdp)
 
 ```
 
@@ -593,7 +623,7 @@ country_gdp = country_gdp %>%
                             unit=UNIT, na_item = NA_ITEM, na_item_label = NA_ITEM_LABEL,
                             value = Value, flag_notes = Flag.and.Footnotes) %>%
               mutate(country_abb = as.character(country_abb),
-                     country = as.character(country))%>%
+                     country = as.character(country)) %>%
               mutate(country = ifelse(country =="Germany (until 1990 former territory of the FRG)","Germany",country ))
 
 russian_nat_gdp = russian_nat_gdp %>%
@@ -602,13 +632,10 @@ russian_nat_gdp = russian_nat_gdp %>%
                             value = Value, flag_notes = Flag.and.Footnotes) %>%
                             mutate(country_abb = "RU")
 
-  
-
-
 ```
 
 #### 6.1.3 Restrict years to >= 2000
-For EU country GDP
+For EU country GDP, and filter for Blatic countries
 ```{r years to greater than or equal to 2000}
 country_gdp = country_gdp %>%
               filter(year >=2000) %>%
@@ -627,11 +654,11 @@ unique(country_gdp$unit)
 ##[3] Chain linked volumes, index 2010=100
 
 country_gdp = country_gdp %>%
-              mutate(unit = as.character(unit))%>%
-              filter(unit == "Current prices, million euro")%>%
+              mutate(unit = as.character(unit)) %>%
+              filter(unit == "Current prices, million euro") %>%
               mutate(unit = "million euro")
 
-dim(country_gdp) #[1] 128   8
+# dim(country_gdp) #[1] 128   8
 
 ## Russia GDP, clean unit code
 russian_nat_gdp = russian_nat_gdp %>%
@@ -641,97 +668,84 @@ russian_nat_gdp = russian_nat_gdp %>%
 
 #### 6.1.5 assign data flag codes
 ```{r data flag codes}
-country_gdp %>% select(flag_notes)%>%distinct() ## p e
+country_gdp %>% select(flag_notes) %>%distinct() ## p e
 country_gdp = country_gdp %>%
               mutate(flag_notes = ifelse(flag_notes == 'p', "provisional",
                                   ifelse(flag_notes == 'e', "estimated", "")))
 country_gdp %>% filter(flag_notes == "provisional" | flag_notes == "estimated")  ## no baltic countries
 
 
-russian_nat_gdp %>% select(flag_notes) %>% distinct() #e
+# russian_nat_gdp %>% select(flag_notes) %>% distinct() #e
+
 russian_nat_gdp = russian_nat_gdp %>%
                   mutate(flag_notes = ifelse(flag_notes == 'e', "estimated", ""))
-russian_nat_gdp %>% filter(flag_notes == "estimated")  ## two years estimated 2000, 2001
 
-
+# russian_nat_gdp %>% filter(flag_notes == "estimated")  ## two years estimated 2000, 2001
 
 
 ```
 
 ### 6.2 Baltic regions
 
-#### 6.2.1 Filter for Baltic countries
-```{r filter country gdp for Baltic countries}
-
-country_gdp2 = country_gdp %>%
-                filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country))
-dim(country_gdp2);dim(country_gdp)                
-
-colnames(country_gdp2)
-colnames(russian_nat_gdp)
-
-```
-
-#### 6.2.2 Bind rows EU Baltic countries and Russia data
+#### 6.2.1 Bind rows EU Baltic countries and Russia data
 ```{r join eu and russia}
 
-country_gdp3 = bind_rows(select(country_gdp2, year, country, country_abb, unit, value, flag_notes),
+country_gdp2 = bind_rows(select(country_gdp, year, country, country_abb, unit, value, flag_notes),
                     select(russian_nat_gdp, year, country, country_abb, unit, value, flag_notes))
-str(country_gdp3)
+# str(country_gdp2)
 
 ## check flag_notes
-country_gdp3 %>% select(flag_notes)%>% distinct()
-country_gdp3%>% filter(flag_notes == "estimated") ## two years GDP is estimated for Russia, 2000,2001  ## elimate column
+# country_gdp2 %>% select(flag_notes) %>% distinct()
+# country_gdp2%>% filter(flag_notes == "estimated") ## two years GDP is estimated for Russia, 2000,2001  ## elimate column
 
-
-country_gdp3 = country_gdp3 %>%
+country_gdp3 = country_gdp2 %>%
                select(-flag_notes)
 
 ```  
 
-#### 6.2.3 Plot National GDP
+#### 6.2.2 Plot National GDP
 ```{r plot national GDP}
-ggplot(country_gdp3)+
-  geom_point(aes(year,value))+
+ggplot(country_gdp3) +
+  geom_point(aes(year,value)) +
   facet_wrap(~country, scales="free_y") +
   ggtitle("National Nominal GDP")
 
 ```
 
-### 6.4 Per capita national gdp
+### 6.3 Per capita national gdp
 
-#### 6.4.1 read in population data
+#### 6.3.1 read in population data
 These data are in the folder 'eco_data_database' but have not yet been taken from server into BHI database
 ```{r read in national population data}
 eu_pop = read.csv(file.path(dir_eco, 'eco_data_database/demo_gind_1_Data_cleaned.csv'), sep=";", stringsAsFactors = FALSE)
 
-str(eu_pop)
-dim(eu_pop)
+# str(eu_pop)
+# dim(eu_pop)
 
 ru_pop = read.csv(file.path(dir_eco, 'eco_data_database/naida_10_pe_1_Data_cleaned.csv'), sep=";", stringsAsFactors = FALSE)
 
-str(ru_pop)
-dim(ru_pop)
+# str(ru_pop)
+# dim(ru_pop)
 
 
 ```
 
 
-#### 6.4.2 clean population data
+#### 6.3.2 clean population data
 EU population size information:  
 Population on 1 January: Eurostat aims at collecting from the EU-28's Member States' data on population on 31st December, which is further published as 1 January of the following year. The recommended definition is the 'usual resident population' and represents the number of inhabitants of a given area on 31st December . However, the population transmitted by the countries can also be either based on data from the most recent census adjusted by the components of population change produced since the last census, either based on population registers.  
 [Source](http://ec.europa.eu/eurostat/cache/metadata/en/demo_gind_esms.htm)  
 ```{r clean national population data}
 ## EU countries
 eu_pop2 = eu_pop %>%
-          select(-TIME_LABEL)%>%
+          select(-TIME_LABEL) %>%
           dplyr::rename(year = TIME,
                         country_abb = GEO,
                         country= GEO_LABEL,
                         unit = INDIC_DE,
                         value = Value,
-                        flag_notes = Flag.and.Footnotes)%>%
-          filter(unit == "Population on 1 January - total " )%>% # select this meauresure of population size
+                        flag_notes = Flag.and.Footnotes) %>%
+          filter(unit == "Population on 1 January - total " ) %>% # select this meauresure of population size
           mutate(value = ifelse(value== ":", NA, value),
                 value= as.numeric(value))
 
@@ -740,21 +754,22 @@ eu_pop2 = eu_pop %>%
 eu_pop3 = eu_pop2 %>%
           mutate(country = ifelse(country =="Germany (until 1990 former territory of the FRG)","Germany",country),
                  country = ifelse(country =="Germany (including former GDR)","Germany",country),
-                 country_abb = ifelse(country_abb == "DE_TOT","DE",country_abb))%>%
+                 country_abb = ifelse(country_abb == "DE_TOT","DE",country_abb)) %>%
           filter(grepl("Denmark|Estonia|Finland|Germany|Latvia|Lithuania|Poland|Sweden",country)) %>%
           filter(year >=2000)
 
-  dim(eu_pop3) ## Germany is duplicated because of GDR and FRG but in more recent years, value occurs twice ##144 6
+# dim(eu_pop3) 
+## Germany is duplicated because of GDR and FRG but in more recent years, value occurs twice ##144 6
 
 eu_pop3 = eu_pop3 %>%
           distinct()
 
-dim(eu_pop3) ##129 6
-
-str(eu_pop3)           
+# dim(eu_pop3) ##129 6
+# 
+# str(eu_pop3)           
 
 ## check data flags
-eu_pop3 %>% select(flag_notes)%>%distinct()
+eu_pop3 %>% select(flag_notes) %>%distinct()
 eu_pop3 %>% filter(flag_notes == "b")  ## b = break in time series -- this should be fine
 
 eu_pop3 = eu_pop3 %>%
@@ -770,29 +785,29 @@ ru_pop2 = ru_pop%>%
                         unit = NA_ITEM,
                         unit_type = UNIT_LABEL,
                         value = Value,
-                        flag_notes = Flag.and.Footnotes)%>%
+                        flag_notes = Flag.and.Footnotes) %>%
           filter(unit=="Total population national concept") %>% ## other unit is employment
-          mutate(value = value *1000)%>% ## convert value to total people not in thousands unit
-         select(-unit_type,-UNIT)%>%
+          mutate(value = value *1000) %>% ## convert value to total people not in thousands unit
+         select(-unit_type,-UNIT) %>%
         filter(year>=2000)
 
 ##check data flags
-ru_pop2 %>% select(flag_notes)%>%distinct()
-ru_pop2 %>% filter(flag_notes =="e") ## population estimated in 2012 and 2013
+# ru_pop2 %>% select(flag_notes) %>%distinct()
+# ru_pop2 %>% filter(flag_notes =="e") ## population estimated in 2012 and 2013
 
 ru_pop2 = ru_pop2 %>%
           select(-flag_notes)
-str(ru_pop2)
+# str(ru_pop2)
 ```
 
-#### 6.4.3 Combine EU and Russian data
+#### 6.3.3 Combine EU and Russian data
 ```{r combined national pop data}
 nat_pop = bind_rows(eu_pop3, ru_pop2)
 
 ## add column for the 2005 value, should I use to be consistent with regional gdp
 nat_pop_2005 = nat_pop %>%
-               filter(year==2005) %>%
-               dplyr::rename(pop_2005 = value)%>%
+               filter(year == 2005) %>%
+               dplyr::rename(pop_2005 = value) %>%
                select(country, pop_2005)
 
 nat_pop = nat_pop %>%
@@ -802,15 +817,15 @@ nat_pop = nat_pop %>%
 
 
 
-#### 6.4.4 Plot national population over time
+#### 6.3.4 Plot national population over time
 ```{r plot national population}
 
 
-ggplot(nat_pop)+
-  geom_point(aes(year,value))+
-  geom_hline(aes(yintercept = pop_2005))+
-  facet_wrap(~country, scales="free_y")+
-  ylab("Number of people")+
+ggplot(nat_pop) +
+  geom_point(aes(year,value)) +
+  geom_hline(aes(yintercept = pop_2005)) +
+  facet_wrap(~country, scales="free_y") +
+  ylab("Number of people") +
   ggtitle("National Population Size")
 
 ```
@@ -821,8 +836,8 @@ Calculate the national per capita GDP. Do in two different ways: (1) use the pop
 #### 6.5.1 Join GDP and population data
 ```{r join nat gdp and pop}
 ## rename some columns for clarity
-str(country_gdp3)
-str(nat_pop)
+# str(country_gdp3)
+# str(nat_pop)
 
 country_gdp3 = country_gdp3 %>%
                dplyr::rename(unit_gdp = unit,
@@ -836,13 +851,13 @@ nat_pop = nat_pop %>%
 
 ## join
 nat_gdp_pop = full_join(country_gdp3,nat_pop,
-                        by=c("country","country_abb","year"))%>%
+                        by=c("country","country_abb","year")) %>%
               arrange(country,year)
 
 
-dim(nat_gdp_pop) ##145  8
-str(nat_gdp_pop)
-nat_gdp_pop %>% select(country)%>%distinct() #check country list
+# dim(nat_gdp_pop) ##145  8
+# str(nat_gdp_pop)
+# nat_gdp_pop %>% select(country) %>%distinct() #check country list
 
 ```
 
@@ -858,37 +873,37 @@ nat_gdp_pop = nat_gdp_pop %>%
 #### 6.5.3 Plot national per capita GDP calcuated two ways
 Note, there is no population data for Russia in 2014, that is why there is a difference in the number of data points between the two methods.  
 ```{r plot nat per cap gdp both calculations}
-ggplot(nat_gdp_pop)+
-  geom_point(aes(year, gdp_per_cap, colour=country))+
-  geom_line(aes(year, gdp_per_cap, colour=country))+
-  ylab("GDP per capita (million euro)")+
+ggplot(nat_gdp_pop) +
+  geom_point(aes(year, gdp_per_cap, colour=country)) +
+  geom_line(aes(year, gdp_per_cap, colour=country)) +
+  ylab("GDP per capita (million euro)") +
   ggtitle("National per capita GDP, population size by year")
 
-ggplot(nat_gdp_pop)+
-  geom_point(aes(year, gdp_per_cap_2005, colour=country))+
-  geom_line(aes(year, gdp_per_cap_2005, colour=country))+
-  ylab("GDP per capita (million euro)")+
+ggplot(nat_gdp_pop) +
+  geom_point(aes(year, gdp_per_cap_2005, colour=country)) +
+  geom_line(aes(year, gdp_per_cap_2005, colour=country)) +
+  ylab("GDP per capita (million euro)") +
   ggtitle("National per capita GDP, population size fixed to 2005")
 
 
 ## comparison plot
-ggplot(nat_gdp_pop)+
-  geom_point(aes(year, gdp_per_cap_2005), colour="green",shape=0)+
-  geom_line(aes(year, gdp_per_cap_2005),colour="green")+
-    geom_point(aes(year, gdp_per_cap),shape=1)+
-  geom_line(aes(year, gdp_per_cap))+
-  facet_wrap(~country, scales="free_y")+
-  ylab("GDP per capita (million euro)")+
+ggplot(nat_gdp_pop) +
+  geom_point(aes(year, gdp_per_cap_2005), colour="green",shape=0) +
+  geom_line(aes(year, gdp_per_cap_2005),colour="green") +
+    geom_point(aes(year, gdp_per_cap),shape=1) +
+  geom_line(aes(year, gdp_per_cap)) +
+  facet_wrap(~country, scales="free_y") +
+  ylab("GDP per capita (million euro)") +
   ggtitle("National per capita GDP, compare population size alternatives")
 
 
 ```
 
 #### 6.5.4 Decision on national per capita GDP
-Seems to have relatively little effect.  Choose to use a fixed population size (2005) so that it is consistent with the regional GDP approach.
+Based on the plots above, it seems to have relatively little effect. We chose to use a fixed population size (2005) so that it is consistent with the regional GDP approach.
 ```{r clean up nat gpd per cap so only one method}
 nat_gdp_pop = nat_gdp_pop %>%
-              select(year, country, country_abb, unit_gdp, gdp_per_cap_2005)%>%
+              select(year, country, country_abb, unit_gdp, gdp_per_cap_2005) %>%
               mutate(unit_gdp = "per capita million euro")
 
 ```
@@ -898,7 +913,7 @@ nat_gdp_pop = nat_gdp_pop %>%
 #### 6.6.1 Load BHI region lookup
 ```{r load region basin country lookup}
 bhi_lookup = read.csv(file.path(dir_eco, "bhi_basin_country_lookup.csv"), sep=";",stringsAsFactors = FALSE) %>%
-            select(rgn_nam, BHI_ID)%>%
+            select(rgn_nam, BHI_ID) %>%
             dplyr::rename(country= rgn_nam,
                           rgn_id = BHI_ID)
 
@@ -912,15 +927,15 @@ str(bhi_lookup)
 rgn_nat_gdp = full_join(bhi_lookup,nat_gdp_pop,
                         by="country")
 
-str(rgn_nat_gdp)
+# str(rgn_nat_gdp)
 
 ## check unique rgns
-rgn_nat_gdp %>% select(rgn_id) %>% distinct() %>% nrow() ##42
+# rgn_nat_gdp %>% select(rgn_id) %>% distinct() %>% nrow() ##42
 
 
 ### SAVE also for VISUALIZE
 eco_nat_time_data = rgn_nat_gdp %>%
-                    select(rgn_id,year,value = gdp_per_cap_2005)%>%
+                    select(rgn_id,year,value = gdp_per_cap_2005) %>%
                     mutate(unit= "GDP per capita",
                            bhi_goal="ECO",
                            data_descrip = "National GDP per capita (2005 pop size)")
@@ -932,29 +947,25 @@ write.csv(eco_nat_time_data, file.path(dir_baltic,'visualize/eco_nat_time_data.c
 #### 6.6.3 plot national gdp by region to check
 
 ```{r plot nat gdp by bhi region}
-ggplot(rgn_nat_gdp)+
-  geom_point(aes(year,gdp_per_cap_2005))+
-  facet_wrap(~rgn_id)+
-  ylab("GDP per capita (million euro)")+
-  ggtitle("National Per Capita GDP by BHI region")
 
+ggplot(rgn_nat_gdp) +
+  geom_point(aes(year,gdp_per_cap_2005)) +
+  facet_wrap(~rgn_id) +
+  ylab("GDP per capita (million euro)") +
+  ggtitle("National Per Capita GDP by BHI region")
 
 ```
 
 ### 6.7 Natioanl GDP Data layer for layers
 Will export per national capita GDP. This value only changes because of changes in GDP size, the population size is static because using fixed population size from 2005.  
 
-#### 6.7.1 Prepare object for csv
 ```{r prepare national bhi gdp for layers}
 bhi_nat_gdp_layer = rgn_nat_gdp %>%
-                      select(rgn_id,year,gdp_per_cap_2005)%>%
+                      select(rgn_id,year,gdp_per_cap_2005) %>%
                       filter(year < 2014) ## so years are consistent with regional gdp
 
-str(bhi_nat_gdp_layer)
-```
-#### 6.7.2
+# str(bhi_nat_gdp_layer)
 
-```{r write national gdp bhi layer}
 write.csv(bhi_nat_gdp_layer, file.path(dir_layers, "le_gdp_country_bhi2015.csv"),row.names=FALSE)
 
 ```
@@ -962,8 +973,8 @@ write.csv(bhi_nat_gdp_layer, file.path(dir_layers, "le_gdp_country_bhi2015.csv")
 
 
 ## 7. Status and Trend Calculation
-Status and trend are calculated in functions.r but code is tested and explored here.
 
+Status and trend are calculated in functions.r but code is tested and explored here.
 
 ### 7.1 Assign data layer
 ```{r read in data layers for status and trend calc}
@@ -990,15 +1001,16 @@ Status and trend are calculated in functions.r but code is tested and explored h
 
 #### 7.3.1 prepare region and country layers
 ```{r eco status calc}
+
 ## ECO region: prepare for calculations with a lag
   eco_region = le_gdp_region %>%
     dplyr::rename(gdp = rgn_gdp_per_cap) %>%
     filter(!is.na(gdp)) %>%
-    group_by(rgn_id)%>%
+    group_by(rgn_id) %>%
     mutate(year_ref = lag(year, lag_win, order_by=year),
            ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year)%>%
-    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    arrange(year) %>%
+    filter(year>= max(year)- lag_win) %>% #select only the previous 5 years from the max year
     ungroup() %>%
     mutate(rgn_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
     select(rgn_id,year,rgn_value)
@@ -1010,11 +1022,11 @@ dim(eco_region) ##210 3
   eco_country = le_gdp_country %>%
     dplyr::rename(gdp = nat_gdp_per_cap) %>%
     filter(!is.na(gdp)) %>%
-    group_by(rgn_id)%>%
+    group_by(rgn_id) %>%
     mutate(year_ref = lag(year, lag_win, order_by=year),
            ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year)%>%
-    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+    arrange(year) %>%
+    filter(year>= max(year)- lag_win) %>% #select only the previous 5 years from the max year
     ungroup() %>%
     mutate(cntry_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
     select(rgn_id,year,cntry_value)
@@ -1030,8 +1042,8 @@ dim(eco_region) ##210 3
 #### 7.3.2 Calculate status time series
 ```{r calc eco status time series}
 ## calculate status
-  eco_status_calc = inner_join(eco_region,eco_country, by=c("rgn_id","year"))%>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
-               mutate(Xeco = rgn_value/cntry_value)%>% #calculate status
+  eco_status_calc = inner_join(eco_region,eco_country, by=c("rgn_id","year")) %>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
+               mutate(Xeco = rgn_value/cntry_value) %>% #calculate status
                mutate(status = pmin(1, Xeco)) # status calculated cannot exceed 1
 
   head(eco_status_calc)
@@ -1042,12 +1054,12 @@ dim(eco_region) ##210 3
 #### 7.3.3 Extract most recent year status
 ```{r extract eco most recent year status}
 eco_status = eco_status_calc%>%
-              group_by(rgn_id)%>%
-              filter(year== max(year))%>%       #select status as most recent year
-              ungroup()%>%
-              full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
+              group_by(rgn_id) %>%
+              filter(year== max(year)) %>%       #select status as most recent year
+              ungroup() %>%
+              full_join(bhi_rgn, .,by="rgn_id") %>%  #all regions now listed, have NA for status, this should be 0 to indicate the measure is applicable, just no data
               mutate(score=round(status*100),   #scale to 0 to 100
-                     dimension = 'status')%>%
+                     dimension = 'status') %>%
               select(region_id = rgn_id,score, dimension) #%>%
               ##mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
                                     ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
@@ -1057,15 +1069,15 @@ head(eco_status)
 
 ## what is max year
 max_year_status= eco_status_calc%>%
-              group_by(rgn_id)%>%
-              filter(year== max(year))%>%       #select status as most recent year
-              ungroup()%>%
+              group_by(rgn_id) %>%
+              filter(year== max(year)) %>%       #select status as most recent year
+              ungroup() %>%
               select(rgn_id,year)
-max_year_status %>% select(year)%>% distinct() ## all final years are 2013
+max_year_status %>% select(year) %>% distinct() ## all final years are 2013
 ```
 
 ### 7.3.4 Which BHI regions have no status
-Regions 13,16,19,21,22,30,32,33 have NA status.
+Regions 13,16,19,22,30,32,33 have NA status.
 
 Russian regions have NA status because no regional data (19,22,33)
 
@@ -1073,63 +1085,60 @@ Regions with no coast line have no status because not joined to a NUTS reion (30
 
 Regions with missing regional data: 13,16 (from Germany see below)
 
-Region with mis-assigned NUTS3 to BHI regions: 21 - See 4.2.2 about Polish NUTS3 regions
 ```{r which eco status are na}
-eco_status %>% filter(is.na(score)) #13,16,19,21,22,30,33
+eco_status %>% filter(is.na(score)) #13,16,19,22,30,33
 
-
+# missing regional data
 eco_status_calc %>% filter(rgn_id == 13)
 eco_region %>% filter(rgn_id == 13) ## No data for associated German NUTS3 DE80H, DE805, DE80D
 
 eco_status_calc %>% filter(rgn_id == 16)
 eco_region %>% filter(rgn_id == 16)## no data for associated German NUTS3 DE80F, DE80I
 
-eco_status_calc %>% filter(rgn_id == 21)
-eco_region %>% filter(rgn_id == 21)  ## based on Eurostat nuts3 map (http://ec.europa.eu/eurostat/statistical-atlas/gis/viewer/#) should be associated with PL634. PL634 assigned to 17 and 18.  This appears to be an error!!
-
 
 
 ```
 
 
-### 7.3.1 Plot status
+### 7.3.5 Plot status
 Status values in the time series are between 0 and 1.  
 There are no values for Russia because we do not have regional GDP data.  
 Status values for the most recent year (2013 for all regions) are transformed to value between 0 and 100
 ```{r plot eco status}
 ## plot eco status time series
-ggplot(eco_status_calc)+
-  geom_point(aes(year,status))+
-  facet_wrap(~rgn_id)+
-  ylim(0,1)+
-  ylab("Status")+
+ggplot(eco_status_calc) +
+  geom_point(aes(year,status)) +
+  facet_wrap(~rgn_id) +
+  ylim(0,1) +
+  ylab("Status") +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain"),
-        axis.text.y = element_text(size=6))+
+        axis.text.y = element_text(size=6)) +
   ggtitle("ECO status time series")
 
 ## plot eco status time series, less range on y-axis
-ggplot(eco_status_calc)+
-  geom_point(aes(year,status))+
-  facet_wrap(~rgn_id)+
-  ylim(.8,1)+
-  ylab("Status")+
+ggplot(eco_status_calc) +
+  geom_point(aes(year,status)) +
+  facet_wrap(~rgn_id) +
+  ylim(.8,1) +
+  ylab("Status") +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain"),
-        axis.text.y = element_text(size=6))+
+        axis.text.y = element_text(size=6)) +
   ggtitle("ECO status time series - different y-axis range")
 
 
 ## plot final year (2013) status
 
-ggplot(eco_status)+
-  geom_point(aes(region_id,score), size=2)+
-  ylim(0,100)+
-  ylab("Status score")+
-  xlab("BHI region")+
+ggplot(eco_status) +
+  geom_point(aes(region_id,score), size=2) +
+  ylim(0,100) +
+  ylab("Status score") +
+  xlab("BHI region") +
   ggtitle("ECO status score in 2013")
 
 ```
+
 
 
 ### 7.4 Trend calculation
@@ -1140,16 +1149,16 @@ ggplot(eco_status)+
   ## calculate trend for 5 years (5 data points)
   ## years are filtered in eco_region and eco_country, so not filtered for here
       eco_trend = eco_status_calc %>%
-        filter(year >= max(year - trend_yr))%>%                #select five years of data for trend
+        filter(year >= max(year - trend_yr)) %>%                #select five years of data for trend
         filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
         group_by(rgn_id) %>%
-        mutate(regr_length = n())%>%                            #get the number of status years available for greggion
-        filter(regr_length == (trend_yr + 1))%>%                   #only do the regression for regions that have 5 data points
+        mutate(regr_length = n()) %>%                            #get the number of status years available for greggion
+        filter(regr_length == (trend_yr + 1)) %>%                   #only do the regression for regions that have 5 data points
           do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
             summarize(rgn_id = rgn_id,
-                      score = coef(mdl)['year'] * lag_win)%>%
+                      score = coef(mdl)['year'] * lag_win) %>%
         ungroup() %>%
-        full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
+        full_join(bhi_rgn, .,by="rgn_id") %>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
         mutate(score = round(score, 2),
                dimension = "trend") %>%
         select(region_id = rgn_id, dimension, score) %>%
@@ -1169,12 +1178,12 @@ eco_trend %>% filter(is.na(score)) ## 13,16,19,21,22,30,33
 #### 7.4.3 Plot trend
 
 ```{r plot eco trend}
-ggplot(eco_trend)+
-  geom_point(aes(region_id,score), size=2)+
-  geom_hline(yintercept = 0)+
-  ylim(-1,1)+
-  ylab("Status score")+
-  xlab("BHI region")+
+ggplot(eco_trend) +
+  geom_point(aes(region_id,score), size=2) +
+  geom_hline(yintercept = 0) +
+  ylim(-1,1) +
+  ylab("Status score") +
+  xlab("BHI region") +
   ggtitle("ECO 5 yr trend score")
 
 
@@ -1184,30 +1193,91 @@ ggplot(eco_trend)+
 
 
 #### 7.5 Plot trend and status together
+
 ```{r plot eco trend and status together}
 
 plot_eco = bind_rows(eco_status,eco_trend)
 
-ggplot(plot_eco)+
-  geom_point(aes(region_id,score),size=2.5)+
-  facet_wrap(~dimension, scales = "free_y")+
-  ylab("Score")+
+ggplot(plot_eco) +
+  geom_point(aes(region_id,score),size=2.5) +
+  facet_wrap(~dimension, scales = "free_y") +
+  ylab("Score") +
   ggtitle("ECO Status and Trend")
 
 
 ```
 
-#### 8. explore updated NUTS shapefile 22.9.2016
+
+### 7.5 Status and Trend Calculation Alternative
+
+```{r status alt}
+
+##### Status ####
+
+# combine coastal and national GDP per cap for each region and each year
+# and calculate ratio (coastal/national)
+combined_gdp_per_cap = full_join(le_gdp_region, le_gdp_country, 
+                                 by = c('rgn_id', 'year')) %>% 
+  filter(year %in% 2009:2013) %>% 
+  mutate(ratio = rgn_gdp_per_cap/nat_gdp_per_cap) %>% 
+  group_by(rgn_id) %>% 
+  mutate(ratio_ref = max(ratio) *1.1, # set ref point: 110% of max ratio
+         ratio_score = ratio/ratio_ref*100) 
+
+# plot coastal/national ratio over time 
+
+ggplot(combined_gdp_per_cap) +
+  geom_point(aes(year, ratio)) +
+  facet_wrap(~rgn_id) +
+  xlab("year") +
+  ylab("Ratio") +
+  ggtitle("GDP per Capita Ratio - Coastal/National (2009-2013)")
+
+# choose the most recent year as status 
+
+eco_status = combined_gdp_per_cap %>% 
+  dplyr::select(rgn_id, year, ratio, ratio_score) %>% 
+  filter(year == 2013)
+
+# plot ECO status per region
+ggplot(eco_status) +
+  geom_point(aes(rgn_id, ratio_score)) +
+  ylab("Status Score") +
+  xlab("BHI region ID") +
+  ggtitle("ECO Status of each BHI region (year = 2013)")
+  
+#### Trend ####
+eco_trend = combined_gdp_per_cap %>% 
+  filter(!is.na(ratio_score)) %>%  
+  group_by(rgn_id) %>% 
+  do(mdl = lm(ratio_score ~ year, data = .)) %>% 
+  summarize(rgn_id = rgn_id, 
+            trend = coef(mdl)['year']*0.05) %>% 
+  complete(rgn_id = full_seq(rgn_id, 1))
+
+# plot Trend
+ggplot(eco_trend) +
+  geom_point(aes(rgn_id, trend)) +
+  xlab('BHI ID') +
+  ylab('Trend score') +
+  ggtitle('ECO trend score of each BHI region')
+
+```
+
+
+
+#### 8. Extra: explore updated NUTS shapefile 22.9.2016
 
 Udpated NUTS shape file was received from Marc to correct region misassignment. This section is checking if they match corrected assignments done by Jennifer in section 5.1.4. 
 
-```{r updated NUTS shape file explore}
+```{r updated NUTS shape file explore, eval = FALSE}
 
 # load Jennifer's manually corrected BHI and NUTS3 region assignment list
-correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";",       stringsAsFactors = FALSE) %>% 
+correct_assign = read.csv(file.path(dir_eco,"mis_assigned_bhi_nuts3_corrected_manually.csv"), sep=";", stringsAsFactors = FALSE) %>% 
   dplyr::select(country = country_bhi, 
                 BHI_ID, 
-                nuts3) # 96 obs, excluding BHI_ID 21
+                nuts3,   
+                country_abb = country_abb_nuts) # 96 obs, excluding BHI_ID 21
 
 # load updated assignment list
 nuts3_updated = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/nuts_3_rgn_id_match_udpated_9.16.csv')) %>%
@@ -1222,9 +1292,11 @@ rowcheck  <- function(df1, df2){
       return(zz)
   }
 
-# check if each row of correct_assign_simple is contained in the updated nuts3 region map
-rowcheck(correct_assign_simple, nuts3_updated) 
+# check if each row of correct_assign (mis-assigned portion) is contained in the updated nuts3 region map
+rowcheck(correct_assign, nuts3_updated) 
 ## all TRUE
 
-# this means the updated NTUS3 spatial file matches what Jennifer has manually corrected. can use the updated NUTS3 spatial file to correct misassignments directly, which also includes BHI_ID 21. 
+# this means the updated NTUS3 spatial file matches what Jennifer has manually corrected, and contain the same mis-assignments. However, the updated file includes region 21 assignment. 
+
 ```
+
