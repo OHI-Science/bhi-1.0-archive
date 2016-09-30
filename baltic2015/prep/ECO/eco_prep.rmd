@@ -1,5 +1,5 @@
 ---
-title: "eco_prep.rmd"
+title: "Economies (ECO) Subgoal Data Preparation"
 output:
   github_document:
     toc: true
@@ -7,8 +7,6 @@ output:
 params: 
     datasource: csv
 ---
-
-# ECO subgoal data preparation
 
 ## 1. Background
 
@@ -163,29 +161,12 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 ### 5.1 Data organization
 
 Data prep setup. 
-```{r setup}
-
-## Libraries
-library(RMySQL)
-library(tidyverse)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
+```{r setup, message=FALSE}
 source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
 dir_eco    = file.path(dir_prep, 'ECO')
 
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory
 create_readme(dir_eco, 'eco_prep.rmd')
-
 ```
 
 #### 5.1.1 Read in data
@@ -278,6 +259,7 @@ regional_gdp1 = regional_gdp1 %>%
                 dplyr::rename(rgn_id = correct_BHI_ID,
                               country = correct_country) %>%
                 arrange(nuts3) 
+
 
 ```
 
@@ -1294,6 +1276,7 @@ rowcheck  <- function(df1, df2){
 
 # check if each row of correct_assign (mis-assigned portion) is contained in the updated nuts3 region map
 rowcheck(correct_assign, nuts3_updated) 
+
 ## all TRUE
 
 # this means the updated NTUS3 spatial file matches what Jennifer has manually corrected, and contain the same mis-assignments. However, the updated file includes region 21 assignment. 

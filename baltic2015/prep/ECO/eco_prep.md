@@ -1,45 +1,41 @@
-eco\_prep.rmd
+Economies (ECO) Subgoal Data Preparation
 ================
 
--   [ECO subgoal data preparation](#eco-subgoal-data-preparation)
-    -   [1. Background](#background)
-    -   [2. Data](#data)
-        -   [2.1 Regional Data](#regional-data)
-        -   [2.2 Country Level data](#country-level-data)
-        -   [2.3 Russian country level data](#russian-country-level-data)
-        -   [2.4 Population density data](#population-density-data)
-        -   [2.5 Aligning BHI regions with NUTS3 regions and population density](#aligning-bhi-regions-with-nuts3-regions-and-population-density)
-    -   [3. Goal Model](#goal-model)
-        -   [3.1 Status](#status)
-        -   [3.1.2 Status Alternative](#status-alternative)
-        -   [3.2 Trend](#trend)
-    -   [4. Other](#other)
-        -   [4.1 Interpreting NA and zero](#interpreting-na-and-zero)
-        -   [4.2 Data issues](#data-issues)
-    -   [5. Regional GDP prep](#regional-gdp-prep)
-        -   [5.1 Data organization](#data-organization)
-        -   [5.2 Data associations with Baltic and BHI](#data-associations-with-baltic-and-bhi)
-        -   [5.3 BHI region GDP](#bhi-region-gdp)
-        -   [5.4 Data layer for layers](#data-layer-for-layers)
-        -   [5.4.2 Save data layers](#save-data-layers)
-    -   [6.Country GDP prep](#country-gdp-prep)
-        -   [6.1 Organize data](#organize-data)
-        -   [6.2 Baltic regions](#baltic-regions)
-        -   [6.3 Per capita national gdp](#per-capita-national-gdp)
-        -   [6.5 Per capita National GDP](#per-capita-national-gdp-1)
-        -   [6.6 Join BHI regions on countries](#join-bhi-regions-on-countries)
-        -   [6.7 Natioanl GDP Data layer for layers](#natioanl-gdp-data-layer-for-layers)
-    -   [7. Status and Trend Calculation](#status-and-trend-calculation)
-        -   [7.1 Assign data layer](#assign-data-layer)
-        -   [7.2 Set parameters](#set-parameters)
-        -   [7.3 Status calculation](#status-calculation)
-        -   [7.3.4 Which BHI regions have no status](#which-bhi-regions-have-no-status)
-        -   [7.3.5 Plot status](#plot-status)
-        -   [7.4 Trend calculation](#trend-calculation)
-        -   [7.5 Status and Trend Calculation Alternative](#status-and-trend-calculation-alternative)
-
-ECO subgoal data preparation
-============================
+-   [1. Background](#background)
+-   [2. Data](#data)
+    -   [2.1 Regional Data](#regional-data)
+    -   [2.2 Country Level data](#country-level-data)
+    -   [2.3 Russian country level data](#russian-country-level-data)
+    -   [2.4 Population density data](#population-density-data)
+    -   [2.5 Aligning BHI regions with NUTS3 regions and population density](#aligning-bhi-regions-with-nuts3-regions-and-population-density)
+-   [3. Goal Model](#goal-model)
+    -   [3.1 Status](#status)
+    -   [3.1.2 Status Alternative](#status-alternative)
+    -   [3.2 Trend](#trend)
+-   [4. Other](#other)
+    -   [4.1 Interpreting NA and zero](#interpreting-na-and-zero)
+    -   [4.2 Data issues](#data-issues)
+-   [5. Regional GDP prep](#regional-gdp-prep)
+    -   [5.1 Data organization](#data-organization)
+    -   [5.2 Data associations with Baltic and BHI](#data-associations-with-baltic-and-bhi)
+    -   [5.3 BHI region GDP](#bhi-region-gdp)
+    -   [5.4 Data layer for layers](#data-layer-for-layers)
+    -   [5.4.2 Save data layers](#save-data-layers)
+-   [6.Country GDP prep](#country-gdp-prep)
+    -   [6.1 Organize data](#organize-data)
+    -   [6.2 Baltic regions](#baltic-regions)
+    -   [6.3 Per capita national gdp](#per-capita-national-gdp)
+    -   [6.5 Per capita National GDP](#per-capita-national-gdp-1)
+    -   [6.6 Join BHI regions on countries](#join-bhi-regions-on-countries)
+    -   [6.7 Natioanl GDP Data layer for layers](#natioanl-gdp-data-layer-for-layers)
+-   [7. Status and Trend Calculation](#status-and-trend-calculation)
+    -   [7.1 Assign data layer](#assign-data-layer)
+    -   [7.2 Set parameters](#set-parameters)
+    -   [7.3 Status calculation](#status-calculation)
+    -   [7.3.4 Which BHI regions have no status](#which-bhi-regions-have-no-status)
+    -   [7.3.5 Plot status](#plot-status)
+    -   [7.4 Trend calculation](#trend-calculation)
+    -   [7.5 Status and Trend Calculation Alternative](#status-and-trend-calculation-alternative)
 
 1. Background
 -------------
@@ -200,45 +196,10 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 Data prep setup.
 
 ``` r
-## Libraries
-library(RMySQL)
-```
-
-    ## Loading required package: DBI
-
-``` r
-library(tidyverse)
-```
-
-    ## Loading tidyverse: ggplot2
-    ## Loading tidyverse: tibble
-    ## Loading tidyverse: tidyr
-    ## Loading tidyverse: readr
-    ## Loading tidyverse: purrr
-    ## Loading tidyverse: dplyr
-
-    ## Conflicts with tidy packages ----------------------------------------------
-
-    ## filter(): dplyr, stats
-    ## lag():    dplyr, stats
-
-``` r
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-
 source('~/github/bhi/baltic2015/prep/common.r')
-
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
 dir_eco    = file.path(dir_prep, 'ECO')
 
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+## add a README.md to the prep directory
 create_readme(dir_eco, 'eco_prep.rmd')
 ```
 
@@ -1597,6 +1558,7 @@ rowcheck  <- function(df1, df2){
 
 # check if each row of correct_assign (mis-assigned portion) is contained in the updated nuts3 region map
 rowcheck(correct_assign, nuts3_updated) 
+
 ## all TRUE
 
 # this means the updated NTUS3 spatial file matches what Jennifer has manually corrected, and contain the same mis-assignments. However, the updated file includes region 21 assignment. 
