@@ -822,10 +822,6 @@ LIV = function(layers){
 
   return(scores)
 
-
-
-
-  return(scores)
 } ## End LIV function
 
 
