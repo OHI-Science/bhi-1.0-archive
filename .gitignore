@@ -1,5 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
-github
-bhi
+rsconnect
+.DS_Store
+bhi_baltic2015.Rdata
+bhi_draft
+bhi_draft_remote_sha.txt

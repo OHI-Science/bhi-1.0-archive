@@ -1,21 +1,12 @@
-# configuration for https://ohi-science.nceas.ucsb.edu/bhi
-study_area:       Baltic
-git_owner:        OHI-Science
-git_repo:         bhi
-git_slug:         OHI-Science/bhi
-git_url:          https://github.com/OHI-Science/bhi
-app_url:          http://ohi-science.nceas.ucsb.edu/bhi
-default_branch:   published
-default_scenario: baltic2015
-debug:            False
-last_updated:     2015-08-26
-ohicore_app:
-  git_owner: ohi-science
-  git_repo: ohicore
-  git_branch: dev
-  git_commit: 41ea1726ba08bf1727d6fca34949db12b9d9fa1c
-
-tabs_hide:        
-- Calculate
-- Report
-
+gh_repo: bhi
+app_title: Baltic
+scenario_dirs: baltic2015
+gh_owner: OHI-Science
+gh_branch_data: draft
+gh_branch_app: app
+app_url: http://ohi-science.nceas.ucsb.edu/bhi
+projection: Mercator
+map_shrink_pct: 10.0
+debug: no
+ohirepos_commit: 78221328ae0773611829a7bf45992beca197af96
+last_updated: 17077.0
