@@ -15,7 +15,6 @@ layer_region_areas      = 'rgn_area'
 resilience_element = NULL ## no goals have elements
 pressures_element  = NULL ## no goals have elements
 
-
 # constants
 pressures_gamma = 0.5  # The relative importance of social vs. ecological pressures (pressure = gamma * ecological + (1-gamma) * social)
 resilience_gamma = 0.5 # The relative importance of social vs. ecological resiliences (resilience = gamma * ecological + (1-gamma) * social)
@@ -23,10 +22,8 @@ goal_discount = 1.0    # Used to calculate likely future state
 goal_beta = 0.67       # The relative importance of trend vs. pressure/resilience on likely future state; if goal_beta = 0.67, trend is twice as important as pressure/resilience.
 default_trend = 0
 
-
-#### NOTE: can we delete the following information???
-# map configuration
-map_lat=0; map_lon=0; map_zoom=3
+# spatial configuration (used by shiny app and future ohicore mapping functions that use leaflet)
+geojson = 'spatial/regions_gcs.geojson'
 
 # extra descriptions not covered by goals.description or layers.description, used in ohigui
 index_description = 'The overall Index represents the weighted average of all goal scores.'
