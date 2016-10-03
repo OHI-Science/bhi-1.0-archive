@@ -5,8 +5,8 @@ gh_owner: OHI-Science
 gh_branch_data: draft
 gh_branch_app: app
 app_url: http://ohi-science.nceas.ucsb.edu/bhi
-projection: Mercator
+projection: Mollweide
 map_shrink_pct: 10.0
 debug: no
-ohirepos_commit: 78221328ae0773611829a7bf45992beca197af96
+ohirepos_commit: 7c52c23b214bbbdf9505c39381557d0a3b5d5203
 last_updated: 17077.0
