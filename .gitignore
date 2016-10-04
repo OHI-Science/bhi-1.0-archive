@@ -1,8 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-_site
-_asset_bundler_cache
-.sass
-.sass-cache
+rsconnect
 .DS_Store
+bhi_draft
