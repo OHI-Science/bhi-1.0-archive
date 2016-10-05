@@ -59,6 +59,7 @@ Data sources:
 
 
 - [Eurostat database lfst_r_lfe2emprt](http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=lfst_r_lfe2emprt)  ","employ_pop_bhi","number people employed","liv_regional_employ_bhi2015.csv","","","","","","rgn_id",,,"year","employ_pop_bhi",,TRUE,2000,2014,1531.5210327012,1433169.56721867,FALSE,,,,42,FALSE
+
 "LIV","liv_national_employ","Number of people employed nationally based on national employment rates","Employment percentage by NUTS0 region from Eurostat.
 
 

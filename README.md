@@ -21,7 +21,6 @@ BHI regions are based upon Baltic Sea basins used in the HELCOM HOLAS assessemen
 [Video on Following BHI progress in Github](https://www.youtube.com/watch?v=u5BRx05Wmwo)
 
 
-
 ### Build status of branches:
 
 - [**draft**](https://github.com/OHI-Science/bhi/tree/draft)
