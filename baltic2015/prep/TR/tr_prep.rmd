@@ -65,18 +65,21 @@ Xtr = a_r/a_ref_r
 - a_n = accomodation stays in NUTS2 region_n  
 - c_n1 = mean proportion of accommodations stays that are coastal at the NUTS1 level  
 
-### 3.2 Trend calculation
+### 3.2 Reference point
+
+We set reference point as 3% more than the most recent year. This figure came from 
+[Study in support of policy measures for maritime and coastal tourism at EU level](http://ec.europa.eu/maritimeaffairs/documentation/studies/documents/study-maritime-and-coastal-tourism_en.pdf)
+
+"As part of EU's Blue Growth strategy, the coastal and maritime tourism sector has been identified as an area with special potential to foster a smart, sustainable and inclusive Europe. It is the biggest maritime sector in terms of gross value added and employment, and is expected to grow by 2-3% by 2020."
+
+### 3.3 Trend calculation
 
 Linear regression fit to the most recent 5 status years.  
 
 ## 4. Data Layer Preparation 
 
 ```{r setup, message=FALSE}
-## libraries
-library(RMySQL)
-library(tidyverse)
-library(tools)
-
+## set directory and load libraries
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_tr = file.path(dir_prep, 'TR')
 
@@ -235,7 +238,7 @@ Shapefiles have names from 2006, check accom1 and accom_coast1 to see if the nam
 
 ![Map of new NUTS2 names for GUlf of Finland](new_FI_nuts2.png?raw=true)  
 
-```{r check fi nuts2 names, eval = FALSE}
+```{r check fi nuts2 names, results = "hide"}
 accom1 %>% filter(grepl("FI", nuts)) %>% select(nuts, nuts_name) %>% distinct()
 ## These are the newer region names : FI1B, FI1C, FI1D
 
@@ -497,16 +500,19 @@ ggplot(accom_coast_nuts1) +
    theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain")) +
   ggtitle("Proportion Coastal Accommodation Stays at NUTS1 level")
+
 ```
 
 #### 4.3.3 Mean proportion coastal for each NUTS1 over the three years 
 
 ```{r mean proportion coastal}
+
 accom_coast_nuts2 = accom_coast_nuts1 %>%
                     select(-year,-nutslevel_pop) %>%
                     group_by(country,country_abb,nuts1,rgn_id,
                              basin) %>%
                     summarise(mean_prop_coastal = mean(prop_coastal, na.rm=TRUE))
+
 ```
 
 #### 4.3.4 Plot Mean proportion coastal accommodation stays for each NUTS1 
@@ -537,6 +543,7 @@ accom_nuts3 = accom_nuts2 %>%
 
 #### 4.4.2 Join timeseries and mean proportion coastal 
 ```{r join time series and mean proportion coastal}
+
 accom_nuts4 = inner_join(accom_nuts3,accom_coast_nuts2,
                         by=c("country","country_abb","basin","rgn_id","nuts1")) %>%
               filter(year>=2000) %>% ## select only data from 2000 onwards
@@ -548,6 +555,7 @@ accom_nuts4 = inner_join(accom_nuts3,accom_coast_nuts2,
 
 #### 4.4.3 Apply proportional coastal to the times series 
 ```{r Apply proportional coastal to the times series}
+
 accom_nuts5 = accom_nuts4%>%
               mutate(night_stays_coastal = night_stays * mean_prop_coastal)
 
@@ -555,6 +563,7 @@ accom_nuts5 = accom_nuts4%>%
 
 #### 4.4.4 Plot coastal night stays times series 
 ```{r  Plot coastal night stays times series}
+
 ggplot(accom_nuts5) +
   geom_point(aes(year,night_stays_coastal,colour=nuts1)) +
   facet_wrap(~country) +
@@ -563,7 +572,6 @@ ggplot(accom_nuts5) +
                                    hjust=.5, vjust=.5, face = "plain")) +
   ggtitle("Coastal Total Night Stays NUTS2 level")
 
- 
 ```
 
 ### 4.5 Determine NUTS2 population allocation among BHI regions 
@@ -572,6 +580,7 @@ ggplot(accom_nuts5) +
 Sum across BHI regions associated with a NUTS2. This is the same for all years as population data comes from a single year.  
 
 ```{r NUTS3 population in the buff }
+
 nuts2_buffer_pop= accom_nuts5 %>%
                   select(nuts2,pop,area) %>%
                   distinct() %>% ## because duplicated for each year
@@ -579,11 +588,13 @@ nuts2_buffer_pop= accom_nuts5 %>%
                   summarise(pop_nuts2 = sum(pop),
                             area_nuts2 = sum(area)) %>%
                   ungroup()
+
 ```
 
 
 #### 4.5.2 Join the total NUTS2 area and population to the per BHI region data
 ```{r join total nuts2 area and pop to accom data}
+
 accom_nuts6  = nuts2_buffer_pop %>%
                   full_join(., accom_nuts5, by="nuts2")
 
@@ -592,6 +603,7 @@ accom_nuts6  = nuts2_buffer_pop %>%
 
 #### 4.5.3 Calculate the population fraction in a BHI region from a NUTS2 out of the NUTS2 total buffer population
 ```{r calculate nuts2 prop for each region}
+
 accom_nuts6 = accom_nuts6 %>%
               mutate(bhi_pop_prop = pop / pop_nuts2)
 
@@ -627,6 +639,7 @@ ggplot(accom_nuts6) +
 #### 4.6.1 Caclulate stays in BHI regions based on population allocation
 
 ```{r Calculate for each NUTS2 region the allocation among BHI regions}
+
 accom_nuts7 = accom_nuts6 %>%
               select(-pop_nuts2,-area_nuts2,-nuts1,-nuts2,-nuts_name,-night_stays,-mean_prop_coastal,
                      pop,-pop_km2,-area) %>%
@@ -713,93 +726,84 @@ write.csv(tr_layer, file.path(dir_layers,"tr_accommodation_stays_bhi2015.csv"),r
 
 
 ## 6. Explore Status and Trend calculation
-Moving window reference
-### 6.1 Read in layers
-```{r}
-tr_layer 
-```
+<!-- Moving window reference -->
+<!-- ### 6.1 Read in layers -->
+<!-- ```{r} -->
+<!-- tr_layer  -->
+<!-- ``` -->
 
-### 6.2 Set Parameters
-```{r set parameters}
-# set lag window for reference point calculations
-  lag_win = 5  # 5 year lag
-  trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points)
-  bhi_rgn = data.frame(rgn_id = as.integer(seq(1, 42, 1))) #unique BHI region numbers to make sure all included with final score and trend
+<!-- ### 6.2 Set Parameters -->
+<!-- ```{r set parameters} -->
+<!-- # set lag window for reference point calculations -->
+<!--   lag_win = 5  # 5 year lag -->
+<!--   trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points) -->
+<!--   bhi_rgn = data.frame(rgn_id = as.integer(seq(1, 42, 1))) #unique BHI region numbers to make sure all included with final score and trend -->
 
-```
+<!-- ``` -->
 
 
-### 6.3 Calculate status
+<!-- ### 6.3 Calculate status -->
 
-```{r calculate status}
+<!-- ```{r calculate status} -->
 
-## calculate status time series
+<!-- ## calculate status time series -->
+<!-- tr_status_score = tr_layer %>% -->
+<!--     dplyr::rename(nights = bhi_coastal_stays_per_cap) %>% -->
+<!--     filter(!is.na(nights)) %>% -->
+<!--     group_by(rgn_id) %>% -->
+<!--     mutate(year_ref = lag(year, lag_win, order_by=year), -->
+<!--            ref_val = lag(nights, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region -->
+<!--     arrange(year) %>% -->
+<!--     filter(year>= max(year)- lag_win) %>% #select only the previous 5 years from the max year -->
+<!--     ungroup() %>% -->
+<!--     mutate(rgn_value = nights/ref_val) %>% #calculate rgn_value per year, numerator of score function -->
+<!--     select(rgn_id,year,rgn_value) %>% -->
+<!--     mutate(status = pmin(1,rgn_value)) ## if regions have no data, are not included here, final year will be included below -->
+
+<!--  ## select last year of data in timeseries for status -->
+<!--   tr_status = tr_status_score %>% -->
+<!--     group_by(rgn_id) %>% -->
+<!--     summarise_each(funs(last), rgn_id, status) %>%  #this will be all same year because of code above selecting the max year -->
+<!--     full_join(bhi_rgn, .,by="rgn_id") %>% #all regions now listed, have NA for for status -->
+<!--     mutate(score = status*100, -->
+<!--             dimension = 'status') %>% ##scale to 0 to 100 -->
+<!--      select(region_id = rgn_id,score, dimension) -->
+<!-- ``` -->
+
+### Status calculation 
+
+We will use the 103% of the most recent year's "coastal_stays_per_cap" (ie. coastal_stays_per_cap * 103%) as the reference point.
+
+```{r status calc alt 1 higher ref point}
 tr_status_score = tr_layer %>%
     dplyr::rename(nights = bhi_coastal_stays_per_cap) %>%
     filter(!is.na(nights)) %>%
     group_by(rgn_id) %>%
-    mutate(year_ref = lag(year, lag_win, order_by=year),
-           ref_val = lag(nights, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year) %>%
-    filter(year>= max(year)- lag_win) %>% #select only the previous 5 years from the max year
-    ungroup() %>%
-    mutate(rgn_value = nights/ref_val) %>% #calculate rgn_value per year, numerator of score function
-    select(rgn_id,year,rgn_value) %>%
-    mutate(status = pmin(1,rgn_value)) ## if regions have no data, are not included here, final year will be included below
-
- ## select last year of data in timeseries for status
-  tr_status = tr_status_score %>%
-    group_by(rgn_id) %>%
-    summarise_each(funs(last), rgn_id, status) %>%  #this will be all same year because of code above selecting the max year
-    full_join(bhi_rgn, .,by="rgn_id") %>% #all regions now listed, have NA for for status
-    mutate(score = status*100,
-            dimension = 'status') %>% ##scale to 0 to 100
-     select(region_id = rgn_id,score, dimension)
-```
-
-### Status calculation alternative - higher reference point
-
-The reference point in the original approach was very low. In all countries, the "coastal_stays_per_cap" has been increasing over the past 5 years, or at least stayed relatively stable. This low reference point resulted in high status scores across all countries. 
-
-To set a more ambitious goal, we will use the 110% of the highest "coastal_stays_per_cap" within the past five years (ie. max(coastal_stays_per_cap)*110%) as the reference point.
-
-```{r status calc alt 1 higher ref point}
-tr_status_score_2 = tr_layer %>%
-    dplyr::rename(nights = bhi_coastal_stays_per_cap) %>%
-    filter(!is.na(nights)) %>%
-    group_by(rgn_id) %>%
-    mutate(ref_nights = max(nights)*1.1, # select ref point: (max nights 2000 - 2014)*110%
-           status_score = round(nights/ref_nights*100, 2)) %>% 
+    mutate(ref_nights = ifelse(year == 2014, nights*1.03, NA), # select ref point: (nights in 2014) * 103%
+           ref_nights = ifelse(!is.na(ref_nights), ref_nights, ref_nights[year == 2014]), 
+           status_score = round(pmin(100, nights/ref_nights*100), 2)) %>% 
     dplyr::select(rgn_id, year, status_score)
  
 # select the most recent year for status    
-tr_status_2 = tr_status_score_2 %>% 
+tr_status = tr_status_score %>% 
   filter(year == max(year)) %>% 
+  complete(rgn_id = full_seq(rgn_id, 1)) %>% 
   mutate(score = status_score,
          dimension = 'status') %>% ##scale to 0 to 100
   dplyr::select(region_id = rgn_id, score, dimension)
+
+# MISSING 19, 22, 30, 33
 
 ```
 
 ### 6.4 Plot Status
 ```{r plot tr status}
 
-## plot tr status time series
-ggplot(tr_status_score) +
-  geom_point(aes(year,status)) +
-  facet_wrap(~rgn_id) +
-  ylim(0,1) +
-  ylab("Status") +
-  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                   hjust=.5, vjust=.5, face = "plain"),
-        axis.text.y = element_text(size=6)) +
-  ggtitle("TR status time series")
-
 ## plot tr status time series, less range on y-axis
 ggplot(tr_status_score) +
-  geom_point(aes(year,status)) +
+  geom_point(aes(year,status_score)) +
   facet_wrap(~rgn_id) +
-  ylim(.8,1) +
+  ylim(60,100) +
   ylab("Status") +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain"),
@@ -819,71 +823,42 @@ ggplot(tr_status) +
 ```
 
 
-### Plot Status alternative: higher reference point
-
-```{r plot status alternative with higher ref pt}
-
-# status over past five years
-ggplot(filter(tr_status_score_2, 
-              year %in% 2010:2014)) +
-  geom_point(aes(year, status_score), size = 1) +
-  ylim(50,100) +
-  facet_wrap(~rgn_id) +
-  ggtitle('TR status scores 2010-2014 of each BHI region')
-
-# status of the most recent year
-ggplot(tr_status_2) +
-  geom_point(aes(region_id, score)) +
-  ggtitle('TR status scores - with higher reference point')
-
-```
-
 ### 6.5 Calculate Trend
 ```{r calculate trend}
-  
+
   ## calculate trend for 5 years (5 data points)
   ## years are filtered tr_status_score
-      tr_trend = tr_status_score %>%
-        filter(year >= max(year - trend_yr)) %>%                #select five years of data for trend
-        filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
-        group_by(rgn_id) %>%
-        mutate(regr_length = n()) %>%                            #get the number of status years available for greggion
-        filter(regr_length == (trend_yr + 1)) %>%                   #only do the regression for regions that have 5 data points
-          do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
-            summarize(rgn_id = rgn_id,
-                      score = coef(mdl)['year'] * lag_win) %>%
-        ungroup() %>%
-        full_join(bhi_rgn, .,by="rgn_id") %>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
-        mutate(score = round(score, 2),
-               dimension = "trend") %>%
-        select(region_id = rgn_id, dimension, score) %>%
-        data.frame()
-
-```
-
-### Trend calculation - alternative 1 with higher ref point
-
-```{r trend calc with higher ref point}
-
-tr_trend_2 = tr_status_score_2 %>% 
-  filter(year %in% 2010:2014) %>% 
-  group_by(rgn_id) %>% 
-  do(dlm = lm(status_score ~ year, data = .)) %>% 
+tr_trend = tr_status_score %>%
+  filter(year >= max(year - 5)) %>%                #select five years of data for trend
+  filter(!is.na(status_score)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
+  group_by(rgn_id) %>%
+  do(mdl = lm(status_score ~ year, data = .)) %>%             # regression model to get the trend
   summarize(rgn_id = rgn_id,
-            score = round(coef(dlm)['year'] * 0.05, 2)) %>% 
-  mutate(score = round(score, 2),
-               dimension = "trend") %>%
-  dplyr::select(region_id = rgn_id, dimension, score) %>%
+            score = round(coef(mdl)['year'] * 0.05, 2)) %>%
+  ungroup() %>%
+  complete(rgn_id = full_seq(rgn_id, 1)) %>%
+  mutate(dimension = "trend") %>%
+  select(region_id = rgn_id, dimension, score) %>%
   data.frame()
 
-# plot trend 2
-
-ggplot(tr_trend_2) +
-  geom_point(aes(x = region_id, y = score)) +
-  ggtitle('TR trend scores - with higher reference point')
-
-
 ```
+
+<!-- ### Trend calculation - alternative 1 with higher ref point -->
+
+<!-- ```{r trend calc with higher ref point} -->
+
+<!-- tr_trend_2 = tr_status_score_2 %>%  -->
+<!--   filter(year %in% 2010:2014) %>%  -->
+<!--   group_by(rgn_id) %>%  -->
+<!--   do(dlm = lm(status_score ~ year, data = .)) %>%  -->
+<!--   summarize(rgn_id = rgn_id, -->
+<!--             score = round(coef(dlm)['year'] * 0.05, 2)) %>%  -->
+<!--   mutate(score = round(score, 2), -->
+<!--                dimension = "trend") %>% -->
+<!--   dplyr::select(region_id = rgn_id, dimension, score) %>% -->
+<!--   data.frame() -->
+
+<!-- ``` -->
 
 
 ### 6.6 Plot trend
@@ -891,18 +866,22 @@ ggplot(tr_trend_2) +
 ```{r plot tr trend}
 
 ggplot(tr_trend) +
-  geom_point(aes(region_id,score), size=2) +
-  geom_hline(yintercept = 0) +
-  ylim(-1,1) +
-  ylab("Status score") +
-  xlab("BHI region") +
-  ggtitle("TR 5 yr trend score")
+  geom_point(aes(x = region_id, y = score)) +
+  ggtitle('TR trend scores - with higher reference point')
+
+# ggplot(tr_trend) +
+#   geom_point(aes(region_id,score), size=2) +
+#   geom_hline(yintercept = 0) +
+#   ylim(-1,1) +
+#   ylab("Status score") +
+#   xlab("BHI region") +
+#   ggtitle("TR 5 yr trend score")
 
 ```
 
 
 
-### 6.7Plot trend and status together
+### 6.7 Plot trend and status together
 ```{r plot tr trend and status together}
 
 plot_tr = bind_rows(tr_status,tr_trend)
