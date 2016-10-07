@@ -27,7 +27,10 @@ g2 = './baltic2015/spatial/regions_rmapshaper-ms_simplify-2x_gcs.geojson'
 s0 = readOGR(g0, 'OGRGeoJSON', verbose=F) #plot(s0, col='gray')
 
 # simplify 1x
-s1 = ms_simplify(s0) #plot(s1, col='gray')
+s1 = ms_simplify(
+  s0, keep=0.05, method='vis', 
+  keep_shapes=T, snap=T, explode=T, 
+  force_FC=T) #plot(s1, col='gray')
 geojson_write(s1, file=g1)
 
 # simplify 2x
