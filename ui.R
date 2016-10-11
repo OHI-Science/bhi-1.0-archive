@@ -7,20 +7,22 @@ dashboardPage(
     sidebarMenu(
       id = 'sidebarmenu',
 
-      menuItem("Introduction",tabName = 'intro',icon=icon("info-circle",lib='font-awesome')),
-
-      menuItem("Explore Data", tabName='explore',icon=icon("globe",lib='font-awesome'), selected=T),
-
       htmlOutput('ui_commit'),
 
-      conditionalPanel(
-        "input.sidebarmenu === 'explore'",
+      menuItem("Explore", tabName='explore',icon=icon("globe",lib='font-awesome'), selected=T),
 
-        selectInput(
-          'sel_scenario',
-          label    = '0. Choose scenario:',
-          choices  = sort(y$scenario_dirs),
-          selected = y$scenario_dirs[1]),
+      menuItem("Compare", tabName='compare',icon=icon("exchange",lib='font-awesome'), selected=F),
+
+      selectInput(
+        'sel_scenario',
+        label    = '0. Choose scenario:',
+        choices  = sort(y$scenario_dirs),
+        selected = y$scenario_dirs[1]),
+
+      conditionalPanel(
+        "input.sidebarmenu == 'compare'",
+
+        uiOutput('ui_sel_scenario_b')),
 
         selectInput(
           'sel_type',
@@ -49,53 +51,61 @@ dashboardPage(
 
           uiOutput('ui_sel_input')),
 
-        htmlOutput('var_description', class='shiny-input-container') ))),
+        selectInput(
+          'sel_rgn',
+          label    = 'Zoom to region:',
+          choices  = c(y$app_title,sort(as.character(rgns@data$rgn_name)))),
+
+        htmlOutput('var_description', class='shiny-input-container') )),
+  #),
 
   dashboardBody(
     tabItems(
 
       tabItem(
-        tabName='intro',
-        includeMarkdown(sprintf('%s_intro.md', y$gh_repo))),
-
-      tabItem(
         tabName='explore',
-        h2("Explore Data"),
 
         fluidRow(
           tabBox(width=12, selected='Map',
-                 #tabBox(width=12, selected='Elements',
 
-                 tabPanel(
-                   'Map', #title    = 'Map', status='primary', collapsible=T,
-                   width=12,
-                   div(
-                     position = 'relative',
+            tabPanel(
+              'Map', #title    = 'Map', status='primary', collapsible=T,
+              width=12,
 
-                     # leaflet map
-                     leafletOutput('map1', height = 550),
+              div(
+                position = 'relative',
 
-                     # hover text showing info on hover area
-                     absolutePanel(
-                       bottom=10, left=10, style='background-color:white',
-                       textOutput('hoverText')),
+                # leaflet map
+                leafletOutput('map1', height = 550),
 
-                     # region info, possibly with aster chart
-                     absolutePanel(
-                       top=10, right=10, # class='floater', # draggable=T, # style='background-color:white', # class='floater', # width='200px', height='200px',
-                       div(class='well', style='margin-right: 15px; margin-top: 44px; text-align: right; overflow: hidden;',
-                           htmlOutput('rgnInfo'),
-                           conditionalPanel(
-                             condition = "input.sel_type === 'output' & input.sel_output_goal=='Index' & input.sel_output_goal_dimension=='score'",
-                             style     = 'float:right; display:block;',
-                             asterOutput(outputId = "aster", width='100px', height='100px')))))),
+                # hover text showing info on hover area
+                absolutePanel(
+                  bottom=10, left=10, style='background-color:white'),
+                  #textOutput('hoverText')),
 
-                 tabPanel(
-                   'Elements',
-                   #visNetworkOutput("network")))),
-                   sunburstOutput("sunburst"),
-                   textOutput("selection")))),
+                # region info, possibly with aster chart
+                absolutePanel(
+                  top=10, right=10, # class='floater', # draggable=T, # style='background-color:white', # class='floater', # width='200px', height='200px',
+                  div(class='well', style='margin-right: 15px; margin-top: 44px; text-align: right; overflow: hidden;',
+                    htmlOutput('rgnInfo'),
+                    conditionalPanel(
+                      condition = "input.sel_type === 'output' & input.sel_output_goal=='Index' & input.sel_output_goal_dimension=='score' & input.sidebarmenu!='compare'",
+                      style     = 'float:right; display:block;',
+                      asterOutput(outputId = "aster", width='100px', height='100px')))))),
+
+            tabPanel(
+              'Table',
+              dataTableOutput('table')),
+
+            tabPanel(
+              'Elements',
+              sunburstOutput("sunburst"),
+              uiOutput("selection")),
+
+            tabPanel(
+              'Plot',
+              uiOutput('ui_boxplot')))),
 
         uiOutput('ui_msg')
 
-      ))))
+        ))))
