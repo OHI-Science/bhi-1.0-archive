@@ -222,21 +222,25 @@ eur_rus = rbind(
 
 ref_point_min = 0
 
-##2010
+## 2010
 ref_point_max_2010 = eur_rus %>%
-  filter(modeled_waste_2010 == max(modeled_waste_2010))
+ filter(country %in% baltic$country) %>% #choosing only Baltic countries
+ filter(modeled_waste_2010 == max(modeled_waste_2010))
 sprintf('max trash for 2010 is %s (%s)', 
         round(ref_point_max_2010$modeled_waste_2010),
         ref_point_max_2010$country)
 ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
+# "max trash for 2010 is 37566 (Russia)"
 
 ## 2025
 ref_point_max_2025 = eur_rus %>%
-  filter(modeled_waste_2025 == max(modeled_waste_2025))
+ filter(country %in% baltic$country) %>%  # choosing only Baltic countries
+ filter(modeled_waste_2025 == max(modeled_waste_2025))
 sprintf('max trash for 2025 is %s (%s)', 
         round(ref_point_max_2025$modeled_waste_2025),
         ref_point_max_2025$country)
 ref_point_max_2025 = ref_point_max_2025$modeled_waste_2025
+# "max trash for 2025 is 59980 (Russia)"
 
 
 ## calculate ref point
@@ -250,6 +254,7 @@ baltic_explore = eur_rus %>%
     trash_score_2025   = (
       (modeled_waste_2025 - ref_point_min) /
       (ref_point_max_2025 - ref_point_min))); # baltic_explore; summary(baltic_explore)
+
 ```
 
 
@@ -287,9 +292,7 @@ baltic_layer = lookup_bhi %>%
 ## save layer to layers folder, and register layer in layers.csv by hand
 write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
 
-  
 ## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?
-
 
 ```
 
