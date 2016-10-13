@@ -371,7 +371,7 @@ employ_nuts3 %>% select(rgn_id) %>%distinct() %>%arrange(rgn_id)
 
 ## there are 38 regions
 
-## missing: 19, 22,30,33
+## missing: 19, 22, 30, 33
 
 ```
 
@@ -403,7 +403,7 @@ ggplot(employ_nuts4) +
 
 
 #### 5.4.3 Calculate total employed by BHI region
-```{r jCalculate total employed by BHI region, message = FALSE}
+```{r Calculate total employed by BHI region, message = FALSE}
 
 employ_nuts5 = employ_nuts4 %>%
                select(country,country_abb,rgn_id,year,employ_pop) %>%
@@ -632,8 +632,8 @@ dim(eu_pop3) ##129 6
 str(eu_pop3)           
 
 ## check data flags
-eu_pop3 %>% select(flag_notes) %>%distinct()
-eu_pop3 %>% filter(flag_notes == "b")  ## b = break in time series -- this should be fine
+# eu_pop3 %>% select(flag_notes) %>%distinct()
+# eu_pop3 %>% filter(flag_notes == "b")  ## b = break in time series -- this should be fine
 
 eu_pop3 = eu_pop3 %>%
           select(-flag_notes)
@@ -764,14 +764,14 @@ Status and trend are calculated in functions.r but code is tested and explored h
 ```
 
 
-### 7.2 Set parameters
-```{r set parameters for status and trend calc, message = FALSE}
- ## set lag window for reference point calculations
-  lag_win = 5  # 5 year lag
-  trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points)
-  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1))) #unique BHI region numbers to make sure all included with final score and trend
+<!-- ### 7.2 Set parameters -->
+<!-- ```{r set parameters for status and trend calc, message = FALSE} -->
+<!--  ## set lag window for reference point calculations -->
+<!--   lag_win = 5  # 5 year lag -->
+<!--   trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points) -->
+<!--   bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1))) #unique BHI region numbers to make sure all included with final score and trend -->
 
-```
+<!-- ``` -->
 
 ### 7.3 Status calculation
 
@@ -1032,3 +1032,57 @@ data_nuts2 = nuts2@data %>%
 write_csv(data_nuts2, file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv'))
 
 ```
+
+## Alternative data and Status calculation: 
+
+```{r alter data and status}
+
+# notes for data calculated above:  
+# nat_employ2: employment rate per country time series 
+# nat_pop_2005: pop per country in 2005
+# nuts2_pop_area2: BHI regional population 
+
+# read in coastal employment data: 
+coast_employ = read_csv(file.path(dir_liv, 'liv_data_database/marine_sector_employ_revenue_by_country.csv'))
+
+# coastal population per country - sum of BHI population
+coast_pop = nuts2_pop_area2 %>% 
+  group_by(country) %>% 
+  summarize(coast_pop = sum(pop) )
+
+# join coastal employ and pop per country
+coast_employ_rate = full_join(coast_pop, coast_employ, 
+                        by = 'country') %>% 
+  mutate(coast_rate = employ/coast_pop*100) %>% 
+  dplyr::select(country, coast_rate)
+
+# join coastal and national employ rate (2014)
+employ_comp = full_join(coast_employ_rate, 
+                        nat_employ2 %>% 
+                          filter(year == '2014') %>% 
+                          dplyr::select(country, nat_rate = value), 
+                        by = 'country') %>% 
+  mutate(ratio = coast_rate / nat_rate)
+
+employ_comp
+
+#     country coast_rate nat_rate       ratio
+# 1   Denmark  0.6652809     72.8 0.009138474
+# 2   Estonia  0.7302494     69.6 0.010492089
+# 3   Finland  0.4813689     68.7 0.007006826
+# 4   Germany  3.2293824     73.8 0.043758569
+# 5    Latvia  1.3260321     66.3 0.020000483
+# 6 Lithuania  0.1507039     65.7 0.002293819
+# 7    Poland  1.1411735     61.7 0.018495519
+# 8    Sweden  0.6502281     74.9 0.008681284
+
+# compare coastal and national pop 
+pop_comp = full_join(coast_pop, nat_pop_2005) %>% 
+  mutate(ratio = coast_pop/pop_2005) 
+
+ 
+
+
+
+```
+

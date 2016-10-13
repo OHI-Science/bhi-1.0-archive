@@ -258,11 +258,17 @@ baltic_explore = eur_rus %>%
 ```{r plot and save layer}
 
 
-#compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
-ggplot(baltic_explore)+
-  geom_point(aes(country,trash_score_2010, colour="red"))+
-  geom_point(aes(country,trash_score_2025))+
-  ggtitle('Country Trash Score')
+# compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
+
+baltic_explore2 = baltic_explore %>% 
+  dplyr::select(country, trash_score_2010, trash_score_2025) %>% 
+  gather(key = ref_point, value = score, 2:3) %>% 
+  mutate(status_score = (1-score)*100)
+
+ggplot(baltic_explore2, aes(x = country, y = status_score, fill = ref_point)) +
+  geom_point(aes(color = ref_point)) + 
+  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+  labs(title = "Trash scores comparison: \n max(2010) vs. max(2025) as reference point")
 
 
 ## assign to BHI regions ----
