@@ -86,12 +86,6 @@ shinyServer(function(input, output, session) {
     req(input$sel_scenario)
     req(input$sel_type)
 
-    # TODO:
-    # - make value A - B
-    # - update Table with label
-    # - Plot tab, conditional on compare
-    # - if score, then compare all goals
-
     if (input$sel_scenario != scenario){
       load_scenario(input$sel_scenario)
     }
@@ -268,7 +262,7 @@ shinyServer(function(input, output, session) {
       return(
         'This boxplot is currently only available when choosing to Compare scenarios from sidebar.')
     } else {
-      exploding_boxplotOutput('boxplot')
+      exploding_boxplotOutput('boxplot', width='600px')
     }
   })
 
@@ -277,7 +271,6 @@ shinyServer(function(input, output, session) {
 
     if (input$sidebarmenu != 'compare') return()
 
-
     d = rgns@data %>%
       select(rgn_id, rgn_name) %>%
       left_join(
@@ -285,9 +278,9 @@ shinyServer(function(input, output, session) {
           filter(scenario == dif_scenario),
         by='rgn_id')
 
-    #browser() # save.image('tmp.Rdata') # View(d)
-    #saveRDS(d, 'tmp_d.Rdata') #
-    #loadRDS()
+    #saveRDS(d, 'tmp_d.Rdata')
+    #browser()
+    #setwd('~/github/ohirepos/inst/app'); d = readRDS('tmp_d.Rdata')
 
     exploding_boxplot(
       d,
