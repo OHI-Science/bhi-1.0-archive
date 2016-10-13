@@ -7,6 +7,8 @@
 
 ## BHI overview
 
+
+
 ### Where we work
 [The Baltic Sea](https://www.google.se/maps/place/Baltic+Sea/@59.4373514,10.9290745,5z/data=!3m1!4b1!4m5!3m4!1s0x46f4d7d988201b2b:0xb43097ae8474cb3!8m2!3d58.487952!4d19.863281)
 
