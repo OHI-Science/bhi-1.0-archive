@@ -18,7 +18,7 @@ gh_repo         = "bhi"
 gh_branch_data  = "draft"
 scenario_dir    = "baltic2015"
 app_url         = "http://ohi-science.nceas.ucsb.edu/bhi"
-ohirepos_commit = "2c38bbd58e510c3ebcdd9e1f23ff21438f102e84"
+ohirepos_commit = "398eed8b1d695170037e64cb072f9224a3c607f8"
 map_shrink_pct  = 5
 
 # derived vars
