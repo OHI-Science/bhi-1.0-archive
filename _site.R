@@ -1,5 +1,40 @@
-title           = "Baltic Ocean Health Index"
+suppressPackageStartupMessages({
+  library(readr)
+  library(dplyr)
+  library(tidyr)
+  library(sp)
+  library(geojsonio)
+  library(leaflet)
+  library(htmltools)
+  library(DT)
+  library(knitr)
+  library(printr)  # devtools::install_github('yihui/printr')
+  library(ohicore) # devtools::install_github('ohi-science/ohicore')
+})
+
+# brewed vars
+study_area      = "Baltic"
+gh_repo         = "bhi"
+gh_branch_data  = "draft"
+scenario_dir    = "baltic2015"
 app_url         = "http://ohi-science.nceas.ucsb.edu/bhi"
-ohirepos_commit = "17cfede2a32970ec356cf576375e68d0932a1b1f"
-dir_scenario    = "bhi_draft/baltic2015"
+ohirepos_commit = "2c38bbd58e510c3ebcdd9e1f23ff21438f102e84"
+map_shrink_pct  = 5
+
+# derived vars
+dir_data        = sprintf('%s_%s', gh_repo, gh_branch_data)
+dir_scenario    = sprintf('%s/%s', dir_data, scenario_dir)
+
+# knitr options
+knitr::opts_chunk$set(echo = F, message = F, warning = F)
+
+# if dir_data not found, then git clone
+if (!file.exists(dir_data)){
+  system(sprintf('git clone https://github.com/ohi-science/%s.git %s', dir_data))
+}
+
+# read config
+config = new.env()
+source(file.path(dir_scenario, 'conf/config.R'), config)
+
 
