@@ -24,7 +24,7 @@ default_trend = 0
 
 # spatial configuration (used by shiny app and future ohicore mapping functions that use leaflet)
 #geojson = 'spatial/regions_gcs.geojson'
-geojson = 'spatial/regions_rmapshaper-ms_simplify-1x_gcs.geojson'
+geojson = 'spatial/regions_gcs_simple2x.geojson'
 
 # extra descriptions not covered by goals.description or layers.description, used in ohigui
 index_description = 'The overall Index represents the weighted average of all goal scores.'
