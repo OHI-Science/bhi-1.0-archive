@@ -8,5 +8,6 @@ app_url: http://ohi-science.nceas.ucsb.edu/bhi
 projection: Mercator
 map_shrink_pct: 10.0
 debug: no
-ohirepos_commit: 91f077d8e3f5fc08e21b04eab26c87d2050b6e9e
+ohirepos_commit: 894134d8c3c3becb792b62cde4fa73ed9b3381ec
+gh_data_commit: 096f2900d262d5672178903276747f4e668013d5
 last_updated: 17098.0
