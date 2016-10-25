@@ -274,4 +274,19 @@ as.data.frame(hab_trend_bhi)
 # 31      Sweden       222 seaice_shoreline -0.7022792023
 ```
 
+### Temperary fix: leave all as NA 
 
+```{r leave as NA}
+cs_status_NA = data.frame(rgn_id = seq(1, 42, by = 1), 
+                          score = NA,
+                          dimension = "status")
+
+write_csv(cs_status_NA, file.path(dir_layers, "cs_status_placeholder_NA.csv"))
+
+cs_trend_NA = data.frame(rgn_id = seq(1, 42, by = 1), 
+                         score = NA,
+                         dimension = "trend")
+
+write_csv(cs_trend_NA, file.path(dir_layers, "cs_trend_placeholder_NA.csv"))
+
+```

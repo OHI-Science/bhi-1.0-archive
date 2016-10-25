@@ -586,7 +586,7 @@ CS = function(layers){
 
 
 
-  ## proxy scores
+  ## proxy scores: NA as placeholders
 
   scores = bind_rows(data.frame(region_id = seq(1,42,1),
                                 dimension = as.character(rep("status",42)),
