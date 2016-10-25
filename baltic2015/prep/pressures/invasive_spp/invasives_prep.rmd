@@ -1,0 +1,45 @@
+---
+title: "Invasive Species pressure layer prep"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+
+Data: number of invasives species introduction events per country from [Aquanis website](http://www.corpi.ku.lt/databases/index.php/aquanis)
+
+Score = #_of_species_introduction_event / reference_point
+
+Reference point: 10 introduction events. With no additional information, this is an arbitrary number set for now. 
+
+
+```{r setup}
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+dir_invasives = file.path(dir_prep, 'pressures/invasive_spp')
+
+## add a README.md to the prep directory 
+create_readme(dir_invasives, 'invasives_prep.rmd')
+
+```
+
+## Layer prep
+
+```{r read in data, echo=FALSE, message=FALSE}
+
+country_score = read_csv(file.path(dir_invasives, "sp_invasives_raw.csv")) %>% 
+  mutate(ref_pt = 10, 
+         score = min(1, num_invasive/ref_pt))
+
+
+bhi_rgn_lookup = read.csv(file.path(dir_prep, "bhi_basin_country_lookup.csv"), sep = ";") %>% 
+  select(country = rgn_nam, BHI_ID)
+
+bhi_score = full_join(country_score, bhi_rgn_lookup, by = 'country')
+
+write_csv(bhi_score, file.path(dir_layers, "sp_invasives_bhi2015.csv"))
+
+```
