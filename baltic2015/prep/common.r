@@ -9,6 +9,7 @@ library(tidyverse) # install.packages('tidyverse') # installs dplyr, tidyr, ggpl
 library(RMySQL)
 library(stringr)
 library(tools)
+library(ggmap) # install.packages('ggmap')
 
 ## Directories
 dir_baltic = '~/github/bhi/baltic2015'
