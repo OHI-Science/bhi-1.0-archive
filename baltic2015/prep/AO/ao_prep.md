@@ -1,21 +1,28 @@
 Artisanal Opportunity (AO) Goal Data Prep
 ================
 
--   [1. Goal Overview](#goal-overview)
-    -   [1.1 Components](#components)
-    -   [1.2 Goal model](#goal-model)
+-   [1. Background](#background)
+    -   [1.1 Goal Description](#goal-description)
+    -   [1.2 Model & Data](#model-data)
+    -   [1.3 Reference points](#reference-points)
+    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
 -   [2. Data](#data)
     -   [2.1 Data Source](#data-source)
     -   [2.2 Data locations](#data-locations)
     -   [2.3 GES status scoring](#ges-status-scoring)
     -   [2.4 Regions with no data](#regions-with-no-data)
--   [3.Data layer preparation](#data-layer-preparation)
-    -   [3.1 Read in data](#read-in-data)
-    -   [3.2 Assign scores to GES status](#assign-scores-to-ges-status)
-    -   [3.3 Unique indicators per monitoring location](#unique-indicators-per-monitoring-location)
-    -   [3.4 BHI score](#bhi-score)
--   [4. AO Status](#ao-status)
-    -   [4.1 Final score objects](#final-score-objects)
+-   [3. Goal model](#goal-model)
+    -   [3.1 Status](#status)
+    -   [3.2 Trend](#trend)
+-   [4.Data layer preparation](#data-layer-preparation)
+    -   [4.1 Read in data](#read-in-data)
+-   [5.Status Calculation](#status-calculation)
+    -   [5.1 Alternative scoring methods exploration](#alternative-scoring-methods-exploration)
+    -   [5.2 Plot alternative scores by location](#plot-alternative-scores-by-location)
+    -   [5.3 Check unique indicators per monitoring location](#check-unique-indicators-per-monitoring-location)
+    -   [5.4 BHI Status score](#bhi-status-score)
+    -   [5.5 Plot scores at each level](#plot-scores-at-each-level)
+    -   [5.6 Final score objects](#final-score-objects)
 -   [5. Calculate Trend of the status](#calculate-trend-of-the-status)
     -   [5.1 Read in slopes](#read-in-slopes)
     -   [5.2 Remove Ringkoebing Fjord and Nissum Fjord](#remove-ringkoebing-fjord-and-nissum-fjord)
@@ -23,28 +30,75 @@ Artisanal Opportunity (AO) Goal Data Prep
     -   [5.4 Mean slope for each indicator (Functional group, Key Spp)](#mean-slope-for-each-indicator-functional-group-key-spp)
     -   [5.5 Basin mean slope](#basin-mean-slope)
     -   [5.6 Apply slopes by Basin to BHI Region](#apply-slopes-by-basin-to-bhi-region)
-    -   [5.1 Final slope object](#final-slope-object)
+    -   [5.7 Final slope object](#final-slope-object)
 -   [6. Export Layers for functions.r](#export-layers-for-functions.r)
 
-1. Goal Overview
-----------------
+1. Background
+-------------
 
-### 1.1 Components
+### 1.1 Goal Description
 
-This goal has three sub-components: *stock, access, and need*. For BHI we focus first on the *stock* sub-component and will use this as a proxy for the entire goal initially
+Artisanal fishing, often also called small-scale fishing, provides a critical source of food, nutrition, poverty alleviation and livelihood opportunities for many people around the world, in particular in developing nations. This goal measure whether people who need to fish on a small, local scale have the opportunity to do so. It has three sub-components: *stock, access, and need*. For BHI we focus on the *stock* sub-component and will use this as a proxy for the entire goal initially.
 
-### 1.2 Goal model
+### 1.2 Model & Data
 
-#### 1.2.1 Status
+AO model assesses the health of fish stocks, represented by the mean of two Core Indicators for stock abundance prepared by HELCOM:
 
-`Xao = Mean Stock Indicator Value /  Reference pt`
+-   [HELCOM Core Indicator Abundance of coastal fish key functional groups](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-coastal-fish-key-functional-groups/) and
+-   [HELCOM Core Indicator Abundance of key coastal fish species](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species))
+
+Each of the indicators was then scaled between 0 and 1.
+
+### 1.3 Reference points
+
+Reference point was the maximum possible good environmental status (value=1).
+
+### 1.4 Other considerations for *OHI-BHI 2.0*
+
+Stock was one component of the AO goal. Model could be updated with parameters representing access and need of artisanal fishing opportunities in the future.
+
+2. Data
+-------
+
+### 2.1 Data Source
+
+[HELCOM Core Indicator Abundance of coastal fish key functional groups](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-coastal-fish-key-functional-groups/)
+
+[HELCOM Core Indicator Abundance of key coastal fish species](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species)
+
+**Good Environmental Status** (GES) is assessed as either *GES* or *sub-GES* based on data times series using either a baseline or a trend approach, [see HELCOM for explanation](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species/good-environmental-status/). There is only a single assessment for each region.
+
+*status qualifying comments*: for one dataset if a monitoring station receives a "sub-GES" assessment, it is given a qualifier as "low" or "high".
+
+Environmental status assessments provided by Jens Olsson (SLU). See [HELCOM FISH-PRO II](http://www.helcom.fi/helcom-at-work/projects/fish-pro/)
+
+CPUE data used in the GES assessment. Data provided by Jens Olsson, used in trend. Slopes from each analysis available here, but CPUE data held internally in the BHI database and not accessible here.
+
+### 2.2 Data locations
+
+Data are from monitoring locations (described in the HELCOM core indicators). Finnish data are fisheries data from ICES assessment regions (ICES 29-32).
+
+### 2.3 GES status scoring
+
+Alternative methods are explored in data prep. This method was selected: GES = 1, subGES = 0.2 (See *5. Status Calculation* section, method 2)
+
+*NOTE:: If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*
+
+### 2.4 Regions with no data
+
+Assign value of NA to these regions. Stocks were not assessed.
+
+3. Goal model
+-------------
+
+### 3.1 Status
+
+Xao = Mean Stock Indicator Value / Reference Pt
 
 -   Stock indicators = two HELCOM core indicators assessed for good environmental status (each scored between 0 and 1 by BHI)
 -   Reference pt = maximum possible good environmental status (value=1)
 
-#### 1.2.2 Trend
-
-**Background**
+### 3.2 Trend
 
 CPUE time series are available for all stations used for the HELCOM coastal fish populations core indicators. These data were provided by Jens Olsson (FISH PRO II project). To calculate GES status, full time series were used. Therefore, only one status time point and cannot calculate trend of status over time. Instead, follow approach from Bergström et al 2016, but only focus on the final time period for the slope (2004-2013).
 
@@ -62,36 +116,8 @@ CPUE time series are available for all stations used for the HELCOM coastal fish
 
 -   Steps 1-3 done in file `prep/AO/ao_slope_calc.r`
 
-2. Data
--------
-
-### 2.1 Data Source
-
-[HELCOM Core Indicator Abundance of coastal fish key functional groups](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-coastal-fish-key-functional-groups/)
-
-[HELCOM Core Indicator Abundance of key coastal fish species](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species)
-
-Good Environmental Status (GES) is assessed as either *GES* or *sub-GES* based on data times series using either a baseline or a trend approach, [see HELCOM for explanation](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species/good-environmental-status/). There is only a single assessment for each region.
-
-*status qualifying comments*: for one dataset if a monitoring station receives a "sub-GES" assessment, it is given a qualifier as "low" or "high".
-
-Environmental status assessments provided by Jens Olsson (SLU). See [HELCOM FISH-PRO II](http://www.helcom.fi/helcom-at-work/projects/fish-pro/)
-
-CPUE data used in the GES assessment. Data provided by Jens Olsson, used in trend. Slopes from each analysis available here, but CPUE data held internally in the BHI database.
-
-### 2.2 Data locations
-
-Data are from monitoring locations (described in the HELCOM core indicators). Finnish data are fisheries data from ICES assessment regions (ICES 29-32).
-
-### 2.3 GES status scoring
-
-Alternative methods are explored in data prep. This method was selected GES = 1, subGES = 0.2
-
-*NOTE:: If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*
-
-### 2.4 Regions with no data
-
-Assign value of NA to these regions. Stocks were not assessed.
+4.Data layer preparation
+------------------------
 
 ``` r
 ## source common libraries, directories, functions, etc
@@ -102,10 +128,7 @@ dir_ao = file.path(dir_prep,'AO')
 create_readme(dir_ao, 'ao_prep.rmd')
 ```
 
-3.Data layer preparation
-------------------------
-
-### 3.1 Read in data
+### 4.1 Read in data
 
 Read in status assessment, monitoring area locations, lookup table for BHI regions to HOLAS basins.
 
@@ -113,7 +136,6 @@ Locations for the Finnish monitoring areas are not given by specific lat-lon bec
 
 ``` r
 ## read in data...
-  ## data are in "ao_data_database" - currently csv loaded directly there, need to put in the database and then set up script to extract
 
 #assessment of GES status, all 2 indicators
 coastal_fish = readr::read_csv2(file.path(dir_ao, 'ao_data_database/ao_coastalfish_ges_status.csv'))
@@ -201,12 +223,12 @@ ao_space_data = coastal_fish_loc %>%
 write.csv(ao_space_data,file.path(dir_baltic, 'visualize/ao_space_data.csv'),row.names=FALSE)
 ```
 
-### 3.2 Assign scores to GES status
+5.Status Calculation
+--------------------
 
-Explore the consequences of different scoring schemes.
-In all cases, a score of 1 achieving highest status.
+We asssigned scores to GES status and explored the consequences of different scoring schemes. In all cases, a score of 1 achieving highest status. After discussion with experts, Alternative 2 was chosen for this goal. Exploration of all alternatives are recorded below.
 
-#### 3.2.1 Alternative scoring methods exploration
+### 5.1 Alternative scoring methods exploration
 
 **score"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"* Only areas with an assessment receives a score. Areas (BHI regions) with no assessment have NA scores, these will not be included until the final scores is calculated
 
@@ -217,15 +239,7 @@ In all cases, a score of 1 achieving highest status.
 ``` r
 ## is status ever NA?
 coastal_fish %>% filter(is.na(status)) #No
-```
 
-    ## # A tibble: 0 × 11
-    ## # ... with 11 variables: Basin_HOLAS <chr>, Basin_assessment <chr>,
-    ## #   country <chr>, monitoring_area <chr>, period <chr>,
-    ## #   coastal_water_type <chr>, core_indicator <chr>, taxa <chr>,
-    ## #   assessment_method <chr>, status <chr>, status_comment <chr>
-
-``` r
 ## Assign three alternative 0-1 scores
   ## score 1:  GES =1, subGES = 0
   ## score 2:  GES =1, subGES = 0.2
@@ -260,7 +274,7 @@ ao_value_data = coastal_fish_scores %>%
 write.csv(ao_value_data,file.path(dir_baltic, 'visualize/ao_value_data.csv'),row.names=FALSE)
 ```
 
-#### 3.2.2 Plot alternative scores by location
+### 5.2 Plot alternative scores by location
 
 Three separate plots for alternative scoring methods.
 
@@ -309,9 +323,7 @@ ggplot(filter(temp_long, score_type=="score3")) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20alt%20scores-3.png)
 
-### 3.3 Unique indicators per monitoring location
-
-*Summary information from code below.*
+### 5.3 Check unique indicators per monitoring location
 
 1.  Is more than one key species monitored at a given locations? **NO**
 2.  Is more than one function group monitored? **Depends on location, 1 or 2 groups monitored**
@@ -359,123 +371,9 @@ indicator_taxa_count= coastal_fish_scores_long %>% filter (score_type=="score1")
                   ungroup()
                   
 indicator_taxa_count %>% print(n=96)
-```
 
-    ## # A tibble: 96 × 3
-    ##                              monitoring_area core_indicator
-    ##                                        <chr>          <chr>
-    ## 1  Area south of Zealand (Smalandsfarvandet)     Functional
-    ## 2  Area south of Zealand (Smalandsfarvandet)    Key species
-    ## 3                                  Arhus Bay     Functional
-    ## 4                                  Arhus Bay    Key species
-    ## 5                                      Askoe     Functional
-    ## 6                                      Askoe    Key species
-    ## 7                                Boergerende     Functional
-    ## 8                                Boergerende    Key species
-    ## 9                            Curonian Lagoon     Functional
-    ## 10                           Curonian Lagoon    Key species
-    ## 11                 Darss-Zingst Bodden chain     Functional
-    ## 12                 Darss-Zingst Bodden chain    Key species
-    ## 13                                Daugagriva     Functional
-    ## 14                                Daugagriva    Key species
-    ## 15                  East of Usedom Peninsula     Functional
-    ## 16                  East of Usedom Peninsula    Key species
-    ## 17                                     Finbo     Functional
-    ## 18                                     Finbo    Key species
-    ## 19                 Fiords of Eastern Jutland     Functional
-    ## 20                 Fiords of Eastern Jutland    Key species
-    ## 21                                  Forsmark     Functional
-    ## 22                                  Forsmark    Key species
-    ## 23                            Gaviksfjaerden     Functional
-    ## 24                            Gaviksfjaerden    Key species
-    ## 25                       Greifswalder Bodden     Functional
-    ## 26                       Greifswalder Bodden    Key species
-    ## 27                                   Hiiumaa     Functional
-    ## 28                                   Hiiumaa    Key species
-    ## 29                            Hjarbaek Fjord     Functional
-    ## 30                                   Holmoen     Functional
-    ## 31                                   Holmoen    Key species
-    ## 32                                ICES SD 29     Functional
-    ## 33                                ICES SD 29    Key species
-    ## 34                                ICES SD 30     Functional
-    ## 35                                ICES SD 30    Key species
-    ## 36                                ICES SD 31     Functional
-    ## 37                                ICES SD 31    Key species
-    ## 38                                ICES SD 32     Functional
-    ## 39                                ICES SD 32    Key species
-    ## 40               Isefjord and Roskilde Fjord     Functional
-    ## 41               Isefjord and Roskilde Fjord    Key species
-    ## 42                                  Jurkalne     Functional
-    ## 43                                  Jurkalne    Key species
-    ## 44                        Kinnbaecksfjaerden     Functional
-    ## 45                        Kinnbaecksfjaerden    Key species
-    ## 46                                  Kumlinge     Functional
-    ## 47                                  Kumlinge    Key species
-    ## 48                           Kvaedoefjaerden     Functional
-    ## 49                           Kvaedoefjaerden    Key species
-    ## 50                                    Lagnoe     Functional
-    ## 51                                    Lagnoe    Key species
-    ## 52                         Langvindsfjaerden     Functional
-    ## 53                         Langvindsfjaerden    Key species
-    ## 54                         Monciskes/Butinge     Functional
-    ## 55                         Monciskes/Butinge    Key species
-    ## 56                                   Norrbyn     Functional
-    ## 57                                   Norrbyn    Key species
-    ## 58                North of Kuhlungsborn city     Functional
-    ## 59                North of Kuhlungsborn city    Key species
-    ## 60                Northeast of Ruegen Island     Functional
-    ## 61                Northeast of Ruegen Island    Key species
-    ## 62                         Northern Kattegat     Functional
-    ## 63                         Northern Kattegat    Key species
-    ## 64                         Northern Limfjord     Functional
-    ## 65                         Northern Limfjord    Key species
-    ## 66                              Odense Fiord    Key species
-    ## 67                Peene river / Achterwasser     Functional
-    ## 68                Peene river / Achterwasser    Key species
-    ## 69                     Pomeranian Bay, Outer     Functional
-    ## 70                     Pomeranian Bay, Outer    Key species
-    ## 71                            Praestoe Fiord     Functional
-    ## 72                            Praestoe Fiord    Key species
-    ## 73                                     Ranea     Functional
-    ## 74                                     Ranea    Key species
-    ## 75                         Rectangle 23 & 28     Functional
-    ## 76                         Rectangle 23 & 28    Key species
-    ## 77                               Sejeroe Bay     Functional
-    ## 78                               Sejeroe Bay    Key species
-    ## 79                Skive Fiord og Lovns Broad    Key species
-    ## 80  Southern Little Belt and the archipelago     Functional
-    ## 81  Southern Little Belt and the archipelago    Key species
-    ## 82              Stettin Lagoon (German part)     Functional
-    ## 83              Stettin Lagoon (German part)    Key species
-    ## 84                                Strelasund     Functional
-    ## 85                                Strelasund    Key species
-    ## 86                            The Great Belt    Key species
-    ## 87                                 The Sound     Functional
-    ## 88                                 The Sound    Key species
-    ## 89                                   Torhamn     Functional
-    ## 90                                   Torhamn    Key species
-    ## 91                Venoe Bay and Nissum Broad     Functional
-    ## 92                Venoe Bay and Nissum Broad    Key species
-    ## 93                                     Vinoe     Functional
-    ## 94                                     Vinoe    Key species
-    ## 95                 Wismar Bight and Salzhaff     Functional
-    ## 96                 Wismar Bight and Salzhaff    Key species
-    ## # ... with 1 more variables: unique_taxa_func <int>
-
-``` r
 ## which locations are missing an indicator type
 indicator_taxa_count %>% filter(monitoring_area %in% one_indicator$monitoring_area )
-```
-
-    ## # A tibble: 4 × 3
-    ##              monitoring_area core_indicator unique_taxa_func
-    ##                        <chr>          <chr>            <int>
-    ## 1             Hjarbaek Fjord     Functional                1
-    ## 2               Odense Fiord    Key species                1
-    ## 3 Skive Fiord og Lovns Broad    Key species                1
-    ## 4             The Great Belt    Key species                1
-
-``` r
 # 
 #              monitoring_area core_indicator unique_taxa_func
 #                        (chr)          (chr)            (int)
@@ -500,17 +398,15 @@ indicator_taxa_count %>%  spread(core_indicator,unique_taxa_func)%>%
                           summarise(Func_na = sum(is.na(Functional)),                                                                               KeySpp_na = sum(is.na(Key_species)))
 ```
 
-    ## # A tibble: 1 × 2
-    ##   Func_na KeySpp_na
-    ##     <int>     <int>
-    ## 1       3         1
+### 5.4 BHI Status score
 
-### 3.4 BHI score
+Step 1. Take mean score for each indicator type in each monitoring region.
 
-1.  Take mean score for each indicator type in each monitoring region.
-2.  Take mean score for each indicator at the HOLAS basin scale.
-3.  Take mean of the two indicators for each basin.
-4.  Apply basin score to each BHI region
+Step 2. Take mean score for each indicator at the HOLAS basin scale.
+
+Step 3. Take mean of the two indicators for each basin.
+
+Step 4. Apply basin score to each BHI region
 
 ``` r
 ## Number of time series that will contribute to the mean score in each basin
@@ -623,11 +519,11 @@ basin_mean_score = basin_indicator_mean %>%
           bhi_mean_score = bhi_mean_score %>% right_join(., score_list, by=c("Basin_HOLAS","bhi_id","score_type"))
 ```
 
-#### 3.4.1 Plot scores at each level
+### 5.5 Plot scores at each level
 
 *e.g. plot the monitoring stations, basins, BHI regions*
 
-#### 3.4.1.1 Plot monitoring area indicator mean scores
+#### Plot monitoring area indicator mean scores
 
 Scoring alternatives do not seem to lead to strong differences. Clearly changing the subGES from 0 to 0.2 shifts the range of scores.
 
@@ -673,9 +569,9 @@ ggtitle("Monitoring Area Indicator Mean Score by Basin")
 
 ![](ao_prep_files/figure-markdown_github/plot%20scores%20levels%20of%20aggregation-3.png)
 
-#### 3.4.1.2 Plot the monitoring area mean scores on a map
+#### Plot the monitoring area mean scores on a map
 
-Each of the alternative score methods plotted on a separate map.
+Each of the alternative score methods is plotted on a separate map.
 
 ``` r
 ##plot on map
@@ -696,7 +592,6 @@ str(monitoring_indicator_mean_loc)
 
 ``` r
 ## get the map
-library('ggmap')
 map = get_map(location = c(8.5, 53, 32, 67.5))
 ```
 
@@ -763,7 +658,7 @@ map = get_map(location = c(8.5, 53, 32, 67.5))
 
 ![](ao_prep_files/figure-markdown_github/monitoring%20mean%20score%20map-3.png)
 
-#### 3.4.1.3 Plot Basin Indicator scores
+#### Plot Basin Indicator scores
 
 Plot the mean basin score for each indicator *(e.g. on functional score per basin and one key species score per basin).*
 *Basins are currently alphabetically ordered on x-axis, not ordered geographically.*
@@ -784,7 +679,7 @@ ggplot(basin_indicator_mean) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20basin%20indicator%20scores-1.png)
 
-#### 3.4.1.4 Plot Basin mean score across indicators
+#### Plot Basin mean score across indicators
 
 The mean of the two indicator scores was taken for each basin.
 
@@ -802,7 +697,7 @@ ggplot(basin_mean_score) +
 
 ![](ao_prep_files/figure-markdown_github/plot%20basin%20mean%20across%20indicators-1.png)
 
-#### 3.4.1.5 Plot BHI Scores
+#### Plot BHI Scores
 
 There are no scores for Kiel Bay and Gdansk Basin, there for no scores for BHI regions 7,8,18,19. For Kiel Bay, this could be because some monitoring locations should be assigned to Kiel Bay but are not. There is no Polish data which is why there is no scoring for Gdansk Basin.
 
@@ -867,26 +762,17 @@ bhi_mean_score_colors = bhi_mean_score %>%
 #     mtext("AO Score", side = 3, outer=TRUE, line=1.5)
 ```
 
-#### 3.4.1.6 Status review and decisions
+<!-- #### Status review and decisions -->
+<!-- 2. Have Jens assess method for scale up from monitoring location specific indicator status assessments to BHI region score - **Jens says generally reasonable, but GF score for Finland should not be applied to Russian and Estonian waters**   -->
+<!-- 3. Check assignment of monitoring regions / assessment basins to HOLAS basins.   -->
+<!-- **Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data).  *Should we gap-fill with adjacent areas?*- **Jens say do not gap fill from adjacent areas, there is not data and populations too local to extrapolate**   -->
+### 5.6 Final score objects
 
-1.  Have Jens assess scoring options for GES status assessment - **Jens says alternative 2**
+Score 2 was chosen. Now we are preparing object with score by basin.
 
-2.  Have Jens assess method for scale up from monitoring location specific indicator status assessments to BHI region score - **Jens says generally reasonable, but GF score for Finland should not be applied to Russian and Estonian waters**
-
-3.  Check assignment of monitoring regions / assessment basins to HOLAS basins.
-    **Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data). *Should we gap-fill with adjacent areas?*- **Jens say do not gap fill from adjacent areas, there is not data and populations too local to extrapolate**
-
-4. AO Status
-------------
-
-**Score is calculated in Section 3.4 **
-
-### 4.1 Final score objects
-
-Prepare object with score by basin.
-- **Select score2**
-- Although scores is calculated by basin, Jens Olsson suggests not applying the score to regions where no sampling occurred. Therefore, 13 regions have the score replaced with NA. *These regions are: 1,4,8,11,15,17,21,20,22,25,31,33,34*
-- See this map of sampling locations provided by Jens Olsson for the above justification (note that the Finnish sites are not marked but covered the entire coastline as they are ICES regions. Coloration of the coastal waters is indication HELCOM coastal water type.
+-   Although scores is calculated by basin, Jens Olsson suggests not applying the score to regions where no sampling occurred. Therefore, 13 regions have the score replaced with NA:
+-   1,4,8,11,15,17,21,20,22,25,31,33,34
+-   See this map of sampling locations provided by Jens Olsson for the above justification (note that the Finnish sites are not marked but covered the entire coastline as they are ICES regions. Coloration of the coastal waters is indication HELCOM coastal water type.
 
 ![map](ao_prep_files/figure-markdown_github/CoastalFishSamplingLocations.png?raw=true)
 - **Object exported in section 6**
@@ -1003,7 +889,7 @@ slope = slope %>%
         dplyr::rename(basin_name= Basin_HOLAS)
 ```
 
-#### 5.1.1 Plot the slopes from all timeseries
+#### Plot the slopes from all timeseries
 
 ``` r
 ggplot(slope)+
@@ -1178,54 +1064,7 @@ slope4 = slope4 %>%
     ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
     ## character vector and factor, coercing into character vector
 
-#### 5.6.1 Plot slopes by BHI region
-
-Currently not plotted; can be done with `bhi/baltic2015/PlotMap()`
-
-``` r
-## dot plot
-# ggplot(slope4) + 
-#   geom_hline(yintercept =0) +
-#   geom_point(aes(bhi_id, slope_mean_basin), colour="black",size=3)+
-#   ylim(-.3,.3)+
-#   ggtitle("Mean slope by BHI Region")
-# 
-# 
-# 
-# 
-# ## 
-# bhi_mean_slope_colors = slope4 %>% 
-#                         mutate(cols = ifelse(is.na(slope_mean_basin) == TRUE, "grey",
-#                                       ifelse(slope_mean_basin >= -1 & slope_mean_basin < -0.5, "red",
-#                                       ifelse(slope_mean_basin >= -0.5 & slope_mean_basin < -0.2, "orange1",
-#                                       ifelse(slope_mean_basin >= -0.2 & slope_mean_basin < 0, "yellow2",
-#                                       ifelse(slope_mean_basin ==0, "yellowgreen",       
-#                                       ifelse(slope_mean_basin >= 0 & slope_mean_basin <0.2, "green1", 
-#                                       ifelse(slope_mean_basin >= 0.2 & slope_mean_basin <0.5, "light blue", 
-#                                       ifelse(slope_mean_basin >= 0.5 & slope_mean_basin <=1, "blue","grey")))))))))
-# 
-# 
-# ## BHI shapefile previously read in
-# shp_slope = BHIshp2
-# 
-# 
-# shp_slope@data = shp_slope@data %>% full_join(., bhi_mean_slope_colors, by=c("BHI_ID"= "bhi_id"))
-# head(shp_slope@data)
-# 
-# 
-# ##PLot
-# par(mfrow=c(1,1))
-#  plot(shp_slope, col=shp_slope@data$cols)
-# 
-#  # plot(c(1,2,3),c(1,2,3), type='n', fg="white",bg="white", xaxt='n',yaxt='n')
-#   legend("right", 
-#          legend=c("No Score","< -0.5","< -0.2","< 0","0","< 0.2","<0.5","<= 1"), 
-#          fill=c("grey","red","orange1","yellow2","yellowgreen","green1","light blue", "blue"), bty='n', cex=1)
-# 
-#     mtext("AO Slope for Trend", side = 3, outer=TRUE, line=1.5, cex=2)
-```
-
-### 5.1 Final slope object
+### 5.7 Final slope object
 
 ``` r
 ## object slope from basin joined to bhi region
@@ -1243,7 +1082,7 @@ bhi_slope = slope4 %>%
 ## Export this object in Section 6
 ```
 
-#### 5.1.2 Plot final slope object
+#### Plot final slope object
 
 Size points by number of times series used
 
@@ -1278,7 +1117,7 @@ Status and trend calculations are done in the prep folder because they are done 
 
 Here the status and slope value obejcts will be be saved as csv files in the layers folder and registerd in layers.csv
 
-**Score Object** Created in section 4.1
+**Score Objects** Created in section 4 and 5.
 
 ``` r
 ## Data layers for the stock component of AO
