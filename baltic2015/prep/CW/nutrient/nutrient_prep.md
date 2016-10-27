@@ -668,13 +668,6 @@ These csv files will be used as a first cut for the secchi status and trend. **F
  - How is it evaluated by HOLAS?
  - BHI regions are 5 & 6. 5 is all coastal, 6 has both coastal and offshore observations before 2000 and from 2000 forward, 3 offshore observations in spring (not summer).
 
-**Should/How to model the data?**
-Not all months are sampled in all years (see above plot).
-If model, do a linear model.
-*Linear model options* 1. Take mean summer secchi, ignore that different months sampled in different years, just average the months that are sampled in any given year. Model by basin and year.
-2. Take mean monthly value by year, model by basin + year + month. Average the modelled monthly value to get a summer mean.
-3. Do the above but just model all the data points, don't take the mean value and instead use a random effect to account for location?
-
 9. Transform status
 -------------------
 
