@@ -34,6 +34,10 @@ Artisanal Opportunity (AO) Goal Data Prep
 1. Background
 -------------
 
+<!-- To be added later -->
+<!-- # ```{r, results='asis', echo=FALSE} -->
+<!-- # cat(readLines('~/github/bhi/baltic2015/conf/goals/ao.md')) -->
+<!-- # ``` -->
 ### 1.1 Goal Description
 
 Artisanal fishing, often also called small-scale fishing, provides a critical source of food, nutrition, poverty alleviation and livelihood opportunities for many people around the world, in particular in developing nations. **This goal measure whether people who need to fish on a small, local scale have the opportunity to do so.** It has three sub-components: *stock, access, and need*. For BHI, we focus on the *stock* sub-component and will use this as a proxy for the entire goal.
