@@ -63,34 +63,35 @@ Assign value of NA to these regions. Stocks were not assessed.
 
 ## 3. Goal model
 
-### 3.1 Status  
+**Status**
 
 Xao = Mean Stock Indicator Value / Reference Pt
 
 - Stock indicators = two HELCOM core indicators assessed for good environmental status (each scored between 0 and 1 by BHI)  
 - Reference pt = maximum possible good environmental status (value=1)  
 
-### 3.2 Trend
+**Trend**
 
-CPUE time series are available for all stations used for the HELCOM coastal fish populations core indicators. These data were provided by Jens Olsson (FISH PRO II project). To calculate GES status, full time series were used. Therefore, only one status time point and cannot calculate trend of status over time. Instead, follow approach from Bergström et al 2016, but only focus on the final time period for the slope (2004-2013).  
+CPUE time series are available for all stations used for the HELCOM coastal fish populations core indicators. These data were provided by Jens Olsson (FISH PRO II project). To calculate GES status, full time series were used. Therefore, only one status time point and cannot calculate trend of status over time. Instead, follow approach from [Bergstrom et al. 2016. Long term changes in the status of coastal fish in the Baltic Sea. Estuarin, Coast and Shelf Science. 169:74-84](http://www.sciencedirect.com/science/article/pii/S0272771415301700http://www.sciencedirect.com/science/article/pii/S0272771415301700), but we only focus on the final time period for the slope (2004-2013).  
 
-[Bergstrom et al. 2016. Long term changes in the status of coastal fish in the Baltic Sea. Estuarin, Coast and Shelf Science. 169:74-84](http://www.sciencedirect.com/science/article/pii/S0272771415301700http://www.sciencedirect.com/science/article/pii/S0272771415301700)  
+Steps involved: 
 
-**Trend Method**
+- 1. Select final time period of trend assessment (2004-2013)  
+- 2. Use time series from both indicators, Key Species and Functional groups. For functional groups,include both cyprinid and piscivore time series.  
+- 3. For each time series:  square-root transform data, z-score, fit linear regression, extract slope  
+- 4. Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin
+- 5. Within each basin take a mean functional group indicator slope (mean of cyprinid mean and piscivore mean)  
+- 6. For each basin take overall mean slope - mean of key species and functional group  
+- 7. Apply trend value for basin to all BHI regions (except in Gulf of Finland, do not apply Finnish site value to Estonia and Russian regions.) 
 
-1. Select final time period of trend assessment (2004-2013)  
-2. Use time series from both indicators, Key Species and Functional groups. For functional groups,include both cyprinid and piscivore time series.  
-3. For each time series:  square-root transform data, z-score, fit linear regression, extract slope  
-4. Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin  
-5. Within each basin take a mean functional group indicator slope (mean of cyprinid mean and piscivore mean)  
-6. For each basin take overall mean slope - mean of key species and functional group  
-7. Apply trend value for basin to all BHI regions (except in Gulf of Finland, do not apply Finnish site value to Estonia and Russian regions.) 
-
-* Steps 1-3 done in file `prep/AO/ao_slope_calc.r`
+_Steps 1-3 done in file `prep/AO/ao_slope_calc.r`_
 
 ## 4.Data layer preparation
 
 ```{r setup, message=FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_ao = file.path(dir_prep,'AO')
@@ -685,7 +686,7 @@ Not currently plotted: can do so with `bhi/baltic2015/PlotMap()`
 ```
 
 
-## 5. Calculate Trend of the status
+## 5. Trend Calculation
 
 ### 5.1 Read in slopes
 These are the slopes for a linear model fit to each monitoring_area for each indicator time series. Data are first square root transformed and zscored. Linear models were fit for the 2004-2013 time period with a minimum of 5 years of data
