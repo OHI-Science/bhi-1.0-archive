@@ -1,24 +1,18 @@
----
-title: "Invasive Species pressure layer prep"
-output:
-  github_document:
-    toc: true
-    toc_depth: 3
-params: 
-    datasource: csv
----
+Invasive Species pressure layer prep
+================
+
+-   [Layer prep](#layer-prep)
 
 Data: number of invasives species introduction events per country from [Aquanis website](http://www.corpi.ku.lt/databases/index.php/aquanis)
 
-Score = #_of_species_introduction_event / reference_point
+Score = \#\_of\_species\_introduction\_event / reference\_point
 
-Reference point: 10 introduction events. With no additional information, this is an arbitrary number set for now. 
+Reference point: 10 introduction events. With no additional information, this is an arbitrary number set for now.
 
+Layer prep
+----------
 
-## Layer prep
-
-```{r setup, message = FALSE}
-
+``` r
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 source('~/github/bhi/baltic2015/prep/common.r')
@@ -27,11 +21,9 @@ dir_invasives = file.path(dir_prep, 'pressures/invasive_spp')
 
 ## add a README.md to the prep directory 
 create_readme(dir_invasives, 'invasives_prep.rmd')
-
 ```
 
-```{r read in data}
-
+``` r
 country_score = read_csv(file.path(dir_invasives, "sp_invasives_raw.csv")) %>% 
   mutate(ref_pt = 10, 
          score = min(1, num_invasive/ref_pt))
@@ -55,5 +47,4 @@ bhi_score = full_join(country_score, bhi_rgn_lookup, by = 'country') %>%
          score)
 
 write_csv(bhi_score, file.path(dir_layers, "sp_invasives_bhi2015.csv"))
-
 ```
