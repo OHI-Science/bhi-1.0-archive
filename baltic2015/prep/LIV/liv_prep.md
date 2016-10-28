@@ -52,7 +52,7 @@ Employment rate data was extracted from NUTS2 employment to substitute Baltic re
 
 ### 1.3 Reference points
 
-The highest coastal/national employment rate ratio in the most recent five years.
+110% of the highest coastal/national employment rate ratio in the most recent five years.
 
 ### 1.4 Other considerations for *OHI-BHI 2.0*
 
