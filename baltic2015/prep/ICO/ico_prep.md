@@ -2,11 +2,14 @@ Iconic Species (ICO) Data Preparation for Sense of Place (SP) goal
 ================
 
 -   [1. Background](#background)
+    -   [1.1 Goal Description](#goal-description)
+    -   [1.2 Model & Data](#model-data)
+    -   [1.3 Reference points](#reference-points)
+    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
 -   [2. Data](#data)
     -   [2.1 Data sources](#data-sources)
     -   [2.2 Data folder for raw data](#data-folder-for-raw-data)
     -   [2.3 Data for ICO](#data-for-ico)
-    -   [2.4 Selecting ICO species](#selecting-ico-species)
     -   [References for Redlist criteria / threat levels](#references-for-redlist-criteria-threat-levels)
 -   [3. Goal model](#goal-model)
 -   [4. Prepare ICO data layer](#prepare-ico-data-layer)
@@ -19,36 +22,11 @@ Iconic Species (ICO) Data Preparation for Sense of Place (SP) goal
 1. Background
 -------------
 
-2. Data
--------
+### 1.1 Goal Description
 
-### 2.1 Data sources
+Iconic species are those that are relevant to local cultural identity through a species’ relationship to one or more of the following: 1) traditional activities such as fishing, hunting or commerce; 2) local ethnic or religious practices; 3) existence value; and 4) locally-recognized aesthetic value (e.g., touristic attractions/common subjects for art such as whales). Habitat-forming species are not included in this definition of iconic species, nor are species that are harvested solely for economic or utilitarian purposes (even though they may be iconic to a sector or individual). This sub-goal assesses how well those species are conserved.
 
-HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria.
-
-\*Pros for using these <data:*>
-
-Much more representative set of species included for Baltic Sea biodiversity.
-
-\*Cons for using these <data:*>
-
-Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.
-
-[HELCOM species checklists](http://helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) (see bottom right of page for links to excel sheets) were downloaded on 14 June 2016
-
-Joni Kaitaranta (HELCOM) emailed the complete list of species assessed using IUCN red list criteria on 14 June 2016.
-
-### 2.2 Data folder for raw data
-
-These data are in the folder 'SPP/data\_checklist\_redlist'
-
-### 2.3 Data for ICO
-
-Data in the folder 'ICO/data\_database' were exported from the [spp\_prep.rmd](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/SPP/spp_prep.md) in Section 5.6.2
-
-### 2.4 Selecting ICO species
-
-Iconic fish and mammals species have been selected to represent ICO. When bird species have distributions by basin (rather than country), ICO can be updated to include those. Included species are:
+Iconic fish and mammals species have been selected to represent ICO in the baltic. Included species are:
 
 -   Cod
 -   Flounder
@@ -63,6 +41,45 @@ Iconic fish and mammals species have been selected to represent ICO. When bird s
 -   harbour seal / common seal
 -   harbour porpoise
 -   ringed seal
+
+### 1.2 Model & Data
+
+HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria. Species were assigned a *threat category* (ranging from "extinct" to "least concern") and assigned a weight. Goal score is the average weight of all species assessed.
+
+### 1.3 Reference points
+
+Reference point is when all species are in the "least concern" category and score of 100 is achieved. The lower cut-off point when 75% of species are extinct and score is 0.
+
+### 1.4 Other considerations for *OHI-BHI 2.0*
+
+-   Iconic fish and mammals species have been selected to represent ICO in the Baltic. When bird species have distributions by basin (rather than country), ICO can be updated to include those.
+
+\*Pros for using these <data:*>
+
+Much more representative set of species included for Baltic Sea biodiversity.
+
+\*Cons for using these <data:*>
+
+Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), and therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.
+
+-   Trend is set to "NA" currently because there are no time-series data on the species status.
+
+2. Data
+-------
+
+### 2.1 Data sources
+
+[HELCOM species checklists](http://helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) (see bottom right of page for links to excel sheets) were downloaded on 14 June 2016.
+
+Joni Kaitaranta (HELCOM) emailed the complete list of species assessed using IUCN red list criteria on 14 June 2016.
+
+### 2.2 Data folder for raw data
+
+These data are in the folder 'SPP/data\_checklist\_redlist'
+
+### 2.3 Data for ICO
+
+Data in the folder 'ICO/data\_database' were exported from the [spp\_prep.rmd](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/SPP/spp_prep.md) in Section 5.6.2
 
 ### References for Redlist criteria / threat levels
 
@@ -97,7 +114,8 @@ Xico\_basin = 1- sum\[wi\]/R
 
 (eg. score equals 1 when all species i have wi of LC)
 
-Scale min value = score is 0 when 75% of species are extinct.\*
+Scale min value = score is 0 when 75% of species are extinct.
+
 \*From Halpern et al 2012, SI. "We scaled the lower end of the biodiversity goal to be 0 when 75% species are extinct, a level comparable to the five documented mass extinctions"
 
 wi from Halpern et al 2012, SI
