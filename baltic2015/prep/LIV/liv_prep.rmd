@@ -1021,7 +1021,7 @@ ggplot(liv_status) +
         tidyr::complete(rgn_id = full_seq(rgn_id, 1)) %>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
         mutate(score = round(score, 2),
                dimension = "trend") %>%
-        select(region_id = rgn_id, dimension, score) %>%
+        select(rgn_id, dimension, score) %>%
         data.frame()
 
 write_csv(liv_trend, file.path(dir_layers, "liv_trend_score_bhi2015.csv"))
@@ -1044,7 +1044,7 @@ liv_trend %>% filter(is.na(score)) ## 19,22,30,33
 ```{r plot liv trend, message = FALSE}
 
 ggplot(liv_trend) +
-  geom_point(aes(region_id,score), size=2) +
+  geom_point(aes(rgn_id,score), size=2) +
   geom_hline(yintercept = 0) +
   ylim(-1,1) +
   ylab("Status score") +
