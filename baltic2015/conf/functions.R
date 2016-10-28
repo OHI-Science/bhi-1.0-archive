@@ -615,40 +615,31 @@ TR = function(layers){
   ##-------------------------------------------------------------------##
 
   ##-------------------------------------------------------------------##
-  ## Set Parameters
-  ## set lag window for reference point calculations
-  lag_win = 5  # 5 year lag
-  trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points)
-  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1))) #unique BHI region numbers to make sure all included with final score and trend
-  ##-------------------------------------------------------------------##
-
 
   ##-------------------------------------------------------------------##
   ## CALCULATE STATUS ##
 
   ## calculate status time series
+  ## updated by Ning Jiang - 10.28.2016
+
   tr_status_score = tr_layer %>%
     dplyr::rename(nights = bhi_coastal_stays_per_cap) %>%
     filter(!is.na(nights)) %>%
-    group_by(rgn_id)%>%
-    mutate(year_ref = lag(year, lag_win, order_by=year),
-           ref_val = lag(nights, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year)%>%
-    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
-    ungroup() %>%
-    mutate(rgn_value = nights/ref_val) %>% #calculate rgn_value per year, numerator of score function
-    select(rgn_id,year,rgn_value)%>%
-    mutate(status = pmin(1,rgn_value)) ## if regions have no data, are not included here, final year will be included below
-
-  ## select last year of data in timeseries for status
-  tr_status = tr_status_score %>%
     group_by(rgn_id) %>%
-    summarise_each(funs(last), rgn_id, status) %>%  #this will be all same year because of code above selecting the max year
-    full_join(bhi_rgn, .,by="rgn_id")%>% #all regions now listed, have NA for for status
-    mutate(score = status*100,
+    filter(year > (max(year) - 5)) %>%
+    mutate(ref_nights = max(nights),
+           status_score = round(pmin(100, nights/ref_nights*100), 2)) %>%
+    dplyr::select(rgn_id, year, status_score) %>%
+    as.data.frame()
+
+  # select the most recent year for status
+  tr_status = tr_status_score %>%
+    filter(year == max(year)) %>%
+    complete(rgn_id = full_seq(rgn_id, 1)) %>%
+    mutate(score = status_score,
            dimension = 'status') %>% ##scale to 0 to 100
-    select(region_id = rgn_id,score, dimension) %>%
-    ungroup()
+    dplyr::select(region_id = rgn_id, score, dimension)
+
   ##-------------------------------------------------------------------##
 
 
@@ -658,20 +649,18 @@ TR = function(layers){
   ## calculate trend for 5 years (5 data points)
   ## years are filtered tr_status_score
   tr_trend = tr_status_score %>%
-    filter(year >= max(year - trend_yr))%>%                #select five years of data for trend
-    filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
+    filter(year >= max(year - 5)) %>%                #select five years of data for trend
+    filter(!is.na(status_score)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
     group_by(rgn_id) %>%
-    mutate(regr_length = n())%>%                            #get the number of status years available for greggion
-    filter(regr_length == (trend_yr + 1))%>%                   #only do the regression for regions that have 5 data points
-    do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
+    do(mdl = lm(status_score ~ year, data = .)) %>%             # regression model to get the trend
     summarize(rgn_id = rgn_id,
-              score = coef(mdl)['year'] * lag_win)%>%
+              score = round(coef(mdl)['year'] * 0.05, 2)) %>%
     ungroup() %>%
-    full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
-    mutate(score = round(score, 2),
-           dimension = "trend") %>%
+    complete(rgn_id = full_seq(rgn_id, 1)) %>%
+    mutate(dimension = "trend") %>%
     select(region_id = rgn_id, dimension, score) %>%
     data.frame()
+
   ##-------------------------------------------------------------------##
 
   ##-------------------------------------------------------------------##
