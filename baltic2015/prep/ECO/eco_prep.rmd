@@ -10,11 +10,27 @@ params:
 
 ## 1. Background
 
+### 1.1 Goal Description
+
 Economies captures the economic value associated with marine industries using revenue from marine sectors. Due to a lack data from specific sectors, here the goal is measured by per capita GDP of each region, relative to the national per capita GDP. 
+
+### 1.2 Model & Data 
+
+Model compares per capita GDP of each region to the national per capita GDP. Both [BHI regional GDP](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp) data and [natinoal GDP](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp) data (in _millions of Euros_) were downloaded from Eurostat database. 
+
+### 1.3 Reference points 
+
+Reference point is 110% of the highest regional/national GDP per capita within the last 5 years. 
+
+### 1.4 Other considerations for _OHI-BHI 2.0_
+
+In this assessment, GDP used is for entire NUTS3, but divided among populations along a 25km buffer along the shore. 
+
+Population data was not extracted for the entire NUTS3 area, only for the buffer area.  Therefore, the entire GDP for the NUTS3 is allocated among BHI regions, rather than only the GDP associated with the population in the buffer.
 
 ## 2. Data
 
-### 2.1 Regional Data
+### 2.1 BHI Regional Data
 
 Eurostat regional (NUTS3) GDP. Nominal GDP data in millions of Euros.
 
@@ -100,11 +116,11 @@ NUTS3 GDP data is joined in the database to the area and population density info
 - NUTS3_area_in_BHI_buffer_km2 = area of a NUTS3 region associated with the 25km buffer of a BHI region  
 
 ## 3. Goal Model
-### 3.1 Status
+### 3.1 Status Alternative 1
 
 Xeco = (GDP_Region_c/GDP_Region_r)/(GDP_Country_c/GDP_Country_r) 
 
-c = current year, r=reference year  
+c = current year, r = reference year  
 
 reference point is a moving window (single year value) 
 
@@ -115,7 +131,7 @@ Data can be in nominal GDP because is a ratio value (adjusting by a deflator wou
 Data are in per capita GDP in millions of euro, using only population size from 2005 for all years.  
 
 
-### 3.1.2 Status Alternative
+### 3.1.2 Status Alternative 2 
 
 Calculate instead the relative importance or contribution of Coastal GDP per capita towards the Country's GDP per capita. The higher the proportion, the higher the status. 
 
@@ -126,8 +142,6 @@ r = (the highest ratio of the past five years) * 110%
 
 ### 3.2 Trend
 Trend will be calculated based on the last 5 status years by fitting a linear model.
-
-
 
 ## 4. Other
 
@@ -151,18 +165,17 @@ No GDP data for the following German NUTS3 regions: DE80H, DE805,DE80D, DE801,DE
 (3) Finnish NUTS3 regions also changed for those associated with BHI region 32:old names FI1A3, FI1A2, FI1A1 but new names appear to be in the same locations (new names FI1D7, FI1D6, FI1D5). These are also fixed in 5.1.5  
 
 
-#### 4.2.3 GDP used is for entire NUTS3 -
-Population data was not extracted for the entire NUTS3 area, only for the buffer area.  Therefore, the entire GDP for the NUTS3 is allocated among BHI regions, rather than only the GDP associated with the population in the buffer.
-
 
 ## 5. Regional GDP prep
 
 ### 5.1 Data organization
 
-Data prep setup. 
 ```{r setup, message=FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 source('~/github/bhi/baltic2015/prep/common.r')
-dir_eco    = file.path(dir_prep, 'ECO')
+dir_eco = file.path(dir_prep, 'ECO')
 
 ## add a README.md to the prep directory
 create_readme(dir_eco, 'eco_prep.rmd')
@@ -953,7 +966,7 @@ write.csv(bhi_nat_gdp_layer, file.path(dir_layers, "le_gdp_country_bhi2015.csv")
 
 
 
-## 7. Status and Trend Calculation
+## 7. Status and Trend Calculation - Alternative 1
 
 Status and trend are calculated in functions.r but code is tested and explored here.
 
@@ -1189,7 +1202,7 @@ ggplot(plot_eco) +
 ```
 
 
-### 7.5 Status and Trend Calculation Alternative
+## 8. Status and Trend Calculation - Alternative 2
 
 ```{r status alt}
 
@@ -1247,7 +1260,7 @@ ggplot(eco_trend) +
 
 
 
-#### 8. Extra: explore updated NUTS shapefile 22.9.2016
+## Appendix: Explore updated NUTS shapefile 22.9.2016
 
 Udpated NUTS shape file was received from Marc to correct region misassignment. This section is checking if they match corrected assignments done by Jennifer in section 5.1.4. 
 
