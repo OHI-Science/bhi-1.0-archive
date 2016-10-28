@@ -10,10 +10,28 @@ params:
 
 ## 1. Background
 
-"This sub-goal describes livelihood quantity and quality for people living on the coast.  
-Ideally, this sub-goal would speak to the quality and quantity of marine jobs in an area. It would encompass all the marine sectors that supply jobs and wages to coastal communities, incorporating information on the sustainability of different sectors while also telling about the working conditions and job satisfaction. "  
+### 1.1 Goal Description
 
-[Reference](http://ohi-science.org/goals/#livelihoods-and-economies)
+This sub-goal describes livelihood quantity and quality for people living on the coast.  
+Ideally, this sub-goal would speak to the quality and quantity of marine jobs in an area. It would encompass all the marine sectors that supply jobs and wages to coastal communities, incorporating information on the sustainability of different sectors while also telling about the working conditions and job satisfaction. (Read more about this goal [here](http://ohi-science.org/goals/#livelihoods-and-economies))
+
+Due to a lack of sector-specific employment information in the Baltic regions, we used overall employment rate in the Baltic coastal regions to represent ocean-dependent livelihood.  
+
+### 1.2 Model & Data 
+
+Employment rate data was extracted from NUTS2 employment to substitute Baltic regional employment data, and compare that with the country-level employment rate. 
+
+### 1.3 Reference points 
+
+The highest coastal/national employment rate ratio in the most recent five years. 
+
+### 1.4 Other considerations for _OHI-BHI 2.0_
+
+Regions 19, 22 , 30, and 33 have NA status and trend. 
+
+Russian regions have NA status because no regional data (19,22,33)
+
+Regions with no coast line have no status because not joined to a NUTS region (30)
 
 ## 2. Data
 
@@ -30,7 +48,7 @@ Available for Country Level (NUTS0), NUTS1, and NUTS2; ages 15-64; All sexes; ye
 
 The source for the regional labour market information down to NUTS level 2 is the EU Labour Force Survey (EU-LFS). This is a quarterly household sample survey conducted in all Member States of the EU and in EFTA and Candidate countries.   
 
-The EU-LFS survey follows the definitions and recommendations of the International Labour Organisation (ILO). To achieve further harmonisation, the Member States also adhere to common principles when formulating questionnaires. The LFS' target population is made up of all persons in private households aged 15 and over. For more information see the EU Labour Force Survey (lfsi_esms, see paragraph 21.1.).  
+The EU-LFS survey follows the definitions and recommendations of the International Labour Organisation (ILO). To achieve further harmonization, the Member States also adhere to common principles when formulating questionnaires. The LFS' target population is made up of all persons in private households aged 15 and over. For more information see the EU Labour Force Survey (lfsi_esms, see paragraph 21.1.).  
 
 The EU-LFS is designed to give accurate quarterly information at national level as well as annual information at NUTS 2 regional level and the compilation of these figures is well specified in the regulation. Microdata including the NUTS 2 level codes are provided by all the participating countries with a good degree of geographical comparability, which allows the production and dissemination of a complete set of comparable indicators for this territorial level.  
 
@@ -97,9 +115,10 @@ employment (thousands of people) *need to exclude this*
 
 UPDATE with Marc's methods or link
 
-## 3. Goal model
+### 2.5 Alternative employment data - explored but excluded
+The [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) identified the potential for Blue Growth in each of the EU Member States of the Baltic Sea Region, and also provided detailed marine revenue and employment by sector and in each BHI country. This data was explored but excluded from this assessment. See data exploration in section 10. 
 
-<!-- Xliv = (Employment_Region_c/Employment_Region_r) / (Employment_Country_c/Employment_Country_r) -->
+## 3. Goal model
 
 Xliv = (Employment_Rate_Region / Employment_Rate_Country)_c / (Employment_Rate_Region / Employment_Rate_Country)_r
 
@@ -107,7 +126,7 @@ Xliv = (Employment_Rate_Region / Employment_Rate_Country)_c / (Employment_Rate_R
 - reference point is the max Region:Country employment ratio of the past five years
 - Region is the BHI region:
    - Each BHI region is composed by one or more NUTS2 regions.  
-   - NUTS2 employment percentage multipled by the by population in the 25km inland buffer associated with a BHI region.  Sum across all associated with a BHI region to get the total employed people in the BHI region.
+   - NUTS2 employment percentage multiplied by the by population in the 25km inland buffer associated with a BHI region.  Sum across all associated with a BHI region to get the total employed people in the BHI region.
    - Regional Employment rate = # of employment/regional population
 - For country data, we have employment rate data directly
 
@@ -115,7 +134,7 @@ Xliv = (Employment_Rate_Region / Employment_Rate_Country)_c / (Employment_Rate_R
 
 (1) NUTS3 regions are assigned to a BHI region due to minor differences in borders.  These are fixed manually in the data preparation in section 5.1.4
 
-(2) Finnish NUTS3 names have changed for the NUTS3 regions associated with BHI 32. These NUTS3 population data must be manually linked to BHI region 32. Fixed manally in section 5.1.5.  
+(2) Finnish NUTS3 names have changed for the NUTS3 regions associated with BHI 32. These NUTS3 population data must be manually linked to BHI region 32. Fixed manually in section 5.1.5.  
 
 (3) Finnish NUTS3 regions also changed for those associated with BHI region 32:old names FI1A3, FI1A2, FI1A1 but new names appear to be in the same locations (new names FI1D7, FI1D6, FI1D5). These are also fixed in 5.1.5  
 
@@ -126,6 +145,8 @@ These issues were manually fixed below.
 ### 5.1 Data organization
 
 ```{r setup, message = FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_liv    = file.path(dir_prep, 'LIV')
 
@@ -139,8 +160,8 @@ create_readme(dir_liv, 'liv_prep.rmd')
 ## read in
 regional_employ = read.csv(file.path(dir_liv, 'liv_data_database/nuts2_employ.csv'), stringsAsFactors = FALSE)
 
-# dim(regional_employ) #[1] 5344    9
-# str(regional_employ)
+dim(regional_employ) #[1] 5344    9
+str(regional_employ)
 
 ## PopDensity (updated - 9.27.2016)
 nuts2_pop_density = read_csv(file.path(dir_liv, 'liv_data_database/NUTS2_BHI_ID_Pop_density_in_buffer.csv'))
@@ -148,7 +169,7 @@ nuts2_pop_density = read_csv(file.path(dir_liv, 'liv_data_database/NUTS2_BHI_ID_
 
 #### Clean Regional employment data object
 
-```{r clean regional data object, message = FALSE, results = "hide"}
+```{r clean regional data object}
 regional_employ1 = regional_employ %>%
                   select(-TIME_LABEL,-SEX,-AGE) %>%
                   dplyr::rename(year = TIME, nuts2 = GEO, nuts2_name = GEO_LABEL,
@@ -176,7 +197,7 @@ regional_employ1 = regional_employ1 %>%
 
 #### Clean population data 
 
-```{r clean nuts pop area data, message = FALSE}
+```{r clean nuts pop area data}
 ## nuts2 population data
 
 nuts2_pop_area1 = nuts2_pop_density %>%
@@ -197,7 +218,7 @@ Shapefiles have names from 2006, check accom1 and accom_coast1 to see if the nam
 - ![Map of old NUTS2 names for Gulf of Finland](BHI_regions_NUTS2_plot.png?raw=true)  
 - ![Map of new NUTS2 names for Gulf of Finland](new_FI_nuts2.png?raw=true)  
 
-```{r check fi nuts2 names, message = FALSE}
+```{r check fi nuts2 names}
 check1 = regional_employ1 %>% filter(grepl("FI", nuts2)) %>% 
   select(nuts2, nuts2_name) %>% 
   distinct()
@@ -249,7 +270,7 @@ nuts2_pop_area2 = nuts2_pop_area1 %>%
                             area = sum(area)) %>% ## some regions occurr twice because of correcting the assignment, sum to get single value for each region
                   ungroup()
 
-# str(nuts2_pop_area2)
+str(nuts2_pop_area2)
 
 ```
 
@@ -339,6 +360,7 @@ fi_employ_correct_nuts = full_join(fi_employ_newnuts1, fi_nuts_oldnuts,
 
 #### Join Finnish data to other regional data
 ```{r Join Finnish data to other regional data, message = FALSE, results = "hide"}
+
 ### bind to rest of data
 colnames(fi_employ_correct_nuts)
 colnames(employ_nuts1)
@@ -833,10 +855,22 @@ print(employ_compare_plot)
 #### Calcluate status 
 
 ```{r status calc, message = FALSE}
+
+# set ref point and calculate scores for all years
 liv_status_all_years = employ_compare %>% 
   group_by(rgn_id) %>% 
-  mutate(ref = max(ratio), 
-         score = min(1, ratio/ref*100)) 
+  mutate(ref = max(ratio) *1.1, 
+         score = min(100, ratio/ref * 100)) 
+
+# selecting most recent year of status - 2014
+liv_status = liv_status_all_years %>% 
+  filter(year == max(year)) %>% 
+  dplyr::select(rgn_id, score) %>% 
+  as.data.frame() %>% 
+  complete(rgn_id = full_seq(rgn_id, 1)) # fill in the missing regions with status score of NA
+
+write_csv(liv_status, file.path(dir_layers, "liv_status_scores_bhi2015.csv"))
+
 
 ### old code: 
 
@@ -914,16 +948,17 @@ liv_status_all_years = employ_compare %>%
 
 
 ### 7.3.4 Which BHI regions have no status
-Regions 19,21,22,30,33 have NA status.
+Regions 19,22,30,33 have NA status.
 
 Russian regions have NA status because no regional data (19,22,33)
 
-Regions with no coast line have no status because not joined to a NUTS reion (30)
+Regions with no coast line have no status because not joined to a NUTS region (30)
 
-# ```{r which liv status are na, message = FALSE}
-# liv_status %>% filter(is.na(score)) #19,21,22,30,33
-# 
-# ```
+ ```{r which liv status are na, message = FALSE}
+ 
+ liv_status %>% filter(is.na(score)) #19,22,30,33
+ 
+ ```
 
 
 ### 7.3.1 Plot status
@@ -931,22 +966,22 @@ Status values in the time series are between 0 and 1.
 There are no values for Russia because we do not have regional GDP data.  
 Status values for the most recent year (2014 for all regions) are transformed to value between 0 and 100
 ```{r plot liv status, message = FALSE}
-## plot liv status time series
-ggplot(liv_status_calc) +
-  geom_point(aes(year,status)) +
-  facet_wrap(~rgn_id) +
-  ylim(0,1) +
-  ylab("Status") +
-  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
-                                   hjust=.5, vjust=.5, face = "plain"),
-        axis.text.y = element_text(size=6)) +
-  ggtitle("LIV status time series")
+# ## plot liv status time series
+# ggplot(liv_status_all_years) +
+#   geom_point(aes(year,score)) +
+#   facet_wrap(~rgn_id) +
+#   ylim(0,1) +
+#   ylab("Status") +
+#   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+#                                    hjust=.5, vjust=.5, face = "plain"),
+#         axis.text.y = element_text(size=6)) +
+#   ggtitle("LIV status time series")
 
 ## plot liv status time series, less range on y-axis
-ggplot(liv_status_calc) +
-  geom_point(aes(year,status)) +
+ggplot(liv_status_all_years) +
+  geom_point(aes(year,score)) +
   facet_wrap(~rgn_id) +
-  ylim(.8,1) +
+  ylim(80, 100) +
   ylab("Status") +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
                                    hjust=.5, vjust=.5, face = "plain"),
@@ -957,8 +992,8 @@ ggplot(liv_status_calc) +
 ## plot final year (2014) status
 
 ggplot(liv_status) +
-  geom_point(aes(region_id,score), size=2) +
-  ylim(0,100) +
+  geom_point(aes(rgn_id,score), size=2) +
+  ylim(80,100) +
   ylab("Status score") +
   xlab("BHI region") +
   ggtitle("LIV status score in 2014")
@@ -973,32 +1008,33 @@ ggplot(liv_status) +
   
   ## calculate trend for 5 years (5 data points)
   ## years are filtered in liv_region and liv_country, so not filtered for here
-      liv_trend = liv_status_calc %>%
-        filter(year >= max(year - trend_yr)) %>%                #select five years of data for trend
-        filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
+      liv_trend = liv_status_all_years %>%
+        filter(year >= max(year - 5)) %>%                #select five years of data for trend
+        filter(!is.na(score)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
         group_by(rgn_id) %>%
-        mutate(regr_length = n()) %>%                            #get the number of status years available for greggion
-        filter(regr_length == (trend_yr + 1)) %>%                   #only do the regression for regions that have 5 data points
-          do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
+        # mutate(regr_length = n()) %>%                            #get the number of status years available for greggion
+        # filter(regr_length == (5 + 1)) %>%                   #only do the regression for regions that have 5 data points
+          do(mdl = lm(score ~ year, data = .)) %>%             # regression model to get the trend
             summarize(rgn_id = rgn_id,
-                      score = coef(mdl)['year'] * lag_win) %>%
+                      score = coef(mdl)['year'] * 0.05) %>%
         ungroup() %>%
-        full_join(bhi_rgn, .,by="rgn_id") %>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
+        tidyr::complete(rgn_id = full_seq(rgn_id, 1)) %>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
         mutate(score = round(score, 2),
                dimension = "trend") %>%
         select(region_id = rgn_id, dimension, score) %>%
         data.frame()
 
+write_csv(liv_trend, file.path(dir_layers, "liv_trend_score_bhi2015.csv"))
+
 
 ```
 
 #### 7.4.2 Which regions have NA trend?
-Same regions as NA status and also Danish regions because have a short time series.  
 
-Should the calculation be modifed so only 3 out of the last five years need for a trend?  
+19, 22, 30, and 33
 ```{r na liv trend, message = FALSE}
 
-liv_trend %>% filter(is.na(score)) ## 2,3,6,7,9,12,15,19,21,22,30,33
+liv_trend %>% filter(is.na(score)) ## 19,22,30,33
 
 ```
 
@@ -1014,22 +1050,6 @@ ggplot(liv_trend) +
   ylab("Status score") +
   xlab("BHI region") +
   ggtitle("LIV 5 yr trend score")
-
-```
-
-
-
-#### 7.5 Plot trend and status together
-```{r plot liv trend and status together, message = FALSE}
-
-plot_liv = bind_rows(liv_status,liv_trend)
-
-ggplot(plot_liv) +
-  geom_point(aes(region_id,score),size=2.5) +
-  facet_wrap(~dimension, scales = "free_y") +
-  ylab("Score") +
-  ggtitle("LIV Status and Trend")
-
 
 ```
 
@@ -1093,13 +1113,13 @@ write_csv(data_nuts2, file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_
 
 ```
 
-## Alternative data and Status calculation: 
+## 10. Alternative data and Status calculation - Not used
 
 The [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) identified the potential for Blue Growth in each of the EU Member States of the Baltic Sea Region, and also provided detailed marine revenue and employment by sector and in each BHI country. Below is a trial to incorporate these data to LIV calculation, while using the same goal model. 
 
 We decided not to incorporate this data yet because of these two problems: 
 
-- there is only one year of data, we could't establish a temporal reference point. 
+- there is only one year of data, we couldn't establish a temporal reference point. 
 - only six sectors that are identified as high-growth-potential have data, and thus provide incomplete data
 
 ```{r alter data and status}
@@ -1143,9 +1163,9 @@ employ_comp
 # 7    Poland  1.1411735     61.7 0.018495519
 # 8    Sweden  0.6502281     74.9 0.008681284
 
-# compare coastal and national pop 
-pop_comp = full_join(coast_pop, nat_pop_2005) %>% 
-  mutate(ratio = coast_pop/pop_2005) 
+# # compare coastal and national pop 
+# pop_comp = full_join(coast_pop, nat_pop_2005) %>% 
+#   mutate(ratio = coast_pop/pop_2005) 
 
 ```
 
