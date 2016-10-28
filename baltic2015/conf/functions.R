@@ -8,7 +8,7 @@
 FIS = function(layers, status_year){
  ## FIS code revised by Melanie Fraser
  ## added to functions.r by Jennifer Griffiths 7 June 2016
- ## only Cod and Herrings data are used here. Sprats data moved to NP.
+ ## only Cod and Herrings data are used here. Sprats data moved to NP, by Ning Jiang in Oct 2016.
 
 
  ## Call Layers
@@ -583,7 +583,6 @@ CS = function(layers){
   ## Status
 
   ## Trend
-
 
 
   ## proxy scores: NA as placeholders
