@@ -1,4 +1,4 @@
-Prepare Data Layers for Tourism & Recreation (TR) Goal
+Tourism & Recreation (TR) Goal Data Preparation
 ================
 
 -   [1. Background](#background)
@@ -122,6 +122,8 @@ Linear regression fit to the most recent 5 status years.
 -------------------------
 
 ``` r
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 ## set directory and load libraries
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_tr = file.path(dir_prep, 'TR')
@@ -145,26 +147,7 @@ accom_coast = read.csv(file.path(dir_tr, "tr_data_database/accom_coast.csv"), st
 
 ## NUTS2 population and area by BHI region fraction
 nuts2_pop_area = read_csv(file.path(dir_tr, "tr_data_database/NUTS2_BHI_ID_Pop_density_in_buffer.csv"))
-```
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   BHI_ID = col_integer(),
-    ##   NUTS_ID = col_character(),
-    ##   PopTot = col_double(),
-    ##   PopUrb = col_double(),
-    ##   PopRur = col_double(),
-    ##   PopTot_density_in_NUTS2_buffer_per_km2 = col_double(),
-    ##   PopUrb_density_in_NUTS2_buffer_per_km2 = col_double(),
-    ##   PopRur_density_in_NUTS2_buffer_per_km2 = col_double(),
-    ##   CNTR_CODE = col_character(),
-    ##   rgn_nam = col_character(),
-    ##   Subbasin = col_character(),
-    ##   HELCOM_ID = col_character(),
-    ##   NUTS2_area_in_BHI_buffer_km2 = col_double()
-    ## )
-
-``` r
 # dim(nuts2_pop_area)
 
 ## european country names and abbreviations
@@ -199,270 +182,12 @@ accom1 = accom %>%
                       dat_descrip2 = "Hotels and holiday and other short-stay accommodation and camping grounds recreational vehicle parks and trailer parks" ) ## fix so no commas or semi-colons
 
 str(accom1)
-```
 
-    ## 'data.frame':    11250 obs. of  8 variables:
-    ##  $ year        : int  1990 1990 1990 1990 1990 1990 1990 1990 1990 1990 ...
-    ##  $ nuts        : chr  "EU28" "EU27" "BE" "BE1" ...
-    ##  $ nuts_name   : chr  "European Union (28 countries)" "European Union (27 countries)" "Belgium" "R\xe9gion de Bruxelles-Capitale / Brussels Hoofdstedelijk Gewest" ...
-    ##  $ dat_descrip : chr  "Nights spent total" "Nights spent total" "Nights spent total" "Nights spent total" ...
-    ##  $ unit        : chr  "Number" "Number" "Number" "Number" ...
-    ##  $ dat_descrip2: chr  "Hotels and holiday and other short-stay accommodation and camping grounds recreational vehicle parks and trailer parks" "Hotels and holiday and other short-stay accommodation and camping grounds recreational vehicle parks and trailer parks" "Hotels and holiday and other short-stay accommodation and camping grounds recreational vehicle parks and trailer parks" "Hotels and holiday and other short-stay accommodation and camping grounds recreational vehicle parks and trailer parks" ...
-    ##  $ value       : num  NA NA 31605550 NA NA ...
-    ##  $ flag_notes  : chr  "" "" "" "" ...
-
-``` r
 ## check flags
 accom1 %>% select(flag_notes) %>% distinct()
-```
-
-    ##   flag_notes
-    ## 1           
-    ## 2          c
-    ## 3          e
-    ## 4          u
-    ## 5         be
-    ## 6          b
-
-``` r
 accom1 %>% filter(flag_notes %in% c("c","e","u","be","b")) %>% select(year, nuts,value, flag_notes) ## very few apply to Baltic countries, u is biggest concern = "low reliability"
-```
-
-    ##     year nuts      value flag_notes
-    ## 1   1994 PT15         NA          c
-    ## 2   1995 PT15         NA          c
-    ## 3   1996 PT15         NA          c
-    ## 4   1997 PT15         NA          c
-    ## 5   1998 PT15         NA          c
-    ## 6   1999  PT2         NA          c
-    ## 7   1999 PT20         NA          c
-    ## 8   1999  PT3         NA          c
-    ## 9   1999 PT30         NA          c
-    ## 10  1999 CH04         NA          c
-    ## 11  2000  PT2         NA          c
-    ## 12  2000 PT20         NA          c
-    ## 13  2000  PT3         NA          c
-    ## 14  2000 PT30         NA          c
-    ## 15  2001  PT2         NA          c
-    ## 16  2001 PT20         NA          c
-    ## 17  2001  PT3         NA          c
-    ## 18  2001 PT30         NA          c
-    ## 19  2007 EU28 2352043082          e
-    ## 20  2007 EU27 2313724244          e
-    ## 21  2007   IE         NA          u
-    ## 22  2007  IE0         NA          u
-    ## 23  2008 EU28 2337334320          e
-    ## 24  2008 EU27 2298802248          e
-    ## 25  2008   IE         NA          u
-    ## 26  2008  IE0         NA          u
-    ## 27  2009 EU28 2289338820          e
-    ## 28  2009 EU27 2251854199          e
-    ## 29  2009   IE         NA          u
-    ## 30  2009  IE0         NA          u
-    ## 31  2010 EU28 2395948566          e
-    ## 32  2010 EU27 2358939384          e
-    ## 33  2010   IE         NA          u
-    ## 34  2010  IE0         NA          u
-    ## 35  2010  UKL         NA          u
-    ## 36  2010  UKM         NA          u
-    ## 37  2011 EU28 2476060092          e
-    ## 38  2011 EU27 2436809302          e
-    ## 39  2011   IE         NA          u
-    ## 40  2011  IE0         NA          u
-    ## 41  2011 IE01         NA          u
-    ## 42  2011 IE02         NA          u
-    ## 43  2011  FR9         NA          u
-    ## 44  2011 FR91         NA          u
-    ## 45  2011 FR92         NA          u
-    ## 46  2011 FR94         NA          u
-    ## 47  2012   IE   28884907         be
-    ## 48  2012  IE0   28884907         be
-    ## 49  2012   EL   80566672          e
-    ## 50  2012  EL1   17249161          e
-    ## 51  2012 EL11    1979378          e
-    ## 52  2012 EL12   12432494          e
-    ## 53  2012 EL13     331998          e
-    ## 54  2012 EL14    2505291          e
-    ## 55  2012  EL2   16708670          e
-    ## 56  2012 EL21    1336119          e
-    ## 57  2012 EL22    9553714          e
-    ## 58  2012 EL23    1571623          e
-    ## 59  2012 EL24    1486993          e
-    ## 60  2012 EL25    2760221          e
-    ## 61  2012  EL3    6133202          e
-    ## 62  2012 EL30    6133202          e
-    ## 63  2012  EL4   40475639          e
-    ## 64  2012 EL41    1722967          e
-    ## 65  2012 EL42   19772657          e
-    ## 66  2012 EL43   18980015          e
-    ## 67  2012   HR   62183925          b
-    ## 68  2012  HR0   62183925          b
-    ## 69  2012 HR03   59855870          b
-    ## 70  2012 HR04    2328055          b
-    ## 71  2012   LV    3546736          b
-    ## 72  2012  LV0    3546736          b
-    ## 73  2012 LV00    3546736          b
-    ## 74  2012   LT    5741252          b
-    ## 75  2012  LT0    5741252          b
-    ## 76  2012 LT00    5741252          b
-    ## 77  2012   LU    2543830          b
-    ## 78  2012  LU0    2543830          b
-    ## 79  2012 LU00    2543830          b
-    ## 80  2012   HU   23169533          b
-    ## 81  2012  HU1    8267517          b
-    ## 82  2012 HU10    8267517          b
-    ## 83  2012  HU2    9856976          b
-    ## 84  2012 HU21    2700068          b
-    ## 85  2012 HU22    4649091          b
-    ## 86  2012 HU23    2507817          b
-    ## 87  2012  HU3    5045040          b
-    ## 88  2012 HU31    1837221          b
-    ## 89  2012 HU32    1866326          b
-    ## 90  2012 HU33    1341493          b
-    ## 91  2012   RO   19091379          b
-    ## 92  2012  RO1    5753526          b
-    ## 93  2012 RO11    2105177          b
-    ## 94  2012 RO12    3648349          b
-    ## 95  2012  RO2    6078090          b
-    ## 96  2012 RO21    1676402          b
-    ## 97  2012 RO22    4401688          b
-    ## 98  2012  RO3    4002707          b
-    ## 99  2012 RO31    1764261          b
-    ## 100 2012 RO32    2238446          b
-    ## 101 2012  RO4    3257056          b
-    ## 102 2012 RO41    1502277          b
-    ## 103 2012 RO42    1754779          b
-    ## 104 2012   SI    9406009          b
-    ## 105 2012  SI0    9406009          b
-    ## 106 2012 SI01    4074219          b
-    ## 107 2012 SI02    5331790          b
-    ## 108 2012   UK  303564528          b
-    ## 109 2012  UKC    8350176          b
-    ## 110 2012 UKC1    1945471          b
-    ## 111 2012 UKC2    6404705          b
-    ## 112 2012  UKD   27011728          b
-    ## 113 2012 UKD1    9399842          b
-    ## 114 2012 UKD3    6128672          b
-    ## 115 2012 UKD4    5484192          b
-    ## 116 2012 UKD6    2231462          b
-    ## 117 2012 UKD7    3767560          b
-    ## 118 2012  UKE   19201074          b
-    ## 119 2012 UKE1    2642410          b
-    ## 120 2012 UKE2   10312821          b
-    ## 121 2012 UKE3    2295336          b
-    ## 122 2012 UKE4    3950507          b
-    ## 123 2012  UKF   14064601          b
-    ## 124 2012 UKF1    5624704          b
-    ## 125 2012 UKF2    3289672          b
-    ## 126 2012 UKF3    5150225          b
-    ## 127 2012  UKG   13840553          b
-    ## 128 2012 UKG1    4502958          b
-    ## 129 2012 UKG2    2888897          b
-    ## 130 2012 UKG3    6448699          b
-    ## 131 2012  UKH   18699192          b
-    ## 132 2012 UKH1   13755880          b
-    ## 133 2012 UKH2    2670062          b
-    ## 134 2012 UKH3    2273249          b
-    ## 135 2012  UKI   60746359          b
-    ## 136 2012 UKI1   44825602          b
-    ## 137 2012 UKI2   15920757          b
-    ## 138 2012  UKJ   33638637          b
-    ## 139 2012 UKJ1    9040586          b
-    ## 140 2012 UKJ2    9963023          b
-    ## 141 2012 UKJ3    9079451          b
-    ## 142 2012 UKJ4    5555577          b
-    ## 143 2012  UKK   46569396          b
-    ## 144 2012 UKK1    9223493          b
-    ## 145 2012 UKK2   11799160          b
-    ## 146 2012 UKK3   13161809          b
-    ## 147 2012 UKK4   12384935          b
-    ## 148 2012  UKL   22423745          b
-    ## 149 2012 UKL1   17273407          b
-    ## 150 2012 UKL2    5150338          b
-    ## 151 2012  UKM   35179443          b
-    ## 152 2012 UKM2   16022706          b
-    ## 153 2012 UKM3    7238996          b
-    ## 154 2012 UKM5    2704858          b
-    ## 155 2012 UKM6    9212882          b
-    ## 156 2012  UKN    3839625          b
-    ## 157 2012 UKN0    3839625          b
-    ## 158 2012   LI     141042          b
-    ## 159 2012  LI0     141042          b
-    ## 160 2012 LI00     141042          b
-    ## 161 2012   ME    9151236          b
-    ## 162 2012  ME0    9151236          b
-    ## 163 2012 ME00    9151236          b
-    ## 164 2013 EU28 2641595112          e
-    ## 165 2013 EU27 2577176820          e
-    ## 166 2013   IE   28286434          e
-    ## 167 2013  IE0   28286434          e
-    ## 168 2013   NL   96074132          b
-    ## 169 2013  NL1   12635032          b
-    ## 170 2013 NL11    1323719          b
-    ## 171 2013 NL12    5162879          b
-    ## 172 2013 NL13    6148434          b
-    ## 173 2013  NL2   18422582          b
-    ## 174 2013 NL21    5490652          b
-    ## 175 2013 NL22   10515234          b
-    ## 176 2013 NL23    2416696          b
-    ## 177 2013  NL3   43697757          b
-    ## 178 2013 NL31    2763343          b
-    ## 179 2013 NL32   22467095          b
-    ## 180 2013 NL33    9485952          b
-    ## 181 2013 NL34    8981367          b
-    ## 182 2013  NL4   21318761          b
-    ## 183 2013 NL41   10481395          b
-    ## 184 2013 NL42   10837364          b
-    ## 185 2014 EU28 2682392679          e
-    ## 186 2014 EU27 2612714203          e
-    ## 187 2014   IE   29166382          e
-    ## 188 2014  IE0   29166382          e
-    ## 189 2014 IE01    7402448          e
-    ## 190 2014 IE02   21763934          e
-    ## 191 2014   EL   95116396          e
-    ## 192 2014  EL5   18546954          e
-    ## 193 2014 EL51    2896028          e
-    ## 194 2014 EL52   13626518          e
-    ## 195 2014 EL53     378935          e
-    ## 196 2014 EL54    1645473          e
-    ## 197 2014  EL6   20966204          e
-    ## 198 2014 EL61    2819744          e
-    ## 199 2014 EL62   11319653          e
-    ## 200 2014 EL63    1779832          e
-    ## 201 2014 EL64    1642532          e
-    ## 202 2014 EL65    3404443          e
-    ## 203 2014  EL3    8354162          e
-    ## 204 2014 EL30    8354162          e
-    ## 205 2014  EL4   47249076          e
-    ## 206 2014 EL41    2301571          e
-    ## 207 2014 EL42   22319510          e
-    ## 208 2014 EL43   22627995          e
-
-``` r
 accom1 %>% filter(flag_notes %in% c("u","bu")) %>% select(year, nuts,value, flag_notes) ## not baltic countries
-```
 
-    ##    year nuts value flag_notes
-    ## 1  2007   IE    NA          u
-    ## 2  2007  IE0    NA          u
-    ## 3  2008   IE    NA          u
-    ## 4  2008  IE0    NA          u
-    ## 5  2009   IE    NA          u
-    ## 6  2009  IE0    NA          u
-    ## 7  2010   IE    NA          u
-    ## 8  2010  IE0    NA          u
-    ## 9  2010  UKL    NA          u
-    ## 10 2010  UKM    NA          u
-    ## 11 2011   IE    NA          u
-    ## 12 2011  IE0    NA          u
-    ## 13 2011 IE01    NA          u
-    ## 14 2011 IE02    NA          u
-    ## 15 2011  FR9    NA          u
-    ## 16 2011 FR91    NA          u
-    ## 17 2011 FR92    NA          u
-    ## 18 2011 FR94    NA          u
-
-``` r
 accom1 = accom1 %>%
         select(-flag_notes)
 ```
@@ -504,14 +229,7 @@ accom_coast1 = accom_coast %>%
 # str(accom_coast1)
 
 accom_coast %>% select(TERRTYPO, TERRTYPO_LABEL) %>% distinct()
-```
 
-    ##   TERRTYPO   TERRTYPO_LABEL
-    ## 1    TOTAL            Total
-    ## 2    CST_A     Coastal area
-    ## 3   NCST_A Non-coastal area
-
-``` r
 ## figure out which are the NUTS1 abbreviations from the other NUTS level abbreviations, select only NUTS1
 accom_coast2 = accom_coast1 %>%
                mutate(country_abb = substr(nuts,1,2)) %>% ## set up country abbreviation
@@ -692,10 +410,6 @@ ggplot(accom_nuts2) +
                                    hjust=.5, vjust=.5, face = "plain")) +
   ggtitle("Time series accommodation stays NUTS2")
 ```
-
-    ## Warning: Removed 470 rows containing missing values (geom_point).
-
-    ## Warning: Removed 464 rows containing missing values (geom_path).
 
 ![](tr_prep_files/figure-markdown_github/plot%20accom_nuts2%20joined%20data-1.png)
 
@@ -912,8 +626,6 @@ ggplot(accom_nuts5) +
   ggtitle("Coastal Total Night Stays NUTS2 level")
 ```
 
-    ## Warning: Removed 24 rows containing missing values (geom_point).
-
 ![](tr_prep_files/figure-markdown_github/Plot%20coastal%20night%20stays%20times%20series-1.png)
 
 ### 4.5 Determine NUTS2 population allocation among BHI regions
@@ -1006,8 +718,6 @@ ggplot(accom_nuts7) +
   ggtitle("BHI Coastal Stays")
 ```
 
-    ## Warning: Removed 24 rows containing missing values (geom_point).
-
 ![](tr_prep_files/figure-markdown_github/plot%20bhi%20night%20stays-1.png)
 
 ``` r
@@ -1021,8 +731,6 @@ ggplot(accom_nuts7) +
   ggtitle("BHI Coastal Stays Per Capita")
 ```
 
-    ## Warning: Removed 24 rows containing missing values (geom_point).
-
 ![](tr_prep_files/figure-markdown_github/plot%20bhi%20night%20stays-2.png)
 
 ``` r
@@ -1035,8 +743,6 @@ ggplot(accom_nuts7) +
          axis.text.y = element_text(size=6)) +
   ggtitle("BHI Coastal Stays Per Capita")
 ```
-
-    ## Warning: Removed 24 rows containing missing values (geom_point).
 
 ![](tr_prep_files/figure-markdown_github/plot%20bhi%20night%20stays-3.png)
 
@@ -1155,8 +861,6 @@ ggplot(tr_status_score) +
   ggtitle("TR status time series - different y-axis range")
 ```
 
-    ## Warning: Removed 19 rows containing missing values (geom_point).
-
 ![](tr_prep_files/figure-markdown_github/plot%20tr%20status-1.png)
 
 ``` r
@@ -1212,8 +916,6 @@ ggplot(tr_trend) +
   ggtitle('TR trend scores - with higher reference point')
 ```
 
-    ## Warning: Removed 4 rows containing missing values (geom_point).
-
 ![](tr_prep_files/figure-markdown_github/plot%20tr%20trend-1.png)
 
 ``` r
@@ -1237,8 +939,6 @@ ggplot(plot_tr) +
   ylab("Score") +
   ggtitle("TR Status and Trend")
 ```
-
-    ## Warning: Removed 4 rows containing missing values (geom_point).
 
 ![](tr_prep_files/figure-markdown_github/plot%20tr%20trend%20and%20status%20together-1.png)
 

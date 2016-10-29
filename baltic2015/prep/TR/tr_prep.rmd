@@ -1,5 +1,5 @@
 ---
-title: "Prepare Data Layers for Tourism & Recreation (TR) Goal"
+title: "Tourism & Recreation (TR) Goal Data Preparation"
 output:
   github_document:
     toc: true
@@ -96,6 +96,9 @@ Linear regression fit to the most recent 5 status years.
 ## 4. Data Layer Preparation 
 
 ```{r setup, message=FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 ## set directory and load libraries
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_tr = file.path(dir_prep, 'TR')
