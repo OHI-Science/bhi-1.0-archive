@@ -2,6 +2,10 @@ Trash (TRA) Subgoal Data Preparation
 ================
 
 -   [1. Background](#background)
+    -   [1.1 Goal Description](#goal-description)
+    -   [1.2 Model & Data](#model-data)
+    -   [1.3 Reference points](#reference-points)
+    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
 -   [2. Data](#data)
     -   [2.1 Data storage](#data-storage)
     -   [2.2 Data Info](#data-info)
@@ -9,13 +13,30 @@ Trash (TRA) Subgoal Data Preparation
 -   [4. Data layer preparation](#data-layer-preparation)
     -   [4.1 Read in data](#read-in-data)
     -   [4.2 Filter Baltic data](#filter-baltic-data)
-    -   [4.3 Modeled Mismanaged plastic waste 2010](#modeled-mismanaged-plastic-waste-2010)
-    -   [4.4 Modeled Mismanaged plastic waste 2025](#modeled-mismanaged-plastic-waste-2025)
+    -   [4.3 Calculate Mismanaged plastic waste 2015](#calculate-mismanaged-plastic-waste-2015)
+    -   [4.3 Plot Modeled Mismanaged plastic waste 2010, 2015, and 2025](#plot-modeled-mismanaged-plastic-waste-2010-2015-and-2025)
     -   [4.5 Prepare data layer for Toolbox](#prepare-data-layer-for-toolbox)
     -   [4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025](#plot-exploring-ref-point-as-max-of-europe-including-russia-in-2010-v.-2025)
+    -   [4.7 Explore status score 2015](#explore-status-score-2015)
 
 1. Background
 -------------
+
+### 1.1 Goal Description
+
+This sub goal assesses a region's ability to manage plastic trash to prevent them from entering the ocean.
+
+### 1.2 Model & Data
+
+The amount of mismanaged plastic trash that has the potential to enter the ocean is modeled from data by [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html). The model compares a country's mismanaged trash in 2015 to the reference point.
+
+### 1.3 Reference points
+
+Reference point was maximum amount of trash among all Baltic countries in 2010.
+
+### 1.4 Other considerations for *OHI-BHI 2.0*
+
+TREND not yet decided....
 
 2. Data
 -------
@@ -49,9 +70,8 @@ Footnotes from .xls file column headers 1 - Based upon 2010 Gross National Incom
 3. Goal model Potential path forward:
 -------------------------------------
 
-**Status**: 2010 modeled values / ref point
-**Ref pt**: maximum for Europe in 2010 or 2025 (explored below)
-**Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal.
+**Status**: 2015 modeled values / ref point 2010
+**Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal?
 
 ``` r
 library(readxl) # install.packages('readxl')
@@ -124,30 +144,59 @@ baltic = data_clean %>%
 #write.csv(baltic, '~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
 ```
 
-### 4.3 Modeled Mismanaged plastic waste 2010
+### 4.3 Calculate Mismanaged plastic waste 2015
 
-![](tra_prep_files/figure-markdown_github/baltic%20data%20explore-1.png)
+Assuming it's a linear trend between 2010 and 2025, 2015 values are the 1/3-point between 2010 and 2025.
 
-### 4.4 Modeled Mismanaged plastic waste 2025
+### 4.3 Plot Modeled Mismanaged plastic waste 2010, 2015, and 2025
 
-![](tra_prep_files/figure-markdown_github/data%20explore%202025-1.png)
+``` r
+modeled_waste = modeled_waste_2015 %>% 
+  gather(scenario, waste, 2:4) 
+
+ggplot(modeled_waste, aes(x = country, y = waste, fill = scenario)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
+  labs(title = 'Modeled waste 2010, 2015, & 2025',
+      x = 'Country', 
+      y = 'Waste (tonns)')
+```
+
+![](tra_prep_files/figure-markdown_github/plot-1.png)
+
+``` r
+## SAVE 2015 DATA for VISUALIZE
+
+tra_value_data= baltic%>%
+                select(value=modeled_waste_2010,
+                       location =country)%>%
+                mutate(unit= "tonnes",
+                       bhi_goal = "TRA",
+                       data_descrip="modeled mismanaged plastic waste 2010" )
+
+write.csv(tra_value_data, file.path(dir_baltic,'visualize/tra_value_data.csv'), row.names=TRUE)
+```
 
 ### 4.5 Prepare data layer for Toolbox
 
 **Plan:**
 
-Modeled Mismanaged plastic waste data (tonnes) are reported for each country. We will create scores for each country related to the reference point, and then apply to all of that country's BHI regions under the assumption that the management for the country is probably equal. Note: for BHI 2.0, would be better to recalcuate their model using coastal population for each BHI region.
+We will create scores for each country for 2015 related to the reference point, and then apply to all of that country's BHI regions under the assumption that the management for the country is probably equal.
+
+Modeled Mismanaged plastic waste data (tonnes) are reported for each country. We will make a linear model between 2010 and 2025 and choose 2015.
+
+Note: for BHI 2.0, would be better to recalculate their model using coastal population for each BHI region.
 
 **Reference points**
 
 Need a min and a max reference point (they will ultimately be inverted for CW but not as a pressure)
 
 -   **Minimum modeled trash entering the ocean = 0** (we want no trash entering the ocean)
--   **Maximum modeled trash entering the ocean = highest Eurpean country in 2025** (we have 2025 modeled data. Is this reasonable, ie do we think that the maximum trash we see in Europe, or is that too high because it's based on a larger population that we don't have now? Another option would be to make a linear model between 2010 and 2025 and choose a year more like 2015?)
+-   **Maximum modeled trash entering the ocean = highest BHI country in 2010**
 
-Note: Because Russia is reported as a whole country, we used the proportion of population in Kaliningrad+St Petersburg to the coastal popultion reported by Jambeck et al. See figure below.
+Note: Because Russia is reported as a whole country, we used the proportion of population in Kaliningrad+St Petersburg to the coastal population reported by Jambeck et al. See figure below.
 
-#### To find reference point, combine Europe with Russia, downweight Russia
+#### Process to find max reference point, combine Europe with Russia, downweight Russia
 
 It made sense to downweight Kaliningrad and St Petersburg by coastal population density instead of total Russia population density because of the distribution along the coasts:
 
@@ -160,7 +209,6 @@ Then find ref point as the max of Europe, but compare 2010 v. 2025 to determine 
 # baltic = read.csv('~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
 # summary(baltic) 
 # summary(data_clean)
-
 
 ## select desired columns
 data_clean_select = data_clean %>%
@@ -210,31 +258,42 @@ eur_rus = rbind(
 
 ref_point_min = 0
 
-##2010
+## 2010
 ref_point_max_2010 = eur_rus %>%
-  filter(modeled_waste_2010 == max(modeled_waste_2010))
+ filter(country %in% baltic$country) %>% #choosing only Baltic countries
+ filter(modeled_waste_2010 == max(modeled_waste_2010))
 sprintf('max trash for 2010 is %s (%s)', 
         round(ref_point_max_2010$modeled_waste_2010),
         ref_point_max_2010$country)
 ```
 
-    ## [1] "max trash for 2010 is 67549 (United Kingdom)"
+    ## [1] "max trash for 2010 is 37566 (Russia)"
 
 ``` r
 ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
+# "max trash for 2010 is 37566 (Russia)"
+
+## model 2015
+
+modeled_waste_2015 = eur_rus %>% 
+  select(country, modeled_waste_2010, modeled_waste_2025) %>% 
+  filter(country %in% baltic$country) %>%  # choosing only Baltic countries
+  mutate(modeled_waste_2015 = modeled_waste_2010 + 1/3 * (modeled_waste_2025 - modeled_waste_2010)) 
 
 ## 2025
 ref_point_max_2025 = eur_rus %>%
-  filter(modeled_waste_2025 == max(modeled_waste_2025))
+ filter(country %in% baltic$country) %>%  # choosing only Baltic countries
+ filter(modeled_waste_2025 == max(modeled_waste_2025))
 sprintf('max trash for 2025 is %s (%s)', 
         round(ref_point_max_2025$modeled_waste_2025),
         ref_point_max_2025$country)
 ```
 
-    ## [1] "max trash for 2025 is 94165 (United Kingdom)"
+    ## [1] "max trash for 2025 is 59980 (Russia)"
 
 ``` r
 ref_point_max_2025 = ref_point_max_2025$modeled_waste_2025
+# "max trash for 2025 is 59980 (Russia)"
 
 
 ## calculate ref point
@@ -253,11 +312,17 @@ baltic_explore = eur_rus %>%
 ### 4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025
 
 ``` r
-#compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
-ggplot(baltic_explore)+
-  geom_point(aes(country,trash_score_2010, colour="red"))+
-  geom_point(aes(country,trash_score_2025))+
-  ggtitle('Country Trash Score')
+# compare reference points - makes minimal differences in scores, country order does not change.  Larger differences for Germany & Russia (lesser degree Poland)
+
+baltic_explore2 = baltic_explore %>% 
+  dplyr::select(country, trash_score_2010, trash_score_2025) %>% 
+  gather(key = ref_point, value = score, 2:3) %>% 
+  mutate(status_score = (1-score)*100)
+
+ggplot(baltic_explore2, aes(x = country, y = status_score, fill = ref_point)) +
+  geom_point(aes(color = ref_point)) + 
+  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+  labs(title = "Trash scores comparison: \n max(2010) vs. max(2025) as reference point")
 ```
 
 ![](tra_prep_files/figure-markdown_github/plot%20and%20save%20layer-1.png)
@@ -279,6 +344,24 @@ baltic_layer = lookup_bhi %>%
 ## save layer to layers folder, and register layer in layers.csv by hand
 write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
 
-  
 ## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?
 ```
+
+### 4.7 Explore status score 2015
+
+Using modeled 2015 data for status but use max 2010 as a reference point.
+
+``` r
+score_2015 = modeled_waste_2015 %>% 
+    filter(country %in% baltic$country) %>%  # choosing only Baltic countries
+    mutate(ref_point = 37566,  # "max trash for 2010 is 37566 (Russia)"
+           score_2015 = (1 - pmin(1, modeled_waste_2015/ref_point))*100 ) %>% 
+    select(country, score = score_2015)
+
+ggplot(score_2015, aes(x = country, y = score)) +
+  geom_point(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+  ggtitle("Trash scores by country: 2015")
+```
+
+![](tra_prep_files/figure-markdown_github/explore%20status%202015-1.png)

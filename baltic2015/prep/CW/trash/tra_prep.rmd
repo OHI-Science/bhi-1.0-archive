@@ -5,10 +5,27 @@ output:
     toc: true
     toc_depth: 3
 params: 
-    datasource: csv
+    datasource: cs
 ---
 
 ## 1. Background
+
+### 1.1 Goal Description
+
+This sub goal assesses a region's ability to manage plastic trash to prevent them from entering the ocean. 
+
+### 1.2 Model & Data 
+
+The amount of mismanaged plastic trash that has the potential to enter the ocean is modeled from data by [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html). The model compares a country's mismanaged trash in 2015 to the reference point. 
+
+### 1.3 Reference points 
+
+Reference point was maximum amount of trash among all Baltic countries in 2010. 
+
+### 1.4 Other considerations for _OHI-BHI 2.0_
+
+TREND not yet decided.... 
+
 
 ## 2. Data
 
@@ -55,6 +72,8 @@ Footnotes from .xls file column headers
 **Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal?
 
 ```{r setup, message=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 library(readxl) # install.packages('readxl')
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_tra    = file.path(dir_prep, 'CW/trash')
@@ -161,7 +180,7 @@ We will create scores for each country for 2015 related to the reference point, 
 
 Modeled Mismanaged plastic waste data (tonnes) are reported for each country. We will make a linear model between 2010 and 2025 and choose 2015.  
 
-Note: for BHI 2.0, would be better to recalcuate their model using coastal population for each BHI region.
+Note: for BHI 2.0, would be better to recalculate their model using coastal population for each BHI region.
 
 **Reference points**
 
@@ -170,7 +189,7 @@ Need a min and a max reference point (they will ultimately be inverted for CW bu
 - **Minimum modeled trash entering the ocean = 0** (we want no trash entering the ocean)
 - **Maximum modeled trash entering the ocean = highest BHI country in 2010** 
 
-Note: Because Russia is reported as a whole country, we used the proportion of population in Kaliningrad+St Petersburg to the coastal popultion reported by Jambeck et al. See figure below. 
+Note: Because Russia is reported as a whole country, we used the proportion of population in Kaliningrad+St Petersburg to the coastal population reported by Jambeck et al. See figure below. 
 
 
 #### Process to find max reference point, combine Europe with Russia, downweight Russia
@@ -304,7 +323,7 @@ baltic_layer = lookup_bhi %>%
          score = trash_score_2010); # baltic_layer
   
 ## save layer to layers folder, and register layer in layers.csv by hand
-write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
+# write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
 
 ## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?
 
@@ -316,17 +335,38 @@ Using modeled 2015 data for status but use max 2010 as a reference point.
 
 ```{r explore status 2015}
 
-score_2015 = modeled_waste_2015 %>% 
+score_2015_by_country = modeled_waste_2015 %>% 
     filter(country %in% baltic$country) %>%  # choosing only Baltic countries
     mutate(ref_point = 37566,  # "max trash for 2010 is 37566 (Russia)"
            score_2015 = (1 - pmin(1, modeled_waste_2015/ref_point))*100 ) %>% 
     select(country, score = score_2015)
 
-ggplot(score_2015, aes(x = country, y = score)) +
+score_2015_by_bhi = lookup_bhi %>%
+  left_join(score_2015_by_country, 
+            by = 'country') %>%
+  select(rgn_id, 
+         score); 
+  
+# plot by country
+ggplot(score_2015_by_country, aes(x = country, y = score)) +
   geom_point(stat = "identity") +
   theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
   ggtitle("Trash scores by country: 2015")
   
+# save as CW-TRA data layer
+write.csv(score_2015_by_bhi, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.csv',row.names=FALSE)
+
+```
+
+## 5. Save as Pollution Pressures layer
+
+```{r save as pressures layer}
+
+press_scores = score_2015_by_bhi %>% 
+  mutate(pressure_score = 1 - score/100)
+
+write.csv(press_scores, file.path(dir_layers, "po_trash_bhi2015.csv"))
+
 ```
 
 
