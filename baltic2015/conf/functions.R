@@ -1075,11 +1075,8 @@ TRA = function(layers){
   ## Read in csv to test
   #cw_tra_score = read.csv('~github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
 
-  cw_tra_score = SelectLayersData(layers, layers='po_trash') %>%
-    dplyr::select(rgn_id = id_num, score = val_num)
-
-  cw_tra_status = cw_tra_score %>%
-    mutate(score = round((1 - score)*100)) ## status is 1 - pressure, status is 0-100
+  cw_tra_status = layers$data[['cw_tra_status']] %>%
+    select(-layer)
 
   ## no TRA trend
   ## this is a problem - need to solve. 7 July 2016
@@ -1095,17 +1092,6 @@ TRA = function(layers){
                   region_id = rgn_id,
                   score) %>%
     arrange(dimension,region_id)
-
-  #debug JSL, temporary
-  # scores = scores %>%
-  #   rbind(cw_tra_status %>%
-  #   mutate(dimension= "status",
-  #          goal = 'TRA') %>%
-  #   dplyr::select(goal,
-  #                 dimension,
-  #                 region_id = rgn_id,
-  #                 score) %>%
-  #   arrange(dimension,region_id))
 
   return(scores)
 } ## END TRA function

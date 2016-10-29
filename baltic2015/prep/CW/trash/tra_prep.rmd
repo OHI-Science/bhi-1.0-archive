@@ -354,7 +354,7 @@ ggplot(score_2015_by_country, aes(x = country, y = score)) +
   ggtitle("Trash scores by country: 2015")
   
 # save as CW-TRA data layer
-write.csv(score_2015_by_bhi, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.csv',row.names=FALSE)
+write.csv(score_2015_by_bhi, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.csv', row.names=FALSE)
 
 ```
 
@@ -363,7 +363,8 @@ write.csv(score_2015_by_bhi, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.cs
 ```{r save as pressures layer}
 
 press_scores = score_2015_by_bhi %>% 
-  mutate(pressure_score = 1 - score/100)
+  mutate(pressure_score = 1 - score/100) %>% 
+  select(-score)
 
 write.csv(press_scores, file.path(dir_layers, "po_trash_bhi2015.csv"))
 
