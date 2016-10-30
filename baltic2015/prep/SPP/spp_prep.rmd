@@ -8,13 +8,46 @@ params:
     datasource: csv
 ---
 
-## 1. Background and Overview
-In the OHI framework, the Biodiversity goal (BD) has two subgoals - species (SPP) and habitats (HAB). In BHI, we use only SPP to represent BD due to a lack of data on habitats. 
+## 1. Background
 
-### 1.1 Species biodiversity
-We care about species biodiversity because "People value biodiversity in particular for its existence value. The risk of species extinction generates great emotional and moral concern for many people."
+### 1.1 Goal Description
+We care about species biodiversity because "people value biodiversity in particular for its existence value. The risk of species extinction generates great emotional and moral concern for many people."
 
-### 1.2 References
+### 1.2 Model & Data 
+
+HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria. Species were assigned a _threat category_ (ranging from "extinct" to "least concern") and assigned a weight. Goal score is the average weight of all species assessed. 
+
+### 1.3 Reference points 
+
+Reference point is when all species are in the "least concern" category and score of 100 is achieved. The lower cut-off point when 75% of species are extinct and score is 0. 
+
+### 1.4 Other considerations for _OHI-BHI 2.0_
+
+
+
+## 2. Data
+Two different data sources and goal calculation approaches are explored. 
+
+
+**Option 1** *See preparation in Section 4*  
+
+HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria.  
+*Pros for using these data:*  
+Much more representative set of species included for Baltic Sea biodiversity.  
+*Cons for using these data:*  
+Distribution is provided for most taxa groups at the basin scale - coaser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.  
+
+
+**Option 2** *See preparation in Section 5*
+
+HELCOM has spatial occurrence data layers for species and species are given an IUCN threat category.  
+*Pros for using these data:*  
+Data are spatially explicit, can score presence absence for each BHI region.  
+*Cons for using these data:*  
+These represent a very limited number of species in the Baltic (125 total) with the selection criteria being those with a spatial data layer in HELCOM. Many more species have been assessed using the IUCN criteria by HELCOM. 
+
+** General References **
+
 [Halpern et al. 2012. An index to assess the health and benefits of the global ocean. Nature 488: 615-620](http://www.nature.com/nature/journal/v488/n7413/full/nature11397.html)
 
 [HELCOM Red List](http://www.helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) based on [IUCN criteria. ](http://www.iucnredlist.org/technical-documents/categories-and-criteria).  
@@ -38,26 +71,6 @@ We care about species biodiversity because "People value biodiversity in particu
 
 - Not Evaluated (NE)
 
-## 2. Data
-Two different data sources and goal calculation approaches are explored. 
-
-**Option 1** *See preparation in Section 4*  
-HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria.  
-
-*Pros for using these data:*  
-Much more representative set of species included for Baltic Sea biodiversity.  
-
-*Cons for using these data:*  
-Distribution is provided for most taxa groups at the basin scale - coaser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.  
-
-
-**Option 2** *See preparation in Section 5*
-HELCOM has spatial occurrence data layers for species and species are given an IUCN threat category.  
-*Pros for using these data:*  
-Data are spatially explicit, can score presence absence for each BHI region.  
-*Cons for using these data:*  
-These represent a very limited number of species in the Baltic (125 total) with the selection criteria being those with a spatial data layer in HELCOM. Many more species have been assessed using the IUCN criteria by HELCOM.  
-
 ### 2.1 Data sources and information for checklist data
 
 #### 2.1.1 Data sources
@@ -69,7 +82,7 @@ Joni Kaitaranta (HELCOM) emailed the complete list of species assessed using IUC
 These data are in the folder 'SPP/data_checklist_redlist'  
 
 #### 2.1.3 Data treatment for presence/absence  
-Difference taxa groups had different levels and categorization of presence/absence.  This is what is included as presence for BHI from the checklist.  
+Difference taxa groups had different levels and categorization of presence/absence. This is what is included as presence for BHI from the checklist.  
 
 - *Breeding birds* presence = 'breeding'
 - *Fish* presence = 'regular reproduction' or 'regular occurence, no reproduction'  
@@ -93,7 +106,7 @@ Species coverage and threat level data were obtained from the [HELCOM Biodiversi
 Data were download in March 2016.  
 
 #### 2.2.2 Data extraction
-Different taxa groups have different file types (grid files, polygons). Each species has a threat level assigned. Melanie worked to align taxa and species to BHI regions and assign the vulnerability code.
+Different taxa groups have different file types (grid files, polygons). Each species has a threat level assigned. Melanie Frazier from OHI-science team worked to align taxa and species to BHI regions and assign the vulnerability code.
 
 Folders associated with these data are:  
 
@@ -115,8 +128,7 @@ Melanie's notes on the data extraction process are below.
 #### 2.2.3 Notes
 ##### 2.2.3.1 General Notes
 **SPP data**
-For groups on the HELCOM grid (benthos): there is a key (prep/spatial/helcom_to_rgn_bhi_sea.csv) that translates the grid cells into
-baltic regions. The key was created using this script: prep/spatial/HELCOM_2_baltic.R.
+For groups on the HELCOM grid (benthos): there is a key (prep/spatial/helcom_to_rgn_bhi_sea.csv) that translates the grid cells into baltic regions. The key was created using this script: prep/spatial/HELCOM_2_baltic.R.
 
 For groups associated to HELCOM subbasin: this key was used to translate subbasins into baltic regions: prep/baltic_rgns_to_bhi_rgns_lookup_holas.csv
 
@@ -164,8 +176,7 @@ There is a combined file for mammals.  The ranges are described using polygons t
 
 Some species have multiple IUCN categories (probably due to subspecies).
 It would be ideal if we know which categories correspond to which regions, 
-but these data are not available. 
-two possible options are:
+but these data are not available. Two possible options are:
 
 1. average them
 2. use the most conservative option
@@ -245,6 +256,8 @@ TBD
 # Two alternative data sources and status calculations follow.  Need to assess which is best.  
 
 ```{r setup, message=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_spp    = file.path(dir_prep, 'SPP')
@@ -265,11 +278,11 @@ create_readme(dir_spp, 'spp_prep.rmd')
 
 bbirds = read.csv(file.path(dir_spp,'data_checklist_redlist/breedingbirds_dist_checklist.csv'), sep= ";", stringsAsFactors = FALSE)
 
-fish = readr::read_csv2(file.path(dir_spp,'data_checklist_redlist/fish_dist_checklist.csv'))
+fish = read.csv(file.path(dir_spp,'data_checklist_redlist/fish_dist_checklist.csv'), sep= ";", stringsAsFactors = FALSE)
 
-invert = readr::read_csv2(file.path(dir_spp,'data_checklist_redlist/invert_dist_checklist.csv'))
+invert = read.csv(file.path(dir_spp,'data_checklist_redlist/invert_dist_checklist.csv'), sep= ";", stringsAsFactors = FALSE)
 
-invert_taxa_all = readr::read_csv2(file.path(dir_spp,'data_checklist_redlist/invert_dist_checklist_alltaxalevels.csv')) ## this is the same distribution data as in the "invert" object but all taxa levels are included in the csv so can be modified for insects
+invert_taxa_all = read.csv(file.path(dir_spp,'data_checklist_redlist/invert_dist_checklist_alltaxalevels.csv'), sep= ";", stringsAsFactors = FALSE) ## this is the same distribution data as in the "invert" object but all taxa levels are included in the csv so can be modified for insects
 
 macrophytes = read.csv(file.path(dir_spp,'data_checklist_redlist/macrophytes_dist_checklist.csv'), sep= ";", stringsAsFactors = FALSE)
 
@@ -284,12 +297,11 @@ redlist = read.csv(file.path(dir_spp,'data_checklist_redlist/helcom_redlist_alls
 
 ```{r data structure}
 str(bbirds)
-# str(fish)
-# str(invert) # JSL: error, even using readr:: above
+str(fish)
+str(invert) 
 str(invert_taxa_all)
 str(macrophytes)
 str(mammals)
-
 str(redlist)
 ```
 
@@ -451,8 +463,7 @@ species_checklist = species_checklist%>%
 
 
 #### 4.2.2 Get number of species by taxa group on the red list
-2772 on redlist  
-Need to see how many are assessed. 
+2772 on redlist. Need to see how many are assessed. 
 ```{r number species redlist}
 str(redlist)
 
@@ -489,18 +500,15 @@ full_species = full_join(species_checklist,redlist, by=c("latin_name","taxa_grou
                   mutate(helcom_category = as.character(helcom_category))
 dim(full_species) #2818   6
 
-##which species are not on both lists?
-
-  #          
-
             
 ```
-##### 4.2.3.2 on checklist not redlist
-9 species not on redlist
-Ringed seal latin name differs - correct in redlist to *Pusa hispida*  
-4 breeding birds not on redlist --spelling differences, correct on redlist  
-3 macrophytes not on redlist  (2 are spelling error, corrected)
-1 invertebreate not on redlist  (insecta not assessed here)
+##### 4.2.3.2 Which species are on checklist not redlist
+9 species not on redlist: 
+
+- Ringed seal latin name differs - correct in redlist to *Pusa hispida*  
+- 4 breeding birds not on redlist --spelling differences, correct on redlist  
+- 3 macrophytes not on redlist  (2 are spelling error, corrected)
+- 1 invertebreate not on redlist  (insecta not assessed here)
 ```{r species on checklist not redlist }
 # which are in checklist but not redlist
       full_species %>% filter(is.na(list_type.y)) %>%nrow()  ##9
@@ -571,7 +579,7 @@ dim(full_species) #2811   6
 ```
 
 ##### 4.2.3.3 on redlist not on checklist  
-**442 species on redlist not on checklist **
+**442 species on redlist not on checklist **: 
 1. 63 species of wintering birds. There is no wintering birds checklist so just use breeding birds and the threat level assigned to species in breeding birds (even if a species is listed on redlist in both breeding and wintering)  
 2. 9 species of fish. Not found - but perhaps smelt is simply incorrect on redlist (*Osmerus eperlanomarinus*) and should be changed to *Osmerus eperlanus* which is on the checklist?  
 3. 1 macrophyte not found  
@@ -796,9 +804,9 @@ dim(shared_species) #2421
 shared_species_threat_n = shared_species %>%
                        count(taxa_group,helcom_category)
 
-ggplot(shared_species_threat_n, aes(x=taxa_group, y=n, fill=helcom_category))+
-  geom_bar(stat="identity")+
-  theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
+ggplot(shared_species_threat_n, aes(x=taxa_group, y=n, fill=helcom_category)) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, hjust=.5, vjust=.5, face="plain"), axis.text.y = element_text(colour="grey20", size=6)) +
   ggtitle("Count of species in each IUCN category")
 
 ```
@@ -821,8 +829,6 @@ shared_species_dd_ne_threat_n = shared_species_dd_ne %>%
 ggplot(shared_species_dd_ne_threat_n, aes(x=taxa_group, y=n, fill=helcom_category))+
   geom_bar(stat="identity")+
   ggtitle("Count of excluded species ")
-
-
 
 ##object excluding DD and NE
 shared_species2 = bind_rows(filter(shared_species,helcom_category == 'NT'),
@@ -857,7 +863,6 @@ Add category Regionally Extinct, and score same as Extinct
 
 ## repeat code from section 4, vulnerability lookup table
 
-
 vuln_lookup = shared_species2 %>%
               select(helcom_category)%>%
               distinct(.) %>% ## unique vulnerability codes
@@ -890,8 +895,8 @@ shared_species3 = shared_species2 %>%
 Major basin are the same but smaller regions also included, these differ in number
 ```{r basin names used for distribution}
 
-fish_loc = fish_long %>% select(location)%>%arrange()%>%distinct() %>%
-  mutate(location = ifelse(location == "Åland.Sea", "Aland.Sea",location))##21
+fish_loc = fish_long %>% select(location) %>% arrange() %>% distinct() %>%
+  mutate(location = ifelse(location == "Åland.Sea", "Aland.Sea",location)) ##21
 invert_loc = invert_taxa_all_long %>% select(location)%>%arrange()%>%distinct() ##32
 macrophytes_loc = macrophytes_long %>% select(location)%>%arrange()%>%distinct() ##17
 mammals_loc = mammals_long %>% select(location)%>%arrange()%>%distinct()%>%
@@ -950,8 +955,6 @@ insect_fam_dist = insect_fam_dist %>%
                   dplyr::rename(latin_name = family)
 
 
-
-
 ## JOIN the species dist with the insecta family dist
 dim(species_dist) #63672     6
 species_dist = bind_rows(species_dist,
@@ -980,7 +983,7 @@ shared_species3 %>% nrow() ## 1456 species should be on the final list
 ## join shared_species3 to species_dist
 shared_species_dist = left_join(shared_species3, species_dist, 
                                 by=c("latin_name","taxa_group")) %>%
-                      select(-list_type.x, -list_type.y,-location)%>%  ## exclude location because may have more than one location per basin
+                      select(-list_type.x, -list_type.y,-location) %>%  ## exclude location because may have more than one location per basin
                       select(taxa_group,latin_name,common_name,helcom_category,helcom_category_numeric,basin,presence) %>%
                       distinct()%>%
                       arrange(taxa_group, latin_name)
@@ -1042,12 +1045,12 @@ spp_dist_threat_value_data = shared_species_dist_n%>%
 write.csv(spp_dist_threat_value_data, file.path(dir_baltic,'visualize/spp_dist_threat_value_data.csv'),row.names = FALSE)
 
 
-## distribution without DD with each taxa group separately by basin & threat
+# distribution without DD with each taxa group separately by basin & threat
 #invert
 ##color to highlight Gulf of Finland
 col_gof =rep(c(rep("black",9),"red",rep("black",7)),4)
 ggplot(filter(shared_species_dist_n, taxa_group=="invert"))+
-    geom_point(aes(basin,n), size=2.5, colour=col_gof)+
+    # geom_point(aes(basin, n), size=2.5, colour=col_gof)+
   facet_wrap(~helcom_category, scales="free_y")+
   ylab("Count of species")+
    theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
@@ -1061,8 +1064,6 @@ ggplot(data_filtered_plot)+
   ylab("Count of species")+
    theme(axis.text.x = element_text(colour="grey20",size=8,angle=90,hjust=.5,vjust=.5,face="plain"),axis.text.y = element_text(colour="grey20",size=6))+
   ggtitle("Count of Invert species in each IUCN category Northern basins")
-
-
 
 #macrophytes
 ggplot(filter(shared_species_dist_n, taxa_group=="macrophytes"))+
