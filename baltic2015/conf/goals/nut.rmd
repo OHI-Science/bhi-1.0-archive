@@ -1,22 +1,34 @@
 ### Goal Description
 
-*~3+ sentences: what the goal is trying to describe pulled from ohi-science.org/goals; for BHI what specifically does that mean*
+*The nutrient sub-goal of the Clean Water goal captures the degree to which local waters are affected by eutrophication. This sub-goal uses two eutrophication indicators for the Baltic Sea: Secchi depth and hypoxic area. Secchi depth is used as a proxy for water clarity, which reflects nutrient level in the water. Hypoxic area represents the long-term effects of human activities on nutrient levels and water quality. Both indicators are used as [core indicators](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity) for eutrophication by HELCOM.* 
+
 
 ### Model & Data
 
-*~2 sentences*
+* For Secchi depth  mean summer secchi depth (June-September) were used and the data were downloaded from the [ICES database](http://www.ices.dk/marine-data/Pages/default.aspx).*
 
-- [Data](Data link)
-- [Data2](Data2 link)
+*For hypoxic area we used data was published by [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Deep water anoxia are defined as O2 level <2 mg⋅L−1. It represents the long-term effects of human activities on nutrient levels and water quality. We used deep water anoxia only for the following basins: Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland.*  
+
+*To calculate the status of the nutrient sub goal the geometric mean of both the secchi depth status and the hypoxic area status have been calculated for Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland. For the other basins only the secchi depth has been used to calculate the nutrient status.*
 
 *something about rescaling if required to make reference point make sense*
 
 ### Reference points
 
-*~1-2 sentences describing reference point, where it came from*
+*Secchi depth reference points are set "based on the results obtained in the TARGREV project (HELCOM 2013a), taking also advantage of the work carried out during the EUTRO PRO project (HELCOM 2009) and national work for WFD. The final targets were set through an expert evaluation process done by the intersessional activity on development of core eutrophication indicators (HELCOM CORE EUTRO) and the targets were adopted by the HELCOM Heads of Delegations".* 
+
+*[Approaches and methods for eutrophication target setting in the Baltic Sea region](http://www.helcom.fi/Documents/Ministerial2013/Associated%20documents/Background/Eutorophication%20targets_BSEP133.pdf)*
+
+*[Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10](http://www.sciencedirect.com/science/article/pii/S0272771412000418)*  
+
+*[EUTRO-OPER](http://helcom.fi/helcom-at-work/projects/eutro-oper/) Making HELCOM Eutrophication Assessments opestatusnal.  Check here for HELCOM status calculations and assessment. Included on this page is a link to the [Eutrophication Assessment Manual](http://helcom.fi/Documents/Eutrophication%20assessment%20manual.pdf)*  
+
+
+*Hypoxic area reference point is set to be the hypoxic area of each basin in 1906.* 
+
 
 ### Other considerations for _OHI-BHI 2.0_
 
-*link to prep files*
+*link to [prep files](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/nutrient/nutrient_prep.Rmd)*
 
-*external advisors/goalkeepers?*
+*external advisors/goalkeepers: Christoph Humborg*
