@@ -25,7 +25,8 @@ $$
 
 ## Food Provision: Mariculture
 
-Amount of sustainable farm-raised seafood compared to max sustainable
+```{r, child='goals/mar.rmd',results='asis', echo=FALSE}
+```
 
 $$
 x_{MAR} =  \frac{Y_{c}}{Y_{r}}
