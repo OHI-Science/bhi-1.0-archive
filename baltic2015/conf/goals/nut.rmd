@@ -7,7 +7,7 @@
 *~2 sentences*
 
 - [Data](Data link)
-- [Data2](Data2 link))
+- [Data2](Data2 link)
 
 *something about rescaling if required to make reference point make sense*
 
