@@ -54,4 +54,4 @@ TEQ values from the [World Health Organization 2005](http://www.who.int/ipcs/ass
 
 *link to [prep files](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd)*
 
-*external advisors/goalkeepers?*
+*external advisors/goalkeepers: Anna Sobek*
