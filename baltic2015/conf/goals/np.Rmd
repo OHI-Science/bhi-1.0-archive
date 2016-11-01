@@ -1,0 +1,22 @@
+### Goal Description
+
+*~3+ sentences: what the goal is trying to describe pulled from ohi-science.org/goals; for BHI what specifically does that mean*
+
+### Model & Data
+
+*~2 sentences*
+
+- [Data](Data link)
+- [Data2](Data2 link))
+
+*something about rescaling if required to make reference point make sense*
+
+### Reference points
+
+*~1-2 sentences describing reference point, where it came from*
+
+### Other considerations for _OHI-BHI 2.0_
+
+*link to prep files*
+
+*external advisors/goalkeepers?*
