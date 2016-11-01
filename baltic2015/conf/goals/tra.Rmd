@@ -1,22 +1,21 @@
 ### Goal Description
 
-*~3+ sentences: what the goal is trying to describe pulled from ohi-science.org/goals; for BHI what specifically does that mean*
+*This sub goal assesses a region's ability to manage litter to prevent them from entering the ocean to cause harm to the coastal and marine environment. Marine litter is a large global concern, impacting all marine environments of the world.* 
+
 
 ### Model & Data
 
-*~2 sentences*
+*The amount of mismanaged plastic litter that has the potential to enter the ocean is calculated from model data by [Jambeck et al 2015: Plastic waste inputs from land into the ocean](http://science.sciencemag.org/content/347/6223/768.full.pdf+html). The status is calculated by a country's mismanaged litter in 2015 to the reference point in 2010.* 
 
-- [Data](Data link)
-- [Data2](Data2 link))
-
-*something about rescaling if required to make reference point make sense*
+*The modelled data have been downweighted for Russia, Germany, Denmark and Sweden (proportion of coastal pop/national pop) to include only the litter that reaches the  the Baltic Sea from these countries.*
 
 ### Reference points
 
-*~1-2 sentences describing reference point, where it came from*
+*The official good environmental status (reference point) from the Marine Strategy Framework Directive is "Properties and quantities of marine litter do not cause harm to the coastal and marine environment". For the moment being no offical quantitative reference point is set. Therefore we decided at the time being two reference points. The highest is the maximum amount of litter among all Baltic surrounding countries in 2010 unless an offical reference point is set. The lowest is zero litter in the Baltic Sea.*
+
 
 ### Other considerations for _OHI-BHI 2.0_
 
-*link to prep files*
+*link to [prep files](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)*
 
 *external advisors/goalkeepers?*
