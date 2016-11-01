@@ -3,7 +3,7 @@
 These files provide the template for creating a website for an OHI repository per [Github Pages](http://pages.github.com) by populating the HTML files from Rmarkdown into the gh-pages branch of the Github repo.
 
 Normally these files are translated from template files into the website using `ohirepos::deploy_website()` function, like so:
-
+ 
 ```r
 library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
 
