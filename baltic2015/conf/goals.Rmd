@@ -4,11 +4,6 @@ output: html_document
 
 ## Food Provision: Fisheries
 
-```{r, results='asis', echo=FALSE}
-cat(readLines('goals/ao.md'))
-```
-
-
 
 $$
 x_{FIS} =  (\prod_{g=1}^{6} SS_{i,g}^{C_{i,g}})^\frac{1}{\sum{C_{i,g}}}
