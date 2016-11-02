@@ -2,8 +2,8 @@ name: "Baltic Ocean Health Index"
 navbar:
   title: "BHI"
   left:
-    - text: "About"
-      href: about.html
+    - text: "Overview"
+      href: overview.html
     - text: "App"
       href: app.html
    # - text: "Regions"

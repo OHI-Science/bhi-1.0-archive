@@ -1,0 +1,21 @@
+---
+title: "Overview"
+---
+
+# Assessing ocean health in the Baltic Sea
+
+Working with local partners, we will tailor the Ocean Health Index to capture characteristics that make the Baltic Sea’s coastal ecosystems unique. Our approach will incorporate locally meaningful information, targets, and perspectives in order to give the first comprehensive picture of Baltic Sea health today, while also identifying areas for improvement.
+
+# Why we are doing this
+
+With this regional assessment of the Ocean Health Index we aim to address X core questions that inform science and management: 
+
+1. 
+2. 
+3. 
+X. 
+
+
+```{r child=sprintf('%s/reports/interpreting_BHI.Rmd', dir_scenario)}
+```
+
