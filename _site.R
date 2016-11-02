@@ -30,7 +30,7 @@ gh_url          = sprintf('https://github.com/OHI-Science/%s.git', gh_repo)
 knitr::opts_chunk$set(echo = F, message = F, warning = F)
 
 run_cmd = function(cmd){
-  cat(sprintf('running command:\n  %s\n', cmd))
+ # cat(sprintf('running command:\n  %s\n', cmd)) #comment out so not displayed on website
   system.time(system(cmd))
 }
 
