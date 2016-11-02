@@ -1,0 +1,32 @@
+
+
+### Goal Description
+
+*Highly productive coastal wetland ecosystems or seagrass store substantially large amount of carbon have the highest sequestration rates of any habitats on earth. They are also threatened by under-regulated coastal development but are amenable to restoration and conservation efforts. This goal intends to capture the ability of the coastal habitats to remove carbon given their carbon uptake rate and health conditions. A score of 100 means all habitats that contribute to carbon removal are still intact or have been restored and they can function to their full carbon burial potential. For the BHI we used seagrass as an indicator for carbon storage.*   
+
+
+### Model & Data
+
+*We used the seagrass data (Zostera species) in the Baltic Sea. The data were downloaded from the [HELCOM Marine Spatial Planning Map Service](http://maps.helcom.fi/website/msp/index.html)  
+by selecting -  Marine Spatial Planning - Ecology - Ecosystem Health status  
+Data layer - "Zostera Meadows" [Metadata link](http://maps.helcom.fi/website/getMetadata/htm/All/Zostera%20meadows.htm).*  
+
+*The data structure at the moment is based on point data where observations are accompanies by either "dense" or "sparse." Therefore the spatial extent of the seagrass meadows is unclear and cannot be used for the BHI goal calculation.* 
+
+*Related publications
+[Boström et al 2014](http://onlinelibrary.wiley.com/doi/10.1002/aqc.2424/abstract).*  
+
+*[HELCOM Red List Biotope Information Sheet](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)*  
+
+
+### Reference points
+
+*Not relevant yet.*
+
+
+### Other considerations for _OHI-BHI 2.0_
+*Other spatial data sources are currently explored.* 
+
+*link to [prep files](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CS/cs_prep.md)*
+
+*external advisors/goalkeepers: Christoffer Boström and Markku Viitasalo.*
