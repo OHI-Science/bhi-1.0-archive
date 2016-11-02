@@ -1031,7 +1031,8 @@ NUT = function(layers){
 
   ## calculate status
   nut_status = full_join(secchi_status, anoxia_status, by = 'rgn_id') %>%
-    mutate(score = (sec_status + anox_status)/2, # did not remove NA, and result in NA as status for rgions 3:8
+    mutate(score = ifelse(!is.na(sec_status) & !is.na(anox_status), (sec_status + anox_status)/2,
+                          ifelse(!is.na(sec_status) & is.na(anox_status), sec_status, "")),
            dimension = 'status')  %>%
     dplyr::select(rgn_id,
                   score,
@@ -1039,7 +1040,8 @@ NUT = function(layers){
 
 ## calculate trend
   nut_trend = full_join(secchi_trend, anoxia_trend, by = 'rgn_id') %>%
-    mutate(score = round((sec_trend + anox_trend)/2, 2),
+    mutate(score = ifelse(!is.na(sec_trend) & !is.na(anox_trend), (sec_trend + anox_trend)/2,
+                          ifelse(!is.na(sec_trend) & is.na(anox_trend), sec_trend, "")),
            dimension = 'trend') %>%
     dplyr::select(rgn_id,
                   score,
@@ -1278,36 +1280,25 @@ BD = function(layers){
   ## Updated by Jennifer Griffiths 7 July 2016
   ## BD status calculated in spp_prep file because calculated by basin and then applied to BHI regions
       ## Status is the geometric mean of each taxa group status by basin
-      ## No Trend, have NA as placeholder
+      ## Trend is temporarily substituted by OHI-Global 2016 BD trend scores
 
 
   ## Call Layers
   ## status
-  bd_status = SelectLayersData(layers, layers='bd_spp_status', narrow=T) %>%
-    select(rgn_id = id_num,
+  status = SelectLayersData(layers, layers='bd_spp_status', narrow=T) %>%
+    select(region_id = id_num,
            dimension = category,
-           score= val_num)
+           score= val_num) %>%
+    mutate(score = round(score*100))
 
   ##trend
-    ## no trend layer
+  trend = layers$data[['bd_spp_trend']] %>%
+    select(region_id = rgn_id, score) %>%
+    mutate(dimension = "trend")
 
-
-  ## Finalize status and trend
-      status = bd_status %>%
-            dplyr::rename(region_id=rgn_id) %>%
-            mutate(score = round(score*100))
-
-
-    ## place holder for trend
-      trend = data.frame(region_id = seq(1,42,1), score = rep(NA,42), dimension =rep("trend",42))
-
-
-    ######################################################
-    ## Scores combined
-    ######################################################
-     # scores
-      scores = bind_rows(status, trend)%>%
-           mutate(goal = 'BD')
+ # scores
+  scores = bind_rows(status, trend)%>%
+    mutate(goal = 'BD')
 
       return(scores)
 } ## End BD Function
