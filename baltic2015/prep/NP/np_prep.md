@@ -1,7 +1,7 @@
 Natural Products (NP) Goal & Food Provision (FP) - Fisheries (FIS) subgoal Data Prep
 ================
 
-tTe **Natural Products** goal describes the ability to maximize the sustainable yield of *non-food* natural products, while the **Fisheries** subgoal of Food Provision focuses on *wild-caught seafood for human consumption*.
+The **Natural Products** goal describes the ability to maximize the sustainable yield of *non-food* natural products, while the **Fisheries** subgoal of Food Provision focuses on *wild-caught seafood for human consumption*.
 
 The same model was used for both Fisheries and Natural Products, which compares landings with Maximum Sustainable Yield. A score of 100 means the country or region is harvesting seafood to the ecosystem’s production potential in an sustainable manner.
 

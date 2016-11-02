@@ -12,7 +12,7 @@ params:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-tTe **Natural Products** goal describes the ability to maximize the sustainable yield of _non-food_ natural products, while the **Fisheries** subgoal of Food Provision focuses on _wild-caught seafood for human consumption_. 
+The **Natural Products** goal describes the ability to maximize the sustainable yield of _non-food_ natural products, while the **Fisheries** subgoal of Food Provision focuses on _wild-caught seafood for human consumption_. 
 
 The same model was used for both Fisheries and Natural Products, which compares landings with Maximum Sustainable Yield. A score of 100 means the country or region is harvesting seafood to the ecosystem’s production potential in an sustainable manner.
 
