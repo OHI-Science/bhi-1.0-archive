@@ -1671,6 +1671,6 @@ bd_trend = full_join(bd_scores_bhi, bhi_country_lookup, by = "country") %>%
   select(rgn_id, score) %>% 
   complete(rgn_id = full_seq(c(1,42), 1))
 
-write_csv(bd_trend, file.path(dir_layers, "spp_trend_scores_bhi2015.csv"))
+write_csv(bd_trend, file.path(dir_layers, "bd_spp_trend_scores_bhi2015.csv"))
 
 ```
