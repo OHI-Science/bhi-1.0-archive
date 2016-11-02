@@ -20,7 +20,7 @@ $$
 
 ## Food Provision: Mariculture
 
-```{r, child='goals/mar.rmd',results='asis', echo=FALSE}
+```{r, child='goals/mar.rmd', results='asis', echo=FALSE}
 ```
 
 $$
@@ -63,34 +63,11 @@ $$
 
 ## Natural Products
 
-Level of protection of the coast from inundation and erosion compared to the local natural potential
+```{r, child='goals/np.rmd', results='asis', echo=FALSE}
+```
 
-$$
-x_{NP} = \frac{\sum_{p=1}^{N} w_p * x_p}{N}  
-$$
-
-$$
-x_p = H_p * S_p
-$$
-
-$$
-S_p = 1 - (\frac{E + R}{N})  
-$$
-
-- $w_p$ = proportional peak US dollar value of product $p$  
-
-- $x_p$ = sustainable-harvest score for product $p$  
-
-- $H_p$ = harvest yield for product $p$  
-
-- $S_p$ = sustainability of product $p$ 
-
-- $E$ = exposure term 
-
-- $R$ = risk term
-
-￼products:aquaria fishes, corals, sponges, shells, seaweeds, fish oil
-
+For data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
+For goal model code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
 
 ## Carbon Storage
 
