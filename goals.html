@@ -281,6 +281,9 @@ div.tocify {
   <a href="app.html">App</a>
 </li>
 <li>
+  <a href="regions.html">Regions</a>
+</li>
+<li>
   <a href="layers.html">Layers</a>
 </li>
 <li>
@@ -378,25 +381,30 @@ D_{U} = (1 - P) * (1 - O_{AO})
 </div>
 <div id="natural-products" class="section level2">
 <h2>Natural Products</h2>
-<p>Level of protection of the coast from inundation and erosion compared to the local natural potential</p>
-<p><span class="math display">\[
-x_{NP} = \frac{\sum_{p=1}^{N} w_p * x_p}{N}  
-\]</span></p>
-<p><span class="math display">\[
-x_p = H_p * S_p
-\]</span></p>
-<p><span class="math display">\[
-S_p = 1 - (\frac{E + R}{N})  
-\]</span></p>
+<div id="goal-description-1" class="section level3">
+<h3>Goal Description</h3>
+<p>This goal measures how sustainably people harvest non-food products from the sea. From seashells and sponges to aquarium fish, natural products contribute to local economies and international trade. <strong>For the BHI sprat was included as a natural product</strong> because it often used for fish meal production or animal food.</p>
+</div>
+<div id="model-data-overview" class="section level3">
+<h3>Model &amp; Data Overview</h3>
+<p>The data used for this goal are composed of total sprat spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated as a function of the ratio (B’) between the single species current biomass at sea (B) and the reference biomass at maximum sustainable yield (BMSY), as well as the ratio (F’) between the single species current fishing mortality (F) and the fishing mortality at maximum sustainable yield (FMSY). B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/ffms%3By_bbmsy_2_score.png">general relationship</a>.</p>
 <ul>
-<li><p><span class="math inline">\(w_p\)</span> = proportional peak US dollar value of product <span class="math inline">\(p\)</span></p></li>
-<li><p><span class="math inline">\(x_p\)</span> = sustainable-harvest score for product <span class="math inline">\(p\)</span></p></li>
-<li><p><span class="math inline">\(H_p\)</span> = harvest yield for product <span class="math inline">\(p\)</span></p></li>
-<li><p><span class="math inline">\(S_p\)</span> = sustainability of product <span class="math inline">\(p\)</span></p></li>
-<li><p><span class="math inline">\(E\)</span> = exposure term</p></li>
-<li><p><span class="math inline">\(R\)</span> = risk term</p></li>
+<li><a href="http://www.ices.dk/marine-data/tools/Pages/stock-assessment-graphs.aspx">Sprat data available from the ICES homepage</a> &gt; search for ‘sprat’ &gt; specify the ecoregion as Baltic Sea &gt; search for the 2013 assessment.</li>
 </ul>
-<p>￼products:aquaria fishes, corals, sponges, shells, seaweeds, fish oil</p>
+</div>
+<div id="reference-points-1" class="section level3">
+<h3>Reference points</h3>
+<p>The reference point used for the computation are based on the MSY principle and are described as a functional relationship. MSY means the highest theoretical equilibrium yield that can be continuously taken on average from a stock under existing average environmental conditions without significantly affecting the reproduction process <em>(European Union 2013, World Ocean Review 2013).</em></p>
+</div>
+<div id="considerations-for-bhi-2.0" class="section level3">
+<h3>Considerations for <em>BHI 2.0</em></h3>
+</div>
+<div id="other-information" class="section level3">
+<h3>Other information</h3>
+<p><em>External advisors/goalkeepers are Christian Möllmann &amp; Stefan Neuenfeldt</em></p>
+<p>For data preparation information and code, click <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md">here</a>.<br />
+For goal model code, click <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md">here</a>.</p>
+</div>
 </div>
 <div id="carbon-storage" class="section level2">
 <h2>Carbon Storage</h2>

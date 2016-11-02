@@ -37,7 +37,7 @@ leaflet() %>%
       HTML(sprintf("<em>%s</em>", htmlEscape(n)))},
       rgns$rgn_name, SIMPLIFY = F),
     stroke = TRUE, opacity=0.5, weight=2, fillOpacity = 0.5, smoothFactor = 0.5,
-    color = ~colorNumeric('RdYlBu', rgns$rgn_id)(rgn_id)) %>%
+    color = ~colorNumeric('Purple', rgns$rgn_id)(rgn_id)) %>%
   fitBounds(lng1 = b[1], lat1 = b[2], lng2 = b[3], lat2 = b[4]) %>%
   htmlwidgets::onRender("
   function(el, t) {
