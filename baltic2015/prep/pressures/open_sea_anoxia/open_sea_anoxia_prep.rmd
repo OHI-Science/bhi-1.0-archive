@@ -19,7 +19,7 @@ params:
 #### 2.1.1 Anoxia data layer
 These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Jacob Carstensen provided dbf files containing O2 (mg⋅L−1) for a series of years for the Baltic Proper and the Gulf of Finland. Anoxic conditions are defined as O2 level <2 mg⋅L−1. 
 
-HELCOM uses [anoxia as an applicable indicator](http://www.helcom.fi/baltic-sea-trends/indicators/oxygen/) in the _Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland_. Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
+HELCOM uses [anoxia as an applicable indicator](http://www.helcom.fi/baltic-sea-trends/indicators/oxygen/) in the _Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland_. Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of NA.  
 
 
 ## Reference point
@@ -50,7 +50,6 @@ dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
 
 if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
   warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
-  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
 }
 
 dir_shp <- file.path(dir_M, 'git-annex/Baltic')
@@ -126,15 +125,13 @@ bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile'))
 
 ## subset Baltic Proper (BP) and Gulf of Finland (GoF) regions, and rasterize them to the same coor system and resolution as O2_bottom files. 
 
-O2_raster = raster::raster(file.path(dir_anox, 'O2_bottom_files', 'CodRVmap_2014.tif'))
+# test:
+# O2_raster = raster::raster(file.path(dir_anox, 'O2_bottom_files', 'CodRVmap_2014.tif'))
 
-GoF = bhi %>%
-   subset(Subbasin == "Gulf of Finland") %>%
-  spTransform(bal_proj) %>%
-  rasterize(O2_raster, field = 'BHI_ID') #plot(GoF)
+BP_list = c("Bornholm Basin", "Western Gotland Basin", "Eastern Gotland Basin", "Northern Baltic Proper")
 
 BP = bhi %>% 
-  subset(!Subbasin == "Gulf of Finland") %>%
+  subset(Subbasin %in% BP_list) %>%
   spTransform(bal_proj) %>%
   rasterize(O2_raster, field = 'BHI_ID') #plot(BP)
 
@@ -197,8 +194,13 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 ``` {r Gulf of Finland Anoxia data extraction, warning = FALSE}
 
-O2_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
-                          pattern ="CodRVmap_[0-9]+\\.tif")
+# subset GoF from O2 data
+GoF = bhi %>%
+   subset(Subbasin == "Gulf of Finland") %>%
+  spTransform(bal_proj) %>%
+  rasterize(O2_raster, field = 'BHI_ID') #plot(GoF)
+
+# Loop for each O2_bottom tif file, mask with GoF 
 
 for (i in O2_file_list){
 
@@ -206,7 +208,7 @@ for (i in O2_file_list){
 ## test: i = 'CodRVmap_1906.tif'
 O2_bottom = raster::raster(file.path(dir_anox, 'O2_bottom_files', i))
 
-## select area with O2<0 
+## select area with O2<2
 O2_below_2 = O2_bottom
 O2_below_2[O2_below_2 >= 2] = NA
 # plot(O2_below_2)
@@ -244,8 +246,6 @@ write_csv(data.frame(area_rgn), file.path(dir_temp, paste0(file_path_sans_ext(i)
 
 ``` {r combine GoF and BP data }
 
-#setwd(file.path(dir_anox, 'O2_bottom_files'))
-
 ## Baltif Proper anoxia data in all years
 
 BP_file_list = list.files(path = file.path(dir_anox, 'O2_bottom_files'),
@@ -277,8 +277,6 @@ for (i in 2:length(GoF_file_list)) {
 
 GoF_anoxia_all_yr = dat
 
-## reset working directory
-#setwd(file.path('~/github/bhi'))
 
 ```
 
@@ -383,6 +381,7 @@ anoxia_all_rgns = rbind(BP_anoxic_area, GoF_anoxic_area) %>%
   group_by(year) %>% 
   gather(area_type, area, c(current_area, max_area, min_area)) 
 
+# plot
 anoxia_area_plot <- ggplot(anoxia_all_rgns, aes(x = year, y = area, fill = area_type)) +
  geom_bar(position="dodge", stat = "identity") +
  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
@@ -407,11 +406,11 @@ anoxia_scores_all = rbind(BP_anoxic_area, GoF_anoxic_area) %>%
          pressure_score = as.numeric(str_replace_all(pressure_score, "NaN", 0)) ) %>%
   dplyr::select(rgn_id = BHI_ID, 
                 year,
-                max_area, 
-                min_area, 
-                current_area,
+                # max_area, 
+                # min_area, 
+                # current_area,
                 pressure_score ) %>% 
-    complete(rgn_id = full_seq(rgn_id, 1),  # missing rgn 3, 4, 7, 8, leave as NA 
+    complete(rgn_id = full_seq(rgn_id, 1),  
              year = full_seq(year, 1))
 
 
@@ -419,7 +418,11 @@ anoxia_scores_all = rbind(BP_anoxic_area, GoF_anoxic_area) %>%
 
 anoxia_pressure = anoxia_scores_all %>% 
   filter(year == max(year)) %>% 
-  dplyr::select(rgn_id, pressure_score)
+  complete(rgn_id = full_seq(c(1, 42), 1), 
+           fill = list(pressure_score = 0)) %>% 
+  dplyr::select(rgn_id = as.integer((rgn_id)), pressure_score) 
+
+str(anoxia_pressure)
 
 write_csv(anoxia_pressure, file.path(dir_layers, "hab_anoxia_bhi2015.csv"))
 
@@ -440,7 +443,8 @@ anoxia_status_all_years = anoxia_scores_all %>%
 # most recent year 
 anoxia_status = anoxia_status_all_years %>% 
   filter(year == max(year)) %>% 
-  dplyr::select(rgn_id, score = status_score)
+  dplyr::select(rgn_id, score = status_score) %>% 
+  complete(rgn_id = full_seq(c(1, 42), 1))
 
 # save as .csv in layers folder
 write_csv(anoxia_status, file.path(dir_layers, "cw_nut_anoxia_status_bhi2015.csv"))
@@ -458,7 +462,7 @@ anoxia_trend = anoxia_status_all_years %>%
   do(lmd = lm(status_score ~year, data = .)) %>% 
   summarize(rgn_id = rgn_id, 
             score = min(1, max(-1, round(coef(lmd)['year']*0.05, 2)))) %>% 
-  complete(rgn_id = full_seq(rgn_id, 1)) # fill the empty BHI_ID as NA
+  complete(rgn_id = full_seq(c(1, 42), 1)) # fill the empty BHI_ID as NA
 
 write_csv(anoxia_trend, file.path(dir_layers, 'cw_nut_anoxia_trend_bhi2015.csv'))
 

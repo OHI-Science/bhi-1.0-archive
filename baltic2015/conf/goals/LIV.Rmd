@@ -1,0 +1,22 @@
+
+
+### Goal Description
+
+*This sub-goal describes livelihood quantity and quality for people living on the coast. Livelihoods includes the number of jobs in different marine related sectors.*
+
+
+### Model & Data
+
+
+*Data for each country were downloaded from the [EU-Study on Blue Growth](https://webgate.ec.europa.eu/maritimeforum/node/3550), Maritime Policy and the EU Strategy for the Baltic Sea Region” identified the potential for Blue Growth in each of the EU Member States (MS) of the Baltic Sea Region (BSR) and at sea basin level.* 
+
+### Reference points
+
+*to be determined*
+
+
+### Other considerations for _OHI-BHI 2.0_
+
+*link to [prep files](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LIV/liv_prep.md)*
+
+*external advisors/goalkeepers: Martin Quaas and Wilfried Rickels.*
