@@ -1,7 +1,10 @@
----
-title: "Overview"
----
-
+<!---
+<figure>
+<p align = 'center'>
+<img src="images/bhi_baltic-eye.jpg" height="200px" />
+</figure>
+--->
+  
 # Assessing ocean health in the Baltic Sea
 
 Working with local partners, we will tailor the Ocean Health Index to capture characteristics that make the Baltic Sea’s coastal ecosystems unique. Our approach will incorporate locally meaningful information, targets, and perspectives in order to give the first comprehensive picture of Baltic Sea health today, while also identifying areas for improvement.
