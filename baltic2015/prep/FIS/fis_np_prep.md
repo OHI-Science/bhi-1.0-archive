@@ -1,4 +1,4 @@
-Natual Products (NP) Goal & Food Provision (FP) - Fisheries (FIS) subgoal Data Prep
+Food Provision (FP) - Fisheries (FIS) subgoal & Natural Products (NP) Goal Data Prep
 ================
 
 -   [1. Background](#background)
@@ -14,13 +14,13 @@ Natual Products (NP) Goal & Food Provision (FP) - Fisheries (FIS) subgoal Data P
 1. Background
 -------------
 
-**Fisheries** subgoal of Food Provision describes a country's ability to maximize the sustainable yield of *wild-caught seafood for human consumption*, while **Natural Products** focuses on *non-food* natural products.
+The **Fisheries** subgoal of Food Provision describes the ability to maximize the sustainable yield of *wild-caught seafood for human consumption*, while the **Natural Products** goal focuses on *non-food* natural products.
 
-The same model was used for both goals, which generally compares landings with Maximum Sustainable Yield. A score of 100 means the country or region is harvesting seafood to the ecosystem’s production potential in an sustainable manner.
+The same model was used for both Fisheries and Natural Products, which compares landings with Maximum Sustainable Yield. A score of 100 means the country or region is harvesting seafood to the ecosystem’s production potential in an sustainable manner.
 
 This document prepares data for both Natural Products (NP) and Fisheries (FIS). For Baltic regions, commercially fished stocks are used in these two goals, but different stocks were considered for each goal:
 
--   FIS stocks: Cod & Herrings, mainly for human consumption
+-   FIS stocks: Cod & Herring, mainly for human consumption
 -   cod\_2224, cod\_2532, her\_3a22, her\_2532, her\_riga, her\_30
 -   NP stocks: Sprat, not for human consumption
 -   spr\_2232
@@ -45,66 +45,15 @@ These parameters can be changed in this [part](https://github.com/OHI-Science/bh
 
 Here is some more information about these scores:
 
-<table style="width:114%;">
-<colgroup>
-<col width="18%" />
-<col width="40%" />
-<col width="26%" />
-<col width="29%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Equation</th>
-<th align="left">Over/under fished</th>
-<th align="left">Fishing related mortality</th>
-<th align="left">resulting F' score</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">a</td>
-<td align="left">overfished (B/Bmsy &lt; 0.8)</td>
-<td align="left">high</td>
-<td align="left">all 0s (lowest possible score)</td>
-</tr>
-<tr class="even">
-<td align="left">b</td>
-<td align="left"></td>
-<td align="left">low</td>
-<td align="left">penalty applied</td>
-</tr>
-<tr class="odd">
-<td align="left">c</td>
-<td align="left"></td>
-<td align="left">med/high</td>
-<td align="left">penalty applied</td>
-</tr>
-<tr class="even">
-<td align="left">d</td>
-<td align="left"></td>
-<td align="left">med/low</td>
-<td align="left">all 1s (best possible score)</td>
-</tr>
-<tr class="odd">
-<td align="left">e</td>
-<td align="left">not overfished (B/Bmsy &gt; 0.8)</td>
-<td align="left">low</td>
-<td align="left">penalty applied</td>
-</tr>
-<tr class="even">
-<td align="left">f</td>
-<td align="left"></td>
-<td align="left">medium</td>
-<td align="left">all 1s (best possible score)</td>
-</tr>
-<tr class="odd">
-<td align="left">g</td>
-<td align="left"></td>
-<td align="left">high</td>
-<td align="left">penalty applied</td>
-</tr>
-</tbody>
-</table>
+| Equation | Over/under fished                | Fishing related mortality | resulting F' score             |
+|----------|----------------------------------|---------------------------|--------------------------------|
+| a        | overfished (B/Bmsy &lt; 0.8)     | high                      | all 0s (lowest possible score) |
+| b        |                                  | low                       | penalty applied                |
+| c        |                                  | med/high                  | penalty applied                |
+| d        |                                  | med/low                   | all 1s (best possible score)   |
+| e        | not overfished (B/Bmsy &gt; 0.8) | low                       | penalty applied                |
+| f        |                                  | medium                    | all 1s (best possible score)   |
+| g        |                                  | high                      | penalty applied                |
 
 Here are the specific equations: ![image](https://cloud.githubusercontent.com/assets/5685517/11152185/5291d988-89ee-11e5-839a-0b1b162832f3.png)
 
