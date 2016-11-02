@@ -418,8 +418,11 @@ anoxia_scores_all = rbind(BP_anoxic_area, GoF_anoxic_area) %>%
 
 anoxia_pressure = anoxia_scores_all %>% 
   filter(year == max(year)) %>% 
-  complete(rgn_id = full_seq(c(1, 42), 1)) %>% 
-  dplyr::select(rgn_id, pressure_score)
+  complete(rgn_id = full_seq(c(1, 42), 1), 
+           fill = list(pressure_score = 0)) %>% 
+  dplyr::select(rgn_id = as.integer((rgn_id)), pressure_score) 
+
+str(anoxia_pressure)
 
 write_csv(anoxia_pressure, file.path(dir_layers, "hab_anoxia_bhi2015.csv"))
 
