@@ -19,13 +19,14 @@ params:
 #### 2.1.1 Anoxia data layer
 These data are from [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Jacob Carstensen provided dbf files containing O2 (mg⋅L−1) for a series of years for the Baltic Proper and the Gulf of Finland. Anoxic conditions are defined as O2 level <2 mg⋅L−1. 
 
-Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
+HELCOM uses [anoxia as an applicable indicator](http://www.helcom.fi/baltic-sea-trends/indicators/oxygen/) in the _Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland_. Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0.  
+
 
 ## Reference point
 
 Reference point was the anoxia condition in 1906 for each basin. 
 
-## 3. 
+## 3. Other considerations 
 
 ## 4. Data prep
 
