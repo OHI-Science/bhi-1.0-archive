@@ -4,23 +4,16 @@ output: html_document
 
 ## Food Provision: Fisheries
 
+```{r, child='goals/FIS.Rmd', results='asis', echo=FALSE}
+```
 
-$$
-x_{FIS} =  (\prod_{g=1}^{6} SS_{i,g}^{C_{i,g}})^\frac{1}{\sum{C_{i,g}}}
-$$
-
-- $SS$ stock status score, based on B/Bmsy (biomass / maximum sustainable yield of biomass) and an underharvest penalty adjustment
-
-- $C$ total catch
-
-- $i$ OHI reporting region
-
-- $g$ level of taxonomic grouping (ISSCAAP)
+For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/fis_np_prep.md).   
+<!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
 
 
 ## Food Provision: Mariculture
 
-```{r, child='goals/mar.rmd', results='asis', echo=FALSE}
+```{r, child='goals/MAR.Rmd', results='asis', echo=FALSE}
 ```
 
 $$
@@ -63,11 +56,11 @@ $$
 
 ## Natural Products
 
-```{r, child='goals/np.rmd', results='asis', echo=FALSE}
+```{r, child='goals/NP.Rmd', results='asis', echo=FALSE}
 ```
 
-For data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
-For goal model code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
+For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
+<!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
 
 ## Carbon Storage
 
