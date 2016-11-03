@@ -63,33 +63,6 @@ $$
 habitats: seagrass beds, salt marshes, mangroves
 
 
-## Coastal Protection
-
-Protection from inundation or erosion compared to the local natural potential
-
-$$
-x_{CP} =  \sum_{k}^{n} \alpha_{k} * \frac{C_{c,k}}{C_{r,k}}
-$$
-
-$$
-\alpha_{k} = \frac{w_{k}*A_{k}}{\sum{w_{k}*A_{k}}}
-$$
-
-$$
-w_{k} = \frac{r_{k}}{\sum{r_{k}}}
-$$
-
-- $C$ = condition of habitat $k$, current [$c$] and reference [$r$]
-
-- $\alpha$ = weighted area of habitat $k$  
-
-- $A$ = area of habitat $k$ 
-
-- $r$ = habitat protective ability rank weight 
-
-habitats: salt marshes, seagrass beds, mangroves, coral reefs, sea ice
-
-
 ## Tourism & Recreation
 
 Tourism & recreation value, independent of monetary exchange
@@ -197,22 +170,7 @@ For full data preparation information and code, click [here](https://github.com/
 For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd)
 
 
-## Biodiversity: Habitats
-
-Existence values people hold for biodiversity measured through the status of key habitats
-
-$$
-x_{HAB} =  \sum_{i=1}^{k} \frac{C_{c,k}}{C_{r,k}} * \frac{A_{c,k}}{A_{T}}
-$$
-
-- $C$ = condition of habitat k, current [$c$] or reference[$r$]
-
-- $A$ = area of habitat k, current [$c$] or total of all habitats [T]
-
-habitats: seagrass beds, salt marshes, subtidal soft-bottom habitats, mangroves, coral reefs, sea ice edge
-
-
-## Biodiversity: Species
+## Biodiversity
 
 Existence values people hold for biodiversity measured through the status of native species
 
