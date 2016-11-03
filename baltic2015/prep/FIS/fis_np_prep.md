@@ -2,6 +2,11 @@ Food Provision (FP) - Fisheries (FIS) subgoal & Natural Products (NP) Goal Data 
 ================
 
 -   [1. Background](#background)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 Raw and Prepared data](#raw-and-prepared-data)
     -   [2.3 B/Bmsy and F/msy](#bbmsy-and-fmsy)
@@ -14,6 +19,29 @@ Food Provision (FP) - Fisheries (FIS) subgoal & Natural Products (NP) Goal Data 
 1. Background
 -------------
 
+### Goal Description
+
+The Fisheries sub-goal of Food Provision describes a country's ability to maximize the sustainable yield of wild-caught seafood for human consumption. **For the BHI cod and herring stocks in the Baltic Sea were included as wild-caught fisheries**.
+
+### Model & Data
+
+The data used for this goal are composed of cod and herring spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated as a function of the ratio (B’) between the single species current biomass at sea (B) and the reference biomass at maximum sustainable yield (BMSY), as well as the ratio (F’) between the single species current fishing mortality (F) and the fishing mortality at maximum sustainable yield (FMSY). B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this [general relationship](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/ffms%3By_bbmsy_2_score.png).
+
+-   [Cod and herring data accessed from the ICES homepage](http://www.ices.dk/marine-data/tools/Pages/stock-assessment-graphs.aspx) &gt; search for 'cod' or 'herring' &gt; specify the ecoregion as Baltic Sea &gt; search for the 2013 assessment.
+
+### Reference points
+
+The reference point used for the computation are based on the MSY principle and are described as a functional relationship. MSY means the highest theoretical equilibrium yield that can be continuously taken on average from a stock under existing average environmental conditions without significantly affecting the reproduction process *(European Union 2013, World Ocean Review 2013).*
+
+### Considerations for *BHI 2.0*
+
+### Other information
+
+*external advisors/goalkeepers are Christian Möllmann & Stefan Neuenfeldt*
+
+2. Data
+-------
+
 The **Fisheries** subgoal of Food Provision describes the ability to maximize the sustainable yield of *wild-caught seafood for human consumption*, while the **Natural Products** goal focuses on *non-food* natural products.
 
 The same model was used for both Fisheries and Natural Products, which compares landings with Maximum Sustainable Yield. A score of 100 means the country or region is harvesting seafood to the ecosystem’s production potential in an sustainable manner.
@@ -24,9 +52,6 @@ This document prepares data for both Natural Products (NP) and Fisheries (FIS). 
 -   cod\_2224, cod\_2532, her\_3a22, her\_2532, her\_riga, her\_30
 -   NP stocks: Sprat, not for human consumption
 -   spr\_2232
-
-2. Data
--------
 
 ### 2.1 Raw and Prepared data
 
