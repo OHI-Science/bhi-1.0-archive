@@ -16,21 +16,7 @@ For full data preparation information and code, click [here](https://github.com/
 ```{r, child='goals/MAR.Rmd', results='asis', echo=FALSE}
 ```
 
-$$
-x_{MAR} =  \frac{Y_{c}}{Y_{r}}
-$$
-
-$$
-Y_{c} = \frac{\sum{1}^{k} Y_{k} * S_{M,k}}{P_{c}}
-$$
-
-- $Y$ = current sustainably harvested total yield, current [$c$] or reference [$r$] 
-
-- $S_{M,k}$ = Sustainability score for each species $k$
-
-- $P_{c}$ = Coastal population within 100km
-
-- $Y_{r} = max(Y_{c})$
+For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md)
 
 
 ## Artisanal Fishing Opportunity 

@@ -9,10 +9,12 @@ params:
 ---
 
 ## 1. Background
-Mariculture (farming fish and shellfish in the ocean) is not a huge industry in the Baltic, but it does provide some food production. Data were available for parts of Denmark, Sweden, Germany, and Finland. All other BHI regions are scored as NA, and thus MAR will not contribute to the overall FP goal score. A counter argument could be made that some of these regions have the capacity for production, therefore they should receive a score of zero when having no production.
+
+```{r, child='../../conf/goals/MAR.Rmd', results='asis', echo=FALSE}
+```
 
 ## 2. Data
-Rainbow trout production. Data were compiled primarily by Ginnette Flores Carmenate. 
+Rainbow trout production.
 
 ### 2.1 Data sources
 
