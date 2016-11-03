@@ -2,10 +2,11 @@ Clean Water (CW) - Nutrient (NUT) Subgoal Data Preparation
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model and Data](#model-and-data)
-    -   [1.3 Reference point:](#reference-point)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Secchi Data Prep](#secchi-data-prep)
     -   [2.1 Data sources](#data-sources)
     -   [2.2 Data Cleaning and decision-making](#data-cleaning-and-decision-making)
@@ -13,7 +14,7 @@ Clean Water (CW) - Nutrient (NUT) Subgoal Data Preparation
 -   [4. Data Prep](#data-prep)
     -   [4.1 Read in data](#read-in-data)
     -   [4.2 Remove coastal observations](#remove-coastal-observations)
-    -   [4.3 Reference points](#reference-points)
+    -   [4.3 Reference points](#reference-points-1)
     -   [4.4 HELCOM HOLAS Basin](#helcom-holas-basin)
     -   [4.5 Select summer data and plot](#select-summer-data-and-plot)
     -   [4.6 Assign secchi data to a HOLAS basin](#assign-secchi-data-to-a-holas-basin)
@@ -35,37 +36,33 @@ Clean Water (CW) - Nutrient (NUT) Subgoal Data Preparation
 1. Background
 -------------
 
-### 1.1 Goal Description
+### Goal Description
 
-Nutrient subgoal is represented by two parameters: Secchi depth and Anoxia.
+The Contaminant sub-goal of the Clean Water goal captures the degree to which local waters are unpolluted by contaminants. This sub-goal scores highest when the contamination level is below a threshold, which is defined by the Marine Framework Directive. For the BHI three contaminants indicators are proposed, describing different aspects of toxicity: dioxin and dioxin like compounds, polychlorinated biphenyl compounds (PCBs) and perfluorooctanesulfonic acid (PFOS).
 
-Secchi depth is used as a proxy for water clarity, which reflects nutrient level in the water and is used as [one of the core indicators](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity) for eutrophication by HELCOM.
+**NOTE: Experts are discussing whether to exclude or modify this goal as it is difficult to represent with the available indicators. Currently in the BHI assessment, Contaminants scores are set to NA.**
 
-Anoxic conditions are defined as O2 level &lt;2 mg⋅L−1. It reprsents the long-term effects of human activities on nutrient levels and water quality.
+### Model & Data
 
-### 1.2 Model and Data
+All contaminant data were downloaded from the open-accessible ICES database (see below).
 
-Nutrient status is the mean of Secchi status and Anoxia status.
+-   [PCB data from ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)
+-   [Dioxins from ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)
+-   [PFOS data from ICES DOME database](http://dome.ices.dk/views/ContaminantsBiota.aspx).
 
-**Secchi** status model compares mean summer secchi depth (June-September) with HELCOM-set targets. ICES and SMHI datasets were explored and combined in this assessment.
+### Reference points
 
-**Anoxia** status model evaluates the deep sea oxygen levels in relation to the anoxic conditions in 1906. Data was from a published study by [Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract).
+**ICES-6 PCB**: The target for non-dioxin contaminents like PCBs is set at the threshold of 75 μg/kg ww (wet weight) fish muscle, which is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF). This threshold was also agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016.
 
-### 1.3 Reference point:
+**TEQ value for PCBs and Dioxins**: The target for dioxin and dioxin-like compounds is set at 0.0065 TEQ ug /kg ww fish, crustaceans or molluscs (source of target: EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC). This threshold was agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. This is consistent with the [EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF); TEQ values from the [World Health Organization 2005](http://www.who.int/ipcs/assessment/tef_values.pdf)
 
-**Secchi** reference points are set "based on the results obtained in the TARGREV project (HELCOM 2013a), taking also advantage of the work carried out during the EUTRO PRO project (HELCOM 2009) and national work for WFD. The final targets were set through an expert evaluation process done by the intersessional activity on development of core eutrophication indicators (HELCOM CORE EUTRO) and the targets were adopted by the HELCOM Heads of Delegations".
+**PFOS indicator**: The target for PFOS indicators was set from the GES boundary: "9.1 μg/kg wet weight (or 9.1 ng/g ww) with the protection goal of human health"" according to [HELCOM PFOS core indicator document, p.3](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf).
 
-*Relevant documents*:
+### Considerations for *BHI 2.0*
 
-[Approaches and methods for eutrophication target setting in the Baltic Sea region](http://www.helcom.fi/Documents/Ministerial2013/Associated%20documents/Background/Eutorophication%20targets_BSEP133.pdf)
+### Other information
 
-[Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10](http://www.sciencedirect.com/science/article/pii/S0272771412000418)
-
-[EUTRO-OPER](http://helcom.fi/helcom-at-work/projects/eutro-oper/) Making HELCOM Eutrophication Assessments opestatusnal. Check here for HELCOM status calculations and assessment. Included on this page is a link to the [Eutrophication Assessment Manual](http://helcom.fi/Documents/Eutrophication%20assessment%20manual.pdf)
-
-**Anoxia** reference point is the anoxic conditions of each basin in 1906.
-
-### 1.4 Other considerations for *OHI-BHI 2.0*
+*external advisors/goalkeepers: Anna Sobek*
 
 2. Secchi Data Prep
 -------------------
@@ -89,15 +86,15 @@ Lena did not exclude any data when she downloaded it.
 ICES data contains profile data (eg temperature,but secchi is only measured once). Need only unique secchi records. It appears the SMHI also contains profiles. Also check to see if any SMHI data already in the ICES records.
 
 **Coastal data**
- - non-coastal (offshore) data are flagged with the code "0" under the column *"HELCOM\_COASTAL\_CODE"*
- - HOLAS basin shape files with coastal and non-coastal areas were overlayed with the secchi sampling locations, all locations were flagged with a code indicating coastal or offshore.
- - Coastal data are removed from the analysis.
- - This should result in a similar dataset used as Fleming-Lehtinen and Laamanen 2012 (see map).
+- non-coastal (offshore) data are flagged with the code "0" under the column *"HELCOM\_COASTAL\_CODE"*
+- HOLAS basin shape files with coastal and non-coastal areas were overlayed with the secchi sampling locations, all locations were flagged with a code indicating coastal or offshore.
+- Coastal data are removed from the analysis.
+- This should result in a similar dataset used as Fleming-Lehtinen and Laamanen 2012 (see map).
 
 **Sampling frequency** *Can / should these data decisions be implemented? We have not implemented this so far*
 Fleming-Lehtinen and Laamanen (2012) do the following:
- - If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.
- - If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias.
+- If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.
+- If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias.
 
 3. Goal Model
 -------------
@@ -665,8 +662,8 @@ These csv files will be used as a first cut for the secchi status and trend. **F
 
 **No Observations for The Sound**
 1. The Sound has no summer offshore observations after 2000 in either ICES or SMHI data.
- - How is it evaluated by HOLAS?
- - BHI regions are 5 & 6. 5 is all coastal, 6 has both coastal and offshore observations before 2000 and from 2000 forward, 3 offshore observations in spring (not summer).
+- How is it evaluated by HOLAS?
+- BHI regions are 5 & 6. 5 is all coastal, 6 has both coastal and offshore observations before 2000 and from 2000 forward, 3 offshore observations in spring (not summer).
 
 9. Transform status
 -------------------
@@ -715,11 +712,8 @@ plot_rescaled = qplot(x = ratio, y = status, color = transformation, data =  bas
       fill = 'Transformation')
 
 print(plot_rescaled)
-```
 
-![](nutrient_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-1.png)
 
-``` r
  ## setup to plot different tranformations using PlotMap function
 
  source('~/github/bhi/baltic2015/PlotMap.r')
@@ -747,11 +741,6 @@ gpclibPermit()
 
  plot_transf_1 =  PlotMap(bhi_status_1, map_title = expression('Transformation 1: status = (mean/target)' ^ 2), 
                            rgn_poly        = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
-```
-
-![](nutrient_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-2.png)
-
-``` r
                           # fig_path       = path.expand('~/github/bhi/baltic2015/prep/CW/secchi/transformation_figs')) 
                       
   
@@ -768,11 +757,8 @@ gpclibPermit()
 
  plot_transf_2 =  PlotMap(bhi_status_2, map_title = expression('Transforamtion 2: status = (mean/target)' ^ 4), 
                            rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
-```
 
-![](nutrient_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-3.png)
 
-``` r
  ## transformation 3: status = 1/(1+ exp(-(mean/target - 0.5)/0.1))
 
  bhi_status_3 = basin_status_orig %>%
@@ -787,11 +773,9 @@ gpclibPermit()
  plot_transf_3 =  PlotMap(bhi_status_3, 
                           map_title = 'Transformation 3: \n status = 1/(1+ exp(-(mean/target - 0.5)/0.1))', 
                           rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
-```
 
-![](nutrient_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-4.png)
 
-``` r
+
 ## transformation 4: status = 1/(1+ exp(-(mean/target - 0.7)/0.08))
 
  bhi_status_4 = basin_status_orig %>%
@@ -807,8 +791,6 @@ gpclibPermit()
                           map_title = 'Transformation 4: \n status = 1/(1+ exp(-(mean/target - 0.7)/0.08))', 
                            rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
 ```
-
-![](nutrient_prep_files/figure-markdown_github/testing%20non%20linear%20weighting-5.png)
 
 10. Trial: add Anoxia data to Nutrient calculations (NUT)
 =========================================================

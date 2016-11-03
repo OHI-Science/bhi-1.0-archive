@@ -8,10 +8,17 @@ params:
     datasource: csv
 ---
 
-The following document detailed how this subgoal was prepared. However, experts are discussing whether to exclude or modify this goal as it is difficult to represent with just a few indicators. As for now, we will leave Contaminants scores as NA's. 
+## 1. Background
+
+```{r, child='../../../conf/goals/CON.Rmd', results='asis', echo=FALSE}
+```
+
+
+## 1.2 Set CON status as NA for BHI assessment
+
+Ultimately, the CON status was set to NA for the BHI assessment. Please read below for data processing and considerations for the goal model that was not ultimately not included.
 
 ```{r NA place holder, eval = FALSE}
-
 # status
 status = data.frame(region_id = full_seq(1:42, 1), 
                     goal = "CON",
@@ -27,14 +34,11 @@ trend = data.frame(region_id = full_seq(1:42, 1),
                    dimension = "trend")
 
 write_csv(trend, file.path(dir_layers, 'cw_con_trend_placeholder_NA.csv'))
-
-
-
 ```
 
-# Contaminant Data Prep
 
-## 1. Indicators
+## 2. Data
+
 Three indicators are proposed, describing different aspects of toxicity, and then would be combined to give an overall contamimant sub-component status.  
 
 ### (1) PCB concentration indicator
@@ -75,8 +79,6 @@ EQS are derived from ecotoxicological studies to protect freshwater and marine e
 [Faxneld et al. 2014b](https://www.diva-portal.org/smash/get/diva2:767385/FULLTEXT01.pdf)Distribution of PFAS in liver and muscle of herring, perch, cod, eelpout, arctic char, and pike from limnic and marine environments in Sweden. 
 
 [Bignert, A., Nyberg, E., Sundqvist, K.L., Wiberg, K., 2007. Spatial variation in concentrations and patterns of the PCDD/F and dioxin-like PCB content in herring from the northern Baltic Sea. J. Environ. Monit. 9, 550–556.](http://pubs.rsc.org/en/Content/ArticleLanding/2007/EM/b700667e#!divAbstract)
-
-## 2. Data
 
 ### 2.1 Data sources
 
