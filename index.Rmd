@@ -8,7 +8,7 @@ source("./_site.R")
 
 <div class="page-lead" style="background-image:url(images/regions_1600x800.png)">
 <div class="wrap page-lead-content">
-<h2>An Ocean Health Index assessment for `r study_area`</h2>
+<h2>An Ocean Health Index assessment for the Baltic Sea</h2>
 
 </div><!-- /.page-lead-content. -->
 </div><!-- /.page-lead -->
