@@ -176,22 +176,25 @@ $$
 
 - $C_{t}$ = total coastal land area 
 
+## Clean Waters: Nutrients
 
-## Clean Waters
+For full data preparation information and code, click [here]()
 
-The degree to which coastal waters are free of contaminants
 
-$$
-x_{CW} = \sqrt[4]{a * u * l * d}
-$$
+## Clean Waters: Trash
 
-- $a$  = number of coastal people without access to sanitation  
+```{r, child='goals/TRA.Rmd', results='asis', echo=FALSE}
+```
 
-- $u$ = 1 – (nutrient input)  
+For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)
 
-- $l$ = 1 – (chemical input)  
 
-- $d$ = 1 – (marine debris input, by country)  
+## Clean Waters: Contaminants
+
+```{r, child='goals/CON.Rmd', results='asis', echo=FALSE}
+```
+
+For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd)
 
 
 ## Biodiversity: Habitats

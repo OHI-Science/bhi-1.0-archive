@@ -10,26 +10,12 @@ params:
 
 ## 1. Background
 
-### 1.1 Goal Description
-
-This sub goal assesses a region's ability to manage plastic trash to prevent them from entering the ocean. 
-
-### 1.2 Model & Data 
-
-The amount of mismanaged plastic trash that has the potential to enter the ocean is modeled from data by [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html). The model compares a country's mismanaged trash in 2015 to the reference point. 
-
-### 1.3 Reference points 
-
-Reference point was maximum amount of trash among all Baltic countries in 2010. 
-
-### 1.4 Other considerations for _OHI-BHI 2.0_
-
-TREND not yet decided.... 
-
+```{r, child='../../../conf/goals/TRA.Rmd', results='asis', echo=FALSE}
+```
 
 ## 2. Data
 
-Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html)
+Data for litter/trash from [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html)
 
 **the Jambeck et al method includes:** 
 
