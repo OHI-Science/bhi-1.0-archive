@@ -309,7 +309,7 @@ div.tocify {
 </div>
 
 
-<p>Goals are constructed from input layers based on equations represented below.</p>
+<p>OHI assessments categorize and score goals (some that have sub-goals) representing ocean-derived benefits to people. <strong>The Baltic Health Index (BHI) assesses 9 goals</strong> that listed below with summary information about how each goal was represented and how data were processed.</p>
 <div id="food-provision-fisheries" class="section level2">
 <h2>Food Provision: Fisheries</h2>
 <div id="goal-description" class="section level3">
@@ -508,18 +508,68 @@ x_{LSP} = \frac{(\frac{M}{M_{r}} + \frac{C}{C_{r}})}{2}
 <li><p><span class="math inline">\(C_{t}\)</span> = total coastal land area</p></li>
 </ul>
 </div>
-<div id="clean-waters" class="section level2">
-<h2>Clean Waters</h2>
-<p>The degree to which coastal waters are free of contaminants</p>
-<p><span class="math display">\[
-x_{CW} = \sqrt[4]{a * u * l * d}
-\]</span></p>
+<div id="clean-waters-nutrients" class="section level2">
+<h2>Clean Waters: Nutrients</h2>
+<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/nutrient/nutrient_prep.Rmd"><strong>Full data preparation information and code</strong></a></p>
+</div>
+<div id="clean-waters-trash" class="section level2">
+<h2>Clean Waters: Trash</h2>
+<div id="goal-description-3" class="section level3">
+<h3>Goal Description</h3>
+<p>The Trash sub-goal assesses a region’s ability to manage litter to prevent them from entering the ocean to cause harm to the coastal and marine environment. Marine litter is a large global concern, impacting all marine environments of the world.</p>
+</div>
+<div id="model-data-2" class="section level3">
+<h3>Model &amp; Data</h3>
+<p>The status is calculated by a country’s amount of mismanaged plastic litter that has the potential to enter the ocean</p>
 <ul>
-<li><p><span class="math inline">\(a\)</span> = number of coastal people without access to sanitation</p></li>
-<li><p><span class="math inline">\(u\)</span> = 1 – (nutrient input)</p></li>
-<li><p><span class="math inline">\(l\)</span> = 1 – (chemical input)</p></li>
-<li><p><span class="math inline">\(d\)</span> = 1 – (marine debris input, by country)</p></li>
+<li><a href="http://science.sciencemag.org/content/347/6223/768.full.pdf+html">Modelled data by <em>Jambeck et al. 2015</em>: Plastic waste inputs from land into the ocean</a>.</li>
 </ul>
+<p>The modelled data have been downweighted for Russia, Germany, Denmark and Sweden (proportion of coastal pop/national pop) to include only the litter that reaches the the Baltic Sea from these countries.</p>
+</div>
+<div id="reference-points-3" class="section level3">
+<h3>Reference points</h3>
+<p>The official good environmental status (reference point) from the Marine Strategy Framework Directive is “Properties and quantities of marine litter do not cause harm to the coastal and marine environment”. Currently, there is no offical quantitative reference point set. Therefore we set reference points based on modeled data from <em>Jambeck et al. 2015</em> to rescale the litter data and make them comparable across BHI regions. The upper reference point is the maximum amount of litter among all Baltic surrounding countries in 2010 - this will be used until an offical reference point is set. The lower reference point is zero litter in the Baltic Sea.</p>
+</div>
+<div id="considerations-for-bhi-2.0-3" class="section level3">
+<h3>Considerations for <em>BHI 2.0</em></h3>
+</div>
+<div id="other-information-3" class="section level3">
+<h3>Other information</h3>
+<p>For full data preparation information and code, click <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md">here</a></p>
+</div>
+</div>
+<div id="clean-waters-contaminants" class="section level2">
+<h2>Clean Waters: Contaminants</h2>
+<div id="goal-description-4" class="section level3">
+<h3>Goal Description</h3>
+<p>The Contaminant sub-goal of the Clean Water goal captures the degree to which local waters are unpolluted by contaminants. This sub-goal scores highest when the contamination level is below a threshold, which is defined by the Marine Framework Directive. For the BHI three contaminants indicators are proposed, describing different aspects of toxicity: dioxin and dioxin like compounds, polychlorinated biphenyl compounds (PCBs) and perfluorooctanesulfonic acid (PFOS).</p>
+<p><strong>NOTE: Experts are discussing whether to exclude or modify this goal as it is difficult to represent with the available indicators. Currently in the BHI assessment, Contaminants scores are set to NA.</strong></p>
+</div>
+<div id="model-data-3" class="section level3">
+<h3>Model &amp; Data</h3>
+<p>All contaminant data were downloaded from the open-accessible ICES database (see below).</p>
+<ul>
+<li><a href="http://dome.ices.dk/views/ContaminantsBiota.aspx">PCB data from ICES database</a><br />
+</li>
+<li><a href="http://dome.ices.dk/views/ContaminantsBiota.aspx">Dioxins from ICES database</a><br />
+</li>
+<li><a href="http://dome.ices.dk/views/ContaminantsBiota.aspx">PFOS data from ICES DOME database</a>.</li>
+</ul>
+</div>
+<div id="reference-points-4" class="section level3">
+<h3>Reference points</h3>
+<p><strong>ICES-6 PCB</strong>: The target for non-dioxin contaminents like PCBs is set at the threshold of 75 μg/kg ww (wet weight) fish muscle, which is the <a href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF">EU threshold for fish muscle. See Section 5 Annex, 5.3</a>. This threshold was also agreed upon as GES indicator at the most recent meeting of the <a href="http://helcom.fi/helcom-at-work/groups/state-and-conservation">Working Group on the State of the Environment and Nature Conservation</a> April 11-15, 2016.</p>
+<p><strong>TEQ value for PCBs and Dioxins</strong>: The target for dioxin and dioxin-like compounds is set at 0.0065 TEQ ug /kg ww fish, crustaceans or molluscs (source of target: EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC). This threshold was agreed upon as GES indicator at the most recent meeting of the <a href="http://helcom.fi/helcom-at-work/groups/state-and-conservation">Working Group on the State of the Environment and Nature Conservation</a> April 11-15, 2016. This is consistent with the <a href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF">EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g</a>; TEQ values from the <a href="http://www.who.int/ipcs/assessment/tef_values.pdf">World Health Organization 2005</a></p>
+<p><strong>PFOS indicator</strong>: The target for PFOS indicators was set from the GES boundary: “9.1 μg/kg wet weight (or 9.1 ng/g ww) with the protection goal of human health”&quot; according to <a href="http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf">HELCOM PFOS core indicator document, p.3</a>.</p>
+</div>
+<div id="considerations-for-bhi-2.0-4" class="section level3">
+<h3>Considerations for <em>BHI 2.0</em></h3>
+</div>
+<div id="other-information-4" class="section level3">
+<h3>Other information</h3>
+<p><em>external advisors/goalkeepers: Anna Sobek</em></p>
+<p>For full data preparation information and code, click <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd">here</a></p>
+</div>
 </div>
 <div id="biodiversity-habitats" class="section level2">
 <h2>Biodiversity: Habitats</h2>
