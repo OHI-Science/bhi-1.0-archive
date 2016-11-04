@@ -311,6 +311,7 @@ div.tocify {
 
 <p>OHI assessments categorize and score goals representing ocean-derived benefits to people.<br />
 <strong>The Baltic Health Index (BHI) assesses 9 goals, some of which have sub-goals</strong>. They are listed below, along with summary information about how each goal was represented and how data were processed.</p>
+<p>Hi Jamie</p>
 <hr />
 <div id="food-provision-fisheries" class="section level2">
 <h2>Food Provision: Fisheries</h2>
@@ -422,26 +423,6 @@ x_{CS} =  \sum_{1}^{k} \frac{C_{s}}{C_{r}} * \frac{A_{k}}{A_{T}}
 <li><p><span class="math inline">\(A\)</span> = area of habitat <span class="math inline">\(k\)</span>, current [<span class="math inline">\(c\)</span>] or total area covered by all habitats assessed [T]</p></li>
 </ul>
 <p>habitats: seagrass beds, salt marshes, mangroves</p>
-</div>
-<div id="coastal-protection" class="section level2">
-<h2>Coastal Protection</h2>
-<p>Protection from inundation or erosion compared to the local natural potential</p>
-<p><span class="math display">\[
-x_{CP} =  \sum_{k}^{n} \alpha_{k} * \frac{C_{c,k}}{C_{r,k}}
-\]</span></p>
-<p><span class="math display">\[
-\alpha_{k} = \frac{w_{k}*A_{k}}{\sum{w_{k}*A_{k}}}
-\]</span></p>
-<p><span class="math display">\[
-w_{k} = \frac{r_{k}}{\sum{r_{k}}}
-\]</span></p>
-<ul>
-<li><p><span class="math inline">\(C\)</span> = condition of habitat <span class="math inline">\(k\)</span>, current [<span class="math inline">\(c\)</span>] and reference [<span class="math inline">\(r\)</span>]</p></li>
-<li><p><span class="math inline">\(\alpha\)</span> = weighted area of habitat <span class="math inline">\(k\)</span></p></li>
-<li><p><span class="math inline">\(A\)</span> = area of habitat <span class="math inline">\(k\)</span></p></li>
-<li><p><span class="math inline">\(r\)</span> = habitat protective ability rank weight</p></li>
-</ul>
-<p>habitats: salt marshes, seagrass beds, mangroves, coral reefs, sea ice</p>
 </div>
 <div id="tourism-recreation" class="section level2">
 <h2>Tourism &amp; Recreation</h2>
@@ -573,20 +554,8 @@ x_{LSP} = \frac{(\frac{M}{M_{r}} + \frac{C}{C_{r}})}{2}
 <p>For full data preparation information and code, click <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd">here</a></p>
 </div>
 </div>
-<div id="biodiversity-habitats" class="section level2">
-<h2>Biodiversity: Habitats</h2>
-<p>Existence values people hold for biodiversity measured through the status of key habitats</p>
-<p><span class="math display">\[
-x_{HAB} =  \sum_{i=1}^{k} \frac{C_{c,k}}{C_{r,k}} * \frac{A_{c,k}}{A_{T}}
-\]</span></p>
-<ul>
-<li><p><span class="math inline">\(C\)</span> = condition of habitat k, current [<span class="math inline">\(c\)</span>] or reference[<span class="math inline">\(r\)</span>]</p></li>
-<li><p><span class="math inline">\(A\)</span> = area of habitat k, current [<span class="math inline">\(c\)</span>] or total of all habitats [T]</p></li>
-</ul>
-<p>habitats: seagrass beds, salt marshes, subtidal soft-bottom habitats, mangroves, coral reefs, sea ice edge</p>
-</div>
-<div id="biodiversity-species" class="section level2">
-<h2>Biodiversity: Species</h2>
+<div id="biodiversity" class="section level2">
+<h2>Biodiversity</h2>
 <p>Existence values people hold for biodiversity measured through the status of native species</p>
 <p><span class="math display">\[
 x_{SPP} = \frac{\sum_{k=1}^{M} (\frac{\sum_{i=1}^{N} w_{i}}{N}) * A_{C}}{A_{T}} 
