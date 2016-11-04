@@ -294,7 +294,7 @@ MAR code from OHI uses production/per capita. A coastal population layer was cre
 - Data are allocated to BHI region by taking the production from a country production region and dividing it equally among associated BHI regions.  
 - In goal calculation, data are taken as 4 year running mean
 - Data unit is tons of production
-- Reference point is temporal, 5 year moving window
+- Reference point is when half of max production in past 5 years has sustainability score of 1
 
 
 ## Calculate MAR status and trend
@@ -307,82 +307,56 @@ Calculate MAR status and trend to get feedback.  Code here is copied from functi
   sustainability_score = mar_sustainability_score
 
   # SETTING CONSTANTS
-  rm_year = 4     #number of years to use when calculating the running mean smoother
-  regr_length =5   # number of years to use for regression for trend.  Use this to replace reading in the csv file "mar_trend_years_gl2014"
-  future_year = 5    # the year at which we want the likely future status
-  min_regr_length = 4      # min actual number of years with data to use for regression. !! SHORTER THAN regr_length !!  4 is the value in the old code
   status_years = 2010:2014 #this was originally set in goals.csv
-  lag_win = 5        # if use a 5 year moving window reference point (instead of spatial, use this lag)
 
   #####----------------------######
   #harvest_tonnes has years without data but those years not present with NAs
   #spread and gather data again which will result in all years present for all regions
-  harvest_tonnes=harvest_tonnes%>%spread(key=year,value=tonnes)%>%
-    gather(year, tonnes, -rgn_id,-species_code)%>%
-    mutate(year=as.numeric(year))%>%  #make sure year is not a character
-    arrange(rgn_id,year)
+  harvest_tonnes=harvest_tonnes %>% spread(key=year,value=tonnes) %>%
+    gather(year, tonnes, -rgn_id,-species_code) %>%
+    mutate(year=as.numeric(year) )%>%  #make sure year is not a character
+    arrange(rgn_id,year) %>% 
+    filter(year %in% status_years)
 
   # Merge harvest (production) data with sustainability score
-  #calculate 4 year running mean
-  #this code updated by Lena to use dplyr functions not reshape2
+  # ref_point = half of max production achieve sust coeff of 1
   temp = left_join(harvest_tonnes, harvest_species, by = 'species_code') %>%
     left_join(., sustainability_score, by = c('rgn_id', 'species')) %>%
-    arrange(rgn_id, species) %>%
-    group_by(rgn_id, species_code) %>%    # doing the 4 year running mean in the same chain
-    mutate(rm = zoo::rollapply(data=tonnes, width=rm_year,FUN= mean, na.rm = TRUE, partial=TRUE),    #rm = running mean  #rm_year defined with constants (4 is value from original code)     # better done with zoo::rollmean? how to treat Na with that?
-           sust_tonnes = rm * sust_coeff)
-
-  # now calculate total sust_tonnes per year  #only matters if multiple species
-  ## remove code that made the data unit per capita
-
-  temp2 = temp %>%    # temp2 is ry in the original version
-    group_by(rgn_id, year) %>%
-    summarise(sust_tonnes_sum = sum(sust_tonnes)) #this sums the harvest(production) across all species in a given region if multiple spp are present
-    ## left_join(., popn_inland25km, by=c('rgn_id')) %>%  #apply 2005 pop data to all years
-    ##mutate(mar_prod = sust_tonnes_sum) #tonnes per capita
-
+    group_by(rgn_id, species_code) %>%   
+    mutate(tonnes_sust = tonnes * sust_coeff, 
+           ref_value = 0.5 * max(tonnes) * 1) %>% 
+    ungroup()
 
   ###----------------------------###
   ##Calculate status using temporal reference point
-  ## 5 year moving window (temporal ref by region)
   ## Xmar = Mar_current / Mar_ref
   ## if use this, need to decide if the production should be scaled per capita
 
-  ##for complete region ID list
-  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1)),year=unique(last(temp2$year)))
-
   ## Calculate status
-  mar_status_score = temp2 %>% group_by(rgn_id)%>%
-                mutate(year_ref= lag(year, lag_win, order_by=year),
-                       ref_val = lag(sust_tonnes_sum, lag_win, order_by=year))%>% #create ref year and value which is value 5 years preceeding within a BHI region
-                arrange(year)%>%
-                ungroup()%>%
-                filter(year %in% status_years) %>% #select status years
-                mutate(status = pmin(1,sust_tonnes_sum/ref_val))%>% #calculate status per year
-                select(rgn_id, year, status)%>%
-                full_join(.,bhi_rgn,by=c("rgn_id","year"))%>%  #join with complete rgn_id list
-                arrange(rgn_id,year) ##%>%  ## comment out replace NA with zero, keep as NA for now
-               ## mutate(status, status = replace(status, is.na(status), 0))  #give NA value a 0
-
-  #Calculate score
-  mar_status = mar_status_score%>%
-    group_by(rgn_id) %>%
-    summarise_each(funs(last), rgn_id,status) %>% #select last year of status for the score
-    mutate(score = round(status*100,2))%>% #status is between 0-100
-    ungroup()%>%
-    select(rgn_id,score)
+  mar_status_score = temp %>% group_by(rgn_id)%>%
+    mutate(status = pmin(1, tonnes_sust/ref_value) * 100)%>% #calculate status per year
+    select(rgn_id, year, status)%>%
+    ungroup()
+  
+  mar_status = mar_status_score %>% 
+    filter(year == max(year)) %>% 
+    dplyr::select(rgn_id, score = status) %>% 
+    complete(rgn_id = full_seq(c(1, 42), 1))
+    
 
   ###----------------------------###
   ## Calulate trend
-      ##regr_length = 5; there are 5 data points used to calculate the trend
-  mar_trend= mar_status_score%>%group_by(rgn_id)%>%
+  regr_length = 5
+  mar_trend= mar_status_score %>%
+    group_by(rgn_id) %>%
     do(tail(. , n = regr_length)) %>% #select the years for trend calculate (regr_length # years from the end of the time series)
     #regr_length replaces the need to read in the trend_yrs from the csv file
-    do({if(sum(!is.na(.$status)) >= min_regr_length)      #calculate trend only if X years of data (min_regr_length) in the last Y years of time serie (regr_length)
-      data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year))) #future_year set in contants, this is the value 5 in the old code
+    do({if(sum(!is.na(.$status)) >= 5)      #calculate trend only if X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+      data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * 0.05))) #future_year set in contants, this is the value 5 in the old code
       else data.frame(trend_score = NA)}) %>%
-    ungroup()%>%
-    mutate(trend_score=round(trend_score,2))
+    ungroup() %>%
+    mutate(trend_score = round(trend_score,2)) %>% 
+    complete(rgn_id = full_seq(c(1, 42), 1))
 
   #####----------------------######
   # return MAR scores
