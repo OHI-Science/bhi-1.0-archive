@@ -145,7 +145,7 @@ FIS = function(layers, status_year){
 
    ### final formatting of status data:
   status <- status %>%
-    filter(year == max(year)) %>%
+    filter(year == max(year, na.rm = T)) %>%
     mutate(status = round(status * 100, 1)) %>%
     select(region_id, status)
 
@@ -157,13 +157,16 @@ FIS = function(layers, status_year){
   scores = status %>%
     select(region_id,
            score = status)%>%
+    complete(region_id = full_seq(c(1,42), 1)) %>%
     mutate(dimension='status') %>%
     rbind(
       trend %>%
         select(region_id,
                score = trend) %>%
+        complete(region_id = full_seq(c(1,42), 1)) %>%
         mutate(dimension = 'trend')) %>%
     mutate(goal='FIS')
+
   return(scores)
 
 } ## End FIS function
@@ -992,24 +995,27 @@ NUT = function(layers){
     dplyr::select(rgn_id = id_num, sec_trend = val_num)
 
   anoxia_status = SelectLayersData(layers, layers='cw_nut_anoxia_status') %>%
-    dplyr::select(rgn_id = id_num, anox_status = val_num)
+    as.data.frame() %>%
+    dplyr::select(rgn_id = id_num, anox_status = as.numeric(as.character(val_num)))
 
   anoxia_trend = SelectLayersData(layers, layers='cw_nut_anoxia_trend') %>%
     dplyr::select(rgn_id = id_num, anox_trend = val_num)
 
   ## calculate status
   nut_status = full_join(secchi_status, anoxia_status, by = 'rgn_id') %>%
-    mutate(score = ifelse(!is.na(sec_status) & !is.na(anox_status), (sec_status + anox_status)/2,
-                          ifelse(!is.na(sec_status) & is.na(anox_status), sec_status, "")),
-           dimension = 'status')  %>%
+    mutate(anox_status = as.numeric(anox_status)) %>%
+    mutate(score = rowMeans(cbind(sec_status, anox_status), na.rm=T),
+           dimension = 'status',
+           score = ifelse(score == "Nan", "NA", score)) %>%
     dplyr::select(rgn_id,
                   score,
                   dimension)
 
+
 ## calculate trend
   nut_trend = full_join(secchi_trend, anoxia_trend, by = 'rgn_id') %>%
-    mutate(score = ifelse(!is.na(sec_trend) & !is.na(anox_trend), (sec_trend + anox_trend)/2,
-                          ifelse(!is.na(sec_trend) & is.na(anox_trend), sec_trend, "")),
+    mutate(score = rowMeans(cbind(sec_trend, anox_trend), na.rm=T),
+           score = ifelse(score == "Nan", "NA", score),
            dimension = 'trend') %>%
     dplyr::select(rgn_id,
                   score,
@@ -1021,8 +1027,8 @@ NUT = function(layers){
     dplyr::select(goal,
                   dimension,
                   region_id = rgn_id,
-                  score) %>%
-    arrange(dimension,region_id)
+                  score = score) %>%
+    arrange(dimension, region_id)
 
   return(scores)
   #####----------------------######
@@ -1075,6 +1081,7 @@ CON = function(layers){
   trend = layers$data[['cw_con_trend_NA']]
 
   scores = rbind(status, trend) %>%
+    mutate(score = as.numeric(score)) %>%
     dplyr::select(-layer)
 
   return(scores)
