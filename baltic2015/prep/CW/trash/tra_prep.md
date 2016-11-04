@@ -2,10 +2,11 @@ Trash (TRA) Subgoal Data Preparation
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model & Data](#model-data)
-    -   [1.3 Reference points](#reference-points)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 Data storage](#data-storage)
     -   [2.2 Data Info](#data-info)
@@ -18,30 +19,35 @@ Trash (TRA) Subgoal Data Preparation
     -   [4.5 Prepare data layer for Toolbox](#prepare-data-layer-for-toolbox)
     -   [4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025](#plot-exploring-ref-point-as-max-of-europe-including-russia-in-2010-v.-2025)
     -   [4.7 Explore status score 2015](#explore-status-score-2015)
+-   [5. Save as Pollution Pressures layer](#save-as-pollution-pressures-layer)
 
 1. Background
 -------------
 
-### 1.1 Goal Description
+### Goal Description
 
-This sub goal assesses a region's ability to manage plastic trash to prevent them from entering the ocean.
+The Trash sub-goal assesses a region's ability to manage litter to prevent them from entering the ocean to cause harm to the coastal and marine environment. Marine litter is a large global concern, impacting all marine environments of the world.
 
-### 1.2 Model & Data
+### Model & Data
 
-The amount of mismanaged plastic trash that has the potential to enter the ocean is modeled from data by [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html). The model compares a country's mismanaged trash in 2015 to the reference point.
+The status is calculated by a country's amount of mismanaged plastic litter that has the potential to enter the ocean
 
-### 1.3 Reference points
+-   [Modelled data by *Jambeck et al. 2015*: Plastic waste inputs from land into the ocean](http://science.sciencemag.org/content/347/6223/768.full.pdf+html).
 
-Reference point was maximum amount of trash among all Baltic countries in 2010.
+The modelled data have been downweighted for Russia, Germany, Denmark and Sweden (proportion of coastal pop/national pop) to include only the litter that reaches the the Baltic Sea from these countries.
 
-### 1.4 Other considerations for *OHI-BHI 2.0*
+### Reference points
 
-TREND not yet decided....
+The official good environmental status (reference point) from the Marine Strategy Framework Directive is "Properties and quantities of marine litter do not cause harm to the coastal and marine environment". Currently, there is no offical quantitative reference point set. Therefore we set reference points based on modeled data from *Jambeck et al. 2015* to rescale the litter data and make them comparable across BHI regions. The upper reference point is the maximum amount of litter among all Baltic surrounding countries in 2010 - this will be used until an offical reference point is set. The lower reference point is zero litter in the Baltic Sea.
+
+### Considerations for *BHI 2.0*
+
+### Other information
 
 2. Data
 -------
 
-Proposed data for trash from [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html)
+Data for litter/trash from [**Jambeck et al 2015: Plastic waste inputs from land into the ocean**](http://science.sciencemag.org/content/347/6223/768.full.pdf+html)
 
 **the Jambeck et al method includes:**
 
@@ -74,6 +80,8 @@ Footnotes from .xls file column headers 1 - Based upon 2010 Gross National Incom
 **Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal?
 
 ``` r
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
 library(readxl) # install.packages('readxl')
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_tra    = file.path(dir_prep, 'CW/trash')
@@ -95,24 +103,11 @@ trash_file = '1260352_SupportingFile_Suppl._Excel_seq1_v1.xlsx'
 
 ## lookup table
 baltic_lookup = read_csv(file.path(dir_prep, 'country_id.csv'))
-```
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   country_id = col_character(),
-    ##   country_name = col_character()
-    ## )
-
-``` r
 ## read in data, remove Total and footnotes (NAs in Country column)
 data_raw = read_excel(file.path(dir_raw, trash_file)) %>%
   filter(!is.na(Country));  #head(data_raw); summary(data_raw)
-```
 
-    ## Warning in read_xlsx_(path, sheet, col_names = col_names, col_types =
-    ## col_types, : [194, 12]: expecting numeric: got 'Total'
-
-``` r
 ## filter and rename
 data_clean = data_raw %>%
   dplyr::rename(
@@ -233,11 +228,7 @@ rus_trash_pop = data_clean_select %>%
   select(coastal_pop)
 
 rus_coastal_pop_proportion = as.numeric((4597600+431902) / rus_trash_pop); rus_coastal_pop_proportion
-```
 
-    ## [1] 0.4651547
-
-``` r
 rus = data_clean_select %>%
   filter(country == 'Russia') %>%
   mutate(modeled_waste_2010 = modeled_waste_2010 * rus_coastal_pop_proportion, 
@@ -265,11 +256,6 @@ ref_point_max_2010 = eur_rus %>%
 sprintf('max trash for 2010 is %s (%s)', 
         round(ref_point_max_2010$modeled_waste_2010),
         ref_point_max_2010$country)
-```
-
-    ## [1] "max trash for 2010 is 37566 (Russia)"
-
-``` r
 ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
 # "max trash for 2010 is 37566 (Russia)"
 
@@ -287,11 +273,6 @@ ref_point_max_2025 = eur_rus %>%
 sprintf('max trash for 2025 is %s (%s)', 
         round(ref_point_max_2025$modeled_waste_2025),
         ref_point_max_2025$country)
-```
-
-    ## [1] "max trash for 2025 is 59980 (Russia)"
-
-``` r
 ref_point_max_2025 = ref_point_max_2025$modeled_waste_2025
 # "max trash for 2025 is 59980 (Russia)"
 
@@ -342,7 +323,7 @@ baltic_layer = lookup_bhi %>%
          score = trash_score_2010); # baltic_layer
   
 ## save layer to layers folder, and register layer in layers.csv by hand
-write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
+# write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',row.names=FALSE)
 
 ## calculate trend; maybe make a linear model between 2010 and 2025, take trend as 5 years out?
 ```
@@ -352,16 +333,39 @@ write.csv(baltic_layer, '~/github/bhi/baltic2015/layers/po_trash_bhi2015.csv',ro
 Using modeled 2015 data for status but use max 2010 as a reference point.
 
 ``` r
-score_2015 = modeled_waste_2015 %>% 
+score_2015_by_country = modeled_waste_2015 %>% 
     filter(country %in% baltic$country) %>%  # choosing only Baltic countries
     mutate(ref_point = 37566,  # "max trash for 2010 is 37566 (Russia)"
            score_2015 = (1 - pmin(1, modeled_waste_2015/ref_point))*100 ) %>% 
     select(country, score = score_2015)
 
-ggplot(score_2015, aes(x = country, y = score)) +
+score_2015_by_bhi = lookup_bhi %>%
+  left_join(score_2015_by_country, 
+            by = 'country') %>%
+  select(rgn_id, 
+         score); 
+  
+# plot by country
+ggplot(score_2015_by_country, aes(x = country, y = score)) +
   geom_point(stat = "identity") +
   theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
   ggtitle("Trash scores by country: 2015")
 ```
 
 ![](tra_prep_files/figure-markdown_github/explore%20status%202015-1.png)
+
+``` r
+# save as CW-TRA data layer
+write.csv(score_2015_by_bhi, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.csv', row.names=FALSE)
+```
+
+5. Save as Pollution Pressures layer
+------------------------------------
+
+``` r
+press_scores = score_2015_by_bhi %>% 
+  mutate(pressure_score = 1 - score/100) %>% 
+  select(-score)
+
+write.csv(press_scores, file.path(dir_layers, "po_trash_bhi2015.csv"))
+```

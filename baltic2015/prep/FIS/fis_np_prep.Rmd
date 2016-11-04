@@ -10,6 +10,11 @@ params:
 
 ## 1. Background
 
+```{r, child='../../conf/goals/FIS.Rmd', results='asis', echo=FALSE}
+```
+
+## 2. Data 
+
 The **Fisheries** subgoal of Food Provision describes the ability to maximize the sustainable yield of _wild-caught seafood for human consumption_, while the **Natural Products** goal focuses on _non-food_ natural products. 
 
 The same model was used for both Fisheries and Natural Products, which compares landings with Maximum Sustainable Yield. A score of 100 means the country or region is harvesting seafood to the ecosystem’s production potential in an sustainable manner.
@@ -20,8 +25,6 @@ This document prepares data for both Natural Products (NP) and Fisheries (FIS). 
   - cod_2224, cod_2532, her_3a22, her_2532, her_riga, her_30
 - NP  stocks: Sprat, not for human consumption
   - spr_2232
-  
-## 2. Data 
 
 ### 2.1 Raw and Prepared data
 * Landings [raw data](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/raw/BalticLandings.csv)
