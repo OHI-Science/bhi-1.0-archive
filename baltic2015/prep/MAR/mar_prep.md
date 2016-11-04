@@ -2,6 +2,11 @@ Preparation of Mariculture (MAR) subgoal data layer
 ================
 
 -   [1. Background](#background)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 Data sources](#data-sources)
     -   [2.2 Production regions and BHI assignments](#production-regions-and-bhi-assignments)
@@ -22,12 +27,36 @@ Preparation of Mariculture (MAR) subgoal data layer
 1. Background
 -------------
 
-Mariculture (farming fish and shellfish in the ocean) is not a huge industry in the Baltic, but it does provide some food production. Data were available for parts of Denmark, Sweden, Germany, and Finland. All other BHI regions are scored as NA, and thus MAR will not contribute to the overall FP goal score. A counter argument could be made that some of these regions have the capacity for production, therefore they should receive a score of zero when having no production.
+### Goal Description
+
+The Mariculture sub-goal of the Food Provision (FP) goal describes a country's ability to maximize the sustainable yield of farmed fish and shellfish in the ocean for human consumption. Mariculture is not a large industry in the Baltic, but it does provide some food production. **For the BHI rainbow trout production was included in parts of Denmark, Sweden, Germany, and Finland**, using available data. All other BHI regions are scored as NA, and thus MAR will not contribute to their overall FP goal score.
+
+### Model & Data
+
+Tonnes of mariculture production data were collected from country databases or reports:
+
+-   Sweden [Jorbruksverket](http://www.scb.se/sv_/Hitta-statistik/Statistik-efter-amne/Jord--och-skogsbruk-fiske/Vattenbruk/Vattenbruk/)
+
+-   Denmark [Danish Agrifish Agency (Ministry of Environment and Food of Denmark)](http://agrifish.dk/fisheries/fishery-statistics/aquaculture-statistics/#c32851)
+
+-   Finland [Natural Resources Institute](http://statdb.luke.fi/PXWeb/pxweb/fi/LUKE/LUKE__06%20Kala%20ja%20riista__02%20Rakenne%20ja%20tuotanto__10%20Vesiviljely/?tablelist=true&rxid=5211d344-451e-490d-8651-adb38df626e1)
+
+-   Germany [FAO FishStatJ](http://www.fao.org/fishery/statistics/software/fishstatj/en#downlApp)
+
+### Reference points
+
+*in progress*
+
+### Considerations for *BHI 2.0*
+
+### Other information
+
+*Data were compiled primarily by Ginnette Flores Carmenate.*
 
 2. Data
 -------
 
-Rainbow trout production. Data were compiled primarily by Ginnette Flores Carmenate.
+Rainbow trout production.
 
 ### 2.1 Data sources
 

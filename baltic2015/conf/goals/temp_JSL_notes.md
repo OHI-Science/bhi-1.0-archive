@@ -1,10 +1,7 @@
-Fill in text about AO goal here 
+Next considerations/steps: 
 
-*we will figure out how to display as markdown*
-
-Ref point: include that this is an agreed-upon ref point or something else. (link to prep file/or the original source if available)
-
-list the pressures/resilience (can use Rmd to pull out the appropriate rows from the pressures matrix)
+- [ ] Ref point: include that this is an agreed-upon ref point or something else. (link to prep file/or the original source if available)
+- [ ] list the pressures/resilience (can use Rmd to pull out the appropriate rows from the pressures matrix)
 
 
 JSL notes for website
