@@ -13,8 +13,6 @@ source("./_site.R")
 OHI assessments categorize and score goals representing ocean-derived benefits to people.  
 **The Baltic Health Index (BHI) assesses 9 goals, some of which have sub-goals**. They are listed below, along with summary information about how each goal was represented and how data were processed.
 
-Hi Jamie
-
 ------
 
 ```{r, child=sprintf('%s/conf/goals.Rmd', dir_scenario)}
