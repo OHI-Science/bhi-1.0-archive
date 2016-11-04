@@ -95,9 +95,10 @@ data_clean = data_raw %>%
     modeled_waste_2025_orig      = `Mismanaged plastic waste in 2025\r\n [tonnes]7`) %>%
   mutate(country = str_replace_all(country, '8', '')) # remove footnotes from country names
 
-## filter Baltic data, save intermediate
+## filter Baltic data, excluding Russia, save intermediate
 baltic_all = data_clean %>%
-  filter(country %in% baltic_lookup$country_name)
+  filter(country %in% baltic_lookup$country_name) %>% 
+  filter(!country == "Russia")
 #  write.csv(baltic, '~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
 
 
@@ -113,32 +114,86 @@ Amount of trash proportional of coastal pop/national pop
 bhi_pop = read_csv(file.path(dir_prep, 'LIV', 'liv_data_database/NUTS2_BHI_ID_Pop_density_in_buffer.csv')) %>% 
   dplyr::select(country = rgn_nam, 
                 pop_rgn = PopTot) %>% 
+  filter(!country == "Russia") %>% 
   group_by(country) %>% 
   summarize(bhi_pop = round(sum(pop_rgn), 0)) 
   
 
 ##combine coastal and bhi pop & downweight for Germany, Denmark, Sweden 
 baltic_data = full_join(bhi_pop, baltic_all, by = "country") %>% 
-  mutate(proportion = bhi_pop/coastal_pop, 
+  mutate(proportion = bhi_pop/coastal_pop,
+         ## only downweight for Germany, Denmark, and Sweden
+         proportion = ifelse(country == "Germany" | country == "Denmark" | country == "Sweden", proportion, 1), 
          modeled_waste_2010 = modeled_waste_2010_orig * proportion, 
          modeled_waste_2025 = modeled_waste_2025_orig * proportion) %>% 
   dplyr::select(country, modeled_waste_2010, modeled_waste_2025)
 
-# baltic_pop_proportion = full_join(bhi_pop, baltic_all, by = "country") %>% 
-#   mutate(proportion = bhi_pop/coastal_pop) %>% 
+# baltic_pop_proportion = full_join(bhi_pop, baltic_all, by = "country") %>%
+#   mutate(proportion = bhi_pop/coastal_pop) %>%
 #   dplyr::select(country, bhi_pop, coastal_pop, proportion)
-  
+
 
 ```
 
+Note: Because Russia is reported as a whole country, we used the proportion of population in Kaliningrad+St Petersburg to the coastal population reported by Jambeck et al. See figure below. 
 
+
+#### 4.5.1 downweight Russia Coastal Trash 
+
+It made sense to downweight Kaliningrad and St Petersburg by coastal population density instead of total Russia population density because of the distribution along the coasts:
+
+![figure of Russia coastal population density](RussiaCoastalPopFig_Wikipedia.jpg)
+
+<!-- Then find ref point as the max of Europe, but compare 2010 v. 2025 to determine whether it's worth trying to interpolate/model to find a reference point in ~2015. Conclusion, probably not worth it, so we could just pick either 2010 or 2025 since those data are already modeled/reported by Jambeck et al.  -->
+
+
+```{r data explore and prep}
+
+## havea another look at the data
+# baltic = read.csv('~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
+# summary(baltic) 
+# summary(data_clean)
+
+# ###### NOT NEEDED? ###############
+# ## read in lookup table for European countries
+# lookup = read.csv('~/github/bhi/baltic2015/prep/EUcountrynames.csv', sep=';') %>%
+#   mutate(country_abb = as.character(country_abb),
+#          country     = as.character(country)); # head(lookup)
+# 
+# ## join lookup table to trash data; remove inland NAs and Kosovo, Macedonia, Serbia (no trash data)
+# europe = lookup %>%
+#   left_join(data_clean, by = 'country') %>%
+#   filter(!is.na(coastal_pop)) %>%
+#   dplyr::select(-country_abb); # head(europe)
+
+## downweight russia **very hacky for now**
+#  4597600 # St Petersbergy: from Wikipedia https://en.wikipedia.org/wiki/Demographics_of_Saint_Petersburg
+#  431902  # Kaliningrad https://en.wikipedia.org/wiki/Kaliningrad
+rus_trash_pop = data_clean %>%
+  filter(country == 'Russia') %>%
+  dplyr::select(coastal_pop)
+
+rus_coastal_pop_proportion = as.numeric((4597600+431902) / rus_trash_pop); rus_coastal_pop_proportion
+
+rus = data_clean %>%
+  filter(country == 'Russia') %>%
+  mutate(modeled_waste_2010 = modeled_waste_2010_orig * rus_coastal_pop_proportion, 
+         modeled_waste_2025 = modeled_waste_2025_orig * rus_coastal_pop_proportion) %>% 
+  dplyr::select(country, modeled_waste_2010, modeled_waste_2025)
+
+## create dataframe of europe + russia
+eur_rus = rbind(
+  baltic_data,
+  rus) 
+
+```
 
 ### 4.3 Calculate Mismanaged plastic waste 2015
 
 Assuming it's a linear trend between 2010 and 2025, 2015 values are the 1/3-point between 2010 and 2025. 
 ```{r calculate waste 2015, echo = FALSE, message = FALSE, warning = FALSE}
 
-modeled_waste_2015 = baltic_data %>% 
+modeled_waste = eur_rus %>% 
   dplyr::select(country, modeled_waste_2010, modeled_waste_2025) %>% 
   mutate(modeled_waste_2015 = modeled_waste_2010 + 1/3 * (modeled_waste_2025 - modeled_waste_2010)) 
 
@@ -148,10 +203,10 @@ modeled_waste_2015 = baltic_data %>%
 
 ```{r plot }
 
-modeled_waste = modeled_waste_2015 %>% 
+modeled_waste_plot = modeled_waste %>% 
   gather(scenario, waste, 2:4) 
 
-ggplot(modeled_waste, aes(x = country, y = waste, fill = scenario)) +
+ggplot(modeled_waste_plot, aes(x = country, y = waste, fill = scenario)) +
   geom_bar(stat = 'identity', position = 'dodge') +
   theme(axis.text.x = element_text(angle = 75, hjust = 1)) + 
   labs(title = 'Modeled waste 2010, 2015, & 2025',
@@ -160,7 +215,7 @@ ggplot(modeled_waste, aes(x = country, y = waste, fill = scenario)) +
 
 ## SAVE 2015 DATA for VISUALIZE
 
-tra_value_data= modeled_waste_2015%>%
+tra_value_data= modeled_waste%>%
                 dplyr::select(value=modeled_waste_2015,
                        location =country)%>%
                 mutate(unit= "tonnes",
@@ -189,65 +244,6 @@ Need a min and a max reference point (they will ultimately be inverted for CW bu
 - **Minimum modeled trash entering the ocean = 0** (we want no trash entering the ocean)
 - **Maximum modeled trash entering the ocean = highest BHI country in 2010** 
 
-Note: Because Russia is reported as a whole country, we used the proportion of population in Kaliningrad+St Petersburg to the coastal population reported by Jambeck et al. See figure below. 
-
-
-#### Process to find max reference point, combine Europe with Russia, downweight Russia
-It made sense to downweight Kaliningrad and St Petersburg by coastal population density instead of total Russia population density because of the distribution along the coasts:
-
-![figure of Russia coastal population density](RussiaCoastalPopFig_Wikipedia.jpg)
-
-<!-- Then find ref point as the max of Europe, but compare 2010 v. 2025 to determine whether it's worth trying to interpolate/model to find a reference point in ~2015. Conclusion, probably not worth it, so we could just pick either 2010 or 2025 since those data are already modeled/reported by Jambeck et al.  -->
-
-#### 4.5.1 downweight Russia Coastal Trash 
-
-```{r data explore and prep}
-
-## havea another look at the data
-# baltic = read.csv('~/github/bhi/baltic2015/prep/CW/trash/intermediate/trash_jambeck_baltic.csv')
-# summary(baltic) 
-# summary(data_clean)
-
-## select desired columns
-data_clean_select = data_clean %>%
-  dplyr::select(country, coastal_pop, modeled_waste_2010_orig, modeled_waste_2025_orig)
-
-## read in lookup table for European countries
-lookup = read.csv('~/github/bhi/baltic2015/prep/EUcountrynames.csv', sep=';') %>%
-  mutate(country_abb = as.character(country_abb),
-         country     = as.character(country)); # head(lookup)
-
-## join lookup table to trash data; remove inland NAs and Kosovo, Macedonia, Serbia (no trash data)
-europe = lookup %>%
-  left_join(data_clean_select, by = 'country') %>%
-  filter(!is.na(coastal_pop)) %>%
-  dplyr::select(-country_abb); # head(europe)
-
-## downweight russia **very hacky for now**
-#  4597600 # St Petersbergy: from Wikipedia https://en.wikipedia.org/wiki/Demographics_of_Saint_Petersburg
-#  431902  # Kaliningrad https://en.wikipedia.org/wiki/Kaliningrad
-rus_trash_pop = data_clean_select %>%
-  filter(country == 'Russia') %>%
-  dplyr::select(coastal_pop)
-
-rus_coastal_pop_proportion = as.numeric((4597600+431902) / rus_trash_pop); rus_coastal_pop_proportion
-
-rus = data_clean_select %>%
-  filter(country == 'Russia') %>%
-  mutate(modeled_waste_2010 = modeled_waste_2010 * rus_coastal_pop_proportion, 
-         modeled_waste_2025 = modeled_waste_2025 * rus_coastal_pop_proportion); # rus
-  
-## consider also downweighting Germany, Denmark, Sweden?
-
-
-## create dataframe of europe + russia
-eur_rus = rbind(
-  europe,
-  rus) %>%
-  arrange(desc(modeled_waste_2010)); # eur_rus # view high to low 
-
-```
-
 #### 4.5.2 find ref point
 ```{r find ref and 2015}
 ## set min and max reference points ----
@@ -257,7 +253,6 @@ ref_point_min = 0
 
 ## 2010 ref point
 ref_point_max_2010 = eur_rus %>%
- filter(country %in% baltic$country) %>% #choosing only Baltic countries
  filter(modeled_waste_2010 == max(modeled_waste_2010))
 sprintf('max trash for 2010 is %s (%s)', 
         round(ref_point_max_2010$modeled_waste_2010),
@@ -273,7 +268,6 @@ ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
 
 modeled_waste_2015 = eur_rus %>% 
   dplyr::select(country, modeled_waste_2010, modeled_waste_2025) %>% 
-  filter(country %in% baltic$country) %>%  # choosing only Baltic countries
   mutate(modeled_waste_2015 = modeled_waste_2010 + 1/3 * (modeled_waste_2025 - modeled_waste_2010)) 
 
 
@@ -304,9 +298,9 @@ modeled_waste_2015 = eur_rus %>%
 
 <!-- ## join baltic_explore (baltic countries) to bhi regions, repeating the trash score for each baltic region. -->
 <!-- baltic_layer = lookup_bhi %>% -->
-<!--   left_join(baltic_explore,  -->
+<!--   left_join(baltic_explore, -->
 <!--             by = 'country') %>% -->
-<!--   dplyr::select(rgn_id,  -->
+<!--   dplyr::select(rgn_id, -->
 <!--          score = trash_score_2010); # baltic_layer -->
 
 <!-- ## save layer to layers folder, and register layer in layers.csv by hand -->
@@ -324,7 +318,6 @@ modeled_waste_2015 = eur_rus %>%
 
 ## scores by country
 scores_by_country = modeled_waste_2015 %>% 
-    filter(country %in% baltic$country) %>%  # choosing only Baltic countries
     mutate(ref_point = 37566,  # "max trash for 2010 is 37566 (Russia)"
            score_2010 = (1 - pmin(1, modeled_waste_2010/ref_point))*100, 
            score_2015 = (1 - pmin(1, modeled_waste_2015/ref_point))*100 ) %>% 
@@ -340,7 +333,12 @@ ggplot(scores_by_country_plot, aes(x = country, y = score, fill = year)) +
   ggtitle("Trash scores by country: 2010 & 2015")
 
 ## scores by bhi region
-    
+## join baltic_explore (baltic countries) to bhi regions, repeating the trash score for each baltic region.
+lookup_bhi = read.csv('~/github/bhi/baltic2015/prep/CW/trash/bhi_basin_country_lookup.csv',sep=";", stringsAsFactors = FALSE) %>% 
+ dplyr::select(rgn_id =BHI_ID, 
+      country = rgn_nam) %>%
+      mutate(country = as.character(country)) 
+
 scores_by_bhi = lookup_bhi %>%
   left_join(scores_by_country, 
             by = 'country') %>%
@@ -356,7 +354,10 @@ ggplot(scores_by_bhi_plot, aes(x = rgn_id, y = score, fill = year)) +
 
   
 # save as CW-TRA data layer
-write.csv(score_2015_by_bhi, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.csv', row.names=FALSE)
+scores_TRA = scores_by_bhi %>% 
+  dplyr::select(rgn_id, score = score_2015)
+
+write.csv(scores_TRA, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.csv', row.names=FALSE)
 
 ```
 
@@ -364,11 +365,11 @@ write.csv(score_2015_by_bhi, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.cs
 
 ```{r save as pressures layer}
 
-press_scores = score_2015_by_bhi %>% 
+press_scores = scores_TRA %>% 
   mutate(pressure_score = 1 - score/100) %>% 
-  dplyr::select(-score)
+  dplyr::select(rgn_id, pressure_score)
 
-write.csv(press_scores, file.path(dir_layers, "po_trash_bhi2015.csv"))
+write_csv(press_scores, file.path(dir_layers, "po_trash_bhi2015.csv"))
 
 ```
 
