@@ -7,7 +7,7 @@ output: html_document
 ```{r, child='goals/FIS.Rmd', results='asis', echo=FALSE}
 ```
 
-For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/fis_np_prep.md).   
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/fis_np_prep.md).   
 <!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
 
 
@@ -16,138 +16,44 @@ For full data preparation information and code, click [here](https://github.com/
 ```{r, child='goals/MAR.Rmd', results='asis', echo=FALSE}
 ```
 
-For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md)
 
 
 ## Artisanal Fishing Opportunity 
 
-the opportunity to fish artisanally, independent of how many fish are caught
-
-$$
-x_{AO} = (1 - D_{U}) * S_{AO}
-$$
-
-$$
-D_{U} = (1 - P) * (1 - O_{AO})
-$$
-
-- $D_{U}$ = unmet demand
-
-- $S_{AO}$ = sustainability of fishing methods   
-
-- $O_{AO}$ = access to artisanal fishing
-
-- $P$ = gross domestic product (GDP) per capita, adjusted by purchasing power parity (PPP)
-
+[**Full data preparation information and code**]()
 
 ## Natural Products
 
 ```{r, child='goals/NP.Rmd', results='asis', echo=FALSE}
 ```
 
-For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
 <!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
 
 ## Carbon Storage
 
-Extent and condition of coastal habitats that store and sequester atmospheric carbon 
-
-$$
-x_{CS} =  \sum_{1}^{k} \frac{C_{s}}{C_{r}} * \frac{A_{k}}{A_{T}}
-$$
-
-- $C$ = condition of habitat $k$, current [$c$] or reference[$r$]
-
-- $A$ = area of habitat $k$, current [$c$] or total area covered by all habitats assessed [T]
-
-habitats: seagrass beds, salt marshes, mangroves
-
+[**Full data preparation information and code**]()
 
 ## Tourism & Recreation
 
-Tourism & recreation value, independent of monetary exchange
-
-$$
-x_{TR} = E_{t} * S_{t} 
-$$
-
-$$
-E_{t} = E_{W} / (L_{t} - L_{t} * U_{t})
-$$
-
-- $E$ = tourism employment proportion
-
-- $S$ = sustainability measure
-
-- $E_{W}$ = number of employees in travel and tourism sectors
-
-- $L$ = total labor force
-
-- $U$ = percent unemployment
-
-- $t$ = current year
-
+[**Full data preparation information and code**]()
 
 ## Livelihoods & Economies: Livelihoods
 
-Number of jobs and job quality from marine-associated sectors
-
-$$
-x_{LIV} = \frac{\frac{\sum_{i=1}^{k} j_{c,k}}{\sum_{i=1}^{k} j_{r,k}} + \frac{\sum_{i=1}^{k} g_{m,k}}{\sum_{i=1}^{k} g_{r,k}}}{2}
-$$
-
-- $j$ = number of jobs within sector $k$ at current [$c$] or reference [$r$] time
-
-- $g$ = average wages per job for sector $k$  at current [$m$] or reference [$r$] region
-
-- sectors ($k$): tourism, commercial fishing, marine mammal watching, aquarium fishing, wave & tidal energy, mariculture, transportation & shipping, ports & harbors, ship & boatbuilding
-
+[**Full data preparation information and code**]()
 
 ## Livelihoods & Economies: Economies
 
-Revenue from marine associated sectors
-
-$$
-x_{ECO} = \sum_{i=1}^{k} \frac{e_{c,k}}{e_{r,k}} 
-$$
-
-- $e$ = total adjusted revenue generated from each sector $k$ at current [$c$] or reference [$r$] time
-
-- sectors ($k$): tourism, commercial fishing, marine mammal watching, aquarium fishing, wave & tidal energy, mariculture, transportation & shipping, ports & harbors, ship & boatbuilding
-
+[**Full data preparation information and code**]()
 
 ## Sense of Place: Iconic Species
 
-Aesthetic connections to and cultural identity with a given region measured through the status of iconic species
-
-$$
-x_{ICO} = \frac{\sum_{i=1}^{N} S_{i} * w_{i}}{\sum_{i=1}^{N} S_{i}} 
-$$
-
-- $S$ = number of assessed species in each threat category $i$ 
-
-- $w$ = status weight assigned per threat category $i$ 
-
-- $N$ = 6 threat categories 
-
-iconic species list: WWF Priority Species
-
-threat categories: IUCN
-
+[**Full data preparation information and code**]()
 
 ## Sense of Place: Lasting Special Places
 
-Aesthetic connections to and cultural identity with a given region measured through the status of meaningful locations
-
-$$
-x_{LSP} = \frac{(\frac{M}{M_{r}} + \frac{C}{C_{r}})}{2} 
-$$
-
-- $M$ = percent protected marine coastal area compared to reference [$r$] $C$ = percent protected coastline compared to reference [$r$]
-
-- $C$ = managed area on coastal land (0-1mi)
-
-- $C_{t}$ = total coastal land area 
+[**Full data preparation information and code**]()
 
 ## Clean Waters: Nutrients
 
@@ -159,7 +65,7 @@ $$
 ```{r, child='goals/TRA.Rmd', results='asis', echo=FALSE}
 ```
 
-For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)
 
 
 ## Clean Waters: Contaminants
@@ -167,23 +73,9 @@ For full data preparation information and code, click [here](https://github.com/
 ```{r, child='goals/CON.Rmd', results='asis', echo=FALSE}
 ```
 
-For full data preparation information and code, click [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd)
 
 
 ## Biodiversity
 
-Existence values people hold for biodiversity measured through the status of native species
-
-$$
-x_{SPP} = \frac{\sum_{k=1}^{M} (\frac{\sum_{i=1}^{N} w_{i}}{N}) * A_{C}}{A_{T}} 
-$$
-
-- $M$ = number of grid cells in the assessment region
-
-- $N$ = number species in a grid cell $c$
-
-- $A$ = total area of a grid cell [$c$] the assessment region [T]
-
-- $w_{i}$ = status weight assigned per threat 
-
-assessed species list and maps: IUCN
+[**Full data preparation information and code**]()
