@@ -2,7 +2,9 @@
 
 The Contaminant sub-goal of the Clean Water goal captures the degree to which local waters are unpolluted by contaminants. This sub-goal scores highest when the contamination level is below a threshold, which is defined by the Marine Framework Directive. For the BHI three contaminants indicators are proposed, describing different aspects of toxicity: dioxin and dioxin like compounds, polychlorinated biphenyl compounds (PCBs) and perfluorooctanesulfonic acid (PFOS). 
 
-**NOTE: Experts are discussing whether to exclude or modify this goal as it is difficult to represent with the available indicators. Currently in the BHI assessment, Contaminants scores are set to NA.** 
+<span style="color:red">
+**NOTE: Experts are discussing whether to exclude or modify this goal as it is difficult to represent with the available indicators. Currently in the BHI assessment, Contaminants scores are set to NA.**
+</span>
 
 ### Model & Data
 

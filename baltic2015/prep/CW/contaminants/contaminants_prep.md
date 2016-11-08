@@ -55,6 +55,7 @@ Contaminants - Clean Water Subgoal data prep
     -   [7.2 Plot CON indicators](#plot-con-indicators)
     -   [7.3 Number of CON indicators available per BHI region](#number-of-con-indicators-available-per-bhi-region)
     -   [7.4 Plot number of CON indicators per BHI region](#plot-number-of-con-indicators-per-bhi-region)
+-   [NA Placeholder for Status and Trend](#na-placeholder-for-status-and-trend)
 
 1. Background
 -------------
@@ -63,7 +64,7 @@ Contaminants - Clean Water Subgoal data prep
 
 The Contaminant sub-goal of the Clean Water goal captures the degree to which local waters are unpolluted by contaminants. This sub-goal scores highest when the contamination level is below a threshold, which is defined by the Marine Framework Directive. For the BHI three contaminants indicators are proposed, describing different aspects of toxicity: dioxin and dioxin like compounds, polychlorinated biphenyl compounds (PCBs) and perfluorooctanesulfonic acid (PFOS).
 
-**NOTE: Experts are discussing whether to exclude or modify this goal as it is difficult to represent with the available indicators. Currently in the BHI assessment, Contaminants scores are set to NA.**
+<span style="color:red"> **NOTE: Experts are discussing whether to exclude or modify this goal as it is difficult to represent with the available indicators. Currently in the BHI assessment, Contaminants scores are set to NA.** </span>
 
 ### Model & Data
 
@@ -90,25 +91,7 @@ All contaminant data were downloaded from the open-accessible ICES database (see
 1.2 Set CON status as NA for BHI assessment
 -------------------------------------------
 
-Ultimately, the CON status was set to NA for the BHI assessment. Please read below for data processing and considerations for the goal model that was not ultimately not included.
-
-``` r
-# status
-status = data.frame(region_id = full_seq(1:42, 1), 
-                    goal = "CON",
-                    score = NA,
-                    dimension = "status")
-
-write_csv(status, file.path(dir_layers, 'cw_con_status_placeholder_NA.csv'))
-
-# trend
-trend = data.frame(region_id = full_seq(1:42, 1), 
-                   goal = "CON",
-                   score = NA,
-                   dimension = "trend")
-
-write_csv(trend, file.path(dir_layers, 'cw_con_trend_placeholder_NA.csv'))
-```
+Ultimately, the CON status was set to NA for the BHI assessment. Please read below for data processing and considerations for the goal model that was ultimately not included.
 
 2. Data
 -------
@@ -4407,3 +4390,24 @@ ggplot(con_trend_n)+
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![](contaminants_prep_files/figure-markdown_github/Plot%20number%20of%20CON%20indicators%20per%20BHI%20region-2.png)
+
+NA Placeholder for Status and Trend
+-----------------------------------
+
+``` r
+# status
+status = data.frame(region_id = full_seq(1:42, 1), 
+                    goal = "CON",
+                    score = as.numeric(NA),
+                    dimension = "status")
+
+write_csv(status, file.path(dir_layers, 'cw_con_status_placeholder_NA.csv'))
+
+# trend
+trend = data.frame(region_id = full_seq(1:42, 1), 
+                   goal = "CON",
+                   score = as.numeric(NA),
+                   dimension = "trend")
+
+write_csv(trend, file.path(dir_layers, 'cw_con_trend_placeholder_NA.csv'))
+```
