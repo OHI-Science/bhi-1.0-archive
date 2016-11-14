@@ -43,7 +43,10 @@ output: html_document
 
 ## Tourism & Recreation
 
-[**Full data preparation information and code**]()
+```{r, child='goals/TR.Rmd', results='asis', echo=FALSE}
+```
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/TR/tr_prep.md)
 
 ## Livelihoods & Economies: Livelihoods
 
