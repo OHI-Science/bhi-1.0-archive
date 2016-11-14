@@ -10,6 +10,7 @@ output: html_document
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/fis_np_prep.md).   
 <!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
 
+---- 
 
 ## Food Provision: Mariculture
 
@@ -18,6 +19,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md)
 
+---- 
 
 ## Artisanal Fishing Opportunity 
 
@@ -25,6 +27,8 @@ output: html_document
 ```
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/AO/ao_prep.md)
+
+---- 
 
 ## Natural Products
 
@@ -34,12 +38,16 @@ output: html_document
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
 <!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
 
+---- 
+
 ## Carbon Storage
 
 ```{r, child='goals/CS.Rmd', results='asis', echo=FALSE}
 ```
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CS/cs_prep.md)
+
+---- 
 
 ## Tourism & Recreation
 
@@ -48,6 +56,8 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/TR/tr_prep.md)
 
+---- 
+
 ## Livelihoods & Economies: Livelihoods
 
 ```{r, child='goals/LIV.Rmd', results='asis', echo=FALSE}
@@ -55,6 +65,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LIV/liv_prep.md)
 
+---- 
 
 ## Livelihoods & Economies: Economies
 
@@ -63,6 +74,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/ECO/eco_prep.md)
 
+---- 
 
 ## Sense of Place: Iconic Species
 
@@ -71,6 +83,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/prep/ICO)
 
+---- 
 
 ## Sense of Place: Lasting Special Places
 
@@ -79,6 +92,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LSP/lsp_prep.md)
 
+---- 
 
 ## Clean Waters: Nutrients
 
@@ -87,6 +101,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/nutrient/nutrient_prep.Rmd)
 
+---- 
 
 ## Clean Waters: Trash
 
@@ -95,6 +110,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)
 
+---- 
 
 ## Clean Waters: Contaminants
 
@@ -103,6 +119,7 @@ output: html_document
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.Rmd)
 
+---- 
 
 ## Biodiversity
 
