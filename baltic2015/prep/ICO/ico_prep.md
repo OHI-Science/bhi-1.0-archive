@@ -2,10 +2,11 @@ Iconic Species (ICO) Data Preparation for Sense of Place (SP) goal
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model & Data](#model-data)
-    -   [1.3 Reference points](#reference-points)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 Data sources](#data-sources)
     -   [2.2 Data folder for raw data](#data-folder-for-raw-data)
@@ -22,47 +23,25 @@ Iconic Species (ICO) Data Preparation for Sense of Place (SP) goal
 1. Background
 -------------
 
-### 1.1 Goal Description
+### Goal Description
 
-Iconic species are those that are relevant to local cultural identity through a species’ relationship to one or more of the following: 1) traditional activities such as fishing, hunting or commerce; 2) local ethnic or religious practices; 3) existence value; and 4) locally-recognized aesthetic value (e.g., touristic attractions/common subjects for art such as whales). Habitat-forming species are not included in this definition of iconic species, nor are species that are harvested solely for economic or utilitarian purposes (even though they may be iconic to a sector or individual). This sub-goal assesses how well those species are conserved.
+The Fisheries sub-goal of Food Provision describes the ability to maximize the sustainable yield of wild-caught seafood for human consumption. **For the BHI cod and herring stocks in the Baltic Sea were included as wild-caught fisheries**.
 
-Iconic fish and mammals species have been selected to represent ICO in the baltic. Included species are:
+### Model & Data
 
--   Cod
--   Flounder
--   Herring
--   Perch
--   Pike
--   Salmon
--   Trout
--   Sprat
--   grey seal / gray seal
--   European otter / Euraisan otter
--   harbour seal / common seal
--   harbour porpoise
--   ringed seal
+The data used for this goal are composed of cod and herring spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated as a function of the ratio (B’) between the single species current biomass at sea (B) and the reference biomass at maximum sustainable yield (BMSY), as well as the ratio (F’) between the single species current fishing mortality (F) and the fishing mortality at maximum sustainable yield (FMSY). B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this [general relationship](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/ffms%3By_bbmsy_2_score.png).
 
-### 1.2 Model & Data
+-   [Cod and herring data accessed from the ICES homepage](http://www.ices.dk/marine-data/tools/Pages/stock-assessment-graphs.aspx) &gt; search for 'cod' or 'herring' &gt; specify the ecoregion as Baltic Sea &gt; search for the 2013 assessment.
 
-HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria. Species were assigned a *threat category* (ranging from "extinct" to "least concern") and assigned a weight. Goal score is the average weight of all species assessed.
+### Reference points
 
-### 1.3 Reference points
+The reference point used for the computation are based on the MSY principle and are described as a functional relationship. MSY means the highest theoretical equilibrium yield that can be continuously taken on average from a stock under existing average environmental conditions without significantly affecting the reproduction process *(European Union 2013, World Ocean Review 2013).*
 
-Reference point is when all species are in the "least concern" category and score of 100 is achieved. The lower cut-off point when 75% of species are extinct and score is 0.
+### Considerations for *BHI 2.0*
 
-### 1.4 Other considerations for *OHI-BHI 2.0*
+### Other information
 
--   Iconic fish and mammals species have been selected to represent ICO in the Baltic. When bird species have distributions by basin (rather than country), ICO can be updated to include those.
-
-\*Pros for using these <data:*>
-
-Much more representative set of species included for Baltic Sea biodiversity.
-
-\*Cons for using these <data:*>
-
-Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), and therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.
-
--   Trend is set to "NA" currently because there are no time-series data on the species status.
+*external advisors/goalkeepers are Christian Möllmann & Stefan Neuenfeldt*
 
 2. Data
 -------
@@ -72,6 +51,18 @@ Distribution is provided for most taxa groups at the basin scale - coarser resol
 [HELCOM species checklists](http://helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species) (see bottom right of page for links to excel sheets) were downloaded on 14 June 2016.
 
 Joni Kaitaranta (HELCOM) emailed the complete list of species assessed using IUCN red list criteria on 14 June 2016.
+
+-   Iconic fish and mammals species have been selected to represent ICO in the Baltic. When bird species have distributions by basin (rather than country), ICO can be updated to include those.
+
+\*Pros for using these <data:*>
+
+-   Much more representative set of species included for Baltic Sea biodiversity.
+
+\*Cons for using these <data:*>
+
+-   Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), and therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions.
+
+-   Trend is set to "NA" currently because there are no time-series data on the species status.
 
 ### 2.2 Data folder for raw data
 
@@ -138,6 +129,11 @@ wi from Halpern et al 2012, SI
 ``` r
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
+```
+
+    ## Warning: package 'ggplot2' was built under R version 3.3.2
+
+``` r
 dir_ico    = file.path(dir_prep, 'ICO')
 
 ## add a README.md to the prep directory 

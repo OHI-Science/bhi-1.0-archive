@@ -55,7 +55,10 @@ output: html_document
 
 ## Sense of Place: Iconic Species
 
-[**Full data preparation information and code**]()
+```{r, child='goals/ICO.Rmd', results='asis', echo=FALSE}
+```
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/prep/ICO)
 
 ## Sense of Place: Lasting Special Places
 
