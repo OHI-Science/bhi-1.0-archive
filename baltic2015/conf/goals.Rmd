@@ -21,7 +21,10 @@ output: html_document
 
 ## Artisanal Fishing Opportunity 
 
-[**Full data preparation information and code**]()
+```{r, child='goals/AO.Rmd', results='asis', echo=FALSE}
+```
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/AO/ao_prep.md)
 
 ## Natural Products
 
