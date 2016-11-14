@@ -1,23 +1,24 @@
 ### Goal Description
 
 The Lasting Special Places sub-goal focuses on those geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected.
-In the Baltic region, the designation and management of marine protected areas (MPAs) captures the commitment of a country to preserving areas of biological, aesthetic or ecosystem service value.  The designation of MPAs is also included in international agreements, such as the [Convention on Biodiversity's target](https://www.cbd.int/sp/targets/rationale/target-11/) for the designation of 10% of exclusive economic zones (EEZs) to be in MPAs.* 
+**For the BHI, the designation and management of marine protected areas (MPAs) captures the commitment of a country to preserving areas of biological, aesthetic or ecosystem service value.** The designation of MPAs is also included in international agreements, such as the [Convention on Biodiversity's target](https://www.cbd.int/sp/targets/rationale/target-11/) for the designation of 10% of exclusive economic zones (EEZs) to be in MPAs.
 
 ### Model & Data
-The lasting special places model assesses the area of MPAs in each country in relation to its EEZs, and their management status. Management status are broken down to three categories and weighted on a 0-1 scale: 
+
+The model assesses the area of MPAs in each country in relation to its EEZs, and their management status. Management status are broken down to three categories and weighted on a 0-1 scale: 
 
 - 0.1 = designated
 - 0.4 = designated and partly managed  
 - 1.0 = designated and managed   
 
-Both MPA area and management status data were downloaded from [HELCOM MPA](http://mpas.helcom.fi) website.
+Both MPA area and management status data were downloaded from the [HELCOM MPA](http://mpas.helcom.fi) website.
 
 ### Reference points
 
-*Reference point is when 10% of EEZs in a country is designated as MPAs and fully managed.* 
+The target is for 10% of a country's EEZs is designated as MPAs, and are fully managed.
 
-### Other considerations for _OHI-BHI 2.0_
+### Considerations for *BHI 2.0*
 
-*link to [prep files](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LSP/lsp_prep.md)*
+### Other information
 
 *external advisors/goalkeepers: Sofia Wikström*

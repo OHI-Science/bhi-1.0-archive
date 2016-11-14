@@ -10,28 +10,8 @@ params:
 
 ## 1. Background
 
-### 1.1 Goal Description
-
-Lasting Special Places focuses on those **geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected**. (Read more about this goal [here](http://ohi-science.org/goals/#sense-of-place))
-
-In the Baltic region, the designation and management of marine protected areas (MPAs) captures the commitment of a country to preserving areas of biological, aesthetic or ecosystem service value.  The designation of MPAs is also included in international agreements, such as the [Convention on Biodiversity's target](https://www.cbd.int/sp/targets/rationale/target-11/) for the designation of 10% of EEZs to be in MPAs. 
-
-### 1.2 Model & Data 
-
-LSP model assesses the area of MPAs in each country in relation to its EEZs, and their management status. Management status are broken down to three categories and weighted on a 0-1 scale: 
-
-- 0.1 = designated
-- 0.4 = designated and partly managed  
-- 1.0 = designated and managed   
-
-Both MPA area and management status data were downloaded from [HELCOM MPA](http://mpas.helcom.fi) website. 
-
-### 1.3 Reference points 
-
-Reference point is when 10% of EEZs in a country is designated as MPAs and fully managed. 
-
-### 1.4 Other considerations for _OHI-BHI 2.0_
-
+```{r, child='../../conf/goals/LSP.Rmd', results='asis', echo=FALSE}
+```
 
 ## 2. MPA data  
 
@@ -549,7 +529,7 @@ print( mpa_vs_eez_plot)
 
 Even when a country has many MPAs that are just designated but not managed, it can still achieve a score of 100, is it because the area of MPAs that are "managed" (ie. higher weight) is relatively larger compared to that of the "designated"" (ie. lower weight), and thus have a higher _weight*area_ score?  
 
-The plot below compares the total MPA area of each mangement level with the reference point (10% EEZ). The black dots represent 10% EEZ. 
+The plot below compares the total MPA area of each management level with the reference point (10% EEZ). The black dots represent 10% EEZ. 
 
 
 ```{r MPA area vs management level}

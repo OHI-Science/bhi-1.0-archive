@@ -74,7 +74,11 @@ output: html_document
 
 ## Sense of Place: Lasting Special Places
 
-[**Full data preparation information and code**]()
+```{r, child='goals/LSP.Rmd', results='asis', echo=FALSE}
+```
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LSP/lsp_prep.md)
+
 
 ## Clean Waters: Nutrients
 
