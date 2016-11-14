@@ -3,7 +3,6 @@ Next considerations/steps:
 - [ ] Ref point: include that this is an agreed-upon ref point or something else. (link to prep file/or the original source if available)
 - [ ] list the pressures/resilience (can use Rmd to pull out the appropriate rows from the pressures matrix)
 
-
 JSL notes for website
 Change layers tab title -> data
 About -> make last page, and make this more general about OHI (goal icons)

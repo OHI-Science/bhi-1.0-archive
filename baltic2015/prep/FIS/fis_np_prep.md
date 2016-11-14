@@ -21,7 +21,7 @@ Food Provision (FP) - Fisheries (FIS) subgoal & Natural Products (NP) Goal Data 
 
 ### Goal Description
 
-The Fisheries sub-goal of Food Provision describes a country's ability to maximize the sustainable yield of wild-caught seafood for human consumption. **For the BHI cod and herring stocks in the Baltic Sea were included as wild-caught fisheries**.
+The Fisheries sub-goal of Food Provision describes the ability to maximize the sustainable yield of wild-caught seafood for human consumption. **For the BHI cod and herring stocks in the Baltic Sea were included as wild-caught fisheries**.
 
 ### Model & Data
 
