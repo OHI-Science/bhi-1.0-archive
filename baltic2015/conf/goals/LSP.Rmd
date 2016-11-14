@@ -1,8 +1,6 @@
-
-
 ### Goal Description
 
-*Lasting Special Places focuses on those geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected.
+The Lasting Special Places sub-goal focuses on those geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected.
 In the Baltic region, the designation and management of marine protected areas (MPAs) captures the commitment of a country to preserving areas of biological, aesthetic or ecosystem service value.  The designation of MPAs is also included in international agreements, such as the [Convention on Biodiversity's target](https://www.cbd.int/sp/targets/rationale/target-11/) for the designation of 10% of exclusive economic zones (EEZs) to be in MPAs.* 
 
 ### Model & Data
