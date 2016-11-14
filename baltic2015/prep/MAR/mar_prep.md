@@ -478,12 +478,12 @@ Calculate MAR status and trend to get feedback. Code here is copied from functio
     filter(year %in% status_years)
 
   # Merge harvest (production) data with sustainability score
-  # ref_point = half of max production achieve sust coeff of 1
+  # ref_point = max production achieve sust coeff of 1
   temp = left_join(harvest_tonnes, harvest_species, by = 'species_code') %>%
     left_join(., sustainability_score, by = c('rgn_id', 'species')) %>%
     group_by(rgn_id, species_code) %>%   
     mutate(tonnes_sust = tonnes * sust_coeff, 
-           ref_value = 0.5 * max(tonnes) * 1) %>% 
+           ref_value = max(tonnes) * 1) %>% 
     ungroup()
 
   ###----------------------------###
@@ -514,7 +514,8 @@ Calculate MAR status and trend to get feedback. Code here is copied from functio
       data.frame(trend_score = max(-1, min(1, coef(lm(status ~ year, .))['year'] * 0.05))) #future_year set in contants, this is the value 5 in the old code
       else data.frame(trend_score = NA)}) %>%
     ungroup() %>%
-    mutate(trend_score = round(trend_score,2))
+    mutate(trend_score = round(trend_score,2)) %>% 
+    complete(rgn_id = full_seq(c(1, 42), 1))
 
   #####----------------------######
   # return MAR scores
