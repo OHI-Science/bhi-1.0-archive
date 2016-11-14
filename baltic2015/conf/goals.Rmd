@@ -90,4 +90,7 @@ output: html_document
 
 ## Biodiversity
 
-[**Full data preparation information and code**]()
+```{r, child='goals/BD.Rmd', results='asis', echo=FALSE}
+```
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/SPP/spp_prep.md)
