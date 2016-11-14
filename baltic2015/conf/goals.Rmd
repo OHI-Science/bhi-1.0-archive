@@ -33,7 +33,10 @@ output: html_document
 
 ## Carbon Storage
 
-[**Full data preparation information and code**]()
+```{r, child='goals/CS.Rmd', results='asis', echo=FALSE}
+```
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CS/cs_prep.md)
 
 ## Tourism & Recreation
 
