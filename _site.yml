@@ -4,12 +4,12 @@ navbar:
   left:
     - text: "Overview"
       href: overview.html
-    - text: "App"
-      href: app.html
+    - text: "Explore"
+      href: explore.html
     - text: "Regions"
       href: regions.html
-    - text: "Layers"
-      href: layers.html
+    - text: "Data"
+      href: data.html
     - text: "Goals"
       href: goals.html
     - text: "Scores"

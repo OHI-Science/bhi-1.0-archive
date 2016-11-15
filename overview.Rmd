@@ -19,6 +19,5 @@ With this regional assessment of the Ocean Health Index we aim to address X core
 X. 
 
 
-```{r child=sprintf('%s/reports/interpreting_BHI.Rmd', dir_scenario)}
-```
+<!--- make this a chunk: {r child=sprintf('%s/reports/interpreting_BHI.Rmd', dir_scenario)}--->
 

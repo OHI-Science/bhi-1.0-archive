@@ -85,18 +85,3 @@ datatable(
   select(rgn_id, rgn_name))
 ```
 
-
-IDs for subcountry regions were assigned geographically by increasing longitude. The entire study area `r study_area` has a special region ID of 0.
-
-Exclusive economic zones (EEZs) were identified by [MarineRegions.org](http://www.marineregions.org) and the largest subcountry regions were identified by the generalized administrative boundary database [GADM.org](http://www.gadm.org). Region boundaries were extended offshore to divide the EEZ of `r study_area` into offshore regions. It is possible to use different regions than the ones provided here. See [Create Regions](http://ohi-science.org/pages/create_regions.html) for more details.
-
-Regions were generated with the following inland and offshore buffers relative to the shoreline, which are visualized in the graphic above within increasing transparency away from the shoreline.
-
-- offshore
-- offshore1km
-- offshore3nm
-- inland
-- inland1km
-- inland25km
-
-These data are available as shapefiles as well as csv files summarizing total area per region. Since shapefiles are binary and can be large, they're best stored outside the Github repository.
