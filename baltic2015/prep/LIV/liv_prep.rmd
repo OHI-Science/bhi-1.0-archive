@@ -1188,7 +1188,7 @@ blue_growth_employ <- read_csv(file.path(dir_liv, 'liv_data_database/BHI_employ_
 
 liv_status <- blue_growth_employ %>% 
   mutate(ref_point = employ*1.05, 
-         score = employ/ref_point) %>% 
+         score = employ/ref_point*100) %>% 
   full_join(bhi_lookup, by = 'country') %>% 
   select(rgn_id, score) 
 
