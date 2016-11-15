@@ -588,7 +588,16 @@ TR = function(layers){
   ##-------------------------------------------------------------------##
 
   ##-------------------------------------------------------------------##
+
   ## CALCULATE STATUS ##
+  ## Scores calculated in prep file (prep/TR/tr_prep.rmd) based on EU blue growth report 2015
+  ## updated by Ning Jiang 14Nov2016
+
+  tr_status <- layers$data[['tr_status']] %>%
+    mutate(dimension = 'status') %>%
+    select(region_id = rgn_id, score, dimension)
+
+  ## CALCULATE TREND ##
 
   ## calculate status time series
   ## updated by Ning Jiang - 10.28.2016
@@ -603,19 +612,16 @@ TR = function(layers){
     dplyr::select(rgn_id, year, status_score) %>%
     as.data.frame()
 
-  # select the most recent year for status
-  tr_status = tr_status_score %>%
-    filter(year == max(year)) %>%
-    complete(rgn_id = full_seq(rgn_id, 1)) %>%
-    mutate(score = status_score,
-           dimension = 'status') %>% ##scale to 0 to 100
-    dplyr::select(region_id = rgn_id, score, dimension)
+  # # select the most recent year for status
+  ## REPLACED by tr_status above
 
-  ##-------------------------------------------------------------------##
+  # tr_status = tr_status_score %>%
+  #   filter(year == max(year)) %>%
+  #   complete(rgn_id = full_seq(rgn_id, 1)) %>%
+  #   mutate(score = status_score,
+  #          dimension = 'status') %>% ##scale to 0 to 100
+  #   dplyr::select(region_id = rgn_id, score, dimension)
 
-
-  ##-------------------------------------------------------------------##
-  ## CALCULATE TREND
 
   ## calculate trend for 5 years (5 data points)
   ## years are filtered tr_status_score
@@ -779,95 +785,107 @@ ECO = function(layers){
   ## Updated 7 July 2016, Jennifer Griffiths. If there is no data for status or trend, is NA
 
 
-  ## read in data
-  ## in data prep, year range included is selected
-    ##if different time periods exisit for region and country, NAs for status will be produced
-  le_gdp_region   = SelectLayersData(layers, layers='le_gdp_region') %>%
-    dplyr::select(rgn_id = id_num, year, rgn_gdp_per_cap = val_num)
+  # ## read in data
+  # ## in data prep, year range included is selected
+  #   ##if different time periods exisit for region and country, NAs for status will be produced
+  # le_gdp_region   = SelectLayersData(layers, layers='le_gdp_region') %>%
+  #   dplyr::select(rgn_id = id_num, year, rgn_gdp_per_cap = val_num)
+  #
+  # le_gdp_country  = SelectLayersData(layers, layers='le_gdp_country') %>%
+  #   dplyr::select(rgn_id = id_num, year, nat_gdp_per_cap = val_num)
+  #
+  #
+  # ## temp readin TODO: SelectLayers()
+  # # library(dplyr)
+  # # le_gdp_region = read.csv('~/github/bhi/baltic2015/layers/le_gdp_region_bhi2015.csv'); head(le_gdp_region)
+  # # le_gdp_country = read.csv('~/github/bhi/baltic2015/layers/le_gdp_country_bhi2015.csv'); head(le_gdp_country)
+  #
+  # ## set lag window for reference point calculations
+  # lag_win = 5  # 5 year lag
+  # trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points)
+  # bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1))) #unique BHI region numbers to make sure all included with final score and trend
+  #
+  # ## ECO region: prepare for calculations with a lag
+  # eco_region = le_gdp_region %>%
+  #   dplyr::rename(gdp = rgn_gdp_per_cap) %>%
+  #   filter(!is.na(gdp)) %>%
+  #   group_by(rgn_id)%>%
+  #   mutate(year_ref = lag(year, lag_win, order_by=year),
+  #          ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
+  #   arrange(year)%>%
+  #   filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+  #   ungroup() %>%
+  #   mutate(rgn_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
+  #   select(rgn_id,year,rgn_value)
+  #
+  # ## ECO country
+  # eco_country = le_gdp_country %>%
+  #   dplyr::rename(gdp = nat_gdp_per_cap) %>%
+  #   filter(!is.na(gdp)) %>%
+  #   group_by(rgn_id)%>%
+  #   mutate(year_ref = lag(year, lag_win, order_by=year),
+  #          ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
+  #   arrange(year)%>%
+  #   filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
+  #   ungroup() %>%
+  #   mutate(cntry_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
+  #   select(rgn_id,year,cntry_value)
+  #
+  # ## calculate status
+  # eco_status_calc = full_join(eco_region,eco_country, by=c("rgn_id","year"))%>% #join region and country current/ref ratios
+  #              mutate(Xeco = rgn_value/cntry_value)%>% #calculate status
+  #              mutate(status = pmin(1, Xeco)) # status calculated cannot exceed 1
+  #
+  # eco_status = eco_status_calc%>%
+  #   group_by(rgn_id)%>%
+  #   filter(year== max(year))%>%       #select status as most recent year
+  #   ungroup()%>%
+  #   full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status
+  #   mutate(score=round(status*100),   #scale to 0 to 100
+  #          dimension = 'status')%>%
+  #   select(region_id = rgn_id,score, dimension)
+  #
+  # ## this is where could change NA value of status to zero
+  # #%>%
+  # ##mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
+  # ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
+  #
+  #
+  # ## calculate trend for 5 years (5 data points)
+  #     ## years are filtered in eco_region and eco_country, so not filtered for here
+  #     eco_trend = eco_status_calc %>%
+  #       filter(year >= max(year - trend_yr))%>%                #select five years of data for trend
+  #       filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
+  #       group_by(rgn_id) %>%
+  #       mutate(regr_length = n())%>%                            #get the number of status years available for greggion
+  #       filter(regr_length == (trend_yr + 1))%>%                   #only do the regression for regions that have 5 data points
+  #         do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
+  #           summarize(rgn_id = rgn_id,
+  #                     score = coef(mdl)['year'] * lag_win)%>%
+  #       ungroup() %>%
+  #       full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
+  #       mutate(score = round(score, 2),
+  #              dimension = "trend") %>%
+  #       select(region_id = rgn_id, dimension, score) %>%
+  #       data.frame()
 
-  le_gdp_country  = SelectLayersData(layers, layers='le_gdp_country') %>%
-    dplyr::select(rgn_id = id_num, year, nat_gdp_per_cap = val_num)
+  ### updated 14Nov, 2016 by Ning Jiang from ohi-science team
 
+  eco_status = layers$data[['eco_status']] %>%
+    mutate(dimension = 'status') %>%
+    select(-layer)
 
-  ## temp readin TODO: SelectLayers()
-  # library(dplyr)
-  # le_gdp_region = read.csv('~/github/bhi/baltic2015/layers/le_gdp_region_bhi2015.csv'); head(le_gdp_region)
-  # le_gdp_country = read.csv('~/github/bhi/baltic2015/layers/le_gdp_country_bhi2015.csv'); head(le_gdp_country)
-
-  ## set lag window for reference point calculations
-  lag_win = 5  # 5 year lag
-  trend_yr = 4 # to select the years for the trend calculation, select most recent year - 4 (to get 5 data points)
-  bhi_rgn = data.frame(rgn_id = as.integer(seq(1,42,1))) #unique BHI region numbers to make sure all included with final score and trend
-
-  ## ECO region: prepare for calculations with a lag
-  eco_region = le_gdp_region %>%
-    dplyr::rename(gdp = rgn_gdp_per_cap) %>%
-    filter(!is.na(gdp)) %>%
-    group_by(rgn_id)%>%
-    mutate(year_ref = lag(year, lag_win, order_by=year),
-           ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year)%>%
-    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
-    ungroup() %>%
-    mutate(rgn_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
-    select(rgn_id,year,rgn_value)
-
-  ## ECO country
-  eco_country = le_gdp_country %>%
-    dplyr::rename(gdp = nat_gdp_per_cap) %>%
-    filter(!is.na(gdp)) %>%
-    group_by(rgn_id)%>%
-    mutate(year_ref = lag(year, lag_win, order_by=year),
-           ref_val = lag(gdp, lag_win, order_by=year)) %>% #create ref year and value which is value 5 years preceeding within a BHI region
-    arrange(year)%>%
-    filter(year>= max(year)- lag_win)%>% #select only the previous 5 years from the max year
-    ungroup() %>%
-    mutate(cntry_value = gdp/ref_val) %>% #calculate rgn_value per year, numerator of score function
-    select(rgn_id,year,cntry_value)
-
-  ## calculate status
-  eco_status_calc = full_join(eco_region,eco_country, by=c("rgn_id","year"))%>% #join region and country current/ref ratios
-               mutate(Xeco = rgn_value/cntry_value)%>% #calculate status
-               mutate(status = pmin(1, Xeco)) # status calculated cannot exceed 1
-
-  eco_status = eco_status_calc%>%
-    group_by(rgn_id)%>%
-    filter(year== max(year))%>%       #select status as most recent year
-    ungroup()%>%
-    full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for status
-    mutate(score=round(status*100),   #scale to 0 to 100
-           dimension = 'status')%>%
-    select(region_id = rgn_id,score, dimension)
-
-  ## this is where could change NA value of status to zero
-  #%>%
-  ##mutate(score= replace(score,is.na(score), 0)) #assign 0 to regions with no status calculated because insufficient or no data
-  ##will this cause problems if there are regions that should be NA (because indicator is not applicable?)
-
-
-  ## calculate trend for 5 years (5 data points)
-      ## years are filtered in eco_region and eco_country, so not filtered for here
-      eco_trend = eco_status_calc %>%
-        filter(year >= max(year - trend_yr))%>%                #select five years of data for trend
-        filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
-        group_by(rgn_id) %>%
-        mutate(regr_length = n())%>%                            #get the number of status years available for greggion
-        filter(regr_length == (trend_yr + 1))%>%                   #only do the regression for regions that have 5 data points
-          do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
-            summarize(rgn_id = rgn_id,
-                      score = coef(mdl)['year'] * lag_win)%>%
-        ungroup() %>%
-        full_join(bhi_rgn, .,by="rgn_id")%>%  #all regions now listed, have NA for trend #should this stay NA?  because a 0 trend is meaningful for places with data
-        mutate(score = round(score, 2),
-               dimension = "trend") %>%
-        select(region_id = rgn_id, dimension, score) %>%
-        data.frame()
-
+  eco_trend = layers$data[['eco_trend']] %>%
+    mutate(dimension = 'trend') %>%
+    select(-layer)
 
   ## create scores and rbind to other goal scores
-  scores = eco_status %>%
-    bind_rows(.,eco_trend) %>%
-    mutate(goal='ECO')
+  scores = rbind(eco_status, eco_trend) %>%
+    mutate(goal='ECO') %>%
+    select(region_id = rgn_id,
+           score,
+           dimension,
+           goal)
 
    return(scores)
 
@@ -1040,34 +1058,23 @@ TRA = function(layers){
   ## Trash
   #####----------------------######
 
-  ## UDPATE 11May2016 - Jennifer Griffiths - TRA status included
-
-  ## TO DO
-  ## Solve how to deal with no TRA trend for TRA future status and for overall CW trend
-
+  ## UPDATE 14NOV2016 by Ning Jiang
   ## Status calcuated in prep file
   ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
 
-  ## Read in csv to test
-  #cw_tra_score = read.csv('~github/bhi/baltic2015/layers/po_trash_bhi2015.csv')
+  tra_status = layers$data[['cw_tra_status']] %>%
+    select(-layer,
+           region_id = rgn_id) %>%
+    mutate(dimension = 'status')
 
-  cw_tra_status = layers$data[['cw_tra_status']] %>%
-    select(-layer)
-
-  ## no TRA trend
-  ## this is a problem - need to solve. 7 July 2016
-  ##If is NA, no future status is calculated. If is zero, is problematic for overal CW trend.
-
+  tra_trend = layers$data[['cw_tra_trend']] %>%
+    select(-layer,
+           region_id = rgn_id) %>%
+    mutate(dimension = 'trend')
 
   ## create scores variable
-  scores = cw_tra_status %>%
-    mutate(dimension= "status",
-           goal = 'TRA') %>%
-    dplyr::select(goal,
-                  dimension,
-                  region_id = rgn_id,
-                  score) %>%
-    arrange(dimension,region_id)
+  scores = rbind(tra_status, tra_trend) %>%
+    mutate(goal = 'TRA')
 
   return(scores)
 } ## END TRA function
