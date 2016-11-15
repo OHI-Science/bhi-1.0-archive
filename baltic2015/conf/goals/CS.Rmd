@@ -1,6 +1,6 @@
 ### Goal Description
 
-The Carbon Storage goal captures the ability of the coastal habitats to remove carbon given their carbon uptake rate and health conditions. A score of 100 means all habitats that contribute to carbon removal are still intact or have been restored and they can function to their full carbon burial potential. Highly productive coastal wetland ecosystems or seagrass store substantially large amount of carbon have the highest sequestration rates of any habitats on earth. They are also threatened by under-regulated coastal development but are amenable to restoration and conservation efforts. **For the BHI we used seagrass as an indicator for carbon storage. However, due to data limitions, the Carbon Storage goal was assigned as NA.**   
+The Carbon Storage goal captures the ability of the coastal habitats to remove carbon given their carbon uptake rate and health conditions. A score of 100 means all habitats that contribute to carbon removal are still intact or have been restored and they can function to their full carbon burial potential. Highly productive coastal wetland ecosystems or seagrass store substantially large amount of carbon have the highest sequestration rates of any habitats on earth. They are also threatened by under-regulated coastal development but are amenable to restoration and conservation efforts. **For the BHI we planned to use seagrass as an indicator for carbon storage. However, due to data limitions, the Carbon Storage goal was assigned as NA.**   
 
 
 ### Model & Data
@@ -8,14 +8,15 @@ The Carbon Storage goal captures the ability of the coastal habitats to remove c
 We planned to use seagrass data (*Zostera* species) in the Baltic Sea. 
 
 - [Data were downloaded from the HELCOM Marine Spatial Planning Map Service](http://maps.helcom.fi/website/msp/index.html) > select Marine Spatial Planning - Ecology - Ecosystem Health status  
-Data layer - "Zostera Meadows" [Metadata link](http://maps.helcom.fi/website/getMetadata/htm/All/Zostera%20meadows.htm).*  
+- [Data layer - "Zostera Meadows" Metadata](http://maps.helcom.fi/website/getMetadata/htm/All/Zostera%20meadows.htm)  
 
-*The data structure at the moment is based on point data where observations are accompanies by either "dense" or "sparse." Therefore the spatial extent of the seagrass meadows is unclear and cannot be used for the BHI goal calculation.* 
+*Although these are saved as spatial data, observations are point data, accompanied by either "dense" or "sparse." Therefore the spatial extent of the seagrass meadows is unclear and cannot be used for the BHI goal calculation.* 
 
-*Related publications
-[Boström et al 2014](http://onlinelibrary.wiley.com/doi/10.1002/aqc.2424/abstract).*  
+Related publications: 
 
-*[HELCOM Red List Biotope Information Sheet](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)*  
+- *[Boström et al 2014](http://onlinelibrary.wiley.com/doi/10.1002/aqc.2424/abstract).*  
+
+- *[HELCOM Red List Biotope Information Sheet](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)*  
 
 
 ### Reference points
@@ -23,9 +24,12 @@ Data layer - "Zostera Meadows" [Metadata link](http://maps.helcom.fi/website/get
 *Not relevant yet.*
 
 
-### Other considerations for _OHI-BHI 2.0_
+### Considerations for *BHI 2.0*
+
 *Other spatial data sources are currently explored.* 
 
-*link to [prep files](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CS/cs_prep.md)*
+### Other information
+
+
 
 *external advisors/goalkeepers: Christoffer Boström and Markku Viitasalo.*

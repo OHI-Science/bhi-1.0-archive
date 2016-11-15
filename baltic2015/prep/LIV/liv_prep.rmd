@@ -10,28 +10,9 @@ params:
 
 ## 1. Background
 
-### 1.1 Goal Description
+```{r, child='../../conf/goals/LIV.Rmd', results='asis', echo=FALSE}
+```
 
-This sub-goal describes livelihood quantity and quality for people living on the coast.  
-Ideally, this sub-goal would speak to the quality and quantity of marine jobs in an area. It would encompass all the marine sectors that supply jobs and wages to coastal communities, incorporating information on the sustainability of different sectors while also telling about the working conditions and job satisfaction. (Read more about this goal [here](http://ohi-science.org/goals/#livelihoods-and-economies))
-
-Due to a lack of sector-specific employment information in the Baltic regions, we used overall employment rate in the Baltic coastal regions to represent ocean-dependent livelihood.  
-
-### 1.2 Model & Data 
-
-Employment rate data was extracted from NUTS2 employment to substitute Baltic regional employment data, and compare that with the country-level employment rate. 
-
-### 1.3 Reference points 
-
-110% of the highest coastal/national employment rate ratio in the most recent five years. 
-
-### 1.4 Other considerations for _OHI-BHI 2.0_
-
-Regions 19, 22 , 30, and 33 have NA status and trend. 
-
-Russian regions have NA status because no regional data (19,22,33)
-
-Regions with no coast line have no status because not joined to a NUTS region (30)
 
 ## 2. Data
 

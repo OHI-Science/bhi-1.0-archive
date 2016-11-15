@@ -2,10 +2,11 @@ Biodiversity (BD) Data Preparation
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model & Data](#model-data)
-    -   [1.3 Reference points](#reference-points)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 Data sources and information for checklist data](#data-sources-and-information-for-checklist-data)
     -   [2.2 Data sources and information for HELCOM spatial data](#data-sources-and-information-for-helcom-spatial-data)
@@ -40,24 +41,26 @@ Biodiversity (BD) Data Preparation
     -   [7. Data layer considerations / concerns](#data-layer-considerations-concerns)
         -   [7.1 Aquatic insects](#aquatic-insects)
     -   [TO DO](#to-do)
-    -   [Explore using Global data](#explore-using-global-data)
+    -   [Explore using Global Trend data](#explore-using-global-trend-data)
 
 1. Background
 -------------
 
-### 1.1 Goal Description
+### Goal Description
 
-We care about species biodiversity because "people value biodiversity in particular for its existence value. The risk of species extinction generates great emotional and moral concern for many people."
+People value biodiversity in particular for its existence value. The risk of species extinction generates great emotional and moral concern for many people.
 
-### 1.2 Model & Data
+### Model & Data
 
-HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria. Species were assigned a *threat category* (ranging from "extinct" to "least concern") and assigned a weight. Goal score is the average weight of all species assessed.
+HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria. Species were assigned a *threat category* (ranging from "extinct" to "least concern") and assigned a weight. The goal score is the average weight of all species assessed.
 
-### 1.3 Reference points
+### Reference points
 
-Reference point is when all species are in the "least concern" category and score of 100 is achieved. The lower cut-off point when 75% of species are extinct and score is 0.
+The target is for all species are in the "least concern" category; this will produce a score of 100. The lower cut-off point when 75% of species are extinct and score is 0.
 
-### 1.4 Other considerations for *OHI-BHI 2.0*
+### Considerations for *BHI 2.0*
+
+### Other information
 
 2. Data
 -------
@@ -296,6 +299,11 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
+```
+
+    ## Warning: package 'ggplot2' was built under R version 3.3.2
+
+``` r
 dir_spp    = file.path(dir_prep, 'SPP')
 
 ## add a README.md to the prep directory
@@ -1044,7 +1052,7 @@ ggplot(shared_species_dist_n, aes(x=taxa_group, y=n, fill=helcom_category))+
   ggtitle("Count of species in each IUCN category")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 ``` r
 ## Count of species not by category
@@ -1059,7 +1067,7 @@ ggplot(shared_species_dist_n_no_category, aes(x=taxa_group, y=n))+
   ggtitle("Count of species by taxa group in each basin")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-2.png)
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-2-2.png)
 
 ``` r
 ## SAVE for visualize
@@ -1098,7 +1106,7 @@ ggplot(filter(shared_species_dist_n, taxa_group=="invert"))+
   ggtitle("Count of Invert species in each IUCN category by Basin")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-3.png)
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-2-3.png)
 
 ``` r
 ## limit the number of invert basins
@@ -1111,7 +1119,7 @@ ggplot(data_filtered_plot)+
   ggtitle("Count of Invert species in each IUCN category Northern basins")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-4.png)
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-2-4.png)
 
 ``` r
 #macrophytes
@@ -1122,7 +1130,7 @@ ggplot(filter(shared_species_dist_n, taxa_group=="macrophytes"))+
   ggtitle("Count of macrophytes species in each IUCN category by Basin")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-5.png)
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-2-5.png)
 
 ``` r
 #fish
@@ -1133,7 +1141,7 @@ ggplot(filter(shared_species_dist_n, taxa_group=="fish"))+
   ggtitle("Count of fish species in each IUCN category by Basin")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-6.png)
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-2-6.png)
 
 ``` r
 #mammals
@@ -1144,7 +1152,7 @@ ggplot(filter(shared_species_dist_n, taxa_group=="mammals"))+
   ggtitle("Count of mammals species in each IUCN category by Basin")
 ```
 
-![](spp_prep_files/figure-markdown_github/unnamed-chunk-1-7.png)
+![](spp_prep_files/figure-markdown_github/unnamed-chunk-2-7.png)
 
 ### 4.6.2 Export shared\_species\_dist object
 
@@ -1699,8 +1707,8 @@ TO DO
 3.  check to see if any invasives included in the species list
 4.  How to calculate a trend?
 
-Explore using Global data
--------------------------
+Explore using Global Trend data
+-------------------------------
 
 ``` r
 rgn_id_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-webapps/dev/custom/bhi/sc_studies_custom_bhi.csv')
@@ -1709,38 +1717,43 @@ rgn_id_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-webapps
 
 bd_status_gl <- read_csv('https://rawgit.com/OHI-Science/ohi-global/draft/eez2016/scores.csv'); head(bd_status_gl)
 
+bd_status_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez2016/scores.csv'); head(bd_status_gl)
+
+
 # filter BHI EEZs
 
 bd_scores_bhi <- bd_status_gl %>% 
   filter(goal == 'BD', 
-         dimension %in% c('status', 'trend')) %>% 
+         dimension %in% 'trend') %>% 
   dplyr::rename(gl_rgn_id = region_id) %>%
   left_join(rgn_id_gl %>%
               select(gl_rgn_id,
                      gl_rgn_name), by = 'gl_rgn_id') %>%
   filter(gl_rgn_id %in% rgn_id_gl$gl_rgn_id) %>%
   arrange(gl_rgn_name) %>%
-  select(gl_rgn_name, gl_rgn_id, dimension, score)
+  select(country = gl_rgn_name, score)
 
 as.data.frame(bd_scores_bhi)
 
-#    gl_rgn_name gl_rgn_id dimension score
-# 1      Denmark       175    status 90.95
-# 2      Denmark       175     trend -0.03
-# 3      Estonia        70    status 93.39
-# 4      Estonia        70     trend -0.03
-# 5      Finland       174    status 90.34
-# 6      Finland       174     trend -0.12
-# 7      Germany       176    status 86.67
-# 8      Germany       176     trend  0.00
-# 9       Latvia        69    status 82.33
-# 10      Latvia        69     trend -0.08
-# 11   Lithuania       189    status 81.20
-# 12   Lithuania       189     trend -0.19
-# 13      Poland       178    status 77.50
-# 14      Poland       178     trend -0.21
-# 15      Russia        73    status 95.81
-# 16      Russia        73     trend -0.07
-# 17      Sweden       222    status 89.41
-# 18      Sweden       222     trend -0.05
+#   gl_rgn_name gl_rgn_id dimension score
+# 1     Denmark       175     trend -0.03
+# 2     Estonia        70     trend -0.03
+# 3     Finland       174     trend -0.12
+# 4     Germany       176     trend  0.00
+# 5      Latvia        69     trend -0.08
+# 6   Lithuania       189     trend -0.19
+# 7      Poland       178     trend -0.21
+# 8      Russia        73     trend -0.07
+# 9      Sweden       222     trend -0.05
+
+# assign bhi id to country scores 
+bhi_country_lookup <- read_csv2(file.path(dir_prep, "bhi_basin_country_lookup.csv")) %>% 
+  dplyr::select(country = rgn_nam, rgn_id = BHI_ID)
+
+bd_trend = full_join(bd_scores_bhi, bhi_country_lookup, by = "country") %>% 
+  select(rgn_id, score) %>% 
+  mutate(rgn_id = as.integer(rgn_id)) %>%
+  complete(rgn_id = full_seq(c(1,42), 1))
+
+write_csv(bd_trend, file.path(dir_layers, "bd_spp_trend_scores_bhi2015.csv"))
 ```

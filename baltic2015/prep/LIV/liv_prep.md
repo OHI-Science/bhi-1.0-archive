@@ -2,10 +2,11 @@ Livelihoods (LIV) Subgoal Data Preparation
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model & Data](#model-data)
-    -   [1.3 Reference points](#reference-points)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 NUTS0 (country) and NUTS2 region Employment rate](#nuts0-country-and-nuts2-region-employment-rate)
     -   [2.2 Russian data](#russian-data)
@@ -41,28 +42,38 @@ Livelihoods (LIV) Subgoal Data Preparation
 1. Background
 -------------
 
-### 1.1 Goal Description
+### Goal Description
 
-This sub-goal describes livelihood quantity and quality for people living on the coast.
-Ideally, this sub-goal would speak to the quality and quantity of marine jobs in an area. It would encompass all the marine sectors that supply jobs and wages to coastal communities, incorporating information on the sustainability of different sectors while also telling about the working conditions and job satisfaction. (Read more about this goal [here](http://ohi-science.org/goals/#livelihoods-and-economies))
+The Livelihoods sub-goal describes livelihood quantity and quality for people living on the coast. Livelihoods includes the number of jobs in different marine related sectors. Ideally, this sub-goal would speak to the quality and quantity of marine jobs in an area. It would encompass all the marine sectors that supply jobs and wages to coastal communities, incorporating information on the sustainability of different sectors while also telling about the working conditions and job satisfaction.
 
-Due to a lack of sector-specific employment information in the Baltic regions, we used overall employment rate in the Baltic coastal regions to represent ocean-dependent livelihood.
+<!---
+Due to a lack of sector-specific employment information, **for the BHI we used overall employment rate in the Baltic coastal regions to represent ocean-dependent livelihood.**  
+--->
+### Model & Data
 
-### 1.2 Model & Data
+Data for each country were downloaded from the [EU-Study on Blue Growth](https://webgate.ec.europa.eu/maritimeforum/node/3550), Maritime Policy and the EU Strategy for the Baltic Sea Region” identified the potential for Blue Growth in each of the EU Member States (MS) of the Baltic Sea Region (BSR) and at sea basin level.
 
-Employment rate data was extracted from NUTS2 employment to substitute Baltic regional employment data, and compare that with the country-level employment rate.
+<!---Employment rate data was extracted from NUTS2 employment to substitute Baltic regional employment data, and compare that with the country-level employment rate. 
+--->
+### Reference points
 
-### 1.3 Reference points
+*to be determined*
 
-110% of the highest coastal/national employment rate ratio in the most recent five years.
+<!---
+110% of the highest coastal/national employment rate ratio in the most recent five years. 
+--->
+### Considerations for *BHI 2.0*
 
-### 1.4 Other considerations for *OHI-BHI 2.0*
-
-Regions 19, 22 , 30, and 33 have NA status and trend.
+<!---
+Regions 19, 22 , 30, and 33 have NA status and trend. 
 
 Russian regions have NA status because no regional data (19,22,33)
 
 Regions with no coast line have no status because not joined to a NUTS region (30)
+--->
+### Other information
+
+*external advisors/goalkeepers: Martin Quaas and Wilfried Rickels.*
 
 2. Data
 -------
@@ -184,6 +195,11 @@ These issues were manually fixed below.
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 source('~/github/bhi/baltic2015/prep/common.r')
+```
+
+    ## Warning: package 'ggplot2' was built under R version 3.3.2
+
+``` r
 dir_liv    = file.path(dir_prep, 'LIV')
 
 ## add a README.md to the prep directory 

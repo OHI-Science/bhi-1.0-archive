@@ -2,10 +2,11 @@ Economies (ECO) Subgoal Data Preparation
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model & Data](#model-data)
-    -   [1.3 Reference points](#reference-points)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 BHI Regional Data](#bhi-regional-data)
     -   [2.2 Country Level data](#country-level-data)
@@ -45,23 +46,33 @@ Economies (ECO) Subgoal Data Preparation
 1. Background
 -------------
 
-### 1.1 Goal Description
+### Goal Description
 
-Economies captures the economic value associated with marine industries using revenue from marine sectors. Due to a lack data from specific sectors, here the goal is measured by per capita GDP of each region, relative to the national per capita GDP.
+The Economies goal captures the economic value associated with marine industries using revenue from marine sectors. It is composed of a single component, revenue. <!--- Due to a lack data from specific sectors, **for the BHI, this goal is measured by per capita GDP of each region, relative to the national per capita GDP.** --->
 
-### 1.2 Model & Data
+### Model & Data
 
-Model compares per capita GDP of each region to the national per capita GDP. Both [BHI regional GDP](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp) data and [natinoal GDP](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp) data (in *millions of Euros*) were downloaded from Eurostat database.
+Data for each country were downloaded from the [EU-Study on Blue Growth](https://webgate.ec.europa.eu/maritimeforum/node/3550), Maritime Policy and the EU Strategy for the Baltic Sea Region” identified the potential for Blue Growth in each of the EU Member States (MS) of the Baltic Sea Region (BSR) and at sea basin level.
 
-### 1.3 Reference points
+<!---
+Model compares per capita GDP of each region to the national per capita GDP. Both [BHI regional GDP](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp) data and [natinoal GDP](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp) data (in _millions of Euros_) were downloaded from Eurostat database. 
+--->
+### Reference points
 
-Reference point is 110% of the highest regional/national GDP per capita within the last 5 years.
+*to be determined* <!---
+The reference point is 110% of the highest regional/national GDP per capita within the last 5 years. 
+--->
 
-### 1.4 Other considerations for *OHI-BHI 2.0*
+### Considerations for *BHI 2.0*
 
-In this assessment, GDP used is for entire NUTS3, but divided among populations along a 25km buffer along the shore.
+<!---
+In this assessment, GDP used is for entire NUTS3, but divided among populations along a 25km buffer along the shore. 
 
-Population data was not extracted for the entire NUTS3 area, only for the buffer area. Therefore, the entire GDP for the NUTS3 is allocated among BHI regions, rather than only the GDP associated with the population in the buffer.
+Population data was not extracted for the entire NUTS3 area, only for the buffer area.  Therefore, the entire GDP for the NUTS3 is allocated among BHI regions, rather than only the GDP associated with the population in the buffer.
+--->
+### Other information
+
+*external advisors/goalkeepers: Martin Quaas and Wilfried Rickels.*
 
 2. Data
 -------
@@ -212,6 +223,11 @@ No GDP data for the following German NUTS3 regions: DE80H, DE805,DE80D, DE801,DE
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 source('~/github/bhi/baltic2015/prep/common.r')
+```
+
+    ## Warning: package 'ggplot2' was built under R version 3.3.2
+
+``` r
 dir_eco = file.path(dir_prep, 'ECO')
 
 ## add a README.md to the prep directory
