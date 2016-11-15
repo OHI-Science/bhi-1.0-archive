@@ -262,16 +262,6 @@ ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
 
 ```
 
-#### 4.5.3 model 2015 waste
-```{r model 2015 waste}
-## modeled waste 2015
-
-modeled_waste_2015 = eur_rus %>% 
-  dplyr::select(country, modeled_waste_2010, modeled_waste_2025) %>% 
-  mutate(modeled_waste_2015 = modeled_waste_2010 + 1/3 * (modeled_waste_2025 - modeled_waste_2010)) 
-
-
-```
 
 
 <!-- ### 4.6 Plot exploring ref point as max of Europe (including Russia) in 2010 v. 2025 -->
@@ -317,7 +307,7 @@ modeled_waste_2015 = eur_rus %>%
 ```{r explore status 2015}
 
 ## scores by country
-scores_by_country = modeled_waste_2015 %>% 
+scores_by_country = modeled_waste %>% 
     mutate(ref_point = 37566,  # "max trash for 2010 is 37566 (Russia)"
            score_2010 = (1 - pmin(1, modeled_waste_2010/ref_point))*100, 
            score_2015 = (1 - pmin(1, modeled_waste_2015/ref_point))*100 ) %>% 
@@ -354,12 +344,33 @@ ggplot(scores_by_bhi_plot, aes(x = rgn_id, y = score, fill = year)) +
 
   
 # save as CW-TRA data layer
-scores_TRA = scores_by_bhi %>% 
+TRA_status = scores_by_bhi %>% 
   dplyr::select(rgn_id, score = score_2015)
 
-write.csv(scores_TRA, '~/github/bhi/baltic2015/layers/cw_trash_bhi2015.csv', row.names=FALSE)
+write.csv(TRA_status, '~/github/bhi/baltic2015/layers/cw_trash_status_scores_bhi2015.csv', row.names=FALSE)
 
 ```
+
+## 4.8 Trend calculation
+
+Based on linear model of status scores in 2010 and 2015.  
+
+```{r}
+
+TRA_trend = scores_by_bhi %>% 
+  gather(year, score, 2:3) %>% 
+  mutate(year = substr(year, 7, 10)) %>% 
+  group_by(rgn_id) %>% 
+  summarize(trend_score = round((score[year == 2015] - score[year == 2010])/5 * 0.05, 2)) %>% 
+  # NOT used: could not select coefficient of year from linear model 
+  # do(lmd = lm(score ~ year, data = .)) %>% 
+  # mutate(trend_score = coef(lmd)[['year']])
+  dplyr::select(rgn_id, score = trend_score)
+
+write_csv(TRA_trend, file.path(dir_layers, 'cw_tra_trend_scores_bhi2015.csv'))
+
+```
+
 
 ## 5. Save as Pollution Pressures layer
 
