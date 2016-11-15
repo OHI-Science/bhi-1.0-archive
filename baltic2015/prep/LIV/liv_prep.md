@@ -34,7 +34,9 @@ Livelihoods (LIV) Subgoal Data Preparation
     -   [8.4 Employment data for EU transformed from percent to number of people using 2005 population data for all years](#employment-data-for-eu-transformed-from-percent-to-number-of-people-using-2005-population-data-for-all-years)
     -   [8.5 Short Danish timeseries](#short-danish-timeseries)
     -   [9. Update region assignment](#update-region-assignment)
--   [10. Alternative data and Status calculation - Not used](#alternative-data-and-status-calculation---not-used)
+-   [10. Alternative data and Status calculation - Used for Status for now](#alternative-data-and-status-calculation---used-for-status-for-now)
+    -   [10.1 Trial 1 - not incorporated](#trial-1---not-incorporated)
+    -   [10.2 Trial 2 - Used for LIV status](#trial-2---used-for-liv-status)
 
 1. Background
 -------------
@@ -820,7 +822,7 @@ liv_status = liv_status_all_years %>%
   as.data.frame() %>% 
   complete(rgn_id = full_seq(rgn_id, 1)) # fill in the missing regions with status score of NA
 
-write_csv(liv_status, file.path(dir_layers, "liv_status_scores_bhi2015.csv"))
+# write_csv(liv_status, file.path(dir_layers, "liv_status_scores_bhi2015.csv"))
 
 
 ### old code: 
@@ -1053,8 +1055,10 @@ data_nuts2 = nuts2@data %>%
 write_csv(data_nuts2, file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_udpated_9.16.csv'))
 ```
 
-10. Alternative data and Status calculation - Not used
-------------------------------------------------------
+10. Alternative data and Status calculation - Used for Status for now
+---------------------------------------------------------------------
+
+### 10.1 Trial 1 - not incorporated
 
 The [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) identified the potential for Blue Growth in each of the EU Member States of the Baltic Sea Region, and also provided detailed marine revenue and employment by sector and in each BHI country. Below is a trial to incorporate these data to LIV calculation, while using the same goal model.
 
@@ -1106,4 +1110,29 @@ employ_comp
 # # compare coastal and national pop 
 # pop_comp = full_join(coast_pop, nat_pop_2005) %>% 
 #   mutate(ratio = coast_pop/pop_2005) 
+```
+
+### 10.2 Trial 2 - Used for LIV status
+
+We downloaded employment data by sector on the country level - more detailed data than Trial 1 . Saved in `prep/LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv`.
+
+Reference point is set at 5% growth by 2020.
+
+``` r
+blue_growth_employ <- read_csv(file.path(dir_liv, 'liv_data_database/BHI_employ_revenue_by_country_2010.csv')) %>% 
+  filter(!is.na(employment)) %>% 
+  data.frame(.) %>% 
+  select(country, employment) %>% 
+  group_by(country) %>% 
+  summarize(employ = sum(as.numeric(employment))*1000)
+
+liv_status <- blue_growth_employ %>% 
+  mutate(ref_point = employ*1.05, 
+         score = employ/ref_point) %>% 
+  full_join(bhi_lookup, by = 'country') %>% 
+  select(rgn_id, score) 
+
+# 19, 22, 33 have a score of NA because there was no data on Russia employment. 
+
+write_csv(liv_status, file.path(dir_layers, "liv_status_scores_bhi2015.csv"))
 ```
