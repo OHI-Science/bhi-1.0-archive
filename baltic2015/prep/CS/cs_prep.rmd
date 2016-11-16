@@ -10,7 +10,7 @@ params:
 
 ## 1. Background
 
-```{r, child='../../conf/goals/NP.Rmd', results='asis', echo=FALSE}
+```{r, child='../../conf/goals/CS.Rmd', results='asis', echo=FALSE}
 ```
 
 ## 2. Data 
