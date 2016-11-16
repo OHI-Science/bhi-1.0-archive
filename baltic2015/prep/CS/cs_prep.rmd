@@ -173,6 +173,8 @@ cs_with_wt = cs_bhi_data %>%
 
 ## Explore Global CS scores for Baltic regions
 
+We decided not to use this approach as Global CS scores could be misleading as either 0 or 100. We will leave CS scores as NA's instead to highlight the missing data.  
+
 ```{r, eval=FALSE}
 
 rgn_id_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-webapps/dev/custom/bhi/sc_studies_custom_bhi.csv')
