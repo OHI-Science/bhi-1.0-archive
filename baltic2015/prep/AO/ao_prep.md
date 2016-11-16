@@ -2,10 +2,11 @@ Artisanal Opportunity (AO) Goal Data Prep
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model & Data](#model-data)
-    -   [1.3 Reference points](#reference-points)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. Data](#data)
     -   [2.1 Data Source](#data-source)
     -   [2.2 Data locations](#data-locations)
@@ -34,30 +35,30 @@ Artisanal Opportunity (AO) Goal Data Prep
 1. Background
 -------------
 
-<!-- To be added later -->
-<!-- # ```{r, results='asis', echo=FALSE} -->
-<!-- # cat(readLines('~/github/bhi/baltic2015/conf/goals/ao.md')) -->
-<!-- # ``` -->
-### 1.1 Goal Description
+### Goal Description
 
-Artisanal fishing, often also called small-scale fishing, provides a critical source of food, nutrition, poverty alleviation and livelihood opportunities for many people around the world, in particular in developing nations. **This goal measure whether people who need to fish on a small, local scale have the opportunity to do so.** It has three sub-components: *stock, access, and need*. For BHI, we focus on the *stock* sub-component and will use this as a proxy for the entire goal.
+Artisanal fishing, often also called small-scale fishing, provides a critical source of food, nutrition, poverty alleviation and livelihood opportunities for many people around the world, in particular in developing nations. This goal measure whether people who need to fish on a small, local scale have the opportunity to do so. It has three sub-components: stock, access, and need. A score of 100 means the country or region is meeting the needs of artisanal fishermen or communities by implementing institutional supports, providing access to near-shore water, and maintaining the health of targeted species.
 
-### 1.2 Model & Data
+**For the BHI, we focus on the *stock* sub-component and will use this as a proxy for the entire goal.**
 
-AO model assesses the health of fish stocks, represented by the mean of two Core Indicators for stock abundance prepared by HELCOM:
+### Model & Data
+
+The AO model assesses the health of fish stocks, represented by the mean of two Core Indicators for stock abundance prepared by HELCOM:
 
 -   [HELCOM Core Indicator Abundance of coastal fish key functional groups](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-coastal-fish-key-functional-groups/) and
--   [HELCOM Core Indicator Abundance of key coastal fish species](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species))
+-   [HELCOM Core Indicator Abundance of key coastal fish species](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species)
 
 Each of the indicators was then scaled between 0 and 1.
 
-### 1.3 Reference points
+### Reference points
 
-Reference point was the maximum possible good environmental status (value=1).
+Reference point was the maximum possible good environmental status (value = 1).
 
-### 1.4 Other considerations for *OHI-BHI 2.0*
+### Considerations for *BHI 2.0*
 
 Stock was one component of the AO goal. Model could be updated with parameters representing access and need of artisanal fishing opportunities in the future.
+
+### Other information
 
 2. Data
 -------
@@ -908,7 +909,7 @@ ggplot(slope3) +
   ggtitle("Mean slope by basin")
 ```
 
-![](ao_prep_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](ao_prep_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 ``` r
 ## new object, only basin mean
