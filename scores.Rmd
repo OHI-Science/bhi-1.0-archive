@@ -11,7 +11,13 @@ output:
 source("./_site.R")
 ```
 
-Scores displayed below are based on template data that were extracted from the global assessment. These scores will update when data layers are modified.
+These figures represent Baltic Health Index (BHI) scores as reported for different regions.  
+
+Scores were calculated for 42 BHI regions and aggregated (using a weighted average) to create an overall score for the Baltic. Additionally, there are 9 EEZ aggregated regions and 17 SUBBASIN aggregated regions. 
+
+Additional figures are within the [`BHI_regions`](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/reports/figures/BHI_regions), [`EEZ`](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/reports/figures/EEZ) and [`SUBBASIN`](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/reports/figures/SUBBASIN) folders, respectively.
+
+----
 
 ```{r plot flowers}
 redo_flowers = F
@@ -28,7 +34,7 @@ regions = read_csv(regions_csv) # View(regions)
 goals   = read_csv(goals_csv)   # View(goals)
 
 # prep
-dir.create('images/flowers', showWarnings = F)
+# dir.create('images/flowers', showWarnings = F) #this doesn't get used
 regions = bind_rows(
   data_frame(                # order regions to start with whole study_area
     rgn_id = 0,
