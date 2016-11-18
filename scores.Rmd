@@ -34,7 +34,7 @@ regions = read_csv(regions_csv) # View(regions)
 goals   = read_csv(goals_csv)   # View(goals)
 
 # prep
-# dir.create('images/flowers', showWarnings = F) #this doesn't get used
+# dir.create('images/flowers', showWarnings = F) #this doesn't get used ## JSL TODO: instead of creating these new images, pull from the draft's /figures folder. And have all images deleted before rebuilding this page (they aren't regenerated if they are there.
 regions = bind_rows(
   data_frame(                # order regions to start with whole study_area
     rgn_id = 0,
