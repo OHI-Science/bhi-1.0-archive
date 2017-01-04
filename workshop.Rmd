@@ -1,0 +1,13 @@
+---
+title: "Workshop"
+---
+
+```{r setup, echo=F, warning=FALSE, message=F}
+source("./_site.R")
+```
+
+Agenda
+
+Link to talk
+
+Etc
