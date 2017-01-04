@@ -1,5 +1,9 @@
 ---
 title: "Workshop"
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, echo=F, warning=FALSE, message=F}
