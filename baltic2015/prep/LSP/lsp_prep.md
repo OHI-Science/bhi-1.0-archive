@@ -2,18 +2,21 @@ Lasting Special Places (LSP) Data Preparation
 ================
 
 -   [1. Background](#background)
-    -   [1.1 Goal Description](#goal-description)
-    -   [1.2 Model & Data](#model-data)
-    -   [1.3 Reference points](#reference-points)
-    -   [1.4 Other considerations for *OHI-BHI 2.0*](#other-considerations-for-ohi-bhi-2.0)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
 -   [2. MPA data](#mpa-data)
     -   [2.1 Shapefiles of MPA areas](#shapefiles-of-mpa-areas)
+    -   [2.2 Updated MPA management status](#updated-mpa-management-status)
+    -   [2.3 Additional data not currently used](#additional-data-not-currently-used)
+    -   [2.4 Other resources](#other-resources)
 -   [3. Goal Model - Status and Trend](#goal-model---status-and-trend)
     -   [3.1.1 Alternative 1](#alternative-1)
-    -   [3.1.2 Alternative 2 (similar to Alt 1 but different weights (w\_i)](#alternative-2-similar-to-alt-1-but-different-weights-w_i)
+    -   [3.1.2 Alternative 2](#alternative-2)
     -   [3.1.3 Alternative 3](#alternative-3)
     -   [3.1.4 Alternative 4](#alternative-4)
-    -   [3.1.4 Status and self-reporting](#status-and-self-reporting)
     -   [3.2 Trend calculation](#trend-calculation)
 -   [4. MPA data prep](#mpa-data-prep)
     -   [4.1 Set-up directories](#set-up-directories)
@@ -34,27 +37,29 @@ Lasting Special Places (LSP) Data Preparation
 1. Background
 -------------
 
-### 1.1 Goal Description
+### Goal Description
 
-Lasting Special Places focuses on those **geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected**. (Read more about this goal [here](http://ohi-science.org/goals/#sense-of-place))
+The Lasting Special Places sub-goal focuses on those geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected. **For the BHI, the designation and management of marine protected areas (MPAs) captures the commitment of a country to preserving areas of biological, aesthetic or ecosystem service value.** The designation of MPAs is also included in international agreements, such as the [Convention on Biodiversity's target](https://www.cbd.int/sp/targets/rationale/target-11/) for the designation of 10% of exclusive economic zones (EEZs) to be in MPAs.
 
-In the Baltic region, the designation and management of marine protected areas (MPAs) captures the commitment of a country to preserving areas of biological, aesthetic or ecosystem service value. The designation of MPAs is also included in international agreements, such as the [Convention on Biodiversity's target](https://www.cbd.int/sp/targets/rationale/target-11/) for the designation of 10% of EEZs to be in MPAs.
+### Model & Data
 
-### 1.2 Model & Data
-
-LSP model assesses the area of MPAs in each country in relation to its EEZs, and their management status. Management status are broken down to three categories and weighted on a 0-1 scale:
+The model assesses the area of MPAs in each country in relation to its EEZs, and their management status. Management status are broken down to three categories and weighted on a 0-1 scale:
 
 -   0.1 = designated
 -   0.4 = designated and partly managed
 -   1.0 = designated and managed
 
-Both MPA area and management status data were downloaded from [HELCOM MPA](http://mpas.helcom.fi) website.
+Both MPA area and management status data were downloaded from the [HELCOM MPA](http://mpas.helcom.fi) website.
 
-### 1.3 Reference points
+### Reference points
 
-Reference point is when 10% of EEZs in a country is designated as MPAs and fully managed.
+The target is for 10% of a country's EEZs is designated as MPAs, and are fully managed.
 
-### 1.4 Other considerations for *OHI-BHI 2.0*
+### Considerations for *BHI 2.0*
+
+### Other information
+
+*external advisors/goalkeepers: Sofia Wikström*
 
 2. MPA data
 -----------
@@ -67,7 +72,7 @@ Downloaded 2 November 2015 last updated by HELCOM on the 27 August 2014 (accordi
 
 Shapefiles also provide an MPA status (e.g. designated or managed)
 
-#### 2.2 Updated MPA management status
+### 2.2 Updated MPA management status
 
 Data were downloaded from the [MPAs tab](http://mpas.helcom.fi/apex/f?p=103:5::::::) on the HELCOM MPA website.
 Downloaded on Downloaded 9 June 2016. Status updates on the website are given for 2016.
@@ -79,9 +84,9 @@ There are three categories of MPA status and each are weighed on a 0-1 scale:
 
 These MPA status levels depend upon the existence of implemented management plans for the MPA areas (see 2.1.3 below for more information).
 
-This status is based upon self-reporting to HELCOM by each country.
+*NOTE*: MPA status is based on self-reporting. If countries differ in their definitions of "managed" or inflate their MPA status, we cannot account for those biases in the data.
 
-#### 2.3 Additional data not currently used
+### 2.3 Additional data not currently used
 
 **Management plan status csv**
 
@@ -93,7 +98,7 @@ There are three levels of management plan status that can be assigned to each MP
 
 A challenge is that each MPA can have multiple management plans associated with it. There is no limit to the number of plans not an ability to assess their relative importance. Different management plans for the same MPA can have different levels of implementation.
 
-#### 2.4 Other resources
+### 2.4 Other resources
 
 [Baltic Sea Environment Proceedings NO. 124B Towards an ecologically coherent network of well-managed Marine Protected Areas](http://www.helcom.fi/lists/publications/bsep124b.pdf).
 
@@ -121,7 +126,9 @@ Reference\_pt\_country = 10% of the area in a country's EEZ is designated as an 
 
 **Problem with this approach, if a country designates more than 10% area but does not fully managed the MPA, can still achieve a score of 100**
 
-#### 3.1.2 Alternative 2 (similar to Alt 1 but different weights (w\_i)
+#### 3.1.2 Alternative 2
+
+Similar to Alt 1 but different weights (w\_i)
 
 Xlsp\_country = sum(w\_i \* MPA area)\_m / Reference\_pt\_country
 
@@ -164,15 +171,11 @@ Reference\_pt\_country = 10% of the area in a country's EEZ is designated as an 
 
 #### 3.1.4 Alternative 4
 
-The same as alternative 2, except with a slightly different weighing scheme for the management levels (w\_i):
+The same as alternative 1 & 2, with a different weighing scheme for the management levels (w\_i):
 
 -   0.1 = designated
 -   0.4 = designated and partly managed
 -   1.0 = designated and managed
-
-#### 3.1.4 Status and self-reporting
-
-MPA status is based on self-reporting. If countries differ in their definitions of "managed" or inflate their MPA status, we cannot account for those biases in the data.
 
 ### 3.2 Trend calculation
 
@@ -222,12 +225,12 @@ Also, get them in the same coordinate reference system for the Baltic.
 The MPA file is in the [LAEA coordinate reference system](http://spatialreference.org/ref/epsg/etrs89-etrs-laea/).
 
     ## OGR data source with driver: ESRI Shapefile 
-    ## Source: "/Volumes/ohi/git-annex/Baltic/BHI_MCG_shapefile", layer: "BHI_MCG_11052016"
+    ## Source: "/home/shares/ohi/git-annex/Baltic/BHI_MCG_shapefile", layer: "BHI_MCG_11052016"
     ## with 42 features
     ## It has 6 fields
 
     ## OGR data source with driver: ESRI Shapefile 
-    ## Source: "/Volumes/ohi/git-annex/Baltic/bhi_MPA", layer: "HELCOM_MPAs"
+    ## Source: "/home/shares/ohi/git-annex/Baltic/bhi_MPA", layer: "HELCOM_MPAs"
     ## with 163 features
     ## It has 14 fields
 
@@ -522,7 +525,7 @@ print( mpa_vs_eez_plot)
 
 Even when a country has many MPAs that are just designated but not managed, it can still achieve a score of 100, is it because the area of MPAs that are "managed" (ie. higher weight) is relatively larger compared to that of the "designated"" (ie. lower weight), and thus have a higher \_weight\*area\_ score?
 
-The plot below compares the total MPA area of each mangement level with the reference point (10% EEZ). The black dots represent 10% EEZ.
+The plot below compares the total MPA area of each management level with the reference point (10% EEZ). The black dots represent 10% EEZ.
 
 ``` r
 area_vs_mgmt_lvl = mpa_mgmt_with_wt %>%
@@ -814,7 +817,8 @@ r.status.4 = mpa_mgmt_with_wt_4 %>%
            full_join(status_by_country_4, 
                      by = 'country') %>% 
            dplyr::select(rgn_id, 
-                         score = status) 
+                         score = status) %>% 
+           mutate(rgn_id = as.integer(rgn_id))
 
 # save as .csv
 write_csv(status_by_country_4, file.path(dir_lsp, 'lsp_status_by_country_year_alt_4.csv'))

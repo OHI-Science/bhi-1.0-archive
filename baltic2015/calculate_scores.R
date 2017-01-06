@@ -52,7 +52,7 @@ rgn_names <- read.csv('spatial/regions_lookup_complete.csv') %>%
 
 ## BHI regions
 rgns <- rgns_complete %>%
-  filter(type %in% c('bhi'))
+  filter(type %in% c('bhi', 'GLOBAL'))
 rgns_to_plot <- rgns$region_id
 
 PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(region_id %in% rgns_to_plot),

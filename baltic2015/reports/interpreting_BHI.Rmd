@@ -14,6 +14,8 @@ The **Baltic Health Index (BHI)** assesses 9 goals: Clean Waters (subgoals: Nutr
 ### Nutrients (subgoal of Clean Waters)
 
 Goal model uses HELCOM's Water Clarity Core Indicator: Mean Summer Secchi (June-September).
+and [Hypoxic area data published by Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Deep water anoxia are defined as O2 level <2 mg⋅L−1. It represents the long-term effects of human activities on nutrient levels and water quality. We used deep water anoxia only for the following basins: Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland.  
+
 
 The reference point is the HELCOM-set target for good environmental status (GES), which is measured in relation to scientifically based and commonly agreed sub-basin-wise target levels.
 

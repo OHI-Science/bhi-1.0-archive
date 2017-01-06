@@ -1,41 +1,62 @@
-cs\_prep
+Carbon Storage (CS) Goal Data Preparation
 ================
 
--   [Carbon Storage (CS) Data prep](#carbon-storage-cs-data-prep)
-    -   [1. Background on Zostera data](#background-on-zostera-data)
-        -   [1.1 Why Zostera data](#why-zostera-data)
-        -   [1.2 Zostera species in the Baltic Sea](#zostera-species-in-the-baltic-sea)
-        -   [1.3 Related publications](#related-publications)
-    -   [2. Data source](#data-source)
-        -   [1.1 Download information](#download-information)
-        -   [2.2 Additional background](#additional-background)
-    -   [3. CS goal model overview](#cs-goal-model-overview)
-        -   [3.1 Status](#status)
-        -   [3.2 Trend](#trend)
-    -   [4. Layer prep](#layer-prep)
-        -   [4.1 Read in data](#read-in-data)
-        -   [4.2 Explore and plot data](#explore-and-plot-data)
-        -   [4.3 Intersect the BHI shapefiles and zostera data](#intersect-the-bhi-shapefiles-and-zostera-data)
-        -   [4.4 Status Calcuation (Can't do... See 4.3 Problem)](#status-calcuation-cant-do...-see-4.3-problem)
+-   [1. Background](#background)
+    -   [Goal Description](#goal-description)
+    -   [Model & Data](#model-data)
+    -   [Reference points](#reference-points)
+    -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
+    -   [Other information](#other-information)
+-   [2. Data](#data)
+    -   [1.1 Download information](#download-information)
+    -   [2.2 Additional background](#additional-background)
+-   [3. CS goal model overview](#cs-goal-model-overview)
+    -   [3.1 Status](#status)
+    -   [3.2 Trend](#trend)
+-   [4. Layer prep](#layer-prep)
+    -   [4.1 Read in data](#read-in-data)
+    -   [4.2 Explore and plot data](#explore-and-plot-data)
+    -   [4.3 Intersect the BHI shapefiles and zostera data](#intersect-the-bhi-shapefiles-and-zostera-data)
+    -   [4.4 Status Calcuation (Can't do... See 4.3 Problem)](#status-calcuation-cant-do...-see-4.3-problem)
+-   [Explore Global CS scores for Baltic regions](#explore-global-cs-scores-for-baltic-regions)
+    -   [Temperary fix: leave all as NA](#temperary-fix-leave-all-as-na)
 
-Carbon Storage (CS) Data prep
-=============================
+1. Background
+-------------
 
-1. Background on Zostera data
------------------------------
+### Goal Description
 
-### 1.1 Why Zostera data
+The Carbon Storage goal captures the ability of the coastal habitats to remove carbon given their carbon uptake rate and health conditions. A score of 100 means all habitats that contribute to carbon removal are still intact or have been restored and they can function to their full carbon burial potential. Highly productive coastal wetland ecosystems or seagrass store substantially large amount of carbon have the highest sequestration rates of any habitats on earth. They are also threatened by under-regulated coastal development but are amenable to restoration and conservation efforts. **For the BHI we planned to use seagrass as an indicator for carbon storage. However, due to data limitions, the Carbon Storage goal was assigned as NA.**
 
-### 1.2 Zostera species in the Baltic Sea
+### Model & Data
 
-### 1.3 Related publications
+We planned to use seagrass data (*Zostera* species) in the Baltic Sea.
 
-[Boström et al 2014](http://onlinelibrary.wiley.com/doi/10.1002/aqc.2424/abstract)
+-   [Data were downloaded from the HELCOM Marine Spatial Planning Map Service](http://maps.helcom.fi/website/msp/index.html) &gt; select Marine Spatial Planning - Ecology - Ecosystem Health status
+-   [Data layer - "Zostera Meadows" Metadata](http://maps.helcom.fi/website/getMetadata/htm/All/Zostera%20meadows.htm)
 
-[HELCOM Red List Biotope Information Sheet](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)
+*Although these are saved as spatial data, observations are point data, accompanied by either "dense" or "sparse." Therefore the spatial extent of the seagrass meadows is unclear and cannot be used for the BHI goal calculation.*
 
-2. Data source
---------------
+Related publications:
+
+-   *[Boström et al 2014](http://onlinelibrary.wiley.com/doi/10.1002/aqc.2424/abstract).*
+
+-   *[HELCOM Red List Biotope Information Sheet](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)*
+
+### Reference points
+
+*Not relevant yet.*
+
+### Considerations for *BHI 2.0*
+
+*Other spatial data sources are currently explored.*
+
+### Other information
+
+*external advisors/goalkeepers: Christoffer Boström and Markku Viitasalo.*
+
+2. Data
+-------
 
 ### 1.1 Download information
 
@@ -187,4 +208,117 @@ cs_with_wt = cs_bhi_data %>%
 
 ``` r
 # DT::datatable(cs_with_wt)
+```
+
+Explore Global CS scores for Baltic regions
+-------------------------------------------
+
+We decided not to use this approach as Global CS scores could be misleading as either 0 or 100. We will leave CS scores as NA's instead to highlight the missing data.
+
+``` r
+rgn_id_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-webapps/dev/custom/bhi/sc_studies_custom_bhi.csv')
+
+### Global CS status and trend scores
+
+cs_status_gl <- read_csv('https://rawgit.com/OHI-Science/ohi-global/draft/eez2016/scores.csv'); head(cs_status_gl)
+
+# filter BHI EEZs
+
+cs_scores_bhi <- cs_status_gl %>% 
+  filter(goal == 'CS', 
+         dimension %in% c('status', 'trend')) %>% 
+  dplyr::rename(gl_rgn_id = region_id) %>%
+  left_join(rgn_id_gl %>%
+              select(gl_rgn_id,
+                     gl_rgn_name), by = 'gl_rgn_id') %>%
+  filter(gl_rgn_id %in% rgn_id_gl$gl_rgn_id) %>%
+  arrange(gl_rgn_name) %>%
+  select(gl_rgn_name, gl_rgn_id, dimension, score)
+
+as.data.frame(cs_scores_bhi)
+ 
+#    gl_rgn_name gl_rgn_id dimension  score
+# 1      Denmark       175    status 100.00
+# 2      Denmark       175     trend     NA
+# 3      Estonia        70    status 100.00
+# 4      Estonia        70     trend   0.50
+# 5      Finland       174    status     NA
+# 6      Finland       174     trend     NA
+# 7      Germany       176    status 100.00
+# 8      Germany       176     trend   0.50
+# 9       Latvia        69    status  50.00
+# 10      Latvia        69     trend   0.00
+# 11   Lithuania       189    status     NA
+# 12   Lithuania       189     trend     NA
+# 13      Poland       178    status  56.40
+# 14      Poland       178     trend   0.00
+# 15      Russia        73    status 100.00
+# 16      Russia        73     trend     NA
+# 17      Sweden       222    status  55.27
+# 18      Sweden       222     trend   0.00 
+
+
+# Global HAB trend 
+hab_trend_gl <- read_csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez2016/layers/hab_trend.csv'); head(hab_trend_gl)
+
+## filter BHI EEZs
+hab_trend_bhi <- hab_trend_gl %>%
+  dplyr::rename(gl_rgn_id = rgn_id) %>%
+  left_join(rgn_id_gl %>%
+              select(gl_rgn_id,
+                     gl_rgn_name), by = 'gl_rgn_id') %>%
+  filter(gl_rgn_id %in% rgn_id_gl$gl_rgn_id) %>%
+  arrange(gl_rgn_name) %>%
+  select(gl_rgn_name, gl_rgn_id, habitat, trend)
+
+as.data.frame(hab_trend_bhi)
+
+#    gl_rgn_name gl_rgn_id          habitat         trend
+# 1      Denmark       175      soft_bottom  0.0479267225
+# 2      Denmark       175      seaice_edge  0.0784982935
+# 3      Denmark       175 seaice_shoreline  0.0384615385
+# 4      Estonia        70        saltmarsh  0.5000000000
+# 5      Estonia        70      soft_bottom  0.0000000000
+# 6      Estonia        70      seaice_edge -0.2884057971
+# 7      Estonia        70 seaice_shoreline -0.5269709544
+# 8      Finland       174      soft_bottom  0.0000000000
+# 9      Finland       174      seaice_edge -0.2682619647
+# 10     Finland       174 seaice_shoreline -0.5802707930
+# 11     Germany       176        saltmarsh  0.5000000000
+# 12     Germany       176      soft_bottom  0.0923876208
+# 13     Germany       176      seaice_edge -0.2184466019
+# 14     Germany       176 seaice_shoreline -0.0362903226
+# 15      Latvia        69        saltmarsh  0.0000000000
+# 16      Latvia        69      soft_bottom  0.0000000000
+# 17      Latvia        69      seaice_edge -0.2435064935
+# 18      Latvia        69 seaice_shoreline -0.3571428571
+# 19   Lithuania       189      soft_bottom  0.0000000000
+# 20   Lithuania       189      seaice_edge -0.6326530612
+# 21   Lithuania       189 seaice_shoreline -0.7058823529
+# 22      Poland       178        saltmarsh  0.0000000000
+# 23      Poland       178      soft_bottom  0.0002250377
+# 24      Poland       178      seaice_edge -1.0000000000
+# 25      Russia        73      soft_bottom  0.0012292280
+# 26      Russia        73      seaice_edge -0.0581167073
+# 27      Russia        73 seaice_shoreline  0.0062767475
+# 28      Sweden       222        saltmarsh  0.0000000000
+# 29      Sweden       222      soft_bottom  0.0017414934
+# 30      Sweden       222      seaice_edge -0.0657894737
+# 31      Sweden       222 seaice_shoreline -0.7022792023
+```
+
+### Temperary fix: leave all as NA
+
+``` r
+cs_status_NA = data.frame(rgn_id = seq(1, 42, by = 1), 
+                          score = NA,
+                          dimension = "status")
+
+write_csv(cs_status_NA, file.path(dir_layers, "cs_status_placeholder_NA.csv"))
+
+cs_trend_NA = data.frame(rgn_id = seq(1, 42, by = 1), 
+                         score = NA,
+                         dimension = "trend")
+
+write_csv(cs_trend_NA, file.path(dir_layers, "cs_trend_placeholder_NA.csv"))
 ```
