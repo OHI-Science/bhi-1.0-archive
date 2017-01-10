@@ -11,7 +11,7 @@
 
 
 
-<title>The Baltic Health Index</title>
+<title>The Baltic Health Index - SITE IN PROGRESS</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,12 +19,11 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="site_libs/highlight/textmate.css"
-      type="text/css" />
-<script src="site_libs/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -152,7 +151,6 @@ $(document).ready(function () {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
-<script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
@@ -208,7 +206,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">The Baltic Health Index</h1>
+<h1 class="title toc-ignore">The Baltic Health Index - SITE IN PROGRESS</h1>
 
 </div>
 
@@ -229,7 +227,7 @@ An Ocean Health Index assessment for the Baltic Sea
 </h2>
 <p class="post-excerpt">
 <!-- Suggested instructions: Add several sentences describing the project here.  -->
-<p>This is a study of the Baltic using the Ocean Health Index framework…I’m adding some text here to test.</p>
+<p>This is a study of the Baltic using the Ocean Health Index framework.</p>
 </p>
 </div>
 <div class="tile">
@@ -251,14 +249,6 @@ The Ocean Health Index (‘OHI’) is a scientific framework to measure how heal
 </div>
 </div>
 
-<footer role="contentinfo" id="site-footer">
-
-<!-- /.bottom-menu -->
-	<p class="copyright">&#169; 2016,
-		created by <a href="http://github.com/bbest">Ben Best</a> and <a href="http://github.com/jules32">Julie Lowndes</a>,
-		powered by <a href="http://www.r-project.org">R</a> + <a href="http://rmarkdown.rstudio.com">RMarkdown</a> +
-	             <a href="http://shiny.rstudio.com">Shiny</a> + <a href="http://github.com">Github</a>.</p>
-</footer>
 
 
 
@@ -267,8 +257,11 @@ The Ocean Health Index (‘OHI’) is a scientific framework to measure how heal
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
 
 

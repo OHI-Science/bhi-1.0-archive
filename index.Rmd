@@ -1,5 +1,5 @@
 ---
-title: "The Baltic Health Index"
+title: "The Baltic Health Index - SITE IN PROGRESS"
 ---
 
 ```{r setup, echo=F, warning=FALSE, message=F}
@@ -20,7 +20,7 @@ source("./_site.R")
 <p class="post-excerpt">
 
 <!-- Suggested instructions: Add several sentences describing the project here.  -->
-This is a study of the `r study_area` using the  Ocean Health Index framework...I'm adding some text here to test.
+This is a study of the `r study_area` using the  Ocean Health Index framework.
 
 
 </p>
