@@ -4,16 +4,16 @@ navbar:
   left:
     - text: "Overview"
       href: overview.html
-    - text: "Explore"
-      href: explore.html
+#    - text: "Explore"
+#      href: explore.html
     - text: "Regions"
       href: regions.html
-    - text: "Data"
+    - text: "Data Layers"
       href: data.html
     - text: "Goals"
       href: goals.html
-    - text: "Scores"
-      href: scores.html
+#    - text: "Scores"
+#      href: scores.html
 output_dir: "."
 output:
   html_document:

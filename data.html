@@ -11,7 +11,7 @@
 
 
 
-<title>Data</title>
+<title>Data Layers</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,12 +22,11 @@
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="site_libs/highlight/textmate.css"
-      type="text/css" />
-<script src="site_libs/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -155,7 +154,6 @@ $(document).ready(function () {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
-<script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
@@ -181,7 +179,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
@@ -240,8 +238,9 @@ div.tocify {
 }
 
 .tocify-subheader .tocify-item {
-  font-size: 0.9em;
-  padding-left: 5px;
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -279,19 +278,13 @@ div.tocify {
   <a href="overview.html">Overview</a>
 </li>
 <li>
-  <a href="explore.html">Explore</a>
-</li>
-<li>
   <a href="regions.html">Regions</a>
 </li>
 <li>
-  <a href="data.html">Data</a>
+  <a href="data.html">Data Layers</a>
 </li>
 <li>
   <a href="goals.html">Goals</a>
-</li>
-<li>
-  <a href="scores.html">Scores</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -305,7 +298,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Data</h1>
+<h1 class="title toc-ignore">Data Layers</h1>
 
 </div>
 
@@ -421,6 +414,21 @@ div.tocify {
 <h2>cw_tra_status</h2>
 <p>Status of Trash</p>
 <p>Status of Trash</p>
+</div>
+<div id="cw_tra_trend" class="section level2">
+<h2>cw_tra_trend</h2>
+<p>Trend of Trash</p>
+<p>Trend of Trash based on status of 2010 and 2015</p>
+</div>
+<div id="eco_status" class="section level2">
+<h2>eco_status</h2>
+<p>Status of eco</p>
+<p>Status of economics based on revenue from different blue sectors from EU’s Blue Growth Report</p>
+</div>
+<div id="eco_trend" class="section level2">
+<h2>eco_trend</h2>
+<p>Trend of eco</p>
+<p>Trend of economics based on GDP per capita in the BHI regions compared with country-level GDP per capita</p>
 </div>
 <div id="fis_bbmsy" class="section level2">
 <h2>fis_bbmsy</h2>
@@ -762,6 +770,11 @@ div.tocify {
 <p>Total coastal nights in accommodation stays</p>
 <p>Total coastal nights in accommodation stays. Data sources: - <a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2&amp;lang=en">tour_occ_nin2</a> and <a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2c&amp;lang=en">Eurostat coastal stays tour_occ_nin2c</a></p>
 </div>
+<div id="tr_status" class="section level2">
+<h2>tr_status</h2>
+<p>Tourism and Recreation status scores</p>
+<p>Status scores calculated based on <a href="https://webgate.ec.europa.eu/maritimeforum/node/3550">Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region</a></p>
+</div>
 <div id="wgi_all" class="section level2">
 <h2>wgi_all</h2>
 <p>Strength of governance indicated with the WGI</p>
@@ -772,14 +785,6 @@ div.tocify {
 </ul>
 </div>
 
-<footer role="contentinfo" id="site-footer">
-
-<!-- /.bottom-menu -->
-	<p class="copyright">&#169; 2016,
-		created by <a href="http://github.com/bbest">Ben Best</a> and <a href="http://github.com/jules32">Julie Lowndes</a>,
-		powered by <a href="http://www.r-project.org">R</a> + <a href="http://rmarkdown.rstudio.com">RMarkdown</a> +
-	             <a href="http://shiny.rstudio.com">Shiny</a> + <a href="http://github.com">Github</a>.</p>
-</footer>
 
 
 </div>
@@ -790,8 +795,11 @@ div.tocify {
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
 
 
