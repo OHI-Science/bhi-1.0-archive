@@ -16,6 +16,7 @@ Economies (ECO) Subgoal Data Preparation
 -   [3. Goal Model](#goal-model)
     -   [3.1 Status Alternative 1](#status-alternative-1)
     -   [3.1.2 Status Alternative 2](#status-alternative-2)
+    -   [3.1.3 Status Alternative 3](#status-alternative-3)
     -   [3.2 Trend](#trend)
 -   [4. Other](#other)
     -   [4.1 Interpreting NA and zero](#interpreting-na-and-zero)
@@ -41,6 +42,13 @@ Economies (ECO) Subgoal Data Preparation
     -   [7.3.5 Plot status](#plot-status)
     -   [7.4 Trend calculation](#trend-calculation)
 -   [8. Status and Trend Calculation - Alternative 2](#status-and-trend-calculation---alternative-2)
+-   [8 Status and Trend calculation - Alternative 2](#status-and-trend-calculation---alternative-2-1)
+    -   [8.1 Status](#status)
+    -   [8.1.3 Which BHI regions have no status](#which-bhi-regions-have-no-status-1)
+    -   [8.1.4 Plot status](#plot-status-1)
+    -   [8.2 Trend calculation](#trend-calculation-1)
+-   [9. Status Calculation - Alternative 3](#status-calculation---alternative-3)
+-   [10. Trend calculation](#trend-calculation-2)
 -   [Appendix: Explore updated NUTS shapefile 22.9.2016](#appendix-explore-updated-nuts-shapefile-22.9.2016)
 
 1. Background
@@ -76,6 +84,10 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 
 2. Data
 -------
+
+[“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) provided country-level, sector-specific revenue data and annual growth rate for the year of 2010 (see 3.1.3 Goal Model - Alternative 3). No Russia data was provided.
+
+The data sources listed below correspond with Status Alt 1 and 2, and were not used eventually.
 
 ### 2.1 BHI Regional Data
 
@@ -142,8 +154,6 @@ Downloaded on 10 June 2016 from Eurostat database: [naida\_10\_pe](http://ec.eur
 
 ### 2.5 Aligning BHI regions with NUTS3 regions and population density
 
-TODO: NEED TO ADD LINK to MARC methods
-
 [NUTS spatial files from Eurostat](http://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts) are available for several different years: 2006, 2010, 2013. 2006 was used to join with BHI shapefile. This led to some NUTS3 naming discrepancies between the shapefile associations and the GDP data, which has been manually corrected in section 5.1.4.
 
 NUTS3 GDP data is joined in the database to the area and population density information associated with that NUTS3 and BHI region.
@@ -160,6 +170,8 @@ NUTS3 GDP data is joined in the database to the area and population density info
 
 3. Goal Model
 -------------
+
+Alternative 3 was chosen as the final model.
 
 ### 3.1 Status Alternative 1
 
@@ -183,9 +195,19 @@ Xeco = (GDP\_per\_cap\_Coastal / GDP\_per\_cap\_Country)\_c / (GDP\_per\_cap\_Co
 
 r = (the highest ratio of the past five years) \* 110%
 
+### 3.1.3 Status Alternative 3
+
+The [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) identified the potential for Blue Growth in each of the EU Member States of the Baltic Sea Region, and also provided detailed marine revenue (in Billion Euros) and employment by sector and in each BHI country. Target is 1.5 % annual growth between 2010 and 2020, as envisioned in the report. Status is calculated for each sector, and goal status is the average of sector status scores.
+
+Sector-specific sata is extracted and saved in `prep/LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv`.
+
+Status = revenue\_per\_country / ref\_revenue\_per\_country
+
+ref\_revenue\_per\_country = revenue\_per\_country \* (101.5% ^10)
+
 ### 3.2 Trend
 
-Trend will be calculated based on the last 5 status years by fitting a linear model.
+The Blue Growth report mentioned in Status Calc - Alt. 3 also reports growth rate for each sector for which revenue was reported. Trend of this goal is the weighted average of the growth rate of each sector by their relative contribution to the total revenue.
 
 4. Other
 --------
@@ -223,11 +245,6 @@ No GDP data for the following German NUTS3 regions: DE80H, DE805,DE80D, DE801,DE
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 source('~/github/bhi/baltic2015/prep/common.r')
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.3.2
-
-``` r
 dir_eco = file.path(dir_prep, 'ECO')
 
 ## add a README.md to the prep directory
@@ -960,8 +977,6 @@ bhi_lookup = read.csv(file.path(dir_eco, "bhi_basin_country_lookup.csv"), sep=";
             select(rgn_nam, BHI_ID) %>%
             dplyr::rename(country= rgn_nam,
                           rgn_id = BHI_ID)
-
-str(bhi_lookup)
 ```
 
 #### 6.6.2 Join BHI region lookup and national GDP data
@@ -1170,14 +1185,16 @@ ggplot(eco_status_calc) +
 ![](eco_prep_files/figure-markdown_github/plot%20eco%20status-2.png)
 
 ``` r
-## plot final year (2013) status
+ ## plot final year (2013) status
 
-ggplot(eco_status) +
-  geom_point(aes(region_id,score), size=2) +
-  ylim(0,100) +
-  ylab("Status score") +
-  xlab("BHI region") +
-  ggtitle("ECO status score in 2013")
+eco_status_plot = ggplot(eco_status) +
+   geom_point(aes(region_id,score), size=2) +
+   ylim(0,100) +
+   ylab("Status score") +
+   xlab("BHI region") +
+   ggtitle("ECO status score in 2013")
+
+print(eco_status_plot)
 ```
 
 ![](eco_prep_files/figure-markdown_github/plot%20eco%20status-3.png)
@@ -1268,7 +1285,7 @@ ggplot(combined_gdp_per_cap) +
   ggtitle("GDP per Capita Ratio - Coastal/National (2009-2013)")
 ```
 
-![](eco_prep_files/figure-markdown_github/status%20alt-1.png)
+![](eco_prep_files/figure-markdown_github/status%20alt%202-1.png)
 
 ``` r
 # choose the most recent year as status 
@@ -1285,7 +1302,7 @@ ggplot(eco_status) +
   ggtitle("ECO Status of each BHI region (year = 2013)")
 ```
 
-![](eco_prep_files/figure-markdown_github/status%20alt-2.png)
+![](eco_prep_files/figure-markdown_github/status%20alt%202-2.png)
 
 ``` r
 #### Trend ####
@@ -1305,7 +1322,199 @@ ggplot(eco_trend) +
   ggtitle('ECO trend score of each BHI region')
 ```
 
-![](eco_prep_files/figure-markdown_github/status%20alt-3.png)
+![](eco_prep_files/figure-markdown_github/status%20alt%202-3.png)
+
+8 Status and Trend calculation - Alternative 2
+----------------------------------------------
+
+### 8.1 Status
+
+#### 8.1.1 Calculate status time series
+
+``` r
+## calculate status
+  eco_statu_calc_2 = inner_join(eco_region, eco_country, by=c("rgn_id","year")) %>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
+  mutate(ratio = rgn_value/cntry_value) %>% #calculate status
+  group_by(rgn_id) %>% 
+  mutate(ref_ratio = max(ratio), 
+  status = ratio/ref_ratio*100) 
+  
+  head(eco_statu_calc_2)
+  dim(eco_statu_calc_2) ## 210 6
+```
+
+#### 8.1.2 Extract most recent year status
+
+``` r
+eco_status = eco_statu_calc_2 %>% 
+              filter(year== max(year)) 
+
+head(eco_status)
+```
+
+### 8.1.3 Which BHI regions have no status
+
+Regions 13,16,19,22,30,32,33 have NA status.
+
+Russian regions have NA status because no regional data (19,22,33)
+
+Regions with no coast line have no status because not joined to a NUTS reion (30)
+
+Regions with missing regional data: 13,16 (from Germany see below)
+
+``` r
+eco_status %>% filter(is.na(status)) #13,16,19,22,30,33
+
+# missing regional data
+eco_statu_calc_2 %>% filter(rgn_id == 13)
+eco_region %>% filter(rgn_id == 13) ## No data for associated German NUTS3 DE80H, DE805, DE80D
+
+eco_statu_calc_2 %>% filter(rgn_id == 16)
+eco_region %>% filter(rgn_id == 16)## no data for associated German NUTS3 DE80F, DE80I
+```
+
+### 8.1.4 Plot status
+
+Status values in the time series are between 0 and 1.
+There are no values for Russia because we do not have regional GDP data.
+Status values for the most recent year (2013 for all regions) are transformed to value between 0 and 100
+
+``` r
+## plot eco status time series
+ggplot(eco_statu_calc_2) +
+  geom_point(aes(year,status)) +
+  facet_wrap(~rgn_id) +
+  ylim(0,1) +
+  ylab("Status") +
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6)) +
+  ggtitle("ECO status time series")
+```
+
+![](eco_prep_files/figure-markdown_github/plot%20eco%20status%202-1.png)
+
+``` r
+## plot eco status time series, less range on y-axis
+ggplot(eco_statu_calc_2) +
+  geom_point(aes(year,status)) +
+  facet_wrap(~rgn_id) +
+  ylim(.8,1) +
+  ylab("Status") +
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        axis.text.y = element_text(size=6)) +
+  ggtitle("ECO status time series - different y-axis range")
+```
+
+![](eco_prep_files/figure-markdown_github/plot%20eco%20status%202-2.png)
+
+``` r
+# ## plot final year (2013) status
+# 
+# eco_status_plot = ggplot(eco_status) +
+#   geom_point(aes(region_id,score), size=2) +
+#   ylim(0,100) +
+#   ylab("Status score") +
+#   xlab("BHI region") +
+#   ggtitle("ECO status score in 2013")
+# 
+# print(eco_status_plot)
+```
+
+### 8.2 Trend calculation
+
+#### 8.2.1 Calculate Trend
+
+This is the trend results we saved to calculate the final OHI ECO score.
+
+``` r
+  ## calculate trend for 5 years (5 data points)
+  ## years are filtered in eco_region and eco_country, so not filtered for here
+      eco_trend = eco_statu_calc_2 %>%
+        filter(year >= max(year - trend_yr)) %>%                #select five years of data for trend
+        filter(!is.na(status)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
+        group_by(rgn_id) %>%
+        mutate(regr_length = n()) %>%                            #get the number of status years available for greggion
+        filter(regr_length == (trend_yr + 1)) %>%                   #only do the regression for regions that have 5 data points
+        do(mdl = lm(status ~ year, data = .)) %>%             # regression model to get the trend
+            summarize(rgn_id = rgn_id,
+                      score = coef(mdl)['year'] * 0.05) %>%
+        ungroup() %>%
+        complete(rgn_id = full_seq(1:42, 1))
+```
+
+9. Status Calculation - Alternative 3
+-------------------------------------
+
+Data is from [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550).
+
+Status = revenue\_per\_country / ref\_revenue\_per\_country
+
+ref\_revenue\_per\_country = revenue\_per\_country \* (101.5% ^10)
+
+Each country receives the same score because the reference point is a fixed percentage growth of that country's revenue in 2010. Country\_level data is then distributed to BHI regions. Russia regions (7, 22, 33) have NA scores.
+
+``` r
+blue_growth_revenue <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv')) %>% 
+  filter(!is.na(revenue)) %>% 
+  data.frame(.) %>% 
+  select(country, revenue) %>% 
+  group_by(country) %>% 
+  summarize(total_rev = sum(as.numeric(revenue)))
+
+eco_status_blue_growth <- blue_growth_revenue %>% 
+  mutate(ref_point = total_rev*(1.015^10), 
+         score = total_rev/ref_point*100) %>% 
+  full_join(bhi_lookup, by = 'country')
+
+eco_status_to_save = dplyr::select(eco_status_blue_growth, rgn_id, score)
+
+write_csv(eco_status_to_save, file.path(dir_layers, "eco_status_scores_bhi2015.csv"))
+
+# plot
+eco_plot = ggplot(eco_status_blue_growth) +
+  geom_point(aes(rgn_id, score, color = country)) +
+  ggtitle("ECO Status scores per BHI region based on Blue Growth Report")
+
+ggplot(nuts3_bhi_join2) +
+  geom_point(aes(rgn_id,bhi_pop_prop,colour=nuts3)) +
+  facet_wrap(~country) +
+  ylim(0,1) +
+  ggtitle("Population Fraction of NUTS3 regions for each BHI region")
+```
+
+![](eco_prep_files/figure-markdown_github/status%20alt%203-1.png)
+
+``` r
+print(eco_plot)
+```
+
+![](eco_prep_files/figure-markdown_github/status%20alt%203-2.png)
+
+10. Trend calculation
+---------------------
+
+The Blue Growth report mentioned in Status Calc - Alt. 3 also reports growth rate for each sector for which revenue was reported. Trend of this goal is the weighted average of the growth rate of each sector by their relative contribution to the total revenue.
+
+Growth rate was reported as % in the report.
+
+``` r
+eco_trend <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv')) %>% 
+  filter(!is.na(revenue)) %>% 
+  data.frame(.) %>% 
+  group_by(country) %>% 
+  filter(!is.na(revenue_growth_rate)) %>% 
+  mutate(total_rev = sum(as.numeric(revenue)), 
+    weight = revenue/total_rev, 
+    trend_weighted = revenue_growth_rate/100 * weight) %>%  
+  summarize(score = sum(trend_weighted)) %>% 
+  ungroup
+
+eco_trend
+  
+write_csv(eco_trend, file.path(dir_layers, "eco_trend_scores_bhi2015.csv"))
+```
 
 Appendix: Explore updated NUTS shapefile 22.9.2016
 --------------------------------------------------

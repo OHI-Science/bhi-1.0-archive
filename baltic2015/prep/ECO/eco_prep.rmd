@@ -1267,7 +1267,7 @@ ggplot(eco_trend) +
 
 ### 8.1 Status
 #### 8.1.1 Calculate status time series
-```{r calc eco status time series}
+```{r calc eco status time series alt 2}
 ## calculate status
   eco_statu_calc_2 = inner_join(eco_region, eco_country, by=c("rgn_id","year")) %>% #join region and country current/ref ratios ## inner_join because need to have both region and country values to calculate
   mutate(ratio = rgn_value/cntry_value) %>% #calculate status
@@ -1281,7 +1281,7 @@ ggplot(eco_trend) +
 ```
 
 #### 8.1.2 Extract most recent year status
-```{r extract eco most recent year status}
+```{r extract eco most recent year status 2}
 eco_status = eco_statu_calc_2 %>% 
               filter(year== max(year)) 
 
@@ -1298,7 +1298,7 @@ Regions with no coast line have no status because not joined to a NUTS reion (30
 
 Regions with missing regional data: 13,16 (from Germany see below)
 
-```{r which eco status are na}
+```{r which eco status are na 2}
 eco_status %>% filter(is.na(status)) #13,16,19,22,30,33
 
 # missing regional data
@@ -1316,7 +1316,7 @@ eco_region %>% filter(rgn_id == 16)## no data for associated German NUTS3 DE80F,
 Status values in the time series are between 0 and 1.  
 There are no values for Russia because we do not have regional GDP data.  
 Status values for the most recent year (2013 for all regions) are transformed to value between 0 and 100
-```{r plot eco status}
+```{r plot eco status 2}
 ## plot eco status time series
 ggplot(eco_statu_calc_2) +
   geom_point(aes(year,status)) +
@@ -1360,7 +1360,7 @@ ggplot(eco_statu_calc_2) +
 #### 8.2.1 Calculate Trend 
 
 This is the trend results we saved to calculate the final OHI ECO score.
-```{r eco trend calc}
+```{r eco trend calc 2}
 
   ## calculate trend for 5 years (5 data points)
   ## years are filtered in eco_region and eco_country, so not filtered for here
@@ -1440,9 +1440,10 @@ eco_trend <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_employ_reve
   summarize(score = sum(trend_weighted)) %>% 
   ungroup
 
-eco_trend
+eco_trend_score = full_join(eco_trend, bhi_lookup) %>% 
+  select(rgn_id, score)
   
-write_csv(eco_trend, file.path(dir_layers, "eco_trend_scores_bhi2015.csv"))
+write_csv(eco_trend_score, file.path(dir_layers, "eco_trend_scores_bhi2015.csv"))
 ```
 
 ## Appendix: Explore updated NUTS shapefile 22.9.2016
