@@ -1,5 +1,5 @@
 ---
-title: "Workshop"
+title: "Baltic Health Index meeting"
 output:
   html_document:
     toc: true
@@ -10,8 +10,50 @@ output:
 source("./_site.R")
 ```
 
-Agenda
+**Time**: 26-27 January, 2017
 
-Link to talk
+**Location**: Stockholm Resilience Center 
 
-Etc
+### Tentative Agenda: 
+
+#### Day 1:
+
+- 10:30-12:00 
+  - Thorsten Blenckner: _OHI Baltic in the bigger picture_
+  - Ning Jiang (NCEAS): 
+    - _What's new in OHI global and OHI+_
+    - _Architecture of open-science prep files_
+    - _Review of relationship among goals, pressures, and resilience_
+  - Q & A
+
+- 12:00 - 13:00 Lunch break
+
+- 13:00 – 17:00 
+  - goals – review
+  - goal weightings 
+  - resilience
+  - pressure
+  - discuss potential scenarios 
+
+#### Day 2: 
+
+- 9:00 - 9:20 _Johann Rockstrom_
+- 9:20 - 9:40 _ICES_
+- 9:40 - 10:00 _WWF_
+- 10 - 12 Paper discussion
+   - outline
+   - story/messaging
+- 12:00-13:00 lunch 
+- 13:00 - 15:30 next steps/launch
+   -where?
+   -when? in April
+   -bigger context: EU & SDG 14 
+-15:30-16:00 End of meeting
+   - gather thoughts
+   - identify tasks/to-do
+
+### Presentations
+
+[What's new in OHI global and OHI+](https://docs.google.com/presentation/d/1bcU9hP4msQlhyAnv0P9x2y8jLx57HB2M8ow6SV7lJoQ/pub?start=false&loop=false&delayms=3000)
+
+[Goals, Pressures, and Resilience]()
