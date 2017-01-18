@@ -10,15 +10,15 @@ output:
 source("./_site.R")
 ```
 
-**Time**: 26-27 January, 2017
+**26-27 January, 2017**
 
-**Location**: Stockholm Resilience Center 
+**Stockholm Resilience Center**
 
 ### Tentative Agenda: 
 
-#### Day 1:
+#### _Day 1_
 
-- 10:30-12:00 
+##### 10:30-12:00 
   - Thorsten Blenckner: _OHI Baltic in the bigger picture_
   - Ning Jiang (NCEAS): 
     - _What's new in OHI global and OHI+_
@@ -26,29 +26,32 @@ source("./_site.R")
     - _Added value of OHI: relationship among goals, pressures, and resilience_
   - Q & A
 
-- 12:00 - 13:00 Lunch break
+##### 12:00 - 13:00 Lunch break
 
-- 13:00 – 17:00 
+##### 13:00 – 17:00 
   - goals – review
   - goal weightings 
   - resilience
   - pressure
   - discuss potential scenarios 
 
-#### Day 2: 
+#### _Day 2_ 
 
-- 9:00 - 9:20 _Johann Rockstrom_
-- 9:20 - 9:40 _ICES_
-- 9:40 - 10:00 _WWF_
-- 10 - 12 Paper discussion
+##### 9:00 - 9:20 _Johann Rockstrom_
+##### 9:20 - 9:40 _ICES_
+##### 9:40 - 10:00 _WWF_
+##### 10 - 12 Paper discussion
    - outline
    - story/messaging
-- 12:00-13:00 lunch 
-- 13:00 - 15:30 next steps/launch
+   
+##### 12:00-13:00 lunch 
+
+##### 13:00 - 15:30 next steps/launch
    - where
    - when
    - bigger context: EU & SDG 14 
-- 15:30-16:00 End of meeting 
+   
+##### 15:30-16:00  
    - recap
    - identify tasks/to-do
 
@@ -60,4 +63,4 @@ source("./_site.R")
 
 ### Other resources
 
-[]
+[Goal descriptions, reference point, data, & model](http://ohi-science.org/bhi/goals.html)
