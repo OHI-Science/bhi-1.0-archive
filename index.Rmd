@@ -1,5 +1,5 @@
 ---
-title: "The Baltic Health Index - SITE IN PROGRESS"
+title: "The Baltic Health Index"
 ---
 
 ```{r setup, echo=F, warning=FALSE, message=F}
@@ -18,9 +18,7 @@ source("./_site.R")
 <div class="tile">
 <h2 class="post-title"><i class="fa fa-book fa-2x"></i> Project</h2>
 <p class="post-excerpt">
-
-<!-- Suggested instructions: Add several sentences describing the project here.  -->
-This is a study of the `r study_area` using the  Ocean Health Index framework.
+The Baltic Health Index is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of an integrative and transparent tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability.
 
 
 </p>
@@ -29,9 +27,7 @@ This is a study of the `r study_area` using the  Ocean Health Index framework.
 <div class="tile">
 <h2 class="post-title"><i class="fa fa-cubes fa-2x"></i> Our team</h2>
 <p class="post-excerpt">
-
-<!-- Suggested instructions: Add several sentences describing the team here.  -->
-The `r study_area` Ocean Health Index team consists of...
+The Baltic Health Index is a project jointly led by [Stockholm Resilience Centre (SRC)](http://www.stockholmresilience.org/) and [Baltic Eye](http://www.su.se/ostersjocentrum/baltic-eye) at the Baltic Sea Centre, both at Stockholm University.
 
 </p>
 </div>
