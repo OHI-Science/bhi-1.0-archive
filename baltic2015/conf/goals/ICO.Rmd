@@ -17,6 +17,8 @@ Iconic species are those that are relevant to local cultural identity through a 
 - Harbour seal  
 - Harbour porpoise  
 - Ringed seal
+- White-tailed sea eagle 
+- Common eider
 
 
 ### Model & Data
