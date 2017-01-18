@@ -6,7 +6,8 @@ title: "Regions"
 source("./_site.R")
 ```
 
-Regions are the fundamental spatial units of analysis for the Ocean Health Index. Scores are calculated for each region individually and then combined (with an offshore area-weighted average) to produce scores for the entire study area, `r study_area`. These template regions can be modified with some effort. They were identified as the largest subcountry division within `r study_area`.
+Regions are the fundamental spatial units of analysis for the Ocean Health Index. Scores are calculated for each region individually and then combined (with an offshore area-weighted average) to produce scores for the entire Baltic Sea.  
+There are 42 BHI regions in the Baltic Sea.
 
 
 ```{r}
@@ -75,13 +76,3 @@ leaflet() %>%
     }
   }")
 ```
-
-
-OHI `r study_area` has the following regions, each with a unique identifier (ID):
-
-```{r}
-datatable(
-  rgns@data %>%
-  select(rgn_id, rgn_name))
-```
-
