@@ -43,14 +43,14 @@ source("./_site.R")
 ##### 10 - 12 Paper discussion
    - outline
    - story/messaging
-   
+
 ##### 12:00-13:00 lunch 
 
 ##### 13:00 - 15:30 next steps/launch
    - where
    - when
    - bigger context: EU & SDG 14 
-   
+
 ##### 15:30-16:00  
    - recap
    - identify tasks/to-do
