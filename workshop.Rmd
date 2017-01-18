@@ -63,4 +63,4 @@ source("./_site.R")
 
 ### Other resources
 
-[Goal descriptions, reference point, data, & model](http://ohi-science.org/bhi/goals.html)
+[Goal descriptions, reference points, data, & models](http://ohi-science.org/bhi/goals.html)
