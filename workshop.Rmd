@@ -23,7 +23,7 @@ source("./_site.R")
   - Ning Jiang (NCEAS): 
     - _What's new in OHI global and OHI+_
     - _Architecture of open-science prep files_
-    - _Review of relationship among goals, pressures, and resilience_
+    - _Added value of OHI: relationship among goals, pressures, and resilience_
   - Q & A
 
 - 12:00 - 13:00 Lunch break
@@ -45,11 +45,11 @@ source("./_site.R")
    - story/messaging
 - 12:00-13:00 lunch 
 - 13:00 - 15:30 next steps/launch
-   -where?
-   -when? in April
-   -bigger context: EU & SDG 14 
--15:30-16:00 End of meeting
-   - gather thoughts
+   - where
+   - when
+   - bigger context: EU & SDG 14 
+- 15:30-16:00 End of meeting 
+   - recap
    - identify tasks/to-do
 
 ### Presentations
@@ -57,3 +57,7 @@ source("./_site.R")
 [What's new in OHI global and OHI+](https://docs.google.com/presentation/d/1bcU9hP4msQlhyAnv0P9x2y8jLx57HB2M8ow6SV7lJoQ/pub?start=false&loop=false&delayms=3000)
 
 [Goals, Pressures, and Resilience]()
+
+### Other resources
+
+[]
