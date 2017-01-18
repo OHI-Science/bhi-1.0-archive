@@ -20,7 +20,6 @@ source("./_site.R")
 <p class="post-excerpt">
 The Baltic Health Index is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of an integrative and transparent tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability.
 
-
 </p>
 </div>
 
@@ -36,6 +35,8 @@ The Baltic Health Index is a project jointly led by [Stockholm Resilience Centre
 <h2 class="post-title"><i class="fa fa-globe fa-2x"></i> Ocean Health Index </h2>
 <p class="post-excerpt">
 The Ocean Health Index ('OHI') is a scientific framework to measure how healthy oceans are. Understanding the state of our oceans is a step towards their being able to continue providing humans benefits now and in the future. Learn more at [ohi-science.org](http://ohi-science.org).
+
 </p>
 </div>
+
 </div>
