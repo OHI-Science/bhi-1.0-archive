@@ -302,7 +302,7 @@ ref_point_max_2010 = ref_point_max_2010$modeled_waste_2010
 
 ### 4.7 Explore status score 2010 and 2015 
 
-2015: Using modeled 2015 data for status but use max 2010 as a reference point. 
+2015: Using modeled 2015 data for status but use max 2010 as a reference point. This approach was used as the final candidate for status calculation. 
 
 ```{r explore status 2015}
 
@@ -376,7 +376,7 @@ write_csv(TRA_trend, file.path(dir_layers, 'cw_tra_trend_scores_bhi2015.csv'))
 
 ```{r save as pressures layer}
 
-press_scores = scores_TRA %>% 
+press_scores = TRA_status %>% 
   mutate(pressure_score = 1 - score/100) %>% 
   dplyr::select(rgn_id, pressure_score)
 
