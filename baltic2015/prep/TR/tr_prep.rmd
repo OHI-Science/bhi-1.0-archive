@@ -974,9 +974,11 @@ blue_data <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_employ_reve
   select(country, sub_sector, employment) %>% 
   filter(sub_sector %in% c('Coastal tourism', 'Yachting and maris', 'Cruise tourism')) %>% 
   group_by(country) %>% 
-  summarize(total_employ = sum(employment)) 
+  summarize(total_employ = sum(employment)) %>% 
+  ungroup
 
 blue_tr_status <- blue_data %>% 
+  group_by(country) %>% 
   mutate(ref_point = total_employ * (1.022^10), # set reference point
          score = total_employ / ref_point *100) 
   
@@ -1013,8 +1015,9 @@ blue_tr_trend <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_employ_
   group_by(country) %>% 
   mutate(total_rev = sum(revenue),
   rel_contribut = revenue/total_rev) %>% # calculate relative contribution based on revenue
-  summarize(score = sum(emp_growth_rate * rel_contribut)/100) # weighted average of employment growth rate
-  
+  summarize(score = sum(emp_growth_rate * rel_contribut)/100) %>% # weighted average of employment growth rate
+  ungroup
+
 blue_tr_trend <- full_join(bhi_lookup, blue_tr_trend, by = "country") %>% 
   select(rgn_id, score) %>% 
   mutate(dimension = "trend")

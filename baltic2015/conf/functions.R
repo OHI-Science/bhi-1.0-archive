@@ -577,71 +577,15 @@ CS = function(layers){
 
 
 TR = function(layers){
-  ## updated 11 July 2016 by Jennifer Griffiths
-
-  ##-------------------------------------------------------------------##
-  ## Select layers
-  tr_layer = SelectLayersData(layers, layers='tr_accommodation_stays') %>%
-  dplyr::select(rgn_id = id_num, year, bhi_coastal_stays_per_cap = val_num)
-  ##-------------------------------------------------------------------##
-
-  ##-------------------------------------------------------------------##
-
-  ##-------------------------------------------------------------------##
 
   ## CALCULATE STATUS ##
-  ## Scores calculated in prep file (prep/TR/tr_prep.rmd) based on EU blue growth report 2015
-  ## updated by Ning Jiang 14Nov2016
+  ## Scores calculated in prep file (prep/TR/tr_prep.rmd) Alternative 2 based on EU blue growth report 2015
+  ## updated by Ning Jiang Jan2017
 
-  tr_status <- layers$data[['tr_status']] %>%
-    mutate(dimension = 'status') %>%
-    select(region_id = rgn_id, score, dimension)
-
-  ## CALCULATE TREND ##
-
-  ## calculate status time series
-  ## updated by Ning Jiang - 10.28.2016
-
-  tr_status_score = tr_layer %>%
-    dplyr::rename(nights = bhi_coastal_stays_per_cap) %>%
-    filter(!is.na(nights)) %>%
-    group_by(rgn_id) %>%
-    filter(year > (max(year) - 5)) %>%
-    mutate(ref_nights = max(nights),
-           status_score = round(pmin(100, nights/ref_nights*100), 2)) %>%
-    dplyr::select(rgn_id, year, status_score) %>%
-    as.data.frame()
-
-  # # select the most recent year for status
-  ## REPLACED by tr_status above
-
-  # tr_status = tr_status_score %>%
-  #   filter(year == max(year)) %>%
-  #   complete(rgn_id = full_seq(rgn_id, 1)) %>%
-  #   mutate(score = status_score,
-  #          dimension = 'status') %>% ##scale to 0 to 100
-  #   dplyr::select(region_id = rgn_id, score, dimension)
-
-
-  ## calculate trend for 5 years (5 data points)
-  ## years are filtered tr_status_score
-  tr_trend = tr_status_score %>%
-    filter(year >= max(year - 5)) %>%                #select five years of data for trend
-    filter(!is.na(status_score)) %>%                              # filter for only no NA data because causes problems for lm if all data for a region are NA
-    group_by(rgn_id) %>%
-    do(mdl = lm(status_score ~ year, data = .)) %>%             # regression model to get the trend
-    summarize(rgn_id = rgn_id,
-              score = round(coef(mdl)['year'] * 0.05, 2)) %>%
-    ungroup() %>%
-    complete(rgn_id = full_seq(rgn_id, 1)) %>%
-    mutate(dimension = "trend") %>%
-    select(region_id = rgn_id, dimension, score) %>%
-    data.frame()
-
-  ##-------------------------------------------------------------------##
-
-  ##-------------------------------------------------------------------##
-  ## FINAL OBJECT
+tr_status = layers$data[['tr_status']] %>%
+  select(region_id = rgn_id, score, dimension)
+tr_trend = layers$data[['tr_trend']] %>%
+  select(region_id = rgn_id, score, dimension)
 
   ## create scores and rbind status and trend scores
   scores = tr_status %>%
