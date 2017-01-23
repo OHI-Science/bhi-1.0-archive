@@ -25,23 +25,37 @@ Iconic Species (ICO) Data Preparation for Sense of Place (SP) goal
 
 ### Goal Description
 
-The Fisheries sub-goal of Food Provision describes the ability to maximize the sustainable yield of wild-caught seafood for human consumption. **For the BHI cod and herring stocks in the Baltic Sea were included as wild-caught fisheries**.
+Iconic species are those that are relevant to local cultural identity through a species' relationship to one or more of the following: 1) traditional activities such as fishing, hunting or commerce; 2) local ethnic or religious practices; 3) existence value; and 4) locally-recognized aesthetic value (e.g., touristic attractions/common subjects for art such as whales). Habitat-forming species are not included in this definition of iconic species, nor are species that are harvested solely for economic or utilitarian purposes (even though they may be iconic to a sector or individual). This sub-goal assesses how well those species are conserved.
+
+**For the BHI, a survey identified the following iconic species:**
+
+-   Cod
+-   Flounder
+-   Herring
+-   Perch
+-   Pike
+-   Salmon
+-   Trout
+-   Sprat
+-   Grey seal
+-   European otter
+-   Harbour seal
+-   Harbour porpoise
+-   Ringed seal
+-   White-tailed sea eagle
+-   Common eider
 
 ### Model & Data
 
-The data used for this goal are composed of cod and herring spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated as a function of the ratio (B’) between the single species current biomass at sea (B) and the reference biomass at maximum sustainable yield (BMSY), as well as the ratio (F’) between the single species current fishing mortality (F) and the fishing mortality at maximum sustainable yield (FMSY). B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this [general relationship](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/ffms%3By_bbmsy_2_score.png).
-
--   [Cod and herring data accessed from the ICES homepage](http://www.ices.dk/marine-data/tools/Pages/stock-assessment-graphs.aspx) &gt; search for 'cod' or 'herring' &gt; specify the ecoregion as Baltic Sea &gt; search for the 2013 assessment.
+HELCOM provides species checklists for the Baltic that include distribution and a complete list of all species assessed with IUCN criteria. Species were assigned a *threat category* (ranging from "extinct" to "least concern") and assigned a weight. The goal score is the average weight of all species assessed.
 
 ### Reference points
 
-The reference point used for the computation are based on the MSY principle and are described as a functional relationship. MSY means the highest theoretical equilibrium yield that can be continuously taken on average from a stock under existing average environmental conditions without significantly affecting the reproduction process *(European Union 2013, World Ocean Review 2013).*
+The target is for all species are in the "least concern" category; this will produce a score of 100. The lower cut-off point when 75% of species are extinct and score is 0.
 
 ### Considerations for *BHI 2.0*
 
 ### Other information
-
-*external advisors/goalkeepers are Christian Möllmann & Stefan Neuenfeldt*
 
 2. Data
 -------
@@ -129,11 +143,6 @@ wi from Halpern et al 2012, SI
 ``` r
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.3.2
-
-``` r
 dir_ico    = file.path(dir_prep, 'ICO')
 
 ## add a README.md to the prep directory 
@@ -195,6 +204,35 @@ ico_spp_data %>% select(common_name)%>%distinct()%>%nrow() #13
 
     ## [1] 13
 
+#### Add bird species manually
+
+Discussion with Baltic Sea Centre and SRC (Nov 2016) concluded that 2 bird species as being seen as very important iconic species: white-tailed sea eagle (Haliaeetus albicilla) and common eider (Somateria mollissima). It would be important to add them to the iconic species list and in the ICO calculation. The sea -eagle need to be added manually as it is not in the species redlist from HELCOM but here we could use the status LC from the IUCN criteria based on the Europe IUCN redlist (<http://www.iucnredlist.org/details/22695137/0>). The common eider is already in the red list as VU.
+
+``` r
+basin_names = read.csv(file.path(dir_ico,'bhi_basin_country_lookup.csv'),sep=";") %>% 
+  select(basin = Subbasin) %>% 
+  unique(.)
+
+sea_eagle_data = basin_names %>% 
+  mutate(common_name = "sea eagle", 
+         latin_name = "Haliaeetus albicilla", 
+         taxa_group = "bird", 
+         helcom_category = "LC", 
+         helcom_category_numeric = 0, 
+         presence = 1)
+
+common_elder_data = basin_names %>% 
+  mutate(common_name = "common elder", 
+         latin_name = "Somateria mollissima", 
+         taxa_group = "bird", 
+         helcom_category = "VU", 
+         helcom_category_numeric = 0.4, 
+         presence = 1)
+
+ico_spp_data = rbind(ico_spp_data, sea_eagle_data) %>% 
+  rbind(common_elder_data)
+```
+
 #### 4.1.3 Plot ICO species by basin
 
 Small difference in species presence/absence by basin
@@ -221,7 +259,6 @@ ico_dist_value_data = ico_spp_data %>%
                 mutate(data_descrip = "species presence/absence",
                        unit= "presence",
                        bhi_goal = "ICO")
-
 
 write.csv(ico_dist_value_data, file.path(dir_baltic,'visualize/ico_dist_value_data.csv'), row.names = FALSE)
 ```
