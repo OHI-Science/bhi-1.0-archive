@@ -5,7 +5,6 @@ Tourism in coastal areas is a major component of thriving coastal communities an
 
 ### Model & Data
 
-
 Data for each country were downloaded from the [EU-Study on Blue Growth](https://webgate.ec.europa.eu/maritimeforum/node/3550), Maritime Policy and the EU Strategy for the Baltic Sea Region” identified the potential for Blue Growth in each of the EU Member States (MS) of the Baltic Sea Region (BSR) and at sea basin level.
 
 <!---
@@ -16,10 +15,7 @@ We used Eurostat dataset on [nights spent at tourist accommodation establishment
 
 ### Reference points
 
-*to be determined*
-<!---
-103% of the highest number of night of stay in the past five years. This is based on [EU's Blue Growth Strategy](http://ec.europa.eu/maritimeaffairs/policy/coastal_tourism/index_en.htm), which states "the coastal and maritime tourism sector has been identified as an area with special potential to foster a smart, sustainable and inclusive Europe. It is the biggest maritime sector in terms of gross value added and employment and is expected to grow by 2-3% by 2020." 
---->
+[Study in support of policy measures for maritime and coastal tourism at EU level](https://ec.europa.eu/maritimeaffairs/sites/maritimeaffairs/files/docs/body/study-maritime-and-coastal-tourism_en.pdf) (Page 157) states that the Nordic Countries sea basins tourism has a potential to grow annually by 2.2 % until 2020. We therefore set the target to an annual growth of 2.2% for ten years from 2010. 
 
 
 ### Considerations for *BHI 2.0*

@@ -8,31 +8,38 @@ Tourism & Recreation (TR) Goal Data Preparation
     -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
     -   [Other information](#other-information)
 -   [2. Data](#data)
-    -   [Regional Accommodation Stays Data](#regional-accommodation-stays-data)
-    -   [Regional Accommodation Stays Coastal/Non-Coastal Data](#regional-accommodation-stays-coastalnon-coastal-data)
+    -   [Alternative 1: Regional Accommodation Stays Data](#alternative-1-regional-accommodation-stays-data)
+    -   [Alternative 2:](#alternative-2)
 -   [3. Goal Model](#goal-model)
-    -   [3.1 Status Calculation](#status-calculation)
-    -   [3.2 Reference point](#reference-point)
-    -   [3.3 Trend calculation](#trend-calculation)
--   [4. Data Layer Preparation](#data-layer-preparation)
+    -   [3.1 Status Calculation - Alternative 1](#status-calculation---alternative-1)
+    -   [3.1.2 Reference point - Alternative 1](#reference-point---alternative-1)
+    -   [3.1.3 Trend calculation - Alternative 1](#trend-calculation---alternative-1)
+    -   [3.2 Status Claculation - Alternative 2](#status-claculation---alternative-2)
+    -   [3.2.2 Refrence point - Alternative 2](#refrence-point---alternative-2)
+    -   [3.2.3 Trend calculation - Alternative 2](#trend-calculation---alternative-2)
+-   [4. Data Layer Preparation - Alternative 1](#data-layer-preparation---alternative-1)
     -   [4.1 Data cleaning and organizing](#data-cleaning-and-organizing)
     -   [4.2 Join datasets](#join-datasets)
     -   [4.3 Proportion coastal stays at the NUTS1 level](#proportion-coastal-stays-at-the-nuts1-level)
     -   [4.4 Apply proportion coastal to NUTS2 time series data](#apply-proportion-coastal-to-nuts2-time-series-data)
     -   [4.5 Determine NUTS2 population allocation among BHI regions](#determine-nuts2-population-allocation-among-bhi-regions)
--   [5. Prepare and Save Data Layers](#prepare-and-save-data-layers)
+-   [5. Prepare and Save Data Layers - Alternative 1](#prepare-and-save-data-layers---alternative-1)
     -   [5.1 Prepare layer](#prepare-layer)
     -   [5.2 Write layer to csv](#write-layer-to-csv)
--   [6. Explore Status and Trend calculation](#explore-status-and-trend-calculation)
-    -   [Status calculation](#status-calculation-1)
-    -   [6.4 Plot Status](#plot-status)
-    -   [6.5 Calculate Trend](#calculate-trend)
+-   [6. Explore Status and Trend calculation - Alternative 1](#explore-status-and-trend-calculation---alternative-1)
+    -   [6.1 Status calculation - Alternative 1](#status-calculation---alternative-1-1)
+    -   [6.2 Plot Status](#plot-status)
+    -   [6.3 Calculate Trend - Alternative 1](#calculate-trend---alternative-1)
     -   [6.6 Plot trend](#plot-trend)
-    -   [6.7 Plot trend and status together](#plot-trend-and-status-together)
--   [7. Issues or Concerns](#issues-or-concerns)
-    -   [7.1 Shapefile assignment issues](#shapefile-assignment-issues)
-    -   [7.2 Name discrepancies between datasets](#name-discrepancies-between-datasets)
-    -   [7.3 Spatial resolution of coastal allocation.](#spatial-resolution-of-coastal-allocation.)
+    -   [6.7 Plot trend and status together - Alternative 1](#plot-trend-and-status-together---alternative-1)
+    -   [6.8 Issues or Concerns with Alternative 1](#issues-or-concerns-with-alternative-1)
+    -   [Shapefile assignment issues](#shapefile-assignment-issues)
+    -   [Name discrepancies between datasets](#name-discrepancies-between-datasets)
+    -   [Spatial resolution of coastal allocation.](#spatial-resolution-of-coastal-allocation.)
+-   [7. Explore Alternative 2](#explore-alternative-2)
+    -   [7.1 Status Calculation](#status-calculation)
+    -   [7.2 Trend Calculation](#trend-calculation)
+    -   [7.3 Plot status and trend](#plot-status-and-trend)
 
 1. Background
 -------------
@@ -52,9 +59,7 @@ We used Eurostat dataset on [nights spent at tourist accommodation establishment
 --->
 ### Reference points
 
-*to be determined* <!---
-103% of the highest number of night of stay in the past five years. This is based on [EU's Blue Growth Strategy](http://ec.europa.eu/maritimeaffairs/policy/coastal_tourism/index_en.htm), which states "the coastal and maritime tourism sector has been identified as an area with special potential to foster a smart, sustainable and inclusive Europe. It is the biggest maritime sector in terms of gross value added and employment and is expected to grow by 2-3% by 2020." 
---->
+[Study in support of policy measures for maritime and coastal tourism at EU level](https://ec.europa.eu/maritimeaffairs/sites/maritimeaffairs/files/docs/body/study-maritime-and-coastal-tourism_en.pdf) (Page 157) states that the Nordic Countries sea basins tourism has a potential to grow annually by 2.2 % until 2020. We therefore set the target to an annual growth of 2.2% for ten years from 2010.
 
 ### Considerations for *BHI 2.0*
 
@@ -64,7 +69,11 @@ We used Eurostat dataset on [nights spent at tourist accommodation establishment
 2. Data
 -------
 
-### Regional Accommodation Stays Data
+Alternative 1 is based on regional accommodation data, and Alternative 2 on employment data from [EU-Study on Blue Growth](https://webgate.ec.europa.eu/maritimeforum/node/3550), Maritime Policy and the EU Strategy for the Baltic Sea Region” as mentioned in the Background section, which was selected as the goal model.
+
+Both approaches have been explored and recorded here.
+
+### Alternative 1: Regional Accommodation Stays Data
 
 Eurostat dataset on Nights spent at tourist accommodation establishments by all NUTS regions with the finest scale spatial resolution at NUTS2. [tour\_occ\_nin2](http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2&lang=en)
 
@@ -80,7 +89,7 @@ Select all years available: 1990-2014
 
 Missing data indicated by colon (:)
 
-### Regional Accommodation Stays Coastal/Non-Coastal Data
+#### Regional Accommodation Stays Coastal/Non-Coastal Data
 
 Eurostat dataset on Nights spent at tourist accommodation establishments by coastal and non-coastal area from 2012 onwards. These were download for all available region levels. [tour\_occ\_nin2c](http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2c&lang=en)
 Download Date: 10 Feb 2016, Download By: Jennifer Griffiths
@@ -97,10 +106,16 @@ Selected years available: 2012-2014
 
 Missing data indicated by colon (:)
 
+### Alternative 2:
+
+The [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) identified the potential for Blue Growth in each of the EU Member States of the Baltic Sea Region, and also provided detailed marine revenue and employment by sector and in each BHI country. Saved in `prep/LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv`
+
+Sectors isolated for Tourism and Recreation goal are *Coastal tourism, Yachting and maris, Cruise tourism*.
+
 3. Goal Model
 -------------
 
-### 3.1 Status Calculation
+### 3.1 Status Calculation - Alternative 1
 
 Xtr = a\_r/a\_ref\_r
 
@@ -115,29 +130,38 @@ Xtr = a\_r/a\_ref\_r
 -   a\_n = accommodation stays in NUTS2 region\_n
 -   c\_n1 = mean proportion of accommodations stays that are coastal at the NUTS1 level
 
-### 3.2 Reference point
+### 3.1.2 Reference point - Alternative 1
 
 We set reference point as 3% more than the most recent year. This figure came from [Study in support of policy measures for maritime and coastal tourism at EU level](http://ec.europa.eu/maritimeaffairs/documentation/studies/documents/study-maritime-and-coastal-tourism_en.pdf)
 
 "As part of EU's Blue Growth strategy, the coastal and maritime tourism sector has been identified as an area with special potential to foster a smart, sustainable and inclusive Europe. It is the biggest maritime sector in terms of gross value added and employment, and is expected to grow by 2-3% by 2020."
 
-### 3.3 Trend calculation
+### 3.1.3 Trend calculation - Alternative 1
 
 Linear regression fit to the most recent 5 status years.
 
-4. Data Layer Preparation
--------------------------
+### 3.2 Status Claculation - Alternative 2
+
+Xtr = employment\_current / employment\_ref
+
+Sectors isolated for Tourism and Recreation goal are *Coastal tourism, Yachting and maris, Cruise tourism*.
+
+### 3.2.2 Refrence point - Alternative 2
+
+Reference point is set to 2020, based on 2.2% annual growth from 2010 for the ten years based on [Study in support of policy measures for maritime and coastal tourism at EU level](https://ec.europa.eu/maritimeaffairs/sites/maritimeaffairs/files/docs/body/study-maritime-and-coastal-tourism_en.pdf) (Page 157).
+
+### 3.2.3 Trend calculation - Alternative 2
+
+Trend is based on the same Blue Growth report (as in status calculations). Trend score for each country is weighted average of % growth in employment in each subsector (*Coastal tourism, Yachting and maris, Cruise tourism*), by their relative contribution to the total GVA in Tourism and Recreation.
+
+4. Data Layer Preparation - Alternative 1
+-----------------------------------------
 
 ``` r
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 ## set directory and load libraries
 source('~/github/bhi/baltic2015/prep/common.r')
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.3.2
-
-``` r
 dir_tr = file.path(dir_prep, 'TR')
 
 ## add a README.md to the prep directory 
@@ -758,8 +782,8 @@ ggplot(accom_nuts7) +
 
 ![](tr_prep_files/figure-markdown_github/plot%20bhi%20night%20stays-3.png)
 
-5. Prepare and Save Data Layers
--------------------------------
+5. Prepare and Save Data Layers - Alternative 1
+-----------------------------------------------
 
 Use per capita night stays
 
@@ -791,8 +815,8 @@ write.csv(tr_time_data, file.path(dir_baltic,'visualize/tr_time_data.csv'),row.n
 write.csv(tr_layer, file.path(dir_layers,"tr_accommodation_stays_bhi2015.csv"),row.names = FALSE)
 ```
 
-6. Explore Status and Trend calculation
----------------------------------------
+6. Explore Status and Trend calculation - Alternative 1
+-------------------------------------------------------
 
 <!-- Moving window reference -->
 <!-- ### 6.1 Read in layers -->
@@ -830,7 +854,7 @@ write.csv(tr_layer, file.path(dir_layers,"tr_accommodation_stays_bhi2015.csv"),r
 <!--             dimension = 'status') %>% ##scale to 0 to 100 -->
 <!--      select(region_id = rgn_id,score, dimension) -->
 <!-- ``` -->
-### Status calculation
+### 6.1 Status calculation - Alternative 1
 
 We will use the 103% of the highest "coastal\_stays\_per\_cap" (ie. coastal\_stays\_per\_cap \* 103%) within the past five years (2010-2014) as the reference point.
 
@@ -858,7 +882,7 @@ tr_status = tr_status_score %>%
 # MISSING 19, 22, 30, 33
 ```
 
-### 6.4 Plot Status
+### 6.2 Plot Status
 
 ``` r
 ## plot tr status time series, less range on y-axis
@@ -888,7 +912,7 @@ ggplot(tr_status) +
 
 ![](tr_prep_files/figure-markdown_github/plot%20tr%20status-2.png)
 
-### 6.5 Calculate Trend
+### 6.3 Calculate Trend - Alternative 1
 
 ``` r
   ## calculate trend for 5 years (5 data points)
@@ -940,7 +964,7 @@ ggplot(tr_trend) +
 #   ggtitle("TR 5 yr trend score")
 ```
 
-### 6.7 Plot trend and status together
+### 6.7 Plot trend and status together - Alternative 1
 
 ``` r
 plot_tr = bind_rows(tr_status,tr_trend)
@@ -954,18 +978,17 @@ ggplot(plot_tr) +
 
 ![](tr_prep_files/figure-markdown_github/plot%20tr%20trend%20and%20status%20together-1.png)
 
-7. Issues or Concerns
----------------------
+### 6.8 Issues or Concerns with Alternative 1
 
-### 7.1 Shapefile assignment issues
+### Shapefile assignment issues
 
-#### 7.2.1 Able to fix manually
+#### Able to fix manually
 
-See \#\#\#\# 4.1.4 \#\#\#\# 7.2.2 Not able to fix mannually BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
+See \#\#\#\# 4.1.4 \#\#\#\# Not able to fix mannually BHI region 21 not assigned to any NUTS2 regions - despite clear association with PL63. PL63 split only between BHI 17 and BHI 18
 
-### 7.2 Name discrepancies between datasets
+### Name discrepancies between datasets
 
-#### 7.2.1 Finnish NUTS2 renamed
+#### Finnish NUTS2 renamed
 
 See \#\#\#\# 4.1.3 Shapefiles have names from 2006, accommodation datasets have newer names ![Map of old NUTS2 names for GUlf of Finland](BHI_regions_NUTS2_plot.png?raw=true)
 ![Map of new NUTS2 names for GUlf of Finland](new_FI_nuts2.png?raw=true)
@@ -978,6 +1001,86 @@ Solution: Combine data from the new regions (FI1C and FI1B), and apply populatio
 
 Downsides to this solution: Helsinki is in FI1B, which would assign almost entirely to BHI 32 and whereas FI1C would divide more equally between BHI 36 and BHI 32. Therefore, combining these regions in order to apply the division generated from the old region may have a different result.
 
-### 7.3 Spatial resolution of coastal allocation.
+### Spatial resolution of coastal allocation.
 
 Differs among countries. Within Germany, NUTS area available differs.
+
+7. Explore Alternative 2
+------------------------
+
+The [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) identified the potential for Blue Growth in each of the EU Member States of the Baltic Sea Region, and also provided detailed marine revenue and employment by sector and in each BHI country. Saved in `prep/LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv`
+
+Reference point is set to 2020, based on 2.2% annual growth from 2010 for the ten years.
+
+### 7.1 Status Calculation
+
+``` r
+#### Status ####
+
+# read in blue growth data
+blue_data <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv')) %>% 
+  filter(!is.na(employment)) %>% 
+  data.frame(.) %>% 
+  select(country, sub_sector, employment) %>% 
+  filter(sub_sector %in% c('Coastal tourism', 'Yachting and maris', 'Cruise tourism')) %>% 
+  group_by(country) %>% 
+  summarize(total_employ = sum(employment)) 
+
+blue_tr_status <- blue_data %>% 
+  mutate(ref_point = total_employ * (1.022^10), # set reference point
+         score = total_employ / ref_point *100) 
+  
+  
+# country and BHI regions lookup table
+bhi_lookup = read.csv(file.path(dir_prep, "LIV/bhi_basin_country_lookup.csv"), sep=";",stringsAsFactors = FALSE) %>%
+            select(rgn_nam, BHI_ID) %>%
+            dplyr::rename(country= rgn_nam,
+                          rgn_id = BHI_ID)
+
+blue_tr_status <- full_join(bhi_lookup, blue_tr_status, by = "country") %>% 
+  select(rgn_id, score) %>% 
+  mutate(dimension = "status")
+
+### NTOE: rgn 19, 22, 33 don't have scores because there was no data for Russia
+
+# save as data layer
+write_csv(blue_tr_status, file.path(dir_layers, "tr_status_scores_bhi2015.csv"))
+```
+
+### 7.2 Trend Calculation
+
+Trend is based on the same Blue Growth report as in status calculations. Trend score for each country is weighted average of % growth in employment in each subsector (*Coastal tourism, Yachting and maris, Cruise tourism*), by their relative contribution to the total GVA in Tourism and Recreation.
+
+``` r
+blue_tr_trend <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv')) %>% 
+  filter(!is.na(employment)) %>% 
+  data.frame(.) %>% 
+  select(country, sub_sector, revenue, emp_growth_rate) %>% 
+  filter(sub_sector %in% c('Coastal tourism', 'Yachting and maris', 'Cruise tourism')) %>% 
+  group_by(country) %>% 
+  mutate(total_rev = sum(revenue),
+  rel_contribut = revenue/total_rev) %>% # calculate relative contribution based on revenue
+  summarize(score = sum(emp_growth_rate * rel_contribut)/100) # weighted average of employment growth rate
+  
+blue_tr_trend <- full_join(bhi_lookup, blue_tr_trend, by = "country") %>% 
+  select(rgn_id, score) %>% 
+  mutate(dimension = "trend")
+
+write_csv(blue_tr_trend, file.path(dir_layers, "tr_trend_scores_bhi2015.csv"))
+```
+
+### 7.3 Plot status and trend
+
+``` r
+blue_tr_results = bind_rows(blue_tr_status,blue_tr_trend)
+
+blue_tr_plot = ggplot(blue_tr_results) +
+  geom_point(aes(rgn_id,score),size=2.5) +
+  facet_wrap(~dimension, scales = "free_y") +
+  ylab("Score") +
+  ggtitle("TR Status and Trend - Alt 2 (Blue Growth report)")
+
+print(blue_tr_plot)
+```
+
+![](tr_prep_files/figure-markdown_github/plot%20alt%202%20status%20and%20trend-1.png)
