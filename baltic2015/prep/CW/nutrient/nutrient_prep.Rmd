@@ -10,7 +10,7 @@ params:
 
 ## 1. Background
 
-```{r, child='../../../conf/goals/CON.Rmd', results='asis', echo=FALSE}
+```{r, child='../../../conf/goals/NUT.Rmd', results='asis', echo=FALSE}
 ```
 
 ## 2. Secchi Data Prep
