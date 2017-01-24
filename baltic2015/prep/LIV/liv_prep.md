@@ -36,8 +36,9 @@ Livelihoods (LIV) Subgoal Data Preparation
     -   [8.5 Short Danish timeseries](#short-danish-timeseries)
     -   [9. Update region assignment](#update-region-assignment)
 -   [10. Alternative data and Status calculation - Used for Status for now](#alternative-data-and-status-calculation---used-for-status-for-now)
-    -   [10.1 Trial 1 - not incorporated](#trial-1---not-incorporated)
-    -   [10.2 Trial 2 - Used for LIV status](#trial-2---used-for-liv-status)
+    -   [10.1 Alternative 1 - not incorporated](#alternative-1---not-incorporated)
+    -   [10.2 Alternative 2 - not incorporated](#alternative-2---not-incorporated)
+    -   [10.3 Alternative 3 - Used for now](#alternative-3---used-for-now)
 
 1. Background
 -------------
@@ -195,11 +196,6 @@ These issues were manually fixed below.
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 source('~/github/bhi/baltic2015/prep/common.r')
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.3.2
-
-``` r
 dir_liv    = file.path(dir_prep, 'LIV')
 
 ## add a README.md to the prep directory 
@@ -1074,7 +1070,7 @@ write_csv(data_nuts2, file.path(dir_liv, 'liv_data_database/nuts_2_rgn_id_match_
 10. Alternative data and Status calculation - Used for Status for now
 ---------------------------------------------------------------------
 
-### 10.1 Trial 1 - not incorporated
+### 10.1 Alternative 1 - not incorporated
 
 The [“Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550) identified the potential for Blue Growth in each of the EU Member States of the Baltic Sea Region, and also provided detailed marine revenue and employment by sector and in each BHI country. Below is a trial to incorporate these data to LIV calculation, while using the same goal model.
 
@@ -1082,6 +1078,7 @@ We decided not to incorporate this data yet because of these two problems:
 
 -   there is only one year of data, we couldn't establish a temporal reference point.
 -   only six sectors that are identified as high-growth-potential have data, and thus provide incomplete data
+-   *blue sectors employment rate* is very low (blue\_employment\_number / coastal\_population) is very low (~1%) compared with *national employment rate (~70%)*, so we couldn't compare these two as a LIV model
 
 ``` r
 # notes for data calculated above:  
@@ -1111,7 +1108,7 @@ employ_comp = full_join(coast_employ_rate,
                         by = 'country') %>% 
   mutate(ratio = coast_rate / nat_rate)
 
-employ_comp
+knitr::kable(employ_comp)
 
 #     country coast_rate nat_rate       ratio
 # 1   Denmark  0.6652809     72.8 0.009138474
@@ -1123,14 +1120,15 @@ employ_comp
 # 7    Poland  1.1411735     61.7 0.018495519
 # 8    Sweden  0.6502281     74.9 0.008681284
 
+### EXTRA ###
 # # compare coastal and national pop 
 # pop_comp = full_join(coast_pop, nat_pop_2005) %>% 
 #   mutate(ratio = coast_pop/pop_2005) 
 ```
 
-### 10.2 Trial 2 - Used for LIV status
+### 10.2 Alternative 2 - not incorporated
 
-We downloaded employment data by sector on the country level - more detailed data than Trial 1 . Saved in `prep/LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv`.
+We downloaded employment data by sector on the country level from the blue growth report supplemental tables - more detailed data than Alternative 1 . Saved in `prep/LIV/liv_data_database/BHI_employ_revenue_by_country_2010.csv`.
 
 Reference point is set at 5% growth by 2020.
 
@@ -1144,11 +1142,78 @@ blue_growth_employ <- read_csv(file.path(dir_liv, 'liv_data_database/BHI_employ_
 
 liv_status <- blue_growth_employ %>% 
   mutate(ref_point = employ*1.05, 
-         score = employ/ref_point) %>% 
+         score = employ/ref_point*100) %>% 
   full_join(bhi_lookup, by = 'country') %>% 
   select(rgn_id, score) 
 
 # 19, 22, 33 have a score of NA because there was no data on Russia employment. 
 
-write_csv(liv_status, file.path(dir_layers, "liv_status_scores_bhi2015.csv"))
+#write_csv(liv_status, file.path(dir_layers, "liv_status_scores_bhi2015.csv"))
 ```
+
+### 10.3 Alternative 3 - Used for now
+
+We downloaded [Eurostat country-level employment rate and target employment rate](http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&plugin=0&language=en&pcode=t2020_10&tableSelection=1) from 2008 to 2012. We chose this time frame because LIV status, based on Blue Growth report, used 2010 data. So we wanted to keep the time frame similar.
+
+This data is not specific to the blue sectors. However, it provided more accurate numbers than the original approach (derived from NUTS regional data), and a broader time frame and an accurate, country-specefic reference point than Alt. 2.
+
+Data not available for Russia.
+
+``` r
+#### Status Calculation ####
+
+# load data
+euro_data = read_csv(file.path(dir_liv, 'liv_data_database/liv_employment_rate_Eurostat.csv')) %>% 
+  select(country, 2:6, target) %>%  # choosing year 2008 - 2012 and ref point
+  gather(year, emp_rate, 2:6)
+
+# calculate status all years
+liv_stat_3 = euro_data %>% 
+  mutate(score = pmin(emp_rate/target * 100, 100)) %>% 
+  select(country, year, score)
+
+# plot status all years
+plot_status_3 = ggplot(liv_stat_3) +
+  geom_point(aes(year, score, color = country)) +
+  facet_wrap(~country) +
+  ggtitle("LIV Status by country - Alt. 3 with Eurostat employment rate data") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+print(plot_status_3)
+```
+
+![](liv_prep_files/figure-markdown_github/alt.%203-1.png)
+
+``` r
+# select only most recent year (2012)
+liv_stat_3_final = liv_stat_3 %>% 
+  filter(year == 2012)
+
+# match with BHI ID
+liv_stat_3_bhi = full_join(liv_stat_3_final, bhi_lookup) 
+
+# save layer in layers folder
+write_csv(liv_stat_3_bhi, file.path(dir_layers, 'liv_status_scores_bhi2015.csv'))
+
+#### Trend Calcuation ####
+
+liv_trend_3 = liv_stat_3 %>% 
+  group_by(country) %>% 
+  do(mdl = lm(score~year, data = .)) %>% 
+  summarize(country = country,
+            score = coef(mdl)[2]*0.05)
+
+liv_trend_3_bhi = full_join(liv_trend_3, bhi_lookup)
+
+write_csv(liv_trend_3_bhi, file.path(dir_layers, 'liv_trend_scores_bhi2015.csv'))
+
+# plot trend
+liv_trend_3_plot = ggplot(liv_trend_3) +
+  geom_point(aes(x = country, y = score)) +
+  ggtitle("LIV trend by country - Alt. 3 with Eurostat employment rate data") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+print(liv_trend_3_plot)
+```
+
+![](liv_prep_files/figure-markdown_github/alt.%203-2.png)
