@@ -82,16 +82,6 @@ FIS = function(layers, status_year){
     summarize(score = mean(score, na.rm=TRUE)) %>%
     data.frame()
 
-  ###########################################################################
-  ######### TEMPORARY: coz of skinny cod problem, we added a factor of stock condition
-  ######### of 0.6 for Eastern Baltic regions (ICES_subdivision = 2532)
-  ######### by Ning Jiang, 24 Jan, 2016
-
-  status.scores <- status.scores %>%
-    mutate(scores.with.penal = ifelse(stock == "2532", score*0.6,
-                                      score)) %>%
-    select(-score) %>%
-    dplyr::rename(score = scores.with.penal)
 
   #############################################
   ## STEP 4: calculating the weights.
@@ -132,14 +122,29 @@ FIS = function(layers, status_year){
     filter(!is.na(score)) %>%                    # remove missing data
     select(region_id, year, stock, propCatch, score)        # cleaning data
 
+  ###########################################################################
+  ######### TEMPORARY: coz of skinny cod problem, we added a factor of stock condition
+  ######### of 0.6 for Eastern Baltic regions (ICES_subdivision = 2532)
+  ######### by Ning Jiang, 24 Jan, 2016
+
+  status_with_penalty <- status %>%
+    mutate(scores.with.penal = ifelse(stock == "cod_2532", score*0.6,
+                                      score)) %>%
+    select(-score) %>%
+    dplyr::rename(score = scores.with.penal)
 
   ### Geometric mean weighted by proportion of catch in each region
-  status <- status %>%
+  # status <- status %>%
+  #   group_by(region_id, year) %>%
+  #   summarize(status = prod(score^propCatch)) %>%
+  #   ungroup() %>%
+  #   data.frame()
+
+  status <- status_with_penalty %>%
     group_by(region_id, year) %>%
     summarize(status = prod(score^propCatch)) %>%
     ungroup() %>%
     data.frame()
-
 
   ### To get trend, get slope of regression model based on most recent 5 years
   ### of data
@@ -594,15 +599,26 @@ TR = function(layers){
   ## Scores calculated in prep file (prep/TR/tr_prep.rmd) Alternative 2 based on EU blue growth report 2015
   ## updated by Ning Jiang Jan2017
 
-tr_status = layers$data[['tr_status']] %>%
-  select(region_id = rgn_id, score, dimension)
-tr_trend = layers$data[['tr_trend']] %>%
-  select(region_id = rgn_id, score, dimension)
+# tr_status = layers$data[['tr_status']] %>%
+#   select(region_id = rgn_id, score, dimension)
+# tr_trend = layers$data[['tr_trend']] %>%
+#   select(region_id = rgn_id, score, dimension)
+#
+#   ## create scores and rbind status and trend scores
+#   scores = tr_status %>%
+#     bind_rows(.,tr_trend) %>%
+#     mutate(goal='TR')
 
-  ## create scores and rbind status and trend scores
-  scores = tr_status %>%
-    bind_rows(.,tr_trend) %>%
-    mutate(goal='TR')
+
+  ####### TEMPORARY NA placeholders to examine what effects on overall OHI scores removing social goals have #########
+  scores = bind_rows(data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("status",42)),
+                                score = rep (NA, 42)),
+                     data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("trend",42)),
+                                score = rep (0, 42))
+  ) %>%
+    mutate(goal = 'TR')
 
   return(scores)
   ##-------------------------------------------------------------------##
@@ -714,20 +730,32 @@ LIV = function(layers){
   # ##-------------------------------------------------##
   # ## FINAL SCORES OBEJCT
   # ## create scores and rbind to other goal scores
+#
+#   ########### updated 10.28.2016 by Ning Jiang from ohi-science ##############
+#
+#   liv_status = layers$data[['liv_status']] %>%
+#     select(region_id = rgn_id, score) %>%
+#     mutate(dimension = "status")
+#
+#   liv_trend = layers$data[['liv_trend']] %>%
+#     select(region_id = rgn_id, score) %>%
+#     mutate(dimension = "trend")
+#
+#   scores = liv_status %>%
+#     bind_rows(.,liv_trend) %>%
+#     mutate(goal='LIV')
+#
+#   return(scores)
 
-  ########### updated 10.28.2016 by Ning Jiang from ohi-science ##############
-
-  liv_status = layers$data[['liv_status']] %>%
-    select(region_id = rgn_id, score) %>%
-    mutate(dimension = "status")
-
-  liv_trend = layers$data[['liv_trend']] %>%
-    select(region_id = rgn_id, score) %>%
-    mutate(dimension = "trend")
-
-  scores = liv_status %>%
-    bind_rows(.,liv_trend) %>%
-    mutate(goal='LIV')
+  ####### TEMPORARY NA placeholders to examine what effects on overall OHI scores removing social goals have #########
+  scores = bind_rows(data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("status",42)),
+                                score = rep (NA, 42)),
+                     data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("trend",42)),
+                                score = rep (0, 42))
+  ) %>%
+    mutate(goal = 'ECO')
 
   return(scores)
 
@@ -827,23 +855,36 @@ ECO = function(layers){
 
   ### updated 14Nov, 2016 by Ning Jiang from ohi-science team
 
-  eco_status = layers$data[['eco_status']] %>%
-    mutate(dimension = 'status') %>%
-    select(-layer)
+  # eco_status = layers$data[['eco_status']] %>%
+  #   mutate(dimension = 'status') %>%
+  #   select(-layer)
+  #
+  # eco_trend = layers$data[['eco_trend']] %>%
+  #   mutate(dimension = 'trend') %>%
+  #   select(-layer)
+  #
+  # ## create scores and rbind to other goal scores
+  # scores = rbind(eco_status, eco_trend) %>%
+  #   mutate(goal='ECO') %>%
+  #   select(region_id = rgn_id,
+  #          score,
+  #          dimension,
+  #          goal)
+  #
+  #  return(scores)
 
-  eco_trend = layers$data[['eco_trend']] %>%
-    mutate(dimension = 'trend') %>%
-    select(-layer)
 
-  ## create scores and rbind to other goal scores
-  scores = rbind(eco_status, eco_trend) %>%
-    mutate(goal='ECO') %>%
-    select(region_id = rgn_id,
-           score,
-           dimension,
-           goal)
+  ####### TEMPORARY NA placeholders to examine what effects on overall OHI scores removing social goals have #########
+  scores = bind_rows(data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("status",42)),
+                                score = rep (NA, 42)),
+                     data.frame(region_id = seq(1,42,1),
+                                dimension = as.character(rep("trend",42)),
+                                score = rep (0, 42))
+  ) %>%
+    mutate(goal = 'ECO')
 
-   return(scores)
+  return(scores)
 
 } ## End ECO function
 
