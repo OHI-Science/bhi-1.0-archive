@@ -6,42 +6,42 @@
 
 
 FIS = function(layers, status_year){
- ## FIS code revised by Melanie Fraser
- ## added to functions.r by Jennifer Griffiths 7 June 2016
- ## only Cod and Herrings data are used here. Sprats data moved to NP, by Ning Jiang in Oct 2016.
+  ## FIS code revised by Melanie Fraser
+  ## added to functions.r by Jennifer Griffiths 7 June 2016
+  ## only Cod and Herrings data are used here. Sprats data moved to NP, by Ning Jiang in Oct 2016.
 
 
- ## Call Layers
+  ## Call Layers
   bbmsy = SelectLayersData(layers, layers='fis_bbmsy', narrow=T) %>%
-            select(rgn_id = id_num,
-                   stock = category,
-                   year,
-                   score= val_num) %>%
-            mutate(metric ="bbmsy") %>%
-            dplyr::rename(region_id = rgn_id)
+    select(rgn_id = id_num,
+           stock = category,
+           year,
+           score= val_num) %>%
+    mutate(metric ="bbmsy") %>%
+    dplyr::rename(region_id = rgn_id)
 
   ffmsy = SelectLayersData(layers, layers='fis_ffmsy', narrow=T) %>%
-          select(rgn_id = id_num,
-                  stock = category,
-                  year,
-                  score= val_num) %>%
-          mutate(metric= "ffmsy")%>%
-          dplyr::rename(region_id = rgn_id)
+    select(rgn_id = id_num,
+           stock = category,
+           year,
+           score= val_num) %>%
+    mutate(metric= "ffmsy")%>%
+    dplyr::rename(region_id = rgn_id)
 
   landings = SelectLayersData(layers, layers='fis_landings', narrow=T) %>%
-             select(rgn_id =id_num,
-                    stock = category,
-                    year,
-                    landings= val_num)%>%
-            dplyr::rename(region_id = rgn_id)
+    select(rgn_id =id_num,
+           stock = category,
+           year,
+           landings= val_num)%>%
+    dplyr::rename(region_id = rgn_id)
 
 
   ## combine bbmsy and ffmsy to single object
 
   metric.scores = rbind(bbmsy, ffmsy) %>%
-                  select(region_id, stock, year, metric, score) %>%
-                  mutate(metric = as.factor(metric))%>%
-                   spread(metric, score)
+    select(region_id, stock, year, metric, score) %>%
+    mutate(metric = as.factor(metric))%>%
+    spread(metric, score)
 
 
   ###########################################################################
@@ -82,16 +82,6 @@ FIS = function(layers, status_year){
     summarize(score = mean(score, na.rm=TRUE)) %>%
     data.frame()
 
-  ###########################################################################
-  ######### TEMPORARY: coz of skinny cod problem, we added a factor of stock condition
-  ######### of 0.6 for Eastern Baltic regions (ICES_subdivision = 2532)
-  ######### by Ning Jiang, 24 Jan, 2016
-
-  status.scores <- status.scores %>%
-    mutate(scores.with.penal = ifelse(stock == "2532", score*0.6,
-                                      score)) %>%
-    select(-score) %>%
-    dplyr::rename(score = scores.with.penal)
 
   #############################################
   ## STEP 4: calculating the weights.
@@ -132,14 +122,29 @@ FIS = function(layers, status_year){
     filter(!is.na(score)) %>%                    # remove missing data
     select(region_id, year, stock, propCatch, score)        # cleaning data
 
+  ###########################################################################
+  ######### TEMPORARY: coz of skinny cod problem, we added a factor of stock condition
+  ######### of 0.6 for Eastern Baltic regions (ICES_subdivision = 2532)
+  ######### by Ning Jiang, 24 Jan, 2016
+
+  status_with_penalty <- status %>%
+    mutate(scores.with.penal = ifelse(stock == "cod_2532", score*0.6,
+                                      score)) %>%
+    select(-score) %>%
+    dplyr::rename(score = scores.with.penal)
 
   ### Geometric mean weighted by proportion of catch in each region
-  status <- status %>%
+  # status <- status %>%
+  #   group_by(region_id, year) %>%
+  #   summarize(status = prod(score^propCatch)) %>%
+  #   ungroup() %>%
+  #   data.frame()
+
+  status <- status_with_penalty %>%
     group_by(region_id, year) %>%
     summarize(status = prod(score^propCatch)) %>%
     ungroup() %>%
     data.frame()
-
 
   ### To get trend, get slope of regression model based on most recent 5 years
   ### of data
@@ -155,7 +160,7 @@ FIS = function(layers, status_year){
     ungroup() %>%
     mutate(trend = round(trend, 2))
 
-   ### final formatting of status data:
+  ### final formatting of status data:
   status <- status %>%
     filter(year == max(year, na.rm = T)) %>%
     mutate(status = round(status * 100, 1)) %>%
