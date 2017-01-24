@@ -82,6 +82,17 @@ FIS = function(layers, status_year){
     summarize(score = mean(score, na.rm=TRUE)) %>%
     data.frame()
 
+  ###########################################################################
+  ######### TEMPORARY: coz of skinny cod problem, we added a factor of stock condition
+  ######### of 0.6 for Eastern Baltic regions (ICES_subdivision = 2532)
+  ######### by Ning Jiang, 24 Jan, 2016
+
+  status.scores <- status.scores %>%
+    mutate(scores.with.penal = ifelse(stock == "2532", score*0.6,
+                                      score)) %>%
+    select(-score) %>%
+    dplyr::rename(score = scores.with.penal)
+
   #############################################
   ## STEP 4: calculating the weights.
   #############################################
@@ -128,6 +139,7 @@ FIS = function(layers, status_year){
     summarize(status = prod(score^propCatch)) %>%
     ungroup() %>%
     data.frame()
+
 
   ### To get trend, get slope of regression model based on most recent 5 years
   ### of data
