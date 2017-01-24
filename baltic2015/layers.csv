@@ -72,7 +72,7 @@ Data sources:
 
 
 - [Eurostat database lfst_r_lfe2emprt](http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=lfst_r_lfe2emprt)  ","employ_pop","number people employed","liv_national_employ_bhi2015.csv","","","","","","rgn_id",,,"year","employ_pop",,TRUE,2000,2014,823463.1,70965000,FALSE,,,,42,FALSE
-"LIV","liv_status","Status of Livelihood","LIV status calculated in LIV data prep based on ratio of coastal/national employment rate. ","score","status score","liv_status_scores_bhi2015.csv","","","","","","rgn_id",,,,"score",,TRUE,,,95.2380952380952,95.2380952380952,FALSE,,,,42,FALSE
+"LIV","liv_status","Status of Livelihood","LIV status calculated in LIV data prep based on ratio of coastal/national employment rate. ","score","status score","liv_status_scores_bhi2015.csv","","","","","","rgn_id",,"country","year","score",,TRUE,2012,2012,91.1267605633803,99.8701298701299,FALSE,,,,42,FALSE
 "LIV","liv_trend","Trend of Livelihood ","LIV trend calculated in data prep. Based on most recent five years' status scores. ","score","trend score","liv_trend_score_bhi2015.csv","","","","","","rgn_id",,"dimension",,"score",,TRUE,,,0,0,TRUE,,,,42,FALSE
 "LSP","lsp_status","Status scores of LSP","Status calcluated ","score","status score","lsp_status_by_rgn_bhi2015.csv","","","","","","rgn_id",,,,"score",,TRUE,,,8.9,100,FALSE,,,,42,FALSE
 "LSP","lsp_trend","Trend of LSP ","","score","trend score","lsp_trend_bhi2015.csv","","","","","","rgn_id",,,,"score",,TRUE,,,0,0.1,TRUE,,,,42,FALSE
