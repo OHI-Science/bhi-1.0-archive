@@ -70,6 +70,8 @@ make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio
 
 dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
 
+dir_prep = make_path('baltic2015/prep')
+
 dir_cs   = file.path(dir_prep, 'CS')
 
 ## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
@@ -283,4 +285,53 @@ cs_trend_NA = data.frame(rgn_id = seq(1, 42, by = 1),
 
 write_csv(cs_trend_NA, file.path(dir_layers, "cs_trend_placeholder_NA.csv"))
 
+
 ```
+
+### Trial: using Carbon burial rate 
+
+Carbon burial rate for 6 out of 16 basins. 
+
+Aata included: Kattegat,	Danish Straits,	**Baltic Proper**,	Bothnian Sea,	Bothnian Bay,	Gulf of Riga,	Gulf of Finland,	**Entire Baltic Sea** (bolded basin names are not in the bhi basins)
+
+As a result, only 11 out of 42 regions have scores. 
+
+
+```{r carbon burial trial}
+
+carbon_data <- read_csv(file.path(dir_cs, 'carbon_burial_rate_baltic.csv')) %>% 
+  gather(basin, rate, 2:9) %>% 
+  group_by(basin) %>% 
+  mutate(ref_point = rate[year == 'target']) %>% 
+  filter(!year == 'target') %>% 
+  ungroup
+
+status_carbon <- carbon_data %>% 
+  mutate(score = rate/ref_point * 100)
+
+# select the most recent year
+status_basin <- status_carbon %>% 
+  filter(year == '2014') %>% 
+  select(basin, score)
+
+bhi_rgn_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
+  select(basin = Subbasin, rgn_id = BHI_ID)
+
+# status by bhi rgn
+status_bhi <- full_join(status_basin, bhi_rgn_lookup, by = 'basin') %>% 
+  filter(!is.na(rgn_id)) # remove non-bhi-basins that do not have a matched bhi ID
+
+### Trend calculation ###
+trend_basin <- status_carbon %>% 
+  select(basin, year, score) %>% 
+  group_by(basin) %>% 
+  do(dml = lm(score~year, data = .)) %>% 
+  summarize(basin = basin,
+            score = coef(dml)[2]*0.05) 
+
+trend_bhi <- full_join(trend_basin, bhi_rgn_lookup, by = 'basin') %>% 
+  filter(!is.na(rgn_id)) %>% # remove non-bhibasins
+  select(rgn_id, score)
+  
+```
+
