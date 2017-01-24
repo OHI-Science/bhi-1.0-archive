@@ -1,0 +1,121 @@
+Basin_HOLAS;Basin_assessment;country;monitoring_area;period;coastal_water_type;core_indicator;taxa;assessment_method;status;status_comment
+Aland Sea;Aland Sea;Sweden;Lagnoe;2002-2013;Aland Sea Swedish Coastal waters;Key species;perch;Trend;GES;
+Aland Sea;Aland Sea;Sweden;Lagnoe;2002-2013;Aland Sea Swedish Coastal waters;Functional;cyprinids;Trend;GES;
+Aland Sea;Aland Sea;Sweden;Lagnoe;2002-2013;Aland Sea Swedish Coastal waters;Functional;piscivores;Trend;GES;
+Aland Sea;Archipelago Sea;Finland;ICES SD 29;1998-2013;Archipelago Sea Coastal waters;Key species;perch;Baseline;GES;
+Aland Sea;Archipelago Sea;Finland;Finbo;2002-2013;Archipelago Sea Coastal waters;Key species;perch;Trend;GES;
+Aland Sea;Archipelago Sea;Finland;Kumlinge;2003-2013;Archipelago Sea Coastal waters;Key species;perch;Trend;GES;
+Aland Sea;Archipelago Sea;Finland;ICES SD 29;1998-2013;Archipelago Sea Coastal waters;Functional;cyprinids;Baseline;subGES;High
+Aland Sea;Archipelago Sea;Finland;Finbo;2002-2013;Archipelago Sea Coastal waters;Functional;cyprinids;Trend;GES;
+Aland Sea;Archipelago Sea;Finland;Kumlinge;2003-2013;Archipelago Sea Coastal waters;Functional;cyprinids;Trend;GES;
+Aland Sea;Archipelago Sea;Finland;ICES SD 29;1998-2013;Archipelago Sea Coastal waters;Functional;piscivores;Baseline;GES;
+Aland Sea;Archipelago Sea;Finland;Finbo;2002-2013;Archipelago Sea Coastal waters;Functional;piscivores;Trend;GES;
+Aland Sea;Archipelago Sea;Finland;Kumlinge;2003-2013;Archipelago Sea Coastal waters;Functional;piscivores;Trend;GES;
+Arkona Basin;Arkona Basin;Denmark;Praestoe Fiord;2005-2012;Arkona Basin Danish Coastal waters;Key species;flounder;Trend;subGES;
+Arkona Basin;Arkona Basin;Denmark;Praestoe Fiord;2005-2012;Arkona Basin Danish Coastal waters;Functional;piscivores;Trend;subGES;
+Arkona Basin;Arkona Basin;Germany;Northeast of Ruegen Island;2008-2013;Arkona Basin German Coastal waters;Key species;flounder;Trend;subGES;
+Arkona Basin;Arkona Basin;Germany;Greifswalder Bodden;2008-2013;Arkona Basin German Coastal waters;Key species;perch;Trend;GES;
+Arkona Basin;Arkona Basin;Germany;Strelasund;2009-2103;Arkona Basin German Coastal waters;Key species;perch;Trend;GES;
+Arkona Basin;Arkona Basin;Germany;Darss-Zingst Bodden chain;2008-2013;Arkona Basin German Coastal waters;Key species;perch;Trend;GES;
+Arkona Basin;Arkona Basin;Germany;Greifswalder Bodden;2008-2013;Arkona Basin German Coastal waters;Functional;piscivores;Trend;GES;
+Arkona Basin;Arkona Basin;Germany;Strelasund;2009-2103;Arkona Basin German Coastal waters;Functional;piscivores;Trend;GES;
+Arkona Basin;Arkona Basin;Germany;Darss-Zingst Bodden chain;2008-2013;Arkona Basin German Coastal waters;Functional;piscivores;Trend;GES;
+Arkona Basin;Arkona Basin;Germany;Northeast of Ruegen Island;2008-2013;Arkona Basin German Coastal waters;Functional;piscivores;Trend;GES;
+Bay of Mecklenburg;Arkona Basin;Denmark;Area south of Zealand (Smalandsfarvandet);2008-2013;Mecklenburg Bight Danish Coastal waters;Key species;flounder;Trend;subGES;
+Bay of Mecklenburg;Arkona Basin;Denmark;Area south of Zealand (Smalandsfarvandet);2008-2013;Mecklenburg Bight Danish Coastal waters;Functional;piscivores;Trend;subGES;
+Bay of Mecklenburg;Arkona Basin;Germany;Boergerende;2003-2013;Mecklenburg Bight German Coastal waters;Key species;cod;Trend;GES;
+Bay of Mecklenburg;Arkona Basin;Germany;North of Kuhlungsborn city;2008-2013;Mecklenburg Bight German Coastal waters;Key species;flounder;Trend;GES;
+Bay of Mecklenburg;Arkona Basin;Germany;Wismar Bight and Salzhaff;2008-2012;Mecklenburg Bight German Coastal waters;Key species;flounder;Trend;GES;
+Bay of Mecklenburg;Arkona Basin;Germany;North of Kuhlungsborn city;2008-2013;Mecklenburg Bight German Coastal waters;Functional;piscivores;Trend;GES;
+Bay of Mecklenburg;Arkona Basin;Germany;Wismar Bight and Salzhaff;2008-2012;Mecklenburg Bight German Coastal waters;Functional;piscivores;Trend;subGES;
+Bay of Mecklenburg;Arkona Basin;Germany;Boergerende;2003-2013;Mecklenburg Bight German Coastal waters;Functional;piscivores;Trend;GES;
+Great Belt;Belt sea;Denmark;Sejeroe Bay;2005-2013;Belts Danish Coastal waters;Key species;flounder;Trend;subGES;
+Great Belt;Belt sea;Denmark;The Great Belt;2005-2011;Belts Danish Coastal waters;Key species;flounder;Trend;subGES;
+Great Belt;Belt sea;Denmark;Southern Little Belt and the archipelago;2005-2013;Belts Danish Coastal waters;Key species;flounder;Trend;subGES;
+Great Belt;Belt sea;Denmark;Odense Fiord;2005-2013;Belts Danish Coastal waters;Key species;flounder;Trend;GES;
+Great Belt;Belt sea;Denmark;Arhus Bay;2005-2013;Belts Danish Coastal waters;Key species;flounder;Trend;subGES;
+Great Belt;Belt sea;Denmark;Fiords of Eastern Jutland;2005-2013;Belts Danish Coastal waters;Key species;flounder;Trend;subGES;
+Great Belt;Belt sea;Denmark;Sejeroe Bay;2005-2013;Belts Danish Coastal waters;Functional;piscivores;Trend;subGES;
+Great Belt;Belt sea;Denmark;Southern Little Belt and the archipelago;2005-2013;Belts Danish Coastal waters;Functional;piscivores;Trend;subGES;
+Great Belt;Belt sea;Denmark;Arhus Bay;2005-2013;Belts Danish Coastal waters;Functional;piscivores;Trend;subGES;
+Great Belt;Belt sea;Denmark;Fiords of Eastern Jutland;2005-2013;Belts Danish Coastal waters;Functional;piscivores;Trend;subGES;
+Bornholm Basin;Bornholm Basin;Germany;Pomeranian Bay, Outer;2003-2103;Bornholm Basin German Coastal waters;Key species;flounder;Trend;GES;
+Bornholm Basin;Bornholm Basin;Germany;East of Usedom Peninsula;2009-2103;Bornholm Basin German Coastal waters;Key species;flounder;Trend;subGES;
+Bornholm Basin;Bornholm Basin;Germany;Stettin Lagoon (German part);2008-2013;Bornholm Basin German Coastal waters;Key species;perch;Trend;GES;
+Bornholm Basin;Bornholm Basin;Germany;Peene river / Achterwasser;2009-2103;Bornholm Basin German Coastal waters;Key species;perch;Trend;GES;
+Bornholm Basin;Bornholm Basin;Germany;Pomeranian Bay, Outer;2003-2013;Bornholm Basin German Coastal waters;Functional;piscivores;Trend;GES;
+Bornholm Basin;Bornholm Basin;Germany;Stettin Lagoon (German part);2008-2013;Bornholm Basin German Coastal waters;Functional;piscivores;Trend;GES;
+Bornholm Basin;Bornholm Basin;Germany;Peene river / Achterwasser;2009-2103;Bornholm Basin German Coastal waters;Functional;piscivores;Trend;GES;
+Bornholm Basin;Bornholm Basin;Germany;East of Usedom Peninsula;2008-2013;Bornholm Basin German Coastal waters;Functional;piscivores;Trend;subGES;
+Bornholm Basin;Bornholm Basin;Sweden;Torhamn;2002-2013;Bornholm Basin Swedish Coastal waters;Key species;perch;Trend;GES;
+Bornholm Basin;Bornholm Basin;Sweden;Torhamn;2002-2013;Bornholm Basin Swedish Coastal waters;Functional;cyprinids;Trend;GES;
+Bornholm Basin;Bornholm Basin;Sweden;Torhamn;2002-2013;Bornholm Basin Swedish Coastal waters;Functional;piscivores;Trend;GES;
+Bothnian Bay;Bothnian Bay;Finland;ICES SD 31;1998-2013;Bothnian Bay Finnish Coastal waters;Key species;perch;Baseline;GES;
+Bothnian Bay;Bothnian Bay;Finland;ICES SD 31;1998-2013;Bothnian Bay Finnish Coastal waters;Functional;cyprinids;Baseline;subGES;High
+Bothnian Bay;Bothnian Bay;Finland;ICES SD 31;1998-2013;Bothnian Bay Finnish Coastal waters;Functional;piscivores;Baseline;GES;
+Bothnian Bay;Bothnian Bay;Sweden;Ranea;2002-2013;Bothnian Bay Swedish Coastal waters;Key species;perch;Trend;GES;
+Bothnian Bay;Bothnian Bay;Sweden;Kinnbaecksfjaerden;2004-2013;Bothnian Bay Swedish Coastal waters;Key species;perch;Trend;GES;
+Bothnian Bay;Bothnian Bay;Sweden;Ranea;2002-2013;Bothnian Bay Swedish Coastal waters;Functional;cyprinids;Trend;subGES;Low
+Bothnian Bay;Bothnian Bay;Sweden;Kinnbaecksfjaerden;2004-2013;Bothnian Bay Swedish Coastal waters;Functional;cyprinids;Trend;subGES;Low
+Bothnian Bay;Bothnian Bay;Sweden;Ranea;2002-2013;Bothnian Bay Swedish Coastal waters;Functional;piscivores;Trend;GES;
+Bothnian Bay;Bothnian Bay;Sweden;Kinnbaecksfjaerden;2004-2013;Bothnian Bay Swedish Coastal waters;Functional;piscivores;Trend;GES;
+Bothnian Sea;Bothnian Sea;Finland;ICES SD 30;1998-2013;Bothnian Sea Finnish Coastal waters;Key species;perch;Baseline;GES;
+Bothnian Sea;Bothnian Sea;Finland;ICES SD 30;1998-2013;Bothnian Sea Finnish Coastal waters;Functional;cyprinids;Baseline;subGES;High
+Bothnian Sea;Bothnian Sea;Finland;ICES SD 30;1998-2013;Bothnian Sea Finnish Coastal waters;Functional;piscivores;Baseline;GES;
+Bothnian Sea;Bothnian Sea;Sweden;Gaviksfjaerden;2004-2013;Bothnian Sea Swedish Coastal waters;Key species;perch;Trend;subGES;
+Bothnian Sea;Bothnian Sea;Sweden;Langvindsfjaerden;2002-2013;Bothnian Sea Swedish Coastal waters;Key species;perch;Trend;GES;
+Bothnian Sea;Bothnian Sea;Sweden;Forsmark;1998-2013;Bothnian Sea Swedish Coastal waters;Key species;perch;Baseline;GES;
+Bothnian Sea;Bothnian Sea;Sweden;Gaviksfjaerden;2004-2013;Bothnian Sea Swedish Coastal waters;Functional;cyprinids;Trend;GES;
+Bothnian Sea;Bothnian Sea;Sweden;Langvindsfjaerden;2002-2013;Bothnian Sea Swedish Coastal waters;Functional;cyprinids;Trend;GES;
+Bothnian Sea;Bothnian Sea;Sweden;Forsmark;1998-2013;Bothnian Sea Swedish Coastal waters;Functional;cyprinids;Baseline;GES;
+Bothnian Sea;Bothnian Sea;Sweden;Gaviksfjaerden;2004-2013;Bothnian Sea Swedish Coastal waters;Functional;piscivores;Trend;subGES;
+Bothnian Sea;Bothnian Sea;Sweden;Langvindsfjaerden;2002-2013;Bothnian Sea Swedish Coastal waters;Functional;piscivores;Trend;GES;
+Bothnian Sea;Bothnian Sea;Sweden;Forsmark;1998-2013;Bothnian Sea Swedish Coastal waters;Functional;piscivores;Baseline;GES;
+Eastern Gotland Basin;Gotland Basin;Latvia;Jurkalne;1999-2007;Eastern Gotland Basin Latvian Coastal waters;Key species;flounder;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Latvia;Jurkalne;1999-2007;Eastern Gotland Basin Latvian Coastal waters;Functional;cyprinids;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Latvia;Jurkalne;1999-2007;Eastern Gotland Basin Latvian Coastal waters;Functional;piscivores;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Lithuania;Monciskes/Butinge;1998-2011;Eastern Gotland Basin Lithuanian Coastal waters;Key species;flounder;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Lithuania;Curonian Lagoon;1998-2011;Eastern Gotland Basin Lithuanian Coastal waters;Key species;perch;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Lithuania;Monciskes/Butinge;1998-2011;Eastern Gotland Basin Lithuanian Coastal waters;Functional;cyprinids;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Lithuania;Curonian Lagoon;1998-2011;Eastern Gotland Basin Lithuanian Coastal waters;Functional;cyprinids;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Lithuania;Monciskes/Butinge;1998-2011;Eastern Gotland Basin Lithuanian Coastal waters;Functional;piscivores;Trend;GES;
+Eastern Gotland Basin;Gotland Basin;Lithuania;Curonian Lagoon;1998-2011;Eastern Gotland Basin Lithuanian Coastal waters;Functional;piscivores;Trend;GES;
+Western Gotland Basin;Gotland Basin;Sweden;Kvaedoefjaerden;1998-2013;Western Gotland Basin Swedish Coastal waters;Key species;perch;Baseline;subGES;
+Western Gotland Basin;Gotland Basin;Sweden;Vinoe;1998-2013;Western Gotland Basin Swedish Coastal waters;Key species;perch;Baseline;subGES;
+Western Gotland Basin;Gotland Basin;Sweden;Kvaedoefjaerden;1998-2013;Western Gotland Basin Swedish Coastal waters;Functional;cyprinids;Baseline;subGES;Low
+Western Gotland Basin;Gotland Basin;Sweden;Vinoe;1998-2013;Western Gotland Basin Swedish Coastal waters;Functional;cyprinids;Baseline;subGES;Low
+Western Gotland Basin;Gotland Basin;Sweden;Kvaedoefjaerden;1998-2013;Western Gotland Basin Swedish Coastal waters;Functional;piscivores;Baseline;subGES;
+Western Gotland Basin;Gotland Basin;Sweden;Vinoe;1998-2013;Western Gotland Basin Swedish Coastal waters;Functional;piscivores;Baseline;subGES;
+Gulf of Finland;Gulf of Finland;Finland;ICES SD 32;1998-2013;Gulf of Finland Finnish Coastal waters;Key species;perch;Baseline;GES;
+Gulf of Finland;Gulf of Finland;Finland;ICES SD 32;1998-2013;Gulf of Finland Finnish Coastal waters;Functional;cyprinids;Baseline;subGES;High
+Gulf of Finland;Gulf of Finland;Finland;ICES SD 32;1998-2013;Gulf of Finland Finnish Coastal waters;Functional;piscivores;Baseline;subGES;
+Gulf of Riga;Gulf of Riga;Estonia;Hiiumaa;1998-2013;Gulf of Riga Estonian Coastal waters;Key species;perch;Baseline;subGES;
+Gulf of Riga;Gulf of Riga;Estonia;Hiiumaa;1998-2013;Gulf of Riga Estonian Coastal waters;Functional;cyprinids;Baseline;subGES;Low
+Gulf of Riga;Gulf of Riga;Estonia;Hiiumaa;1998-2013;Gulf of Riga Estonian Coastal waters;Functional;piscivores;Baseline;subGES;
+Gulf of Riga;Gulf of Riga;Latvia;Daugagriva;1998-2007;Gulf of Riga Latvian Coastal waters;Key species;perch;Trend;GES;
+Gulf of Riga;Gulf of Riga;Latvia;Daugagriva;1998-2007;Gulf of Riga Latvian Coastal waters;Functional;cyprinids;Trend;subGES;High
+Gulf of Riga;Gulf of Riga;Latvia;Daugagriva;1998-2007;Gulf of Riga Latvian Coastal waters;Functional;piscivores;Trend;GES;
+Kattegat;Kattegat;Denmark;Isefjord and Roskilde Fjord;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Key species;flounder;Trend;subGES;
+Kattegat;Kattegat;Denmark;Northern Kattegat;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Key species;flounder;Trend;subGES;
+Kattegat;Kattegat;Denmark;Northern Limfjord;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Key species;flounder;Trend;subGES;
+Kattegat;Kattegat;Denmark;Skive Fiord og Lovns Broad;2008-2013;Kattegat Danish Coastal waters, including Limfjorden;Key species;flounder;Trend;subGES;
+Kattegat;Kattegat;Denmark;Venoe Bay and Nissum Broad;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Key species;flounder;Trend;subGES;
+Kattegat;Kattegat;Denmark;Isefjord and Roskilde Fjord;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Functional;piscivores;Trend;subGES;
+Kattegat;Kattegat;Denmark;Northern Kattegat;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Functional;piscivores;Trend;subGES;
+Kattegat;Kattegat;Denmark;Northern Limfjord;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Functional;piscivores;Trend;subGES;
+Kattegat;Kattegat;Denmark;Hjarbaek Fjord;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Functional;piscivores;Trend;subGES;
+Kattegat;Kattegat;Denmark;Venoe Bay and Nissum Broad;2005-2013;Kattegat Danish Coastal waters, including Limfjorden;Functional;piscivores;Trend;subGES;
+Northern Baltic Proper;Northern Baltic Proper;Sweden;Askoe;2005-2013;Northern Baltic Proper Swedish Coastal waters;Key species;perch;Trend;GES;
+Northern Baltic Proper;Northern Baltic Proper;Sweden;Askoe;2005-2013;Northern Baltic Proper Swedish Coastal waters;Functional;cyprinids;Trend;GES;
+Northern Baltic Proper;Northern Baltic Proper;Sweden;Askoe;2005-2013;Northern Baltic Proper Swedish Coastal waters;Functional;piscivores;Trend;GES;
+The Quark;The Quark;Finland;Rectangle 23 & 28;1998-2013;The Quark Finnish Coastal waters;Key species;perch;Baseline;GES;
+The Quark;The Quark;Finland;Rectangle 23 & 28;1998-2013;The Quark Finnish Coastal waters;Functional;cyprinids;Baseline;subGES;High
+The Quark;The Quark;Finland;Rectangle 23 & 28;1998-2013;The Quark Finnish Coastal waters;Functional;piscivores;Baseline;GES;
+The Quark;The Quark;Sweden;Holmoen ;1998-2013;The Quark Swedish Coastal waters;Key species;perch;Baseline;GES;
+The Quark;The Quark;Sweden;Norrbyn;2002-2013;The Quark Swedish Coastal waters;Key species;perch;Trend;subGES;
+The Quark;The Quark;Sweden;Holmoen ;1998-2013;The Quark Swedish Coastal waters;Functional;cyprinids;Baseline;subGES;High
+The Quark;The Quark;Sweden;Norrbyn;2002-2013;The Quark Swedish Coastal waters;Functional;cyprinids;Trend;GES;
+The Quark;The Quark;Sweden;Holmoen ;1998-2013;The Quark Swedish Coastal waters;Functional;piscivores;Baseline;GES;
+The Quark;The Quark;Sweden;Norrbyn;2002-2013;The Quark Swedish Coastal waters;Functional;piscivores;Trend;subGES;
+The Sound;The Sound;Denmark;The Sound;2005-2013;The Sound Danish Coastal waters;Key species;flounder;Trend;subGES;
+The Sound;The Sound;Denmark;The Sound;2005-2013;The Sound Danish Coastal waters;Functional;piscivores;Trend;subGES;

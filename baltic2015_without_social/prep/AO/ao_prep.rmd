@@ -1,0 +1,885 @@
+---
+title: "Artisanal Opportunity (AO) Goal Data Prep"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+
+## 1. Background
+
+```{r, child='../../conf/goals/AO.Rmd', results='asis', echo=FALSE}
+```
+
+## 2. Data
+
+### 2.1 Data Source
+
+[HELCOM Core Indicator Abundance of coastal fish key functional groups](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-coastal-fish-key-functional-groups/)  
+
+[HELCOM Core Indicator Abundance of key coastal fish species](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species)  
+
+**Good Environmental Status** (GES) is assessed as either *GES* or *sub-GES* based on data times series using either a baseline or a trend approach, [see HELCOM for explanation](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species/good-environmental-status/). There is only a single assessment for each region.  
+
+*status qualifying comments*: for one dataset if a monitoring station receives a "sub-GES" assessment, it is given a qualifier as "low" or "high".  
+
+Environmental status assessments provided by Jens Olsson (SLU).  See [HELCOM FISH-PRO II](http://www.helcom.fi/helcom-at-work/projects/fish-pro/)  
+
+CPUE data used in the GES assessment. Data provided by Jens Olsson, used in trend. Slopes from each analysis available here, but CPUE data held internally in the BHI database and not accessible here.  
+
+### 2.2 Data locations
+
+Data are from monitoring locations (described in the HELCOM core indicators). Finnish data are fisheries data from ICES assessment regions (ICES 29-32).
+
+### 2.3 GES status scoring
+
+Alternative methods are explored in data prep. This method was selected: GES = 1, subGES = 0.2 
+(See _5. Status Calculation_ section, method 2)
+
+*NOTE:: If value does not meet GES threshold but have data to assess status receive score of 0.2. This way, if regions are not assessed and use 0 for these regions, a distinction is made (NA in the OHI framework means "indicator not applicable", not "no data").*  
+
+### 2.4 Regions with no data
+Assign value of NA to these regions. Stocks were not assessed.
+
+## 3. Goal model
+
+**Status**
+
+Xao = Mean Stock Indicator Value / Reference Pt
+
+- Stock indicators = two HELCOM core indicators assessed for good environmental status (each scored between 0 and 1 by BHI)  
+- Reference pt = maximum possible good environmental status (value=1)  
+
+**Trend**
+
+CPUE time series are available for all stations used for the HELCOM coastal fish populations core indicators. These data were provided by Jens Olsson (FISH PRO II project). To calculate GES status, full time series were used. Therefore, only one status time point and cannot calculate trend of status over time. Instead, follow approach from [Bergstrom et al. 2016. Long term changes in the status of coastal fish in the Baltic Sea. Estuarin, Coast and Shelf Science. 169:74-84](http://www.sciencedirect.com/science/article/pii/S0272771415301700http://www.sciencedirect.com/science/article/pii/S0272771415301700), but we only focus on the final time period for the slope (2004-2013).  
+
+Steps involved: 
+
+- 1. Select final time period of trend assessment (2004-2013)  
+- 2. Use time series from both indicators, Key Species and Functional groups. For functional groups,include both cyprinid and piscivore time series.  
+- 3. For each time series:  square-root transform data, z-score, fit linear regression, extract slope  
+- 4. Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin
+- 5. Within each basin take a mean functional group indicator slope (mean of cyprinid mean and piscivore mean)  
+- 6. For each basin take overall mean slope - mean of key species and functional group  
+- 7. Apply trend value for basin to all BHI regions (except in Gulf of Finland, do not apply Finnish site value to Estonia and Russian regions.) 
+
+_Steps 1-3 done in file `prep/AO/ao_slope_calc.r`_
+
+## 4.Data layer preparation
+
+```{r setup, message=FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
+
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+dir_ao = file.path(dir_prep,'AO')
+
+## add a README.md to the prep directory
+create_readme(dir_ao, 'ao_prep.rmd')
+```
+
+### 4.1 Read in data
+Read in status assessment, monitoring area locations, lookup table for BHI regions to HOLAS basins.  
+
+Locations for the Finnish monitoring areas are not given by specific lat-lon because are assessment areas. I have assigned a single lat-lon for each Finnish monitoring area for plotting purposes. 
+
+```{r read in data, results = "hide"}
+## read in data...
+
+#assessment of GES status, all 2 indicators
+coastal_fish = readr::read_csv2(file.path(dir_ao, 'ao_data_database/ao_coastalfish_ges_status.csv'))
+
+# head(coastal_fish)
+# dim(coastal_fish)
+# str(coastal_fish)
+
+#locations of specific monitoring stations
+coastal_fish_loc = read.csv(file.path(dir_ao, 'ao_data_database/ao_coastalfish_locations.csv'),
+                          sep=";") ## can't use read_csv2 because while includes sep = ";" as the default, also has the default decimal separator as a comma so does not know what to do with a period
+
+# head(coastal_fish_loc)
+# dim(coastal_fish_loc)
+# str(coastal_fish_loc)        
+
+## Station cleaned is a column that I created to make the station names match those under "monitoring_area" in the status asssessment
+
+## assign lat-lon for ICES area to allow map plotting - assign location in center of Finnish coasts for ICES areas (29-32)
+
+##ICES 31
+ ##64.207281
+ ##23.511161
+##ICES 30
+ ##61.679815
+ ##21.269112
+##ICES 29
+ ##59.705518
+ ##21.264879
+##ICES 32
+ ##60.108130
+ ##25.772410
+##Finnish Rectangle 23 & 28 (The Quark)
+ ##63.505817
+ ##21.351243
+
+coastal_fish_loc = coastal_fish_loc%>%
+                    mutate(lat = DECWGSN,
+                           lon = DECWGSE)%>%
+                    mutate(lat = ifelse(station_cleaned== "ICES SD 31", 64.207281,
+                                 ifelse(station_cleaned== "ICES SD 30", 61.679815,
+                                 ifelse(station_cleaned== "ICES SD 29", 59.705518,
+                                 ifelse(station_cleaned== "ICES SD 32", 60.108130,
+                                 ifelse(station_cleaned== "Rectangle 23 & 28",  63.505817,lat ))))),
+                           lon = ifelse(station_cleaned== "ICES SD 31", 23.511161,
+                                 ifelse(station_cleaned== "ICES SD 30", 21.269112,
+                                 ifelse(station_cleaned== "ICES SD 29", 21.264879,
+                                 ifelse(station_cleaned== "ICES SD 32", 25.772410,
+                                 ifelse(station_cleaned== "Rectangle 23 & 28",  21.351243,lon ))))))%>%
+                    mutate(station_cleaned = as.character(station_cleaned),
+                           station = as.character(station))
+# str(coastal_fish_loc)
+
+#bhi region and HOLAS basin look up
+ basin_lookup = read.csv(file.path(
+  dir_ao,"bhi_basin_country_lookup.csv"), sep=";", stringsAsFactors = FALSE)
+basin_lookup=basin_lookup %>% select(bhi_id=BHI_ID,basin_name=Subbasin)
+# basin_lookup
+
+## THIS IS FOR VISUALIZATION OF THE FINAL PRODUCT ##
+## save location for summary visualizaton
+ao_space_data = coastal_fish_loc %>% 
+  select(lat,lon)%>%
+  distinct()%>%
+  mutate(data_descrip = "coastal fish",
+         goal = 'AO')
+
+write.csv(ao_space_data,file.path(dir_baltic, 'visualize/ao_space_data.csv'),row.names=FALSE)
+```
+
+
+## 5.Status Calculation  
+We asssigned scores to GES status and explored the consequences of different scoring schemes. In all cases, a score of 1 achieving highest status. After discussion with experts, Alternative 2 was chosen for this goal. Exploration of all alternatives are recorded below. 
+
+### 5.1 Alternative scoring methods exploration
+**score"**: GES = 1, subGES = 0 *If value does not meet GES threshold so recieves 0"*  Only areas with an assessment receives a score. Areas (BHI regions) with no assessment have NA scores, these will not be included until the final scores is calculated
+
+**score2**: GES = 1, subGES = 0.2 *If value does not meet GES threshold but have data to assess status receive score of 0.2.* Only areas with an assessment receives a score. Areas (BHI regions) with no assessment have NA scores, these will not be included until the final scores is calculated
+
+**score3**: GES =1, subGES (low) = 0.2, subGES(high) = 0.5, subGES (no comment) = 0.2. *Distinguish between subGES levels that have been ranked low or high. Has only been done for cyprinids functional group.*  Only areas with an assessment receives a score. Areas (BHI regions) with no assessment have NA scores, these will not be included until the final scores is calculated
+
+```{r assign scores, results = "hide"}
+## is status ever NA?
+coastal_fish %>% filter(is.na(status)) #No
+
+## Assign three alternative 0-1 scores
+  ## score 1:  GES =1, subGES = 0
+  ## score 2:  GES =1, subGES = 0.2
+  ## score 3:  GES =1, subGES (low)= 0.2, subGES (high)=0.5, subGES = 0.2
+
+coastal_fish_scores = coastal_fish %>% 
+                      mutate(score1 = ifelse(status== "GES",1,0),
+                             score2 = ifelse(status=="GES",1,.2),
+                             score3 = ifelse(status== "GES",1,
+                                      ifelse(status=="subGES" & is.na(status_comment)==TRUE,.2,      
+                                      ifelse(status=="subGES" & status_comment == "Low",.2,
+                                      ifelse(status=="subGES" & status_comment == "High",.5,0)))))
+                                     
+                                     
+
+# coastal_fish_scores
+
+
+## THIS IS FOR VISUALIZATION OF THE FINAL PRODUCT ##
+### save raw scores (score type 2) for visualization
+ao_value_data = coastal_fish_scores %>%
+               select(location = Basin_HOLAS,
+                      core_indicator,
+                      taxa,
+                      value=score2)%>%
+              mutate(variable = paste(core_indicator,"_",taxa,sep=""),
+                     bhi_goal = "AO",
+                     unit ="Good environmental status score",
+                     data_descrip = "coastal fish cpue")%>%
+              select(-core_indicator,-taxa)
+
+write.csv(ao_value_data,file.path(dir_baltic, 'visualize/ao_value_data.csv'),row.names=FALSE)
+```
+
+### 5.2 Plot alternative scores by location
+Three separate plots for alternative scoring methods.  
+
+The difference between **score1** and **score2** / **score3** is that **score1** is binary between 0 and 1, while **score2** is binary between 0.2 and 1. **Score3** is only slightly different from **score 2** where for the functional groups (cyprinids) some receive a slightly higher score as "high" subGES stats.  
+
+```{r plot alt scores, results = "hide"}
+# make coastal_fish_scores in long format then plot
+temp_long = coastal_fish_scores %>% 
+            select(monitoring_area,core_indicator,taxa, score1,score2,score3) %>%
+            group_by(monitoring_area, core_indicator,taxa) %>%
+            gather(score_type,score,score1,score2,score3)%>%
+            ungroup()
+
+#Score 1
+ggplot(filter(temp_long, score_type=="score1")) + 
+  geom_point(aes(monitoring_area, score, colour=taxa,shape=taxa))+
+  facet_wrap(~core_indicator)+
+   theme(axis.text.x = element_text(colour="grey20",size=7,angle=90,hjust=.5,vjust=.5,face="plain"),
+        plot.margin = unit(c(1,1,1,1), "cm")) +
+  ggtitle("Scoring Method 1")
+
+
+#Score 2
+ggplot(filter(temp_long, score_type=="score2")) + 
+  geom_point(aes(monitoring_area, score, colour=taxa,shape=taxa))+
+  facet_wrap(~core_indicator)+
+   theme(axis.text.x = element_text(colour="grey20",size=7,angle=90,hjust=.5,vjust=.5,face="plain"),
+        plot.margin = unit(c(1,1,1,1), "cm")) +
+  ggtitle("Scoring Method 2")
+
+
+#Score 3
+ggplot(filter(temp_long, score_type=="score3")) + 
+  geom_point(aes(monitoring_area, score, colour=taxa,shape=taxa))+
+  facet_wrap(~core_indicator)+
+   theme(axis.text.x = element_text(colour="grey20",size=7,angle=90,hjust=.5,vjust=.5,face="plain"),
+        plot.margin = unit(c(1,1,1,1), "cm")) +
+  ggtitle("Scoring Method 3")
+```
+
+
+### 5.3 Check unique indicators per monitoring location
+
+1. Is more than one key species monitored at a given locations?  **NO**
+2. Is more than one function group monitored?  **Depends on location, 1 or 2 groups monitored**  
+3. Are both key species and functional groups monitored at all locations? **No**
+
+- 3 monitoring areas without Functional status: *Odense Fiord, Skive Fiord og Lovns Broad, The Great Belt*  
+- 1 monitoring area without Key_spp status: *Hjarbaek Fjord*  
+
+```{r unique indicators monitoring region, results = "hide"}
+coastal_fish_scores_long = coastal_fish_scores %>% 
+            group_by(Basin_HOLAS,Basin_assessment, country,monitoring_area,
+                     period, coastal_water_type,core_indicator,taxa, assessment_method,
+                     status,status_comment) %>%
+            gather(score_type,score,score1,score2,score3)%>%
+            ungroup()
+
+# coastal_fish_scores_long
+
+## Number of indicators by monitoring location
+## how many core indicators, how many taxa
+indicator_count = coastal_fish_scores_long %>%
+                  select(monitoring_area, core_indicator,taxa,score_type,score)%>%
+                  group_by(monitoring_area)%>%
+                  summarise(unique_indicator = length(unique(core_indicator)),
+                            unique_taxa_func =  length(unique(taxa))) %>%
+                ungroup()
+
+# indicator_count %>% print(n=60)
+
+##which stations have only 1 core indicator type (either have only functional or only key spp)
+one_indicator =indicator_count %>% filter(unique_indicator ==1)
+#              monitoring_area unique_indicator unique_taxa_func
+#                        (chr)            (int)            (int)
+# 1             Hjarbaek Fjord                1                1
+# 2               Odense Fiord                1                1
+# 3 Skive Fiord og Lovns Broad                1                1
+# 4             The Great Belt                1                1
+
+
+## number of taxa organized by location and core indicator type
+indicator_taxa_count= coastal_fish_scores_long %>% filter (score_type=="score1") %>% #remove duplicates based on scoring alternatives
+                    select(monitoring_area, core_indicator,taxa)%>%
+                  group_by(monitoring_area,core_indicator)%>%
+                  summarise(unique_taxa_func =length(unique(taxa)))%>%
+                  ungroup()
+                  
+indicator_taxa_count %>% print(n=96)
+
+## which locations are missing an indicator type
+indicator_taxa_count %>% filter(monitoring_area %in% one_indicator$monitoring_area )
+# 
+#              monitoring_area core_indicator unique_taxa_func
+#                        (chr)          (chr)            (int)
+# 1             Hjarbaek Fjord     Functional                1
+# 2               Odense Fiord    Key species                1
+# 3 Skive Fiord og Lovns Broad    Key species                1
+# 4             The Great Belt    Key species                1
+
+ggplot(indicator_taxa_count) + geom_point(aes(monitoring_area, unique_taxa_func))+
+                              facet_wrap(~core_indicator)+
+                              theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                                               hjust=.5, vjust=.5, face = "plain"),
+                                    plot.margin = unit(c(1,1,1,1), "cm")) 
+
+##Number of NAs by each indicator
+indicator_taxa_count %>%  spread(core_indicator,unique_taxa_func)%>% 
+                          dplyr::rename(Key_species = `Key species`)%>%
+                          summarise(Func_na = sum(is.na(Functional)),                                                                               KeySpp_na = sum(is.na(Key_species)))
+```
+
+### 5.4 BHI Status score
+
+Step 1. Take mean score for each indicator type in each monitoring region.  
+
+Step 2. Take mean score for each indicator at the HOLAS basin scale. 
+
+Step 3. Take mean of the two indicators for each basin.  
+
+Step 4. Apply basin score to each BHI region  
+
+```{r status calculation}
+## Number of time series that will contribute to the mean score in each basin
+## these are the number of GES assessments (across indicators and taxa)
+basin_n_obs = coastal_fish_scores_long %>% 
+                            filter(score_type=="score1") %>% ## only select 1 score type so no duplicates
+                            select(Basin_HOLAS)%>%
+    
+                            count(Basin_HOLAS)
+# basin_n_obs                            
+
+
+
+## indicator mean by monitoring area
+monitoring_indicator_mean = coastal_fish_scores_long %>% 
+                            select(Basin_HOLAS, monitoring_area,core_indicator,score_type,score)%>%
+                            group_by(Basin_HOLAS, monitoring_area,core_indicator,score_type)%>%
+                            summarise(mean_core_monitoring_score = mean(score, na.rm=TRUE))%>%
+                            ungroup()
+# monitoring_indicator_mean
+
+
+
+# indicator mean by HOLAS basin
+basin_indicator_mean = monitoring_indicator_mean %>%
+                        group_by(Basin_HOLAS,core_indicator, score_type)%>%
+                        summarise(mean_core_basin_score = mean(mean_core_monitoring_score,na.rm=TRUE))%>%
+                        ungroup()
+# basin_indicator_mean
+
+#HOLAS basin score (mean across the two indicators)
+basin_mean_score = basin_indicator_mean %>%
+                    group_by(Basin_HOLAS,score_type)%>%
+                    summarise(mean_basin_score = round(mean(mean_core_basin_score,na.rm=TRUE),2))%>%
+                    ungroup()
+  
+# basin_mean_score
+
+
+## BHI score
+    ## join basin lookup
+  bhi_mean_score = basin_mean_score %>% full_join(.,basin_lookup, by=c("Basin_HOLAS" = "basin_name"))
+  bhi_mean_score %>% print(n=45)
+  
+  ## Want to make sure that there are entries for each score type and basin (if not scored because no data, then only get a single NA)
+      ## make a "master" list of scores and bhi_id
+      score_list = basin_lookup %>% select(basin_name, bhi_id)%>% 
+                                    mutate(score1 = "score1",
+                                           score2 = "score2",
+                                           score3 = "score3") %>%
+                                    dplyr::rename(Basin_HOLAS = basin_name) %>%
+                                    group_by(Basin_HOLAS,bhi_id) %>%
+                                    gather(score_type,score,score1,score2,score3)%>%
+                                    ungroup() %>%
+                                    select(Basin_HOLAS,bhi_id,score_type)
+      
+      ## Join bhi_mean_score and score_list
+          bhi_mean_score = bhi_mean_score %>% right_join(., score_list, by=c("Basin_HOLAS","bhi_id","score_type"))
+
+  
+```
+
+### 5.5 Plot scores at each level
+*e.g. plot the monitoring stations, basins, BHI regions*  
+
+
+#### Plot monitoring area indicator mean scores
+Scoring alternatives do not seem to lead to strong differences.  Clearly changing the subGES from 0 to 0.2 shifts the range of scores.  
+
+**Note that points are "jittered" in the second plot to make visible**  
+
+**Colors in the second plot are different monitoring locations**
+```{r plot scores levels of aggregation}
+
+##plot monitoring area indicator mean scores
+ggplot(monitoring_indicator_mean) + 
+  geom_point(aes(monitoring_area, mean_core_monitoring_score, color=core_indicator))+
+  facet_wrap(~score_type)+
+  theme(axis.text.x = element_text(colour="grey20", size=6, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm"))  +
+  ggtitle("Monitoring Area Indicator Mean Score")
+
+##plot monitoring area indicator mean scores by HOLAS basin
+ggplot(monitoring_indicator_mean) + 
+  geom_jitter(aes(Basin_HOLAS, mean_core_monitoring_score, color=monitoring_area, shape=factor(core_indicator)))+
+  facet_wrap(~score_type)+
+  guides(colour=FALSE)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) +
+   ggtitle("Monitoring Area Indicator Mean Score by Basin")
+
+
+
+ggplot(monitoring_indicator_mean)+
+  geom_boxplot(aes(Basin_HOLAS, mean_core_monitoring_score))+
+  facet_wrap(~core_indicator)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+ggtitle("Monitoring Area Indicator Mean Score by Basin")
+```
+
+#### Plot the monitoring area mean scores on a map
+Each of the alternative score methods is plotted on a separate map.
+
+```{r monitoring mean score map}
+##plot on map
+
+## Join monitoring_indicator_mean to lat-lon
+monitoring_indicator_mean_loc= monitoring_indicator_mean %>% left_join(., select(coastal_fish_loc, station_cleaned, lat, lon), by=c("monitoring_area" = "station_cleaned"))
+str(monitoring_indicator_mean_loc)
+
+## get the map
+map = get_map(location = c(8.5, 53, 32, 67.5))
+
+##Plot Scoring Alternative 1
+    map_data1 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score1")
+    
+    ##set up the plot
+    plot_map1 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score, shape=factor(core_indicator)), data=map_data1,size = 2.5)
+    
+    ##plot the map
+    plot_map1 + scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 1') +
+      theme(title = element_text(size = 12))
+
+
+##Plot Scoring Alternative 2
+    map_data2 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score2")
+    
+    ##set up the plot
+    plot_map2 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score,shape=factor(core_indicator)), data=map_data2,size = 2.5)
+    
+    ##plot the map
+    plot_map2 + scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 2') +
+      theme(title = element_text(size = 12))
+
+
+
+##Plot Scoring Alternative 3
+    map_data3 = monitoring_indicator_mean_loc %>% select(monitoring_area, core_indicator,score_type,mean_core_monitoring_score,lat,lon ) %>% 
+      filter(score_type == "score3")
+    
+    ##set up the plot
+    plot_map3 = ggmap(map) +
+      geom_point(aes(x=lon, y=lat, colour=mean_core_monitoring_score,shape=factor(core_indicator)), data=map_data3,size = 2.5)
+    
+    ##plot the map
+    plot_map3+ scale_color_gradientn(colours=rainbow(2), limits=c(0,1)) +
+      ggtitle('Coastal Fish Stock Status, Score Type 3') +
+      theme(title = element_text(size = 12))
+```
+
+
+
+#### Plot Basin Indicator scores
+Plot the mean basin score for each indicator *(e.g. on functional score per basin and one key species score per basin).*  
+*Basins are currently alphabetically ordered on x-axis, not ordered geographically.*  
+```{r plot basin indicator scores}
+
+##basin_indicator_mean
+
+##plot monitoring area indicator mean scores
+ggplot(basin_indicator_mean) + 
+  geom_point(aes(Basin_HOLAS, mean_core_basin_score, color=core_indicator,shape=core_indicator), size=1.5)+
+  facet_wrap(~score_type)+
+  scale_shape_manual(values=c(6,19))+
+  scale_colour_manual(values = c("black","turquoise"))+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
+
+```
+
+#### Plot Basin mean score across indicators
+The mean of the two indicator scores was taken for each basin.
+
+```{r plot basin mean across indicators}
+##basin_mean_score
+
+##plot monitoring area indicator mean scores
+ggplot(basin_mean_score) + 
+  geom_point(aes(Basin_HOLAS, mean_basin_score), size=2)+
+  facet_wrap(~score_type)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                    hjust=.5, vjust=.5, face = "plain"),
+         plot.margin = unit(c(1,1,1,1), "cm")) 
+```
+
+
+
+#### Plot BHI Scores
+There are no scores for Kiel Bay and Gdansk Basin, there for no scores for BHI regions 7,8,18,19. For Kiel Bay, this could be because some monitoring locations should be assigned to Kiel Bay but are not. There is no Polish data which is why there is no scoring for Gdansk Basin.  
+
+**Outcome among score type** does not seem to change at the basin or BHI scale. Should other score methods be considered?  
+
+Currently not plotted; can be done with `bhi/baltic2015/PlotMap()`
+```{r plot BHI scores}
+## BHI Data
+# library(rgdal)
+# BHIshp = readOGR("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/BHI_r/March2016WkshpPlots/shapefiles", "BHI_regions_plus_buffer_25km")
+# BHIshp2 = spTransform(BHIshp, CRS("+proj=longlat +init=epsg:4326"))
+# print(proj4string(BHIshp2))
+# 
+# 
+# ## Assign colors to BHI ID based on score - these bins are not even, not sure how to do a gradient
+# ## 0 - 0.19
+# ## 0.2 - 0.49
+# ## 0.5 - 0.74
+# ## 0.75 - 1.0
+# 
+bhi_mean_score_colors = bhi_mean_score %>%
+                        mutate(cols = ifelse(is.na(mean_basin_score) == TRUE, "grey",
+                                      ifelse(mean_basin_score >= 0 & mean_basin_score < 0.2, "orange1",
+                                      ifelse(mean_basin_score >= 0.2 & mean_basin_score < 0.5, "yellow2",
+                                      ifelse(mean_basin_score >= 0.5 & mean_basin_score < 0.75, "light blue",
+                                      ifelse(mean_basin_score >= .75 & mean_basin_score <=1.0, "blue", "grey"))))))
+# 
+# 
+# ## Need separate shapefile for each score
+# 
+# shp_score1 = BHIshp2
+# shp_score2 = BHIshp2
+# shp_score3 = BHIshp2
+# 
+# #assign colors to shapefile data
+# 
+# shp_score1@data = shp_score1@data %>% full_join(., filter(bhi_mean_score_colors,score_type=="score1"), by=c("BHI_ID"= "bhi_id"))
+# head(shp_score1@data)
+# 
+# shp_score2@data = shp_score2@data %>% full_join(., filter(bhi_mean_score_colors,score_type=="score2"), by=c("BHI_ID"= "bhi_id"))
+# head(shp_score2@data)
+# 
+# shp_score3@data = shp_score3@data %>% full_join(., filter(bhi_mean_score_colors,score_type=="score3"), by=c("BHI_ID"= "bhi_id"))
+# head(shp_score3@data)
+# 
+# ## Plot BHI regions colored by score value
+# 
+#   ## plot each score type separately
+# 
+#   par(mfrow=c(2,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
+#   
+#  plot(shp_score1, col=shp_score1@data$cols, main = "score 1")
+#  plot(shp_score1, col=shp_score1@data$cols, main = "score 2")
+#  plot(shp_score1, col=shp_score1@data$cols, main = "score 3")
+# 
+#   plot(c(1,2,3),c(1,2,3), type='n', fg="white",bg="white", xaxt='n',yaxt='n')
+#   legend("center", 
+#          legend=c("No Score","0 - 0.19", "0.2 - 0.49", "0.5 - 0.74", "0.75 -1.0"), 
+#          fill=c("grey","orange1","yellow2","light blue", "blue"), bty='n', cex=1.5)
+# 
+#     mtext("AO Score", side = 3, outer=TRUE, line=1.5)
+```
+
+
+<!-- #### Status review and decisions -->
+
+<!-- 2. Have Jens assess method for scale up from monitoring location specific indicator status assessments to BHI region score - **Jens says generally reasonable, but GF score for Finland should not be applied to Russian and Estonian waters**   -->
+
+<!-- 3. Check assignment of monitoring regions / assessment basins to HOLAS basins.   -->
+<!-- **Missing BHI scores** for Kiel Bay (should something be reassigned) and Gdansk Basin (no Polish data).  *Should we gap-fill with adjacent areas?*- **Jens say do not gap fill from adjacent areas, there is not data and populations too local to extrapolate**   -->
+
+
+### 5.6 Final score objects
+
+Score 2 was chosen. Now we are preparing object with score by basin.  
+
+- Although scores is calculated by basin, Jens Olsson suggests not applying the score to regions where no sampling occurred. Therefore, 13 regions have the score replaced with NA: 
+   - 1,4,8,11,15,17,21,20,22,25,31,33,34
+- See this map of sampling locations provided by Jens Olsson for the above justification (note that the Finnish sites are not marked but covered the entire coastline as they are ICES regions. Coloration of the coastal waters is indication HELCOM coastal water type.  
+
+![map](ao_prep_files/figure-markdown_github/CoastalFishSamplingLocations.png?raw=true)  
+- **Object exported in section 6**  
+
+```{r final score objects}
+##Object with basin scores joinded to BHI id
+## bhi_mean_score_colors
+bhi_score = bhi_mean_score_colors%>%
+            filter(score_type == "score2") %>%
+            select(bhi_id, mean_basin_score) %>%
+            mutate(mean_basin_score = ifelse(bhi_id %in% c(1,4,8,11,15,17,21,20,22,25,31,33,34), NA, mean_basin_score),
+                   dimension= "status")%>%  ## replace these regions with NA because no obs from these regions
+            dplyr::rename(rgn_id=bhi_id,
+                          score=mean_basin_score)%>%
+            mutate(score = round(score*100)) %>%  ## score from 0-100
+            select(rgn_id,dimension,score)
+
+# str(bhi_score)
+
+## Export this object in section 6. 
+```
+
+#### 4.1.1  Plot final score objects
+Size the points by number of time series with GES assessment
+
+Not currently plotted: can do so with `bhi/baltic2015/PlotMap()`
+```{r  final score object plotted}
+## Number of observations
+##basin_n_obs    
+##Plot points
+# plot_score = bhi_score %>% 
+#              full_join(.,basin_lookup, by= c("rgn_id"= "bhi_id")) %>%
+#              full_join(., basin_n_obs, by=c("basin_name" ="Basin_HOLAS"))
+# 
+# ggplot(plot_score)+
+#   geom_point(aes(rgn_id, score, size= n))+
+#   ylim(0,100) +
+#   ggtitle("AO Status Score")
+# 
+# 
+# ## Plot map
+# shp_scoreFinal = BHIshp2
+# 
+# shp_scoreFinal@data = shp_scoreFinal@data %>%
+#                       full_join(., plot_score, by=c("BHI_ID"= "rgn_id"))%>%
+#                        mutate(cols = ifelse(is.na(score) == TRUE, "grey",
+#                                       ifelse(score >= 0 & score < 20, "orange1",
+#                                       ifelse(score >= 20 & score < 50, "yellow2",
+#                                       ifelse(score >= 50 & score < 75, "light blue",
+#                                       ifelse(score >= 75 & score <=100, "blue", "grey"))))))
+# 
+# head(shp_scoreFinal@data)
+# 
+#  
+# par(mfrow=c(1,2), mar=c(.5,.2,.5,.2), oma=c(0,0,4,0))
+#  plot(shp_scoreFinal, col=shp_scoreFinal@data$cols)
+#  plot(c(1,2,3),c(1,2,3), type='n', fg="white",bg="white", xaxt='n',yaxt='n')
+#   legend("center", legend=c("No Score","0 - 19", "20 - 49", "50 - 74", "75 -100"), 
+#          fill=c("grey","orange1","yellow2","light blue", "blue"), bty='n', cex=1.5)
+#   mtext("AO Status", side = 3, outer=TRUE, line=1.5)
+```
+
+
+## 5. Trend Calculation
+
+### 5.1 Read in slopes
+These are the slopes for a linear model fit to each monitoring_area for each indicator time series. Data are first square root transformed and zscored. Linear models were fit for the 2004-2013 time period with a minimum of 5 years of data
+
+```{r  slope data read in}
+slope = read.csv(file.path(dir_ao, 'ao_data_database/ao_cpue_slope.csv'))
+dim(slope)
+str(slope)
+head(slope)
+
+slope = slope %>%
+        dplyr::rename(basin_name= Basin_HOLAS)
+```
+
+#### Plot the slopes from all timeseries
+```{r plot slopes}
+ggplot(slope)+
+geom_hline(yintercept =0) +
+  geom_boxplot(aes(basin_name,slope))+
+  facet_wrap(~core_indicator + taxa)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Time Series slope by Indicator type and Taxa")
+
+
+## Only Functional groups
+ggplot(filter(slope, core_indicator=="Functional groups"))+
+geom_hline(yintercept =0) +
+  geom_point(aes(basin_name,slope, colour=monitoring_area))+
+  facet_wrap(~taxa)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        legend.text =element_text(colour="grey20", size=5),
+         plot.title = element_text(colour="grey20", size=8)) +
+  ggtitle("Time Series slope for Functional Group by Taxa")
+
+## Only Key Species
+ggplot(filter(slope, core_indicator=="Key Species"))+
+geom_hline(yintercept =0) +
+  geom_point(aes(basin_name,slope, colour=monitoring_area, shape=taxa))+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"),
+        legend.text =element_text(colour="grey20", size=5),
+        plot.title = element_text(colour="grey20", size=8)) +
+  #guides(size=.5)+
+  ggtitle("Time Series slope for Key Species by Taxa")
+```
+
+
+
+### 5.2 Remove Ringkoebing Fjord and Nissum Fjord
+
+This monitoring area (Denmark) was included in the data but has no basin associated with it and is not included in the [GES assessment, Table 1](http://helcom.fi/baltic-sea-trends/indicators/abundance-of-key-coastal-fish-species/results-and-confidence/)
+
+
+```{r remove ringkoebing fjord}
+dim(slope) #133   8
+
+slope = slope %>%
+        filter(monitoring_area != "Ringkoebing Fjord and Nissum Fjord")
+dim(slope) #132   8
+```
+
+### 5.3 Mean Slope group x basin
+Within each time series group (key species, cyprinid, piscivore), take the mean slope for each group within each basin  
+```{r mean slope by group by basin}
+## slope
+slope = slope %>%
+        group_by(basin_name, core_indicator, taxa) %>%
+        mutate(slope_mean_basin_taxa = mean(slope)) %>%
+        ungroup()
+
+# str(slope)
+
+## number of time series for each basin
+basin_n_obs_slope = slope %>%
+                    select(basin_name)%>%
+                    count(basin_name)
+# basin_n_obs_slope  ## the number of time series here are greater. This could be if more than one key species measured for a monitoring area (and were combined when GES status assigned)
+
+## Plot
+ggplot(slope) + 
+  geom_hline(yintercept =0) +
+  geom_boxplot(aes(basin_name,slope))+
+  geom_point(aes(basin_name, slope_mean_basin_taxa), colour="red")+
+  facet_wrap(~core_indicator + taxa)+
+  
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Mean slope by basin and indicator taxa")
+
+
+## new object only mean value
+slope2 = slope %>%
+        select(basin_name, core_indicator, taxa, slope_mean_basin_taxa)
+```
+
+### 5.4 Mean slope for each indicator (Functional group, Key Spp)
+Within each basin take a mean functional group indicator slope (mean of cyprinid mean and piscivore mean) and take mean of each Key species indicator
+
+```{r  mean indicator slope}
+slope2 = slope2 %>%
+        group_by(basin_name, core_indicator)%>%
+        mutate(slope_mean_basin_indicator = mean(slope_mean_basin_taxa))%>%
+        ungroup()
+# str(slope2)
+
+ggplot(slope2) + 
+  geom_hline(yintercept =0) +
+  geom_point(aes(basin_name, slope_mean_basin_indicator), colour="red")+
+  facet_wrap(~core_indicator)+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+  ylim(-.3,.3)+
+  ggtitle("Mean slope by basin and indicator type")
+
+
+## new object only basin and indicator mean
+slope3 = slope2 %>%
+        select(basin_name, core_indicator,slope_mean_basin_indicator)
+```
+
+### 5.5 Basin mean slope
+Take the mean for each basin across the indicator types (Functional groups, key species)
+
+```{r}
+slope3 = slope3 %>%
+          group_by(basin_name) %>%
+        mutate(slope_mean_basin = mean(slope_mean_basin_indicator))%>%
+        ungroup()
+
+
+ggplot(slope3) + 
+  geom_hline(yintercept =0) +
+  geom_point(aes(basin_name, slope_mean_basin), colour="black",size=3)+
+  geom_point(aes(basin_name, slope_mean_basin_indicator, shape=core_indicator), colour="red")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90,
+                                   hjust=.5, vjust=.5, face = "plain"))+
+  scale_shape_manual(values=c(1:2))+
+  ylim(-.3,.3)+
+  ggtitle("Mean slope by basin")
+
+
+## new object, only basin mean
+slope4 = slope3 %>%
+          select(basin_name, slope_mean_basin) %>%
+          distinct(.)
+```
+
+### 5.6 Apply slopes by Basin to BHI Region
+Apply slopes from the Basins to their BHI regions.  For Gulf of Finland do not apply values to Russian and Estonian waters because observations only from Finnish waters.
+
+```{r slope basin to region}
+slope4 = slope4 %>%
+         full_join(., basin_lookup, by="basin_name") %>%
+        mutate(slope_mean_basin = ifelse(bhi_id %in% c(33,34), NA, slope_mean_basin))%>%
+        arrange(bhi_id)
+```
+
+
+### 5.7 Final slope object
+
+```{r final slope object}
+## object slope from basin joined to bhi region
+##slope4
+
+bhi_slope = slope4 %>%
+            select(bhi_id, slope_mean_basin)%>%
+            dplyr::rename(rgn_id = bhi_id,
+                          score = slope_mean_basin) %>%
+            mutate(dimension="trend",
+                  score = round(score,2)) %>% ## round to 2 decimal places
+            select(rgn_id, dimension,score)
+# str(bhi_slope)
+
+## Export this object in Section 6
+```
+
+#### Plot final slope object
+Size points by number of times series used
+```{r plot final code object}
+##object with number of observations
+##basin_n_obs_slope
+
+plot_slope = bhi_slope %>%
+                   full_join(., basin_lookup, by=c("rgn_id"="bhi_id")) %>%
+                   full_join(., basin_n_obs_slope, by="basin_name")
+
+ggplot(plot_slope)+
+  geom_hline(yintercept =0) +
+  geom_point(aes(rgn_id, score, size= n))+
+  ylim(-1,1) +
+  ggtitle("AO Slope")
+```
+
+
+## 6. Export Layers for functions.r
+Status and trend calculations are done in the prep folder because they are done at the basin level and then applied to BHI regions (so they cannot be calculated directly in functions.r).
+
+Here the status and slope value obejcts will be be saved as csv files in the layers folder and registerd in layers.csv
+
+**Score Objects** Created in section 4 and 5. 
+
+```{r  export data layers}
+## Data layers for the stock component of AO
+
+## Status Score
+write.csv(bhi_score, file.path(dir_layers, 'ao_stock_status_bhi2015.csv'),row.names=FALSE)
+
+
+## Slope for Trend
+write.csv(bhi_slope, file.path(dir_layers, 'ao_stock_slope_bhi2015.csv'),row.names=FALSE)
+```
+

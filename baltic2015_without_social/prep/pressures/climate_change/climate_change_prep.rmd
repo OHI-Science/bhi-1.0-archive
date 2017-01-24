@@ -1,0 +1,428 @@
+---
+title: "climate_change_prep"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+
+# Climate Change Pressure Layers
+## Raw data cleaning
+
+
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+dir_cc    = file.path(dir_prep, 'pressures/climate_change')
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_cc, 'climate_change_prep.rmd') 
+```
+
+## 1. Background 
+The direct effects of climate change in the abiotic environment will be changes to water temperature and salinity. In the BHI framework, we will include sea surface temperature (SST), surface salinity (SS), and bottom water salinity (BWS) as climate change pressures. Depth of bottom water varies by basin.
+
+**Climate Change in the Baltic Sea**  
+[Second Assessment of Climate Change for the Baltic Sea Basin](http://www.springer.com/gp/book/9783319160054)  
+
+## 2. Data
+
+### 2.1 Data source
+Data are from the [BALTSEM model](http://www.balticnest.org/balticnest/thenestsystem/baltsem.4.3186f824143d05551ad20ea.html), run by BÃ¤rbel MÃ¼ller Karulis from the Baltic Sea Centre at Stockholm University.
+
+### 2.2 Data cleaning and extraction
+Data from hindcast and future scenarios by basin need to be organized into separate SST and salinity files. These data will then be prepared in the subfolder 'temperature_climatechange' and 'salinity_climatechange'
+
+There are two different projection scenarios.
+
+One set of projection scenarios use BALTSEM results run with forcing from the [ECHAM5](http://www.mpimet.mpg.de/en/science/models/echam/) global climate model for the scenario A1b. Project goes to year 2100.  
+
+The second set of  projection scenarios use BALTSEM results run with forcing from the [HADCM3](http://www.metoffice.gov.uk/research/modelling-systems/unified-model/climate-models/hadcm3) global climate model for the scenario A1b. Projection goes to year 2099.  
+
+
+## 3. Hindcast data organization
+
+### 3.1 Read in Hindcast data
+```{r read in hindcast}
+## read in data...
+hind_ar = read.csv(file.path(dir_cc, 'raw_data/Hydro_AR_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "AR") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_AR,
+                        sal_surface = SALIN_O_5_AR, sal_deep = SALIN_50_AR)
+
+
+hind_bb = read.csv(file.path(dir_cc, 'raw_data/Hydro_BB_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BB,
+                        sal_surface = SALIN_O_5_BB, sal_deep = SALIN_110_BB)
+
+hind_bn = read.csv(file.path(dir_cc, 'raw_data/Hydro_BN_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BN") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BN,
+                        sal_surface = SALIN_O_5_BN, sal_deep = SALIN_97_BN)
+
+hind_bs = read.csv(file.path(dir_cc, 'raw_data/Hydro_BS_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BS,
+                        sal_surface = SALIN_O_5_BS, sal_deep = SALIN_220_BS)
+
+hind_ck = read.csv(file.path(dir_cc, 'raw_data/Hydro_CK_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "CK") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_CK,
+                        sal_surface = SALIN_O_5_CK, sal_deep = SALIN_125_CK)
+
+hind_fb = read.csv(file.path(dir_cc, 'raw_data/Hydro_FB_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "FB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_FB,
+                        sal_surface = SALIN_O_5_FB, sal_deep = SALIN_65_FB)
+
+hind_gf = read.csv(file.path(dir_cc, 'raw_data/Hydro_GF_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GF") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GF,
+                        sal_surface = SALIN_O_5_GF, sal_deep = SALIN_85_GF)
+
+hind_gr = read.csv(file.path(dir_cc, 'raw_data/Hydro_GR_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GR") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GR,
+                        sal_surface = SALIN_O_5_GR, sal_deep = SALIN_50_GR)
+
+hind_gs = read.csv(file.path(dir_cc, 'raw_data/Hydro_GS_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GS,
+                        sal_surface = SALIN_O_5_GS, sal_deep = SALIN_250_GS)
+
+hind_os = read.csv(file.path(dir_cc, 'raw_data/Hydro_OS_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "OS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_OS,
+                        sal_surface = SALIN_O_5_OS, sal_deep = SALIN_45_OS)
+
+hind_sb = read.csv(file.path(dir_cc, 'raw_data/Hydro_SB_Hindcast.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "SB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_SB,
+                        sal_surface = SALIN_O_5_SB, sal_deep = SALIN_55_SB)
+
+
+
+
+```
+
+### 3.2 Single object for hindcast data
+
+```{r single hindcast object}
+
+hindcast = bind_rows(hind_ar, hind_bb,hind_bn,hind_bs,hind_ck,hind_fb,hind_gf,hind_gr,hind_gs,hind_os,hind_sb)
+
+```
+
+### 3.3 read in csv for linking baltsem names and holas basins
+```{r read in baltsem to holas lookup}
+basin_lookup = read.csv(file.path(dir_cc,'baltsem_basins_lookup.csv'), sep=";")
+
+
+```
+
+
+### 3.4 join hindcast to basin_lookup
+```{r join hindcast to basin_lookup}
+dim(hindcast) # 495   5
+
+hindcast = hindcast %>%
+           full_join(., basin_lookup, by = "basin_abb_baltsem") %>%
+           filter(!is.na(basin_name_holas))
+
+dim(hindcast) #767   8
+
+```
+
+### 3.5 separate objects for sst, sal_surf, sal_deep
+
+```{r separate objects for hindcast}
+hind_sst = hindcast %>%
+           select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                  year, sst_jul_aug)
+
+hind_sal_surf = hindcast %>%
+                select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                  year,sal_surface)
+
+
+hind_sal_deep = hindcast %>%
+                select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                year, sal_deep, salin_bottom_depth)
+                
+```
+
+### 3.5 save hindcast objects
+```{r save hindcast objects}
+
+write.csv(hind_sst, file.path(dir_cc, 'temperature_climatechange/temp_data_database/hind_sst.csv'),row.names=FALSE)
+
+write.csv(hind_sal_surf, file.path(dir_cc, 'salinity_climatechange/sal_data_database/hind_sal_surf.csv'),row.names=FALSE)
+
+write.csv(hind_sal_deep, file.path(dir_cc, 'salinity_climatechange/sal_data_database/hind_sal_deep.csv'),row.names=FALSE)
+```
+
+
+## 4. ECHAM Projection data organization
+
+### 4.1 Read in data from ECHAM5 projection
+```{r read in projection data}
+
+proj_ar = read.csv(file.path(dir_cc, 'raw_data/Hydro_ARecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "AR") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_AR,
+                        sal_surface = SALIN_O_5_AR, sal_deep = SALIN_50_AR)
+
+proj_bb = read.csv(file.path(dir_cc, 'raw_data/Hydro_BBecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BB,
+                        sal_surface = SALIN_O_5_BB, sal_deep = SALIN_110_BB)
+
+proj_bn = read.csv(file.path(dir_cc, 'raw_data/Hydro_BNecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BN") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BN,
+                        sal_surface = SALIN_O_5_BN, sal_deep = SALIN_97_BN)
+
+proj_bs = read.csv(file.path(dir_cc, 'raw_data/Hydro_BSecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BS,
+                        sal_surface = SALIN_O_5_BS, sal_deep = SALIN_220_BS)
+
+proj_ck = read.csv(file.path(dir_cc, 'raw_data/Hydro_CKecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "CK") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_CK,
+                        sal_surface = SALIN_O_5_CK, sal_deep = SALIN_125_CK)
+
+proj_fb = read.csv(file.path(dir_cc, 'raw_data/Hydro_FBecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "FB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_FB,
+                        sal_surface = SALIN_O_5_FB, sal_deep = SALIN_65_FB)
+
+proj_gf = read.csv(file.path(dir_cc, 'raw_data/Hydro_GFecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GF") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GF,
+                        sal_surface = SALIN_O_5_GF, sal_deep = SALIN_85_GF)
+
+proj_gr = read.csv(file.path(dir_cc, 'raw_data/Hydro_GRecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GR") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GR,
+                        sal_surface = SALIN_O_5_GR, sal_deep = SALIN_50_GR)
+
+proj_gs = read.csv(file.path(dir_cc, 'raw_data/Hydro_GSecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GS,
+                        sal_surface = SALIN_O_5_GS, sal_deep = SALIN_250_GS)
+
+proj_os = read.csv(file.path(dir_cc, 'raw_data/Hydro_OSecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "OS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_OS,
+                        sal_surface = SALIN_O_5_OS, sal_deep = SALIN_45_OS)
+
+proj_sb = read.csv(file.path(dir_cc, 'raw_data/Hydro_SBecham5_a1b_3_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "SB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_SB,
+                        sal_surface = SALIN_O_5_SB, sal_deep = SALIN_55_SB)
+
+```
+
+
+### 4.2 Single object for projection data
+
+```{r single projection object}
+
+projection = bind_rows(proj_ar, proj_bb,proj_bn,proj_bs,proj_ck,proj_fb,proj_gf,proj_gr,proj_gs,proj_os,proj_sb)
+
+```
+
+### 4.3 read in csv for linking baltsem names and holas basins
+Have already done above
+
+### 4.4 join projection to basin_lookup
+```{r join projection to basin_lookup}
+dim(projection) # 1551   5
+
+projection = projection %>%
+           full_join(., basin_lookup, by = "basin_abb_baltsem") %>%
+           filter(!is.na(basin_name_holas))
+
+dim(projection) #2399   8
+
+```
+
+### 4.5 separate objects for sst, sal_surf, sal_deep
+
+```{r separate objects for projection}
+proj_sst = projection %>%
+           select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                  year, sst_jul_aug)
+
+proj_sal_surf = projection %>%
+                select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                  year,sal_surface)
+
+
+proj_sal_deep = projection %>%
+                select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                year, sal_deep, salin_bottom_depth)
+                
+```
+
+### 4.5 save projection objects
+```{r save projection objects}
+
+write.csv(proj_sst, file.path(dir_cc, 'temperature_climatechange/temp_data_database/proj_sst.csv'),row.names=FALSE)
+
+write.csv(proj_sal_surf, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj_sal_surf.csv'),row.names=FALSE)
+
+write.csv(proj_sal_deep, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj_sal_deep.csv'),row.names=FALSE)
+```
+
+
+## 5. HADCM3 Projection data organization
+
+### 5.1 Read in data from HADCM3 projection
+```{r read in projection data hadcm3}
+
+
+proj2_ar = read.csv(file.path(dir_cc, 'raw_data/Hydro_ARrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "AR") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_AR,
+                        sal_surface = SALIN_O_5_AR, sal_deep = SALIN_50_AR)
+
+proj2_bb = read.csv(file.path(dir_cc, 'raw_data/Hydro_BBrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BB,
+                        sal_surface = SALIN_O_5_BB, sal_deep = SALIN_110_BB)
+
+proj2_bn = read.csv(file.path(dir_cc, 'raw_data/Hydro_BNrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BN") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BN,
+                        sal_surface = SALIN_O_5_BN, sal_deep = SALIN_97_BN)
+
+proj2_bs = read.csv(file.path(dir_cc, 'raw_data/Hydro_BSrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "BS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_BS,
+                        sal_surface = SALIN_O_5_BS, sal_deep = SALIN_220_BS)
+
+proj2_ck = read.csv(file.path(dir_cc, 'raw_data/Hydro_CKrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "CK") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_CK,
+                        sal_surface = SALIN_O_5_CK, sal_deep = SALIN_125_CK)
+
+proj2_fb = read.csv(file.path(dir_cc, 'raw_data/Hydro_FBrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "FB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_FB,
+                        sal_surface = SALIN_O_5_FB, sal_deep = SALIN_65_FB)
+
+proj2_gf = read.csv(file.path(dir_cc, 'raw_data/Hydro_GFrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GF") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GF,
+                        sal_surface = SALIN_O_5_GF, sal_deep = SALIN_85_GF)
+
+proj2_gr = read.csv(file.path(dir_cc, 'raw_data/Hydro_GRrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GR") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GR,
+                        sal_surface = SALIN_O_5_GR, sal_deep = SALIN_50_GR)
+
+proj2_gs = read.csv(file.path(dir_cc, 'raw_data/Hydro_GSrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "GS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_GS,
+                        sal_surface = SALIN_O_5_GS, sal_deep = SALIN_250_GS)
+
+proj2_os = read.csv(file.path(dir_cc, 'raw_data/Hydro_OSrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "OS") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_OS,
+                        sal_surface = SALIN_O_5_OS, sal_deep = SALIN_45_OS)
+
+proj2_sb = read.csv(file.path(dir_cc, 'raw_data/Hydro_SBrcao-hadcm3_ref_a1b_PLC55new_Demo.csv'), header=TRUE) %>%
+          mutate(basin_abb_baltsem = "SB") %>%
+          dplyr::rename(year=Year, sst_jul_aug =TEMP_O_5_JulAug_SB,
+                        sal_surface = SALIN_O_5_SB, sal_deep = SALIN_55_SB)
+```
+
+
+### 5.2 Single object for HADCM3 projection data
+
+```{r single projection object hadcm3}
+
+projection2 = bind_rows(proj2_ar, proj2_bb,proj2_bn,proj2_bs,proj2_ck,proj2_fb,proj2_gf,proj2_gr,proj2_gs,proj2_os,proj2_sb)
+
+```
+
+### 5.3 read in csv for linking baltsem names and holas basins
+Have already done above
+
+### 5.4 join projection2 to basin_lookup
+```{r join projection2 to basin_lookup}
+dim(projection2) # 1540   5
+
+projection2 = projection2 %>%
+           full_join(., basin_lookup, by = "basin_abb_baltsem") %>%
+           filter(!is.na(basin_name_holas))
+
+dim(projection2) #2382   8
+
+```
+
+### 5.5 separate objects for sst, sal_surf, sal_deep
+
+```{r separate objects for projection2}
+proj2_sst = projection2 %>%
+           select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                  year, sst_jul_aug)
+
+proj2_sal_surf = projection2 %>%
+                select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                  year,sal_surface)
+
+
+proj2_sal_deep = projection2 %>%
+                select(basin_name_holas, basin_name_baltsem, basin_abb_baltsem,
+                year, sal_deep, salin_bottom_depth)
+                
+```
+
+### 5.5 save projection2 objects
+```{r save projection2 objects}
+
+write.csv(proj2_sst, file.path(dir_cc, 'temperature_climatechange/temp_data_database/proj2_sst.csv'),row.names=FALSE)
+
+write.csv(proj2_sal_surf, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj2_sal_surf.csv'),row.names=FALSE)
+
+write.csv(proj2_sal_deep, file.path(dir_cc, 'salinity_climatechange/sal_data_database/proj2_sal_deep.csv'),row.names=FALSE)
+```
