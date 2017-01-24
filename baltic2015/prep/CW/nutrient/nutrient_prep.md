@@ -38,31 +38,30 @@ Clean Water (CW) - Nutrient (NUT) Subgoal Data Preparation
 
 ### Goal Description
 
-The Contaminant sub-goal of the Clean Water goal captures the degree to which local waters are unpolluted by contaminants. This sub-goal scores highest when the contamination level is below a threshold, which is defined by the Marine Framework Directive. For the BHI three contaminants indicators are proposed, describing different aspects of toxicity: dioxin and dioxin like compounds, polychlorinated biphenyl compounds (PCBs) and perfluorooctanesulfonic acid (PFOS).
-
-**NOTE: Experts are discussing whether to exclude or modify this goal as it is difficult to represent with the available indicators. Currently in the BHI assessment, Contaminants scores are set to NA.**
+The Nutrient sub-goal of the Clean Water goal captures the degree to which local waters are affected by eutrophication. **For the BHI two eutrophication indicators were included: Secchi depth and hypoxic area**. Secchi depth is used as a proxy for water clarity, which reflects nutrient level in the water. Hypoxic area represents the long-term effects of human activities on nutrient levels and water quality. Both indicators are used as [core indicators](http://www.helcom.fi/baltic-sea-trends/indicators/water-clarity) for eutrophication by HELCOM.
 
 ### Model & Data
 
-All contaminant data were downloaded from the open-accessible ICES database (see below).
+To calculate the status of the Nutrient sub-goal the geometric mean of both the Secchi depth status and the hypoxic area status have been calculated for Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland. For the other basins only the Secchi depth has been used to calculate the nutrient status.
 
--   [PCB data from ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)
--   [Dioxins from ICES database](http://dome.ices.dk/views/ContaminantsBiota.aspx)
--   [PFOS data from ICES DOME database](http://dome.ices.dk/views/ContaminantsBiota.aspx).
+-   [Mean Summer Secchi depth (June-September) data from ICES database](http://www.ices.dk/marine-data/Pages/default.aspx).
+-   [Hypoxic area data published by Carstensen et al. 2014](http://www.pnas.org/content/111/15/5628.abstract). Deep water anoxia are defined as O2 level &lt;2 mg⋅L−1. It represents the long-term effects of human activities on nutrient levels and water quality. We used deep water anoxia only for the following basins: Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland.
 
 ### Reference points
 
-**ICES-6 PCB**: The target for non-dioxin contaminents like PCBs is set at the threshold of 75 μg/kg ww (wet weight) fish muscle, which is the [EU threshold for fish muscle. See Section 5 Annex, 5.3](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF). This threshold was also agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016.
+**Secchi depth reference points** are set based on the results obtained in the TARGREV project (HELCOM 2013a), taking advantage of the work carried out during the EUTRO PRO project (HELCOM 2009) and national work for WFD. The final targets were set through an expert evaluation process done by the intersessional activity on development of core eutrophication indicators (HELCOM CORE EUTRO) and the targets were adopted by the HELCOM Heads of Delegations.
 
-**TEQ value for PCBs and Dioxins**: The target for dioxin and dioxin-like compounds is set at 0.0065 TEQ ug /kg ww fish, crustaceans or molluscs (source of target: EQS biota human health). Secondary GES boundary: CB-118 24 μg/kg lw fish liver or muscle (source: EAC). This threshold was agreed upon as GES indicator at the most recent meeting of the [Working Group on the State of the Environment and Nature Conservation](http://helcom.fi/helcom-at-work/groups/state-and-conservation) April 11-15, 2016. This is consistent with the [EU human health thresholds for dioxin and dioxin-like compounds - 6.5 pg/g](http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:320:0018:0023:EN:PDF); TEQ values from the [World Health Organization 2005](http://www.who.int/ipcs/assessment/tef_values.pdf)
+-   [Approaches and methods for eutrophication target setting in the Baltic Sea region](http://www.helcom.fi/Documents/Ministerial2013/Associated%20documents/Background/Eutorophication%20targets_BSEP133.pdf)
+-   [Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10](http://www.sciencedirect.com/science/article/pii/S0272771412000418)
+-   [EUTRO-OPER](http://helcom.fi/helcom-at-work/projects/eutro-oper/). Included on this page is a link to the [Eutrophication Assessment Manual](http://helcom.fi/Documents/Eutrophication%20assessment%20manual.pdf)
 
-**PFOS indicator**: The target for PFOS indicators was set from the GES boundary: "9.1 μg/kg wet weight (or 9.1 ng/g ww) with the protection goal of human health"" according to [HELCOM PFOS core indicator document, p.3](http://www.helcom.fi/Core%20Indicators/PFOS_HELCOM%20core%20indicator%202016_web%20version.pdf).
+**The hypoxic area reference point** is set to be the hypoxic area of each basin in 1906.
 
 ### Considerations for *BHI 2.0*
 
 ### Other information
 
-*external advisors/goalkeepers: Anna Sobek*
+*external advisors/goalkeepers: Christoph Humborg*
 
 2. Secchi Data Prep
 -------------------
@@ -129,6 +128,11 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.3.2
+
+``` r
 dir_cw    = file.path(dir_prep, 'CW')
 dir_secchi    = file.path(dir_prep, 'CW/nutrient')
 
@@ -243,45 +247,35 @@ dim(allData) #[1]  50193    10
 allData %>% filter(is.na(coast_code) & is.na(bhi_id)) %>% dim() # 3567   10
 allData %>% filter(is.na(coast_code) & !is.na(bhi_id)) %>% dim() #  3 10
   
-  ## 3567 observations with no coast_code or BHI_ID, all from SMHI, are 292 distinct locations
-      loc_no_coastcode_nobhi =allData %>% 
-                                filter(is.na(coast_code) & is.na(bhi_id))%>%
-                                dplyr::select(lat,lon)%>%
-                                  distinct()
-     
-        ## check locations
-         library('ggmap')
-        map = get_map(location = c(8.5, 53, 32, 67.5))
+## 3567 observations with no coast_code or BHI_ID, all from SMHI, are 292 distinct locations
+loc_no_coastcode_nobhi =allData %>% 
+  filter(is.na(coast_code) & is.na(bhi_id))%>%
+  dplyr::select(lat,lon)%>%
+  distinct()
 
-         plot_map1 = ggmap(map) +
-          geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_nobhi,size = 2.5)
-      
-          plot_map1
-```
+## check locations
+library('ggmap')
+map = get_map(location = c(8.5, 53, 32, 67.5))
 
-![](nutrient_prep_files/figure-markdown_github/remove%20coastal%20data%20points-1.png)
+# plot_map1 = ggmap(map) +
+#   geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_nobhi,size = 2.5)
+# 
+# plot_map1
+## these locations are very coastal or outside of the Baltic Sea
 
-``` r
-      ## these locations are very coastal or outside of the Baltic Sea
-    
-  ##3 observations with NA for the coast_code but have BHI_ID
-     loc_no_coastcode_bhi =  allData %>% 
-                              filter(is.na(coast_code) & !is.na(bhi_id)) %>% 
-                              dplyr::select(lat,lon)%>%
-                              distinct()
-      
-     plot_map2 = ggmap(map) +
-      geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_bhi,size = 2.5)
-      
-      plot_map2
-```
+##3 observations with NA for the coast_code but have BHI_ID
+loc_no_coastcode_bhi =  allData %>% 
+  filter(is.na(coast_code) & !is.na(bhi_id)) %>% 
+  dplyr::select(lat,lon)%>%
+  distinct()
 
-![](nutrient_prep_files/figure-markdown_github/remove%20coastal%20data%20points-2.png)
+# plot_map2 = ggmap(map) +
+#   geom_point(aes(x=lon, y=lat), data=loc_no_coastcode_bhi,size = 2.5)
+# 
+# plot_map2
+## these are clearly coastal stations
 
-``` r
-      ## these are clearly coastal stations
-  
-      
+
 ## What are coastal codes for The Sound (BHI regions 5,6)
 ##Region 6
 allData %>% filter(bhi_id %in% 6) %>% dplyr::select(bhi_id,year,date,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
