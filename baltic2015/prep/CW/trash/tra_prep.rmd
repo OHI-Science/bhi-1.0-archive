@@ -55,7 +55,7 @@ Footnotes from .xls file column headers
 ## 3. Goal model Potential path forward:
 
 **Status**: 2015 modeled values / ref point 2010  
-**Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal?
+**Trend**: 5 year liear trend 2010-2015
 
 ```{r setup, message=FALSE}
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")

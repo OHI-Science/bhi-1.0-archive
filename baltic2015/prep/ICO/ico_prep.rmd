@@ -29,7 +29,7 @@ Joni Kaitaranta (HELCOM) emailed the complete list of species assessed using IUC
 
 *Cons for using these data:*  
 
-- Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country (Germany has a couple of regions), and therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions. 
+- Distribution is provided for most taxa groups at the basin scale - coarser resolution for calculation. Bird distribution is only by country, and therefore, will need additional expert information to allocate to basin or all bird species associated with a country will be allocated to all a country's BHI regions. 
 
 - Trend is set to "NA" currently because there are no time-series data on the species status. 
 

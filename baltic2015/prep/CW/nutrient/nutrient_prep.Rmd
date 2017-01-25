@@ -734,7 +734,7 @@ gpclibPermit()
   
 ```
 
-# 10. Trial: add Anoxia data to Nutrient calculations (NUT)
+# 10. Add Anoxia data to Nutrient calculations (NUT)
 
 ```{r add anoxia to NUT}
 
