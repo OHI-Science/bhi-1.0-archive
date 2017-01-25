@@ -69,7 +69,8 @@ source(file.path(dir_vis,'visualize_functions.r'))
 ```{r Set local directory for pdf output}
 
 # pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Output")
-pdf_dir = c("/Users/jstewart/Dropbox/Baltic Health Index/Visualize")
+# pdf_dir = c("/Users/jstewart/Dropbox/Baltic Health Index/Visualize")
+pdf_dir = c("/Users/ningningj/Dropbox/Baltic Health Index/Visualize")
 
 ```
 
@@ -209,11 +210,11 @@ goal_select = "NUT"
 
 
 ##data
-space_data= read.csv(file.path(dir_vis,'nut_space_data.csv'), stringsAsFactors = FALSE)
+# space_data= read.csv(file.path(dir_vis,'nut_space_data.csv'), stringsAsFactors = FALSE)
 
 
 #time_data
-time_data= read.csv(file.path(dir_vis,'nut_time_data.csv'), stringsAsFactors = FALSE)
+# time_data= read.csv(file.path(dir_vis,'nut_time_data.csv'), stringsAsFactors = FALSE)
 
   
 ##Scores
@@ -238,16 +239,16 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
       ## NA 
       
       ##plot raw time series by basin
-       plot_datatime (time_data, facet_type= "basin",variable =TRUE)
+       # plot_datatime(time_data, facet_type= "basin",variable =TRUE)
       
        ##plot raw times series by rgn_id
       ## NA 
        
        ##plot pressure data layers and weights for goal
-      plotPressuresResilienceGoal ("pressures", goal_select)
+      plotPressuresResilienceGoal("pressures", goal_select)
       
       ##plot resilience data layers and weights for goal
-      plotPressuresResilienceGoal ("resilience", goal_select)
+      plotPressuresResilienceGoal("resilience", goal_select)
      
       ##plot Map of Each score type
       plotScoreTypes(scores,goal_select)
@@ -270,7 +271,7 @@ goal_select = "TRA"
 ##NA
 
 ## value data
-value_data= read.csv(file.path(dir_vis,'tra_value_data.csv'), stringsAsFactors = FALSE)
+# value_data= read.csv(file.path(dir_vis,'tra_value_data.csv'), stringsAsFactors = FALSE)
 
 
 #time_data
@@ -291,7 +292,7 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
  
       
       ## plot raw values single time period by staton
-       plot_datavalue(value_data, variable=FALSE)
+       # plot_datavalue(value_data, variable=FALSE)
       
       
       ##plot raw times series by station
@@ -334,10 +335,10 @@ goal_select = "ECO"
 
 
 #time_data
-time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/eco_rgn_time_data.csv'), stringsAsFactors=FALSE)
-
-time_data_nat = read.csv(file.path(dir_baltic, 'visualize/eco_nat_time_data.csv'), stringsAsFactors=FALSE)
-  
+# time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/eco_rgn_time_data.csv'), stringsAsFactors=FALSE)
+# 
+# time_data_nat = read.csv(file.path(dir_baltic, 'visualize/eco_nat_time_data.csv'), stringsAsFactors=FALSE)
+#   
 ##Scores
 scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
               filter(goal== goal_select)
@@ -362,9 +363,9 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
        ##NA
       
        ##plot raw times series by rgn_id
-       plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
-       plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
-       
+       # plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
+       # plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
+       # 
        ##plot pressure data layers and weights for goal
       plotPressuresResilienceGoal ("pressures", goal_select)
       
@@ -523,9 +524,9 @@ goal_select = "LIV"
 
 
 #time_data
-time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/liv_rgn_time_data.csv'), stringsAsFactors=FALSE)
-
-time_data_nat = read.csv(file.path(dir_baltic, 'visualize/liv_nat_time_data.csv'), stringsAsFactors=FALSE)
+# time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/liv_rgn_time_data.csv'), stringsAsFactors=FALSE)
+# 
+# time_data_nat = read.csv(file.path(dir_baltic, 'visualize/liv_nat_time_data.csv'), stringsAsFactors=FALSE)
   
 ##Scores
 scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
@@ -551,9 +552,9 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
        ##NA
       
        ##plot raw times series by rgn_id
-       plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
-       plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
-       
+       # plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
+       # plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
+       # 
        ##plot pressure data layers and weights for goal
       plotPressuresResilienceGoal ("pressures", goal_select)
       
@@ -585,7 +586,7 @@ goal_select = "TR"
 
 
 #time_data
-time_data = read.csv(file.path(dir_baltic, 'visualize/tr_time_data.csv'), stringsAsFactors=FALSE)
+# time_data = read.csv(file.path(dir_baltic, 'visualize/tr_time_data.csv'), stringsAsFactors=FALSE)
 
 ##Scores
 scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
@@ -611,7 +612,7 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
        ##NA
       
        ##plot raw times series by rgn_id
-       plot_datatime (time_data, facet_type= "rgn_id", variable =FALSE)
+       # plot_datatime (time_data, facet_type= "rgn_id", variable =FALSE)
        
        ##plot pressure data layers and weights for goal
       plotPressuresResilienceGoal ("pressures", goal_select)
@@ -930,7 +931,6 @@ plotPressuresResilience(type="resilience")
 
 
 dev.off()
-
 
 
 ```
