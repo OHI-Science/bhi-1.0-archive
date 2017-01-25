@@ -572,7 +572,7 @@ plotPressuresResilience = function(type){
     fp_over_harvest  =read.csv(file.path(dir_layers,'fp_over_harvest_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "fp_over_harvest"  )%>% arrange(rgn_id)
     sp_invasives     =read.csv(file.path(dir_layers,'sp_invasives_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( pressure = "sp_invasives"     )%>% arrange(rgn_id)
     po_inverse_secchi=read.csv(file.path(dir_layers,'po_inverse_secchi_bhi2015.csv'),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_inverse_secchi")%>% arrange(rgn_id)
-    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% dplyr::rename(pressure_score =score) %>%arrange(rgn_id)
+    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% dplyr::rename(score=pressure_score) %>%arrange(rgn_id)
 
     ##
     pressure_plot = bind_rows(cc_sal_surf      ,
@@ -697,7 +697,7 @@ plotPressuresResilienceGoal = function(type, goal_select){
     fp_over_harvest  =read.csv(file.path(dir_layers,'fp_over_harvest_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "fp_over_harvest"  )%>% arrange(rgn_id)
     sp_invasives     =read.csv(file.path(dir_layers,'sp_invasives_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( pressure = "sp_invasives"     )%>% arrange(rgn_id)
     po_inverse_secchi=read.csv(file.path(dir_layers,'po_inverse_secchi_bhi2015.csv'),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_inverse_secchi")%>% arrange(rgn_id)
-    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% dplyr::rename(pressure_score =score) %>%arrange(rgn_id)
+    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% dplyr::rename(score = pressure_score) %>%arrange(rgn_id)
 
     ##read in pressure matrix
     pressure_matrix = read.csv(file.path(dir_baltic,'conf/pressures_matrix.csv'), stringsAsFactors = FALSE)

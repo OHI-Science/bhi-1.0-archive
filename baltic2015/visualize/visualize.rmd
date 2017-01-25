@@ -69,7 +69,7 @@ source(file.path(dir_vis,'visualize_functions.r'))
 ```{r Set local directory for pdf output}
 
 # pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Output")
-pdf_dir = c("/Users/julialowndes/Dropbox/NCEAS_Julie/OHI_Regional/OHI_Baltic/_documentation/visualize_reports")
+pdf_dir = c("/Users/jstewart/Dropbox/Baltic Health Index/Visualize")
 
 ```
 
