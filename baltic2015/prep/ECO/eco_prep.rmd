@@ -1399,6 +1399,11 @@ blue_growth_revenue <- read_csv(file.path(dir_prep, 'LIV/liv_data_database/BHI_e
   group_by(country) %>% 
   summarize(total_rev = sum(as.numeric(revenue)))
 
+bhi_lookup = read.csv(file.path(dir_prep, "liv/bhi_basin_country_lookup.csv"), sep=";",stringsAsFactors = FALSE) %>%
+            select(rgn_nam, BHI_ID) %>%
+            dplyr::rename(country= rgn_nam,
+                          rgn_id = BHI_ID)
+
 eco_status_blue_growth <- blue_growth_revenue %>% 
   mutate(ref_point = total_rev*(1.015^10), 
          score = total_rev/ref_point*100) %>% 
