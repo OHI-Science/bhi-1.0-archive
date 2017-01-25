@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Data Layers</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="_sass/main.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">BHI</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="overview.html">Overview</a>
+</li>
+<li>
+  <a href="regions.html">Regions</a>
+</li>
+<li>
+  <a href="data.html">Data Layers</a>
+</li>
+<li>
+  <a href="goals.html">Goals</a>
+</li>
+<li>
+  <a href="workshop.html">Workshop</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Data Layers</h1>
+
+</div>
+
+
+<p>The following data layers are used in Ocean Health Index calculations for goal status, trend, pressures, and resilience.</p>
+<hr />
+<div id="ao_stock_slope" class="section level2">
+<h2>ao_stock_slope</h2>
+<p>slope of coastal fish stocks to be used for trend</p>
+<p>Mean slopes of all monitoring time series used for HELCOM core indicators for coastal fish populations</p>
+</div>
+<div id="ao_stock_status" class="section level2">
+<h2>ao_stock_status</h2>
+<p>status of coastal fish stocks</p>
+<p>HELCOM core indicators for coastal fish populations</p>
+</div>
+<div id="bd_spp_status" class="section level2">
+<h2>bd_spp_status</h2>
+<p>BD status based on species biodiversity. Based on geometric mean of taxa group status.</p>
+<p>HELCOM species distributions from HELCOM species checklists and threat level based upon IUCN red list criteria. Data sources: - <a href="http://www.helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species">HELCOM</a></p>
+</div>
+<div id="bd_spp_trend" class="section level2">
+<h2>bd_spp_trend</h2>
+<p>BD trend taken from OHI-Global 2016 for Baltic countries</p>
+<p>NA</p>
+</div>
+<div id="cc_sal_deep" class="section level2">
+<h2>cc_sal_deep</h2>
+<p>Current deep water salinity (depth varies by basin) rescaled between historic max and future min</p>
+<p>Modelled annual deep water (depth differs by basin) salinity using the BALTSEM model, Future projections force by the ECHAM5 global climate model A1b scenario.</p>
+</div>
+<div id="cc_sal_surf" class="section level2">
+<h2>cc_sal_surf</h2>
+<p>Current surface salinity water rescaled between historic max and future min</p>
+<p>Modelled annual surface water (0-5 m) salinity using the BALTSEM model, Future projections force by the ECHAM5 global climate model A1b scenario.</p>
+</div>
+<div id="cc_sst" class="section level2">
+<h2>cc_sst</h2>
+<p>Current sea surface temperature (SST) rescaled to between historic min and future max</p>
+<p>Modelled Jul-Aug SST using the BALTSEM model, Future projections force by the ECHAM5 global climate model A1b scenario.</p>
+</div>
+<div id="cw_coastalpopn_trend" class="section level2">
+<h2>cw_coastalpopn_trend</h2>
+<p>Coastal human population as a proxy for trend in trash</p>
+<p>Coastal population, defined as the total population inland of 25 miles, extracted from Gridded Population of the World (GPW) Population Density Grid Future Estimates.</p>
+<p>Data sources:</p>
+<ul>
+<li><p>Center for International Earth Science Information Network (CIESIN)/Columbia University</p></li>
+<li><p>CIESIN &amp; CIAT (Center for International Earth Science Information Network (CIESIN)/Columbia University, &amp; Centro Internacional de Agricultura Tropical (CIAT)) (2005). <strong>Gridded Population of the World, Version 3 (GPWv3): Population Density Grid, Future Estimates</strong>. Palisades, NY. <a href="http://sedac.ciesin.columbia.edu/data/set/gpw-v3-population-density-future-estimates">NASA Socioeconomic Data and Applications Center (SEDAC)</a></p></li>
+</ul>
+</div>
+<div id="cw_con_dioxin_status" class="section level2">
+<h2>cw_con_dioxin_status</h2>
+<p>Status of dioxin and dioxin-like PCB indicator. HELCOM and EU human health threshold used.</p>
+<p>Status calculated only for most recent period (2009-2013) for each HOLAS basin and applied to all BHI regions</p>
+</div>
+<div id="cw_con_dioxin_trend" class="section level2">
+<h2>cw_con_dioxin_trend</h2>
+<p>Trend of dioxin and dioxin-like PCB indicator. HELCOM and EU human health threshold used.</p>
+<p>Trend calculated on basin time series (2004-2013) with each observation first transformed to a ?status? based on the human health threshold. Basin trends applied to BHI regions</p>
+</div>
+<div id="cw_con_ices6_status" class="section level2">
+<h2>cw_con_ices6_status</h2>
+<p>Status of ICES6 con indicator based on the ICES6 pcbs. HELCOM and EU human health threshold used</p>
+<p>Status calculated only for most recent period (2009-2013) for each HOLAS basin and applied to all BHI regions</p>
+</div>
+<div id="cw_con_ices6_trend" class="section level2">
+<h2>cw_con_ices6_trend</h2>
+<p>Trend of ICES6 con indicator based on the ICES6 pcbs. HELCOM and EU human health threshold used</p>
+<p>Trend calculated on basin time series (2004-2013) with each observation first transformed to a ?status? based on the human health threshold. Basin trends applied to BHI regions</p>
+</div>
+<div id="cw_con_pfos_status" class="section level2">
+<h2>cw_con_pfos_status</h2>
+<p>Status of PFOS contaminants indicator. HELCOM human health threshold.</p>
+<p>Status calculated only for most recent period (2010-2014) for each HOLAS basin and applied to all BHI regions</p>
+</div>
+<div id="cw_con_pfos_trend" class="section level2">
+<h2>cw_con_pfos_trend</h2>
+<p>Trend of PFOS contaminants indicator. HELCOM human health threshold.</p>
+<p>Trend calculated on basin times series (2005-2015) for each HOLAS basin and applied to all BHI regions</p>
+</div>
+<div id="cw_con_status_na" class="section level2">
+<h2>cw_con_status_NA</h2>
+<p>Status of Contaminants NA placeholder</p>
+<p>Status of Contaminants NA placeholder</p>
+</div>
+<div id="cw_con_trend_na" class="section level2">
+<h2>cw_con_trend_NA</h2>
+<p>Trend of Contaminants NA placeholder</p>
+<p>Trend of Contaminants NA placeholder</p>
+</div>
+<div id="cw_nut_anoxia_status" class="section level2">
+<h2>cw_nut_anoxia_status</h2>
+<p>Status of nut component based on anoxic conditions. Inverse of hab_anoxia pressure scores.</p>
+<p>NA</p>
+</div>
+<div id="cw_nut_anoxia_trend" class="section level2">
+<h2>cw_nut_anoxia_trend</h2>
+<p>Trend of nut component based on anoxic conditions.</p>
+<p>NA</p>
+</div>
+<div id="cw_nut_secchi_status" class="section level2">
+<h2>cw_nut_secchi_status</h2>
+<p>Status of nut component based on secchi depth. Calculated for HOLAS basins and HELCOM targets used</p>
+<p>Secchi depths from ICES and SMHI data base, most recent year between 2000-2014 for each region is used for status. This is 2013 for most but not all HOLAS basins</p>
+</div>
+<div id="cw_nut_secchi_trend" class="section level2">
+<h2>cw_nut_secchi_trend</h2>
+<p>Trend of nut component based on secchi depth. Calculated for HOLAS basins and HELCOM targets used</p>
+<p>Trend calculated over most recent 10 years of data (between 2000-2014) with a minimum of 5 years of data need for the trend. Trend calculated for HOLAS basins.</p>
+</div>
+<div id="cw_tra_status" class="section level2">
+<h2>cw_tra_status</h2>
+<p>Status of Trash</p>
+<p>Status of Trash</p>
+</div>
+<div id="cw_tra_trend" class="section level2">
+<h2>cw_tra_trend</h2>
+<p>Trend of Trash</p>
+<p>Trend of Trash based on status of 2010 and 2015</p>
+</div>
+<div id="eco_status" class="section level2">
+<h2>eco_status</h2>
+<p>Status of eco</p>
+<p>Status of economics based on revenue from different blue sectors from EU’s Blue Growth Report</p>
+</div>
+<div id="eco_trend" class="section level2">
+<h2>eco_trend</h2>
+<p>Trend of eco</p>
+<p>Trend of economics based on GDP per capita in the BHI regions compared with country-level GDP per capita</p>
+</div>
+<div id="fis_bbmsy" class="section level2">
+<h2>fis_bbmsy</h2>
+<p>B/Bmsy by stock and year</p>
+<p>ICES Bmsy. Data sources:</p>
+</div>
+<div id="fis_ffmsy" class="section level2">
+<h2>fis_ffmsy</h2>
+<p>F/Fmsy by stock and year</p>
+<p>ICES Fmsy. Data sources:</p>
+</div>
+<div id="fis_landings" class="section level2">
+<h2>fis_landings</h2>
+<p>Landings by stock and year</p>
+<p>Annual Landings by ICES area and stock. Data sources: -ICES</p>
+</div>
+<div id="fp_over_harvest" class="section level2">
+<h2>fp_over_harvest</h2>
+<p>proxy_layer</p>
+<p>NA</p>
+</div>
+<div id="fp_wildcaught_weight" class="section level2">
+<h2>fp_wildcaught_weight</h2>
+<p>Fisheries weighting factor</p>
+<p>Proportion of wild caught fisheries yield to mariculture yield, based in ICES area landings used in FIS and mariculture production of rainbow trout used in MAR.</p>
+</div>
+<div id="hab_anoxia" class="section level2">
+<h2>hab_anoxia</h2>
+<p>Bottom oxygen level (mg_L_1)</p>
+<p>From <a href="http://www.pnas.org/content/111/15/5628.abstract">Carstensen et al. 2014</a>. Carstensen provided dbf files containing O2 (mg_L_1) for a series of years for the Baltic Proper and the Gulf of Finland. Other areas are not included in this study but at the present time have no anoxia problems - therefore they will recieve a pressure value of 0. Data scaled between 0 and 1.</p>
+</div>
+<div id="hab_bottom_trawl" class="section level2">
+<h2>hab_bottom_trawl</h2>
+<p>proxy_layer</p>
+<p>NA</p>
+</div>
+<div id="hab_coastal_pop" class="section level2">
+<h2>hab_coastal_pop</h2>
+<p>proxy_layer</p>
+<p>NA</p>
+</div>
+<div id="hab_illegal_oil" class="section level2">
+<h2>hab_illegal_oil</h2>
+<p>proxy_layer</p>
+<p>NA</p>
+</div>
+<div id="ico_status" class="section level2">
+<h2>ico_status</h2>
+<p>ICO spp status based upon fish and mammals redlist threat level from HELCOM</p>
+<p>HELCOM species distributions and threat level based upon IUCN red list criteria. Data sources: - <a href="http://www.helcom.fi/baltic-sea-trends/biodiversity/red-list-of-species">HELCOM</a></p>
+</div>
+<div id="le_gdp_country" class="section level2">
+<h2>le_gdp_country</h2>
+<p>national per capita GDP</p>
+<p>Gross Domestic Product (GDP) data (nominal values) from Eurostat.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&amp;p_p_id=estatsearchportlet_WAR_estatsearchportlet&amp;p_p_lifecycle=1&amp;p_p_state=maximized&amp;p_p_mode=view&amp;_estatsearchportlet_WAR_estatsearchportlet_action=search&amp;text=nama_10_gdp">Eurostat</a></li>
+</ul>
+</div>
+<div id="le_gdp_region" class="section level2">
+<h2>le_gdp_region</h2>
+<p>Per capita GDP per BHI region</p>
+<p>Gross Domestic Product (GDP) data (nominal values) from Eurostat.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&amp;p_p_id=estatsearchportlet_WAR_estatsearchportlet&amp;p_p_lifecycle=1&amp;p_p_state=maximized&amp;p_p_mode=view&amp;_estatsearchportlet_WAR_estatsearchportlet_action=search&amp;text=nama_10r_3gdp">Eurostat</a></li>
+</ul>
+</div>
+<div id="liv_national_employ" class="section level2">
+<h2>liv_national_employ</h2>
+<p>Number of people employed nationally based on national employment rates</p>
+<p>Employment percentage by NUTS0 region from Eurostat.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&amp;p_p_id=estatsearchportlet_WAR_estatsearchportlet&amp;p_p_lifecycle=1&amp;p_p_state=maximized&amp;p_p_mode=view&amp;_estatsearchportlet_WAR_estatsearchportlet_action=search&amp;text=lfst_r_lfe2emprt">Eurostat database lfst_r_lfe2emprt</a></li>
+</ul>
+</div>
+<div id="liv_regional_employ" class="section level2">
+<h2>liv_regional_employ</h2>
+<p>Number of people employed in each BHI region 25km buffer based on NUTS2 employment rates</p>
+<p>Employment percentage by NUTS2 region from Eurostat.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&amp;p_p_id=estatsearchportlet_WAR_estatsearchportlet&amp;p_p_lifecycle=1&amp;p_p_state=maximized&amp;p_p_mode=view&amp;_estatsearchportlet_WAR_estatsearchportlet_action=search&amp;text=lfst_r_lfe2emprt">Eurostat database lfst_r_lfe2emprt</a></li>
+</ul>
+</div>
+<div id="liv_status" class="section level2">
+<h2>liv_status</h2>
+<p>Status of Livelihood</p>
+<p>LIV status calculated in LIV data prep based on ratio of coastal/national employment rate.</p>
+</div>
+<div id="liv_trend" class="section level2">
+<h2>liv_trend</h2>
+<p>Trend of Livelihood</p>
+<p>LIV trend calculated in data prep. Based on most recent five years’ status scores.</p>
+</div>
+<div id="lsp_status" class="section level2">
+<h2>lsp_status</h2>
+<p>Status scores of LSP</p>
+<p>Status calcluated</p>
+</div>
+<div id="lsp_trend" class="section level2">
+<h2>lsp_trend</h2>
+<p>Trend of LSP</p>
+<p>NA</p>
+</div>
+<div id="mar_coastalpopn2005_inland25km" class="section level2">
+<h2>mar_coastalpopn2005_inland25km</h2>
+<p>Coastal population inland 25 kilometers</p>
+<p>Coastal 25 km buffer population, from 2005. Source HYDE</p>
+</div>
+<div id="mar_harvest_species" class="section level2">
+<h2>mar_harvest_species</h2>
+<p>Mariculture species harvested</p>
+<p>Mariculture species harvested, from national databases</p>
+</div>
+<div id="mar_harvest_tonnes" class="section level2">
+<h2>mar_harvest_tonnes</h2>
+<p>Mariculture harvest</p>
+<p>Mariculture harvest</p>
+</div>
+<div id="mar_sustainability_score" class="section level2">
+<h2>mar_sustainability_score</h2>
+<p>Mariculture sustainability score</p>
+<p>Mariculture sustainability and mariculture regulations indicated by the Mariculture Sustainability Index (MSI). Data sources: - Trujillo P. (2008). <strong>Using a mariculture sustainability index to rank countries performances</strong>. In: A comparative assessment of biodiversity, fisheries and aquaculture in 53 countries Exclusive Economic Zones, Alder J, Pauly D, editors. <em>Fisheries Centre Research Report</em>, vol. 16(7) p. 2856.</p>
+</div>
+<div id="np_bbmsy" class="section level2">
+<h2>np_bbmsy</h2>
+<p>B/Bmsy by stock and year of Sprat</p>
+<p>ICES Bmsy. Data sources:</p>
+</div>
+<div id="np_ffmsy" class="section level2">
+<h2>np_ffmsy</h2>
+<p>F/Fmsy by stock and year of Sprat</p>
+<p>ICES Fmsy. Data sources:</p>
+</div>
+<div id="np_landings" class="section level2">
+<h2>np_landings</h2>
+<p>Landings by stock and year of Sprat</p>
+<p>Annual Landings by ICES area and stock. Data sources: -ICES</p>
+</div>
+<div id="po_atmos_pcb153" class="section level2">
+<h2>po_atmos_pcb153</h2>
+<p>Atmospheric deposition of PCB 153 to the Baltic Sea</p>
+<p>Atmospheric deposition of PCB-153 on the Baltic Sea . Data sources: - <a href="http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcb-153-on-the-baltic-sea/">HELCOM provides EMEP/MSC data for Baltic Sea basins</a></p>
+</div>
+<div id="po_atmos_pcddf" class="section level2">
+<h2>po_atmos_pcddf</h2>
+<p>Atmospheric deposition of PCDD/Fs to the Baltic Sea</p>
+<p>Atmospheric deposition of PCDD/Fs on the Baltic Sea using scenarios with adjusted emissions. Data sources: - <a href="http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcdd-fs-on-the-baltic-sea/">HELCOM provides EMEP/MSC data for Baltic Sea basins</a></p>
+</div>
+<div id="po_inverse_secchi" class="section level2">
+<h2>po_inverse_secchi</h2>
+<p>Water clarity / transparency pressure</p>
+<p>Inverse of NUT status obtained using secchi data.</p>
+</div>
+<div id="po_nload" class="section level2">
+<h2>po_nload</h2>
+<p>nitrogen pollution</p>
+<p>nitrogen load including atmospheric and land-based sources from HELCOM data normalized to ceilings set by HELCOM for each of the seven large basins</p>
+</div>
+<div id="po_pload" class="section level2">
+<h2>po_pload</h2>
+<p>Phosphorus pollution</p>
+<p>phosphorus load including atmospheric and land-based sources from HELCOM data normalized to ceilings set by HELCOM for each of the seven major basins</p>
+</div>
+<div id="po_trash" class="section level2">
+<h2>po_trash</h2>
+<p>Trash pollution</p>
+<p>Density of trash from coastal land and sea (Ocean Conservancy).</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://www.oceanconservancy.org/our-work/international-coastal-cleanup/2012-ocean-trash-index.html">Ocean Conservancy International Coastal Cleanup 2012</a></li>
+</ul>
+</div>
+<div id="res_biodiversity" class="section level2">
+<h2>res_biodiversity</h2>
+<p>proxy_layer</p>
+<p>NA</p>
+</div>
+<div id="res_reg_birds" class="section level2">
+<h2>res_reg_birds</h2>
+<p>Directive 2009/147/EC of the European Parliament and of the Council of 30 November 2009 on the conservation of wild birds</p>
+<p>Directive 2009/147/EC of the European Parliament and of the Council of 30 November 2009 on the conservation of wild birds</p>
+</div>
+<div id="res_reg_bsap" class="section level2">
+<h2>res_reg_bsap</h2>
+<p>HELCOM 2007. HELCOM Baltic Sea Action Plan (BSAP). HELCOM Ministerial Meeting. Adopted in Krakow, Poland, 15 November 2007.</p>
+<p>HELCOM 2007. HELCOM Baltic Sea Action Plan (BSAP). HELCOM Ministerial Meeting. Adopted in Krakow, Poland, 15 November 2007.</p>
+</div>
+<div id="res_reg_bwd" class="section level2">
+<h2>res_reg_bwd</h2>
+<p>Directive 2006/7/EC of the European Parliament and of the Council of 15 February 2006 concerning the management of bathing water quality and repealing the Directive 76/160/EC</p>
+<p>Directive 2006/7/EC of the European Parliament and of the Council of 15 February 2006 concerning the management of bathing water quality and repealing the Directive 76/160/EC</p>
+</div>
+<div id="res_reg_cbd" class="section level2">
+<h2>res_reg_cbd</h2>
+<p>Convention on Biodiversity</p>
+<p>Convention on Biodiversity</p>
+</div>
+<div id="res_reg_cfp" class="section level2">
+<h2>res_reg_cfp</h2>
+<p>Regulation 1380/2013/EU of the European Parliament and of the Council of 11 December 2013 on the Common Fisheries Policy, amending Council Regulations (EC) No 1954/2003 and (EC) No 1224/2009 and repealing Council Regulations (EC) No 2371/2002 and (EC) No</p>
+<p>Regulation 1380/2013/EU of the European Parliament and of the Council of 11 December 2013 on the Common Fisheries Policy, amending Council Regulations (EC) No 1954/2003 and (EC) No 1224/2009 and repealing Council Regulations (EC) No 2371/2002 and (EC) No</p>
+</div>
+<div id="res_reg_cites" class="section level2">
+<h2>res_reg_cites</h2>
+<p>Convention on International Trade in Endangered Species of Wild Fauna and Flora</p>
+<p>Convention on International Trade in Endangered Species of Wild Fauna and Flora</p>
+</div>
+<div id="res_reg_cop21" class="section level2">
+<h2>res_reg_cop21</h2>
+<p>Paris Climate Agreement</p>
+<p>Paris Climate Agreement</p>
+</div>
+<div id="res_reg_hd" class="section level2">
+<h2>res_reg_hd</h2>
+<p>Directive 1992/43/EC of 21 May 1992 on the conservation of natural habitats and of wild fauna and flora</p>
+<p>Directive 1992/43/EC of 21 May 1992 on the conservation of natural habitats and of wild fauna and flora</p>
+</div>
+<div id="res_reg_helcom" class="section level2">
+<h2>res_reg_helcom</h2>
+<p>Convention on the Protection of the Marine Environment of the Baltic Sea Area 1992</p>
+<p>Convention on the Protection of the Marine Environment of the Baltic Sea Area 1992</p>
+</div>
+<div id="res_reg_ied" class="section level2">
+<h2>res_reg_ied</h2>
+<p>Directive 2010/75/EU of the European Parliament and of the Council of 24 November 2010 on industrial emissions (integrated pollution prevention and control)</p>
+<p>Directive 2010/75/EU of the European Parliament and of the Council of 24 November 2010 on industrial emissions (integrated pollution prevention and control)</p>
+</div>
+<div id="res_reg_msfd" class="section level2">
+<h2>res_reg_msfd</h2>
+<p>Directive 2008/56/EC of the European Parliament and of the Council of 17 June 2008 establishing a framework for community action in the field of marine environmental policy</p>
+<p>Directive 2008/56/EC of the European Parliament and of the Council of 17 June 2008 establishing a framework for community action in the field of marine environmental policy</p>
+</div>
+<div id="res_reg_mspd" class="section level2">
+<h2>res_reg_mspd</h2>
+<p>Directive 2014/89/EC of the European Parliament and of the Council of 23 July 2014 establishing a framework for maritime spatial planning</p>
+<p>Directive 2014/89/EC of the European Parliament and of the Council of 23 July 2014 establishing a framework for maritime spatial planning</p>
+</div>
+<div id="res_reg_nd" class="section level2">
+<h2>res_reg_nd</h2>
+<p>Council Directive 91/676/EEC of 12 December 1991 concerning the protection of waters against pollution caused by nitrates from agricultural sources</p>
+<p>Council Directive 91/676/EEC of 12 December 1991 concerning the protection of waters against pollution caused by nitrates from agricultural sources</p>
+</div>
+<div id="res_reg_nec" class="section level2">
+<h2>res_reg_nec</h2>
+<p>Directive 1999/32/EC of 26 April 1999 relating to a reduction in the sulphur content of certain liquid fuels and amending Directive 93/12/EEC</p>
+<p>Directive 1999/32/EC of 26 April 1999 relating to a reduction in the sulphur content of certain liquid fuels and amending Directive 93/12/EEC</p>
+</div>
+<div id="res_reg_pop" class="section level2">
+<h2>res_reg_pop</h2>
+<p>Regulation 850/2004/EC of the European Parliament and of the Council of 29 April 2004 on persistent organic pollutants and amending Directive 79/117/EEC</p>
+<p>Regulation 850/2004/EC of the European Parliament and of the Council of 29 April 2004 on persistent organic pollutants and amending Directive 79/117/EEC</p>
+</div>
+<div id="res_reg_reach" class="section level2">
+<h2>res_reg_reach</h2>
+<p>Regulation 1907/2006/EC of the European Parliament and of the Council of 18 December 2006 concerning the Registration, Evaluation, Authorisation and Restriction of Chemicals (REACH), establishing a European Chemicals Agency, amending Directive 1999/45/EC</p>
+<p>Regulation 1907/2006/EC of the European Parliament and of the Council of 18 December 2006 concerning the Registration, Evaluation, Authorisation and Restriction of Chemicals (REACH), establishing a European Chemicals Agency, amending Directive 1999/45/EC</p>
+</div>
+<div id="res_reg_uwwtd" class="section level2">
+<h2>res_reg_uwwtd</h2>
+<p>Directive 1991/271/EEC Council Directive of 21 May 1991 concerning urban waste water treatment</p>
+<p>Directive 1991/271/EEC Council Directive of 21 May 1991 concerning urban waste water treatment</p>
+</div>
+<div id="res_reg_wfd" class="section level2">
+<h2>res_reg_wfd</h2>
+<p>Directive 2000/60/EC of the European Parliament and of the Council of 23 October 2000 establishing a framework for Community action in the field of water policy</p>
+<p>Directive 2000/60/EC of the European Parliament and of the Council of 23 October 2000 establishing a framework for Community action in the field of water policy</p>
+</div>
+<div id="rgn_area" class="section level2">
+<h2>rgn_area</h2>
+<p>Region area of total EEZ ocean</p>
+<p>Area of Ocean Health Index regions based on exclusive economic zones (VLIZ 2012).</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://www.marineregions.org/">VLIZ Maritime Boundaries Geodatabase, version 7</a></li>
+</ul>
+</div>
+<div id="rgn_area_inland1km" class="section level2">
+<h2>rgn_area_inland1km</h2>
+<p>Region area 1 km inland</p>
+<p>inland area 1 km from shore.</p>
+</div>
+<div id="rgn_area_offshore3nm" class="section level2">
+<h2>rgn_area_offshore3nm</h2>
+<p>Region area offshore 3nm</p>
+<p>Area of Ocean Health Index regions to 3nm (VLIZ 2012).</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://www.marineregions.org/">VLIZ Maritime Boundaries Geodatabase, version 7</a></li>
+</ul>
+</div>
+<div id="rgn_georegion_labels" class="section level2">
+<h2>rgn_georegion_labels</h2>
+<p>Georegion labels per region, at 3 georegion levels</p>
+<p>Lookup table of Ocean Health Index regions and UN georegion names at 3 georegion levels.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://unstats.un.org/unsd/methods/m49/m49regin.htm">UN geographical region and composition</a></li>
+</ul>
+</div>
+<div id="rgn_georegions" class="section level2">
+<h2>rgn_georegions</h2>
+<p>Georegion ids per region, at 3 georegion levels</p>
+<p>Lookup table of Ocean Health Index regions and UN georegion identifiers at 3 georegion levels.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://unstats.un.org/unsd/methods/m49/m49regin.htm">UN geographical region and composition</a></li>
+</ul>
+</div>
+<div id="rgn_global" class="section level2">
+<h2>rgn_global</h2>
+<p>regions used in global analysis for Nature 2012, subset of regions_labels by type=eez and not deleted or disputed</p>
+<p>Regions used in global analysis for Nature 2012, subset of regions_labels by type=eez and not deleted or disputed.</p>
+</div>
+<div id="rgn_labels" class="section level2">
+<h2>rgn_labels</h2>
+<p>regions by type (eez, subocean, unclaimed) and label</p>
+<p>Ocean Health Index regions by type (eez, subocean, unclaimed) and label</p>
+</div>
+<div id="sp_invasives" class="section level2">
+<h2>sp_invasives</h2>
+<p>Invasive species pressure scores</p>
+<p>Invasive species scores based on the number of invasive species introduction evenets in each country.</p>
+</div>
+<div id="ss_wgi" class="section level2">
+<h2>ss_wgi</h2>
+<p>Weakness of governance indicated with the WGI</p>
+<p>Inverse of World Governance Indicators (WGI) six combined scores.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://info.worldbank.org/governance/wgi/index.asp">Worldwide Governance Indicators (WGI)</a></li>
+</ul>
+</div>
+<div id="tr_accommodation_stays" class="section level2">
+<h2>tr_accommodation_stays</h2>
+<p>Total coastal nights in accommodation stays</p>
+<p>Total coastal nights in accommodation stays. Data sources: - <a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2&amp;lang=en">tour_occ_nin2</a> and <a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tour_occ_nin2c&amp;lang=en">Eurostat coastal stays tour_occ_nin2c</a></p>
+</div>
+<div id="tr_status" class="section level2">
+<h2>tr_status</h2>
+<p>Tourism and Recreation status scores</p>
+<p>Status scores calculated based on <a href="https://webgate.ec.europa.eu/maritimeforum/node/3550">Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region</a></p>
+</div>
+<div id="tr_trend" class="section level2">
+<h2>tr_trend</h2>
+<p>Tourism and Recreation trend scores</p>
+<p>Trend scores calculated based on <a href="https://webgate.ec.europa.eu/maritimeforum/node/3550">Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region</a></p>
+</div>
+<div id="wgi_all" class="section level2">
+<h2>wgi_all</h2>
+<p>Strength of governance indicated with the WGI</p>
+<p>World Governance Indicators (WGI) six combined scores.</p>
+<p>Data sources:</p>
+<ul>
+<li><a href="http://info.worldbank.org/governance/wgi/index.asp">Worldwide Governance Indicators (WGI)</a></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

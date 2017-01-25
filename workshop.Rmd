@@ -1,0 +1,69 @@
+---
+title: "Baltic Health Index meeting"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, echo=F, warning=FALSE, message=F}
+source("./_site.R")
+```
+
+**26-27 January, 2017**
+
+**Stockholm Resilience Center**
+
+### Tentative Agenda: 
+
+#### _Day 1_
+
+##### 10:30-12:00 
+  - Thorsten Blenckner: _OHI Baltic in the bigger picture_
+  - Ning Jiang (NCEAS): 
+    - _What's new in OHI global and OHI+_
+    - _Architecture of open-science prep files_
+    - _Added value of OHI: relationship among goals, pressures, and resilience_
+  - Q & A
+
+##### 12:00 - 13:00 Lunch break
+
+##### 13:00 – 17:00 
+  - goals – review
+  - goal weightings 
+  - resilience
+  - pressure
+  - discuss potential scenarios 
+
+#### _Day 2_ 
+
+##### 9:00 - 9:20 _Johann Rockstrom_
+##### 9:20 - 9:40 _ICES_
+##### 9:40 - 10:00 _WWF_
+##### 10 - 12 Paper discussion
+   - outline
+   - story/messaging
+
+##### 12:00-13:00 lunch 
+
+##### 13:00 - 15:30 next steps/launch
+   - where
+   - when
+   - bigger context: EU & SDG 14 
+
+##### 15:30-16:00  
+   - recap
+   - identify tasks/to-do
+
+### Presentations
+
+[What's new in OHI global and OHI+](https://docs.google.com/presentation/d/1bcU9hP4msQlhyAnv0P9x2y8jLx57HB2M8ow6SV7lJoQ/pub?start=false&loop=false&delayms=3000)
+
+### Paper structure 
+[BHI assessment - paper structure](https://docs.google.com/document/d/1c7SIXE1OEVRkoTNb7xFhojq-zeuPl1FbTE84oxJWSh8/pub)
+
+### Other resources
+
+[Goal descriptions, reference points, data, & models](http://ohi-science.org/bhi/goals.html)
+
+
