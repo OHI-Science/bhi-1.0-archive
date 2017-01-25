@@ -755,7 +755,7 @@ LIV = function(layers){
                                 dimension = as.character(rep("trend",42)),
                                 score = rep (0, 42))
   ) %>%
-    mutate(goal = 'ECO')
+    mutate(goal = 'LIV')
 
   return(scores)
 

@@ -14,7 +14,7 @@
 # remove.packages('ohicore') #remove original ohicore
 # devtools::load_all('~/github/ohicore') #load regional ohicore so not to affect the original ohicore accidentally
 
-source('~/github/bhi/baltic2015/pre_scores.R')
+source('~/github/bhi/baltic2015_without_social/pre_scores.R')
 
 ## calculate scenario scores
 scores = CalculateAll(conf, layers)
