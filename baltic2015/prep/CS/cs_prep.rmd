@@ -321,6 +321,8 @@ bhi_rgn_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), 
 status_bhi <- full_join(status_basin, bhi_rgn_lookup, by = 'basin') %>% 
   filter(!is.na(rgn_id)) # remove non-bhi-basins that do not have a matched bhi ID
 
+knitr::kable(status_bhi)
+
 ### Trend calculation ###
 trend_basin <- status_carbon %>% 
   select(basin, year, score) %>% 
