@@ -1,0 +1,937 @@
+---
+title: "visualize"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+
+# Visualize data dimensions and goals outcomes
+```{r setup}
+
+## Libraries
+
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggmap)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = rprojroot::is_rstudio_project)
+
+
+dir_baltic = make_path('baltic2015')
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+dir_vis    = file.path(dir_baltic,'visualize')
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_vis, 'visualize.rmd')
+```
+
+
+## Source functions
+```{r source plotmap function}
+source(file.path(dir_baltic, 'PlotMap.r'))
+source(file.path(dir_baltic, 'PrepSpatial.r'))
+source(file.path(dir_vis,'visualize_functions.r'))
+
+
+```
+
+
+## Set local directory for pdf output
+```{r Set local directory for pdf output}
+
+# pdf_dir = c("C:/Users/jgrif/Documents/StockholmUnivPostDoc/BalticHealthIndex/Output")
+# pdf_dir = c("/Users/jstewart/Dropbox/Baltic Health Index/Visualize")
+pdf_dir = c("/Users/ningningj/Dropbox/Baltic Health Index/Visualize")
+
+```
+
+
+
+## AO Goal
+
+```{r AO plots}
+
+## set values and location
+goal_select = "AO"
+
+##data
+
+##space data
+space_data = read.csv(file.path(dir_vis,'ao_space_data.csv'), stringsAsFactors = FALSE)
+
+## time data
+## no time series
+
+#value_data
+value_data = read.csv(file.path(dir_vis,'ao_value_data.csv'), stringsAsFactors = FALSE)
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal==goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+
+
+      ##plot raw spatial
+      plot_datalocation_latlon(space_data)
+      
+      ## plot raw values single time period by staton
+      plot_datavalue(value_data, variable=TRUE)
+      
+      ##plot raw times series by station
+      #plot_datatime (time_data, "station", variable=TRUE)
+      
+      ##plot raw time series by basin
+      #plot_datatime (time_data, "basin", variable=TRUE)
+      
+      ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal("resilience", goal_select)
+      
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+      
+
+dev.off() ## Finish PDF
+
+```
+
+
+## CON subgoal
+```{r con subgoal}
+
+## set values and location
+goal_select = "CON"
+ind= c("pcb", "dioxin", "pfos")
+
+##data
+space_pcb= read.csv(file.path(dir_vis,'con_pcb_space_data.csv'), stringsAsFactors = FALSE)
+space_diox= read.csv(file.path(dir_vis,'con_dioxin_space_data.csv'), stringsAsFactors = FALSE)
+space_pfos= read.csv(file.path(dir_vis,'con_pfos_space_data.csv'), stringsAsFactors = FALSE)
+
+
+#time_data
+time_pcb= read.csv(file.path(dir_vis,'con_pcb_time_data.csv'), stringsAsFactors = FALSE)
+time_diox= read.csv(file.path(dir_vis,'con_dioxin_time_data.csv'), stringsAsFactors = FALSE)
+time_pfos= read.csv(file.path(dir_vis,'con_pfos_time_data.csv'), stringsAsFactors = FALSE)
+
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+        plot_datalocation_latlon(space_pcb)
+        plot_datalocation_latlon(space_diox)
+        plot_datalocation_latlon(space_pfos)
+      
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+   
+      plot_datatime(time_pcb, facet_type= "station",variable =FALSE)
+      
+      plot_datatime(time_diox, facet_type= "station",variable =TRUE)
+      
+      plot_datatime(time_pfos, facet_type= "station",variable =FALSE)
+      
+      
+      ##plot raw time series by basin
+       plot_datatime(time_pcb, facet_type= "basin",variable =FALSE)
+      
+      plot_datatime(time_diox, facet_type= "basin",variable =TRUE)
+      
+      plot_datatime(time_pfos, facet_type= "basin",variable =FALSE)
+      
+      ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal("resilience", goal_select)
+      
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
+## NUT subgoal
+```{r NUT subgoal}
+
+
+## set values and location
+goal_select = "NUT"
+
+
+##data
+# space_data= read.csv(file.path(dir_vis,'nut_space_data.csv'), stringsAsFactors = FALSE)
+
+
+#time_data
+# time_data= read.csv(file.path(dir_vis,'nut_time_data.csv'), stringsAsFactors = FALSE)
+
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+        plot_datalocation_latlon(space_data)
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       # plot_datatime(time_data, facet_type= "basin",variable =TRUE)
+      
+       ##plot raw times series by rgn_id
+      ## NA 
+       
+       ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal("resilience", goal_select)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+## TRA subgoal
+```{r tra subgoal}
+
+
+## set values and location
+goal_select = "TRA"
+
+##space data
+##NA
+
+## value data
+# value_data= read.csv(file.path(dir_vis,'tra_value_data.csv'), stringsAsFactors = FALSE)
+
+
+#time_data
+##NA
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+       # plot_datavalue(value_data, variable=FALSE)
+      
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+
+## ECO subgoal
+```{r eco subgoal}
+
+
+## set values and location
+goal_select = "ECO"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+# time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/eco_rgn_time_data.csv'), stringsAsFactors=FALSE)
+# 
+# time_data_nat = read.csv(file.path(dir_baltic, 'visualize/eco_nat_time_data.csv'), stringsAsFactors=FALSE)
+#   
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       # plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
+       # plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
+       # 
+       ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+## FIS subgoal
+```{r fis subgoal}
+
+
+## set values and location
+goal_select = "FIS"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+time_data_bbmsy = read.csv(file.path(dir_baltic, 'visualize/fis_bbmsy_time_data.csv'), stringsAsFactors=FALSE)
+
+time_data_ffmsy = read.csv(file.path(dir_baltic, 'visualize/fis_ffmsy_time_data.csv'), stringsAsFactors=FALSE)
+  
+time_data_landings = read.csv(file.path(dir_baltic, 'visualize/fis_landings_time_data.csv'), stringsAsFactors=FALSE)
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       plot_datatime (time_data_bbmsy, facet_type= "ices", variable =FALSE)
+       plot_datatime (time_data_ffmsy, facet_type= "ices", variable =FALSE)
+       plot_datatime (time_data_landings, facet_type= "ices", variable =FALSE)
+       
+       ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+
+## ICO subgoal
+```{r ico subgoal}
+
+
+## set values and location
+goal_select = "ICO"
+
+##space data
+##NA
+
+## value data
+# value_threat= read.csv(file.path(dir_vis,'ico_threat_value_data.csv'), stringsAsFactors = FALSE)
+value_dist= read.csv(file.path(dir_vis,'ico_dist_value_data.csv'), stringsAsFactors = FALSE)
+
+#time_data
+##NA
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+    
+      plot_datavalue(value_dist, variable=TRUE)
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+      
+      ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+
+
+## LIV subgoal
+```{r liv subgoal}
+
+
+## set values and location
+goal_select = "LIV"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+# time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/liv_rgn_time_data.csv'), stringsAsFactors=FALSE)
+# 
+# time_data_nat = read.csv(file.path(dir_baltic, 'visualize/liv_nat_time_data.csv'), stringsAsFactors=FALSE)
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       # plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
+       # plot_datatime (time_data_nat, facet_type= "rgn_id", variable =FALSE)
+       # 
+       ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+## TR subgoal
+```{r tr subgoal}
+
+
+## set values and location
+goal_select = "TR"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+# time_data = read.csv(file.path(dir_baltic, 'visualize/tr_time_data.csv'), stringsAsFactors=FALSE)
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       # plot_datatime (time_data, facet_type= "rgn_id", variable =FALSE)
+       
+       ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+  
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+## MAR subgoal
+```{r mar subgoal}
+
+
+## set values and location
+goal_select = "MAR"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+time_data_countryrgn = read.csv(file.path(dir_baltic, 'visualize/mar_countryrgn_time_data.csv'), stringsAsFactors=FALSE)
+time_data_rgn = read.csv(file.path(dir_baltic, 'visualize/mar_rgn_time_data.csv'), stringsAsFactors=FALSE)
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+      #NA
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+       plot_datatime (time_data_countryrgn, facet_type= "mar_region", variable =FALSE)
+      plot_datatime (time_data_rgn, facet_type= "rgn_id", variable =FALSE)
+      
+      ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+## BD 
+SPP results for BD
+```{r BD subgoal}
+
+
+## set values and location
+goal_select = "BD"
+
+##space data
+##NA
+
+## value data
+value_dist= read.csv(file.path(dir_vis,'spp_dist_value_data.csv'), stringsAsFactors = FALSE)
+value_dist_threat= read.csv(file.path(dir_vis,'spp_dist_threat_value_data.csv'), stringsAsFactors = FALSE)
+
+#time_data
+##NA
+  
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+      ##plot raw spatial
+       ##NA
+ 
+      
+      ## plot raw values single time period by staton
+    
+      plot_datavalue(value_dist, variable=TRUE)
+      plot_datavalue(value_dist_threat, variable=TRUE)
+      
+      ##plot raw times series by station
+      ## NA 
+      
+      ##plot raw time series by basin
+       ##NA
+      
+       ##plot raw times series by rgn_id
+      
+      ##plot pressure data layers and weights for goal
+      plotPressuresResilienceGoal ("pressures", goal_select)
+      
+      ##plot resilience data layers and weights for goal
+      plotPressuresResilienceGoal ("resilience", goal_select)
+
+     
+      ##plot Map of Each score type
+      plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
+
+
+#GOALS
+
+## CW
+
+```{r CW goal}
+
+##goal_select
+goal_select = "CW"
+
+## set parameters for subgoal comparison
+count_goals = 3
+subgoal_abb = c("NUT","CON","TRA")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_select)
+    
+    ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+    
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
+
+## FP
+
+```{r FP goal}
+
+##goal_select
+goal_select = "FP"
+
+## set parameters for subgoal comparison
+count_goals = 2
+subgoal_abb = c("FIS","MAR")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_name =goal_select)
+    
+     ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+   
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
+
+## LE
+
+```{r LE goal}
+
+##goal_select
+goal_select = "LE"
+
+## set parameters for subgoal comparison
+count_goals = 2
+subgoal_abb = c("ECO","LIV")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_select)
+    
+     ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+   
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
+
+
+## SP
+```{r SP goal, eval=FALSE, echo=FALSE}
+
+##goal_select
+goal_select = "SP"
+
+## set parameters for subgoal comparison
+count_goals = 2
+subgoal_abb = c("ICO","LSP")
+
+##Scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)
+scores_filter =scores %>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+    ##plot subgoal and goal all dimensions
+    plotSubgoalsGoal(count_goals, scores, subgoal_abb,goal_select)
+    
+     ##plot subgoal and goal all dimensions, barplot
+    plotSubgoalsGoal_bar(count_goals, scores, subgoal_abb,goal_select)
+   
+    ##plot subgoal relationship by dimensions
+    plotSubgoalRelationship(count_goals, scores, subgoal_abb,goal_select)
+
+      ##plot Map of Each score type
+      plotScoreTypes(scores_filter,goal_select)
+
+
+dev.off() ## Finish PDF
+
+```
+
+## Plot Pressure and resilience data layers
+```{r plot pressure and resilience}
+goal_select ="PressureResilience"
+
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+## plot pressures
+plotPressuresResilience(type="pressures")
+
+##plot resilience
+plotPressuresResilience(type="resilience")
+
+
+dev.off()
+
+
+```
+

@@ -1,0 +1,11 @@
+---
+title: "Data Not Pursued"
+output: github_document
+---
+
+
+| Goal or subgoal 	| BHI lead person 	| Notes from Jennifer 	| Indicator proposed 	| Why Proposed 	| Key contacts + emails 	| Reason for not including in BHI 	| Notes 	|
+|-------- |------- |---------------------	|-------------------------	|------------------------------------------------------------------------------------------------------------------------------------------------	|---------------------------------	|----------------------------------------------------------------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| CON - ICES6 PCB 	| Jennifer 	|  	| Concentration of CB 153 	| This would be a good indicator because it is abundant (so almost always measured) and will have few detection / quantification limit problems. 	| Anders Bignet, Elisabeth Nyberg 	| This is not an indicator for human health used by EU or HELCOM 	| However, OSPAR as individual CB thresholds. [OSPAR background](http://qsr2010.ospar.org/media/assessments/p00390_supplements/p00461_Background_Doc_CEMP_Assessmt_Criteria_Haz_Subs.pdf).  Table 1, p.14: Blue range = Status is acceptable. Concentrations are close to background or zero, i.e. the ultimate aim of the OSPAR Strategy for Hazardous Substances has been achieved.   Table 5c. Blue < BAC  = CB153 0.2 μg/kg wet weight. *(this number differs in what is summarized for this report in the HELCOM core indicator document from 2013)* 	|
+
+

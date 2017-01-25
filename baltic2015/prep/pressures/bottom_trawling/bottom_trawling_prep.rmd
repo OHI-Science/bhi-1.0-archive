@@ -1,0 +1,355 @@
+---
+title: "bottom_trawling_prep"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+# Bottom Trawling Pressure Layer
+
+
+## 1. Background
+
+## 2. Data 
+
+### 2.1 Data sources
+[HELCOM Pressures and Human Activities Map Service](http://maps.helcom.fi/website/Pressures/index.html) under 'Pressures and Human Activities' then 'Fisheries' then 'Effort' - Select 'Fishing Effort mobile bottom-contacting gear' - annual layers (2010-2013).  
+
+Downloaded on July 18, 2016 by Jennifer Griffiths.  
+
+**HELCOM metadata**  
+*The following text is copied directly from the [HELCOM metadata](http://maps.helcom.fi/website/getMetadata/htm/All/Fishing%20effort%20mobile%20bottom-contacting%20gear%202013.htm) file*  
+"This dataset describes fishing effort (hours/c-square) for mobile bottom-contacting gear based on VMS/Log book data processed by ICES Working Group on Spatial Fisheries Data (WGSFD).  
+
+HELCOM requires spatially explicit information on fishing activity affecting the Baltic Sea marine ecosystem for policy purposes. In order to obtain this information a joint ICES/HELCOM/OSPAR data call was issued to relevant authorities of contracting parties to deliver information on fishing activity based on VMS/Log book data. The raw data was submitted to ICES and processed to advice data products by ICES Working Group for Spatial Fisheries (WGSFD) as requested by HELCOM. Processing of the raw data requires specific resources, knowledge and guarantee of anonymity for specific vessels, thus the process was done by ICES WGSFD following Conditions for VMS data use. In 2015 ICES collated Vessel Monitoring System (VMS) and logbook data received; data from Russia were not received. ICES provided to HELCOM advice as fishing abrasion pressure maps as well as fishing effort maps.  
+
+The correct data product citation is following: [ICES. 2015. Fishing abrasion pressure maps for mobile bottom-contacting gears in HELCOM area](http://ices.dk/sites/pub/Publication%20Reports/Data%20outputs/HELCOM_mapping_fishing_intensity_and_effort_data_outputs_2015.zip).   
+
+**Data caveates**  
+When using the data for analysis/assessments the following caveats need to be taken into consideration:The methods for identifying fishing activity from the VMS data varied between countries; therefore there may be some country-specific biases that ICES cannot evaluate. Additionally, activities other than active towing of gear may have been incorrectly identified as fishing activity. This would have the effect of overestimating the apparent fishing intensity in ports and in areas used for passage.The data for 2012 and 2013 is not directly comparable to the data of previous years in the data call (2010–2011) due to the gradual increase in VMS-enabled vessels in the range of 12–15 m. This is likely to be most relevant when examining trends in effort for inshore areas. Many countries have substantial fleets of smaller vessels that are not equipped with VMS (The fishing abrasion pressure methodology is based on very broad assumptions in terms of the area affected by abrasion. A single speed and gear width was applied across each gear category in most cases, which can lead to both underestimates and overestimates in actual surface and subsurface abrasion.  
+
+### 2.2 Data attributes
+
+#### 2.2.1 Units and Temporal attributes
+Layers are yearly effort.  Years 2010-2013
+Units are in hours fished.  
+
+#### 2.2.2 Spatial reference information
+*Provided in the HELCOM file*  
+Spatial Reference, ArcGIS coordinate system
+
+Type: Projected  
+Geographic coordinate reference:GCS_ETRS_1989  
+Projection: ETRS_1989_LAEA  
+
+Coordinate reference details:  
+Well-known identifier:3035  
+X origin: -8426600  
+Y origin: -9526700  
+XY scale: 10000  
+Z origin: 0  
+Z scale: 1  
+M origin: 0  
+M scale: 1  
+XY tolerance: 0.001  
+Z tolerance: 0.001  
+M tolerance: 0.001  
+High precision: true  
+Latest well-known identifier: 3035  
+Well-known text: PROJCS["ETRS_1989_LAEA",GEOGCS["GCS_ETRS_1989",DATUM["D_ETRS_1989",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["False_Easting",4321000.0],PARAMETER["False_Northing",3210000.0],PARAMETER["Central_Meridian",10.0],PARAMETER["Latitude_Of_Origin",52.0],UNIT["Meter",1.0],AUTHORITY["EPSG",3035]]  
+
+
+## 3. Pressure Model
+Overlay trawl effort with BHI shape files so can assign effort per each BHI region.
+
+### 3.1 Current pressure data  
+Use most recent year: 2013  
+Xtrawl_r_y = sum hours within a BHI region in each year *y* in each region *r* / area of BHI region *r* (hours/km2)  
+
+ 
+### 3.2 Rescale data
+Calculate Xtrawl_r_y for all data years.  
+
+min value = 0  
+
+max value = max(Xtrawl_r_y) in any area  
+*It should be discussed with the team if this is okay, or if think even higher pressure in the past, should take pressure_max =  max(XtrawL_r_y) x 1.2  or some greater percentage?*  
+
+for now: 
+
+rescaled value = (max - current) / (max - min)
+
+
+### 3.3. Potential issues with pressure model  
+See data caveats above in section 2.1.  In earlier years, fewer VMS enabled ships, thus fishing effort maybe higher in later years simply because not captured by data.  Think about max value (see comment above).  
+
+
+
+## 4. Prepare bottom trawl pressure layer
+
+
+```{r setup, echo = FALSE, message = FALSE}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+library(stringr) # install.packages("stringr")
+library(rgdal)  # install.packages('rgdal')
+library(raster) # install.packages('raster')
+library(rgeos)  # install.packages('rgeos')
+
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+dir_prep = make_path('baltic2015/prep') # replaces  file.path(dir_baltic, 'layers')
+dir_trawl = file.path(dir_prep, 'pressures/bottom_trawling')
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_trawl, 'bottom_trawling_prep.rmd') 
+```
+
+### 4.1 Read in Data and Explore
+
+```{r read in data, cache = TRUE}
+
+## directory setup
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+  warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
+}
+
+dir_shp <- file.path(dir_M, 'git-annex/Baltic')
+
+# list.files(file.path(dir_shp, 'Bottom_trawling_pressure'))
+# contains data from 2009 to 2013
+
+## read in bottom trawling pressure data from 2010
+
+trawling_raw_2009 <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')),
+                      layer = 'HELCOM_effort_year_MBCG_VMS_2009')  
+
+trawling_raw_2010 <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')),
+                      layer = 'HELCOM_effort_year_MBCG_VMS_2010')  
+
+trawling_raw_2011 <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')),
+                      layer = 'HELCOM_effort_year_MBCG_VMS_2011') 
+
+trawling_raw_2012 <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')),
+                      layer = 'HELCOM_effort_year_MBCG_VMS_2012') 
+
+trawling_raw_2013 <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')),
+                      layer = 'HELCOM_effort_year_MBCG_VMS_2013') 
+
+
+##  extract crs_trawling for scaling 
+
+# trawling_raw_2010@proj4string
+# +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
+crs_trawling = CRS("+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+
+## read in bhi shape files
+bhi = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
+                      layer = 'BHI_MCG_11052016')  
+bhi_data = bhi@data
+
+## change bhi coord. system to the same as trawling efforts
+bhi = spTransform(bhi, crs_trawling)
+
+```
+
+### plot trawling efforts with BHI boundaries
+
+```{r plot data, fig.width= 4, fig.height = 16}
+
+par(mfrow = c(5, 1), mar = c(1,1,1,1))
+
+plot(trawling_raw_2009, col = 'blue', border = "blue"); plot(bhi, border = "grey", main = "BHI regions and Trawling Efforts overlay", add = TRUE); legend('bottomright', c("BHI regions", "Trawling efforts  (2010)"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c("grey", "blue"), text.font = 1, box.lty = 0 )
+
+plot(trawling_raw_2010, col = 'blue', border = "blue"); plot(bhi, border = "grey", main = "BHI regions and Trawling Efforts overlay", add = TRUE); legend('bottomright', c("BHI regions", "Trawling efforts (2010)"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c("grey", "blue"), text.font = 1, box.lty = 0 )
+
+plot(trawling_raw_2011, col = 'blue', border = "blue"); plot(bhi, border = "grey", main = "BHI regions and Trawling Efforts overlay", add = TRUE); legend('bottomright', c("BHI regions", "Trawling efforts (2011)"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c("grey", "blue"), text.font = 1, box.lty = 0 )
+
+plot(trawling_raw_2012, col = 'blue', border = "blue"); plot(bhi, border = "grey", main = "BHI regions and Trawling Efforts overlay", add = TRUE); legend('bottomright', c("BHI regions", "Trawling efforts (2012)"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c("grey", "blue"), text.font = 1, box.lty = 0 )
+
+plot(trawling_raw_2013, col = 'blue', border = "blue"); plot(bhi, border = "grey", main = "BHI regions and Trawling Efforts overlay", add = TRUE); legend('bottomright', c("BHI regions", "Trawling efforts (2013)"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c("grey", "blue"), text.font = 1, box.lty = 0 )
+
+```
+
+### 4.2 Intersect trawling effort with BHI shapefiles  
+
+```{r read all pressure data layers and intersect with bhi shape file, echo = FALSE, eval = FALSE}
+## read all pressure data layers and save as .csv in temp_data folder 
+
+trawling_file_list = list.files(file.path(dir_shp, 'Bottom_trawling_pressure'), 
+                                pattern = 'HELCOM_effort_year_MBCG_VMS_[0-9]+.dbf')
+
+for (i in trawling_file_list) {
+  
+  i = file_path_sans_ext(i)
+  
+  # read in shape file 
+  trawl = rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bottom_trawling_pressure')), 
+                         layer = i) 
+  
+  # intersect trawling and bhi shape file
+  trawling_bhi <- raster::intersect(trawl, bhi)
+  
+  # save as Polygon file
+  rgdal::writeOGR(trawling_bhi,
+                  dsn = path.expand(file.path(dir_trawl, "temp_data")),
+                  driver = "ESRI Shapefile",
+                  layer = paste0('trawling_bhi_intersect_', substr(i, 29, 32)),
+                  overwrite_layer = T)
+  
+  # extract data and save as .csv
+  write_csv(trawling_bhi@data, file.path(dir_trawl, "temp_data", paste0('trawling_bhi_intersect_', substr(i, 29, 32), '.csv')))
+
+}
+
+
+```
+
+
+
+### 4.4 Extract total fishing hours by BHI region for each year  
+
+```{r extract total hours, eval = FALSE, echo = FALSE}
+
+trawling_bhi_intersect_file_list = list.files(file.path(dir_trawl, 'temp_data'), 'trawling_bhi_intersect_[0-9]+.csv')
+
+i = 1  
+  
+for (i in trawling_bhi_intersect_file_list) {
+  
+dat = read_csv(file.path(dir_trawl, 'temp_data', i))
+
+hours_per_area = dat %>%
+  dplyr::select(fishing_ho, BHI_ID) %>%
+  group_by(BHI_ID) %>%
+  summarize(total_hrs = sum(fishing_ho)) %>%
+  left_join(dplyr::select(bhi_data, BHI_ID, Area_km2), 
+            by = 'BHI_ID') %>%
+  mutate(hours_per_area = total_hrs/Area_km2) %>%
+  dplyr::select(BHI_ID, hours_per_area)
+
+write_csv(hours_per_area, file.path(dir_trawl, 'temp_data', sprintf('hours_per_area_%s.csv', substr(hours_per_area_file_list[i], 16, 19))))
+  
+}
+
+```
+
+
+### 4.5 Calculate and Plot Fising Hours per km2
+
+Plot below shows the trawling efforts per area in each region in each year. Note that each year's data covers slightly different BHI regions, and contain 33-37 regions out of 42. 
+
+For years when a region reported no trawling data, the data gap was filled with the average trawling efforts of the rest of the years for that region. 
+
+```{r calculate and plot hours per area region}
+
+## calculate hours per km2, per year, in each region
+
+hours_per_area_file_list = list.files(file.path(dir_trawl, 'temp_data'), 'hours_per_area_[0-9]+.csv' )
+
+hours_per_area_all = data.frame()
+
+for (i in hours_per_area_file_list) {
+
+ d = read_csv(file.path(dir_trawl, 'temp_data', i)) %>%
+   mutate(year = substr(i, 16, 19))
+
+ hours_per_area_all = rbind(hours_per_area_all, d) %>%
+   mutate(year = as.factor(year))
+
+}
+
+# ## fill in the missing years for each region; TODO: also fill in the missing BHI_IDs
+# hours_per_area_filled = hours_per_area_all %>%
+#   tidyr::complete(year = full_seq(year, 1), nesting(BHI_ID), fill = list(hours_per_area = 0)) %>%
+#   arrange(BHI_ID, year) %>%
+#   mutate(year = as.factor(year))
+
+plot_hours_area = ggplot(hours_per_area_all, aes(x = BHI_ID, y = hours_per_area, fill = year)) +
+  geom_bar(position="dodge", stat = 'identity') +
+  labs(title = 'Fishing efforts per km2 2009 - 2014', 
+       x = 'BHI ID', 
+       y = 'Hours per km2')
+
+print(plot_hours_area)
+
+# fill in the NA's in hours_per_area, select the most recent year 2014
+hours_per_area_filled <-  hours_per_area_all %>% 
+  mutate(year = as.integer(as.character(year))) %>% 
+  tidyr::complete(year = full_seq(year, 1), nesting(BHI_ID)) %>% 
+  group_by(BHI_ID) %>% 
+  mutate(ave_hours = mean(hours_per_area, na.rm = TRUE), 
+         hours_per_area = ifelse(is.na(hours_per_area), ave_hours, hours_per_area)) %>% 
+  ungroup
+  
+
+# rescale hours_per_area
+
+bottom_trawling_score <- hours_per_area_filled %>% 
+  group_by(BHI_ID) %>% 
+  mutate(max = max(hours_per_area), 
+         min = min(hours_per_area),
+         score = round((hours_per_area - min) / (max - min), 1)) %>% 
+  filter(year == 2014) %>% 
+  dplyr::select(BHI_ID, 
+         score)
+
+# fill in the missing BHI_IDs, as this data set only contains 37 out of 42 BHI regions
+BHI_rgns <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
+  dplyr::select(BHI_ID)
+
+bottom_trawling_score <- full_join(BHI_rgns, bottom_trawling_score, 
+                                   by = "BHI_ID") %>% 
+  mutate(score = ifelse(is.na(score), 0, score), 
+         score = ifelse(BHI_ID == '32', 0, score)) %>% 
+  dplyr::select(rgn_id = BHI_ID, 
+         pressure_score = score)
+
+write_csv(bottom_trawling_score, file.path(dir_layers, 'hab_bottom_trawl_bhi2015.csv')) 
+
+```
+ 
+# plot bottom trawling scores per region 
+
+```{r plot scores}
+
+ggplot(bottom_trawling_score, aes(x = rgn_id, y = pressure_score)) +
+  geom_bar(stat = 'identity')
+
+
+```
+

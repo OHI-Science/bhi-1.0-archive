@@ -1,0 +1,58 @@
+latin_name;Sweden;Finland;Russia/St. Petersburg;Russia/Kaliningrad;Estonia;Latvia;Lithuania;Poland;Germany/Mecklenburg-Western Pomerania;Germany/Schleswig-Holstein;Denmark;common_name
+Actitis hypoleucos;X;X;X;X;X;X;X;X;X;(X);X;Common sandpiper
+Alca torda;X;X;X;-;X;-;-;-;-;-;X;Razorbill
+Anas clypeata;X;X;X;X;X;X;X;X;X;X;X;Northern shoveler
+Anas platyrhynchos;X;X;X;X;X;X;X;X;X;X;X;Mallard
+Anas strepera;X;X;X;X;X;X;X;X;X;X;X;Gadwall
+Anser anser;X;X;X;X;X;X;X;X;X;X;X;Greylag goose
+Anthus petrosus;X;X;-;-;X;-;-;-;-;-;X;Rock pipit
+Anthus pratensis;X;X;X;X;X;X;X;X;X;X;X;Meadow pipit
+Arenaria interpres;X;X;X;-;X;-;-;-;0;0;X;Turnstone
+Aythya fuligula;X;X;X;X;X;X;X;X;X;X;X;Tufted  duck
+Aythya marila;X;X;X;-;X;-;(X);(X);-;(X);(X);Greater scaup
+Branta leucopsis;X;X;X;-;X;-;-;-;-;X;X;Barnacle goose
+Bucephala clangula;X;X;X;X;X;X;X;X;X;X;X;Goldeneye
+Calidris alpina schinzii;X;X;X;0;X;X;X;0 (X);X;0;X;Southern Dunlin
+Calidris temminckii;X;X;-;-;(X);-;-;-;-;-;-;Temminck’s stint
+Cepphus grylle;X;X;X;-;X;-;-;-;-;-;X;Black guillemot
+Charadrius alexandrinus;0(X);-;-;-;-;-;-;(0);0(X);0;0;Kentish plover
+Charadrius hiaticula hiaticula;X;X;X;X;X;X;X;X;X;X;X;Ringed plover
+Cygnus olor;X;X;X;X;X;X;X;X;X;X;X;Mute swan
+Gelochelidon nilotica;-;-;-;-;-;-;-;-;0;-;0;Gull-billed tern
+Haematopus ostralegus;X;X;X;X;X;X;X;X;X;X;X;Oystercatcher
+Haliaeetus albicilla;X;X;X;X;X;X;X;X;X;X;X;White-tailed sea eagle
+Hydroprogne caspia;X;X;X;-;X;-;(0);(0);(X);-;(X);Caspina tern
+Larus argentatus;X;X;X;X;X;X;X;X;X;X;X;Herring gull
+Larus canus;X;X;X;X;X;X;X;X;X;X;X;Common gull, Mew gull
+Larus fuscus fuscus;X;X;X;-;X;-;-;(X);X(?);-;-;Lesser black-backed gull
+Larus fuscus intermedius;X;-;-;-;-;-;-;-;-;X;X;Lesser black-backed gull
+Larus marinus;X;X;X;-;X;X;-;-;X;X;X;Great black-backed gull
+Larus melanocephalus;(X);-;-;-;-;-;-;X;X;X;X;Mediterranean gull
+Larus minutus (Hydrocoloeus minutus);X;X;X;X;X;X;X;X;(X);-;X;Little gull
+Larus ridibundus (Chroicocephalus ridibundus);X;X;X;X;X;X;X;X;X;X;X;Black-headed gull
+Limosa limosa;X;X;X;X;X;X;X;X;X;X;X;Black-tailed godwit
+Melanitta fusca;X;X;X;-;X;-;-;-;-;-;-;Velvet scoter
+Mergus albellus (Mergellus albellus);X;X;(0);-;-;-;-;-;-;-;-;Smew
+Mergus merganser;X;X;X;X;X;X;X;X;X;X;X;Goosander
+Mergus serrator;X;X;X;X;X;X;X;X;X;X;X;Red-breasted merganser
+Motacilla alba;X;X;X;X;X;X;X;X;X;X;X;White wagtail
+Oenanthe oenanthe;X;X;X;X;X;X;X;X;X;X;X;Northern wheatear
+Pandion haliaetus;X;X;X;X;X;X;X;X;X;0;X;Osprey
+Phalacrocorax carbo sinensis;X;X;X;X;X;X;X;X;X;X;X;Great cormorant
+Philomachus pugnax;X;X;X;(X);X;X;X;X;X;0;X;Ruff
+Podiceps auritus;X;X;X;-;X;X;X;(0);-;(X);(X);Slavonian grebe
+Podiceps cristatus;X;X;X;X;X;X;X;X;X;X;X;Crested grebe
+Recurvirostra avosetta;X;-;-;X;X;-;X;X;X;X;X;Avocet
+Riparia riparia;X;X;X;X;X;X;X;X;X;X;X;Sand martin
+Rissa tridactyla;X;-;-;-;-;-;-;-;-;-;0(X);Black-legged kittiwake
+Somateria mollissima;X;X;X;-;X;-;-;(0);X;X;X;Common eider
+Stercorarius parasiticus;X;X;-;-;-;-;-;-;-;-;-;Parasitic jaeger
+Sterna hirundo;X;X;X;X;X;X;X;X;X;X;X;Common tern
+Sterna paradisaea;X;X;X;-;X;X;-;0;X;X;X;Arctic tern
+Sterna sandvicensis;X;-;-;-;X;-;-;X;X;0(X);X;Sandwich tern
+Sternula albifrons;X;X;X;X;X;X;X;X;X;X;X;Little tern
+Tadorna tadorna;X;X;X;X;X;X;X;X;X;X;X;Common shelduck
+Tringa totanus;X;X;X;X;X;X;X;X;X;X;X;Redshank
+Uria aalge;X;X;(X);-;-;-;-;-;-;-;X;"Common guillemot; Common murre"
+Vanellus vanellus;X;X;X;X;X;X;X;X;X;X;X;Lapwing
+Xenus cinereus;-;X;X;-;-;X;-;-;-;-;-;Terek sandpiper

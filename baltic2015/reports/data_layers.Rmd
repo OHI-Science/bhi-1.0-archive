@@ -1,0 +1,64 @@
+---
+title: "Data Layers Table"
+output: github_document
+---
+
+
+| BHI Component 	| Data layer 	| Layer explanation 	| Data source Ref Number 	| Prep file link 	|
+|---------------	|--------------------------	|---------------------------------------------------------------------------------------------------------	|------------------------	|----------------------------------------------------------------------------------------------------------------------------------------------------	|
+| AO stock 	| ao_stock_status 	| BHI region status of coastal fish populations 	| 1 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/AO/ao_prep.md#artisanal-opportunity-ao-goal-data-prep 	|
+| AO stock 	| ao_stock_slope 	| BHI region trend of coastal fish populations 	| 1 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/AO/ao_prep.md#artisanal-opportunity-ao-goal-data-prep 	|
+| CW NUT 	| cw_nu_status 	| BHI region nutrient status 	| 3 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/secchi/secchi_prep.md#status-and-trend-exploration 	|
+| CW NUT 	| cw_nu_trend 	| BHI region nutrient trend 	| 3 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/secchi/secchi_prep.md#status-and-trend-exploration 	|
+| CW CON 	| cw_con_dioxin_status 	| BHI region contaminants dioixin indicator status 	| 5 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md 	|
+| CW CON 	| cw_con_dioxin_trend 	| BHI region contaminants dioixin indicator trend 	| 5 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md 	|
+| CW CON 	| cw_con_ices6_status 	| BHI region contaminants PCB indicator status 	| 4 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md 	|
+| CW CON 	| cw_con_ices6_trend 	| BHI region contaminants PCB indicator trend 	| 4 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md 	|
+| CW CON 	| cw_con_pfos_status 	| BHI region contaminants PFOS indicator status 	| 31 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md 	|
+| CW CON 	| cw_con_pfos_trend 	| BHI region contaminants PFOS indicator trend 	| 31 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md 	|
+| CW TRA, 	| po_trash 	| BHI region TRA pressure (status = 1- pressure) 	| 7 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md 	|
+| pressure 	|  	|  	|  	|  	|
+| LE ECO 	| le_gdp_region 	| BHI region GDP 	| 8,11 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/ECO/eco_prep.md 	|
+| LE ECO 	| le_gpd_country 	| Country GDP by BHI region 	| 9,12,13 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/ECO/eco_prep.md 	|
+| LE LIV 	| liv_regional_employ 	| BHI region people employed 	| 14,11 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LIV/liv_prep.md 	|
+| LE LIV 	| liv_national_employ 	| National number of people employed by BHI region 	| 12,13,14 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LIV/liv_prep.md 	|
+| FP MAR 	| mar_harvest_species 	| Species harvested for mariculture 	| 15,16,17,18,19 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md 	|
+| FP MAR 	| mar_sustainability_score 	| The sustainability score applied to the mariculture harvested species 	| 15,16,17,18,19 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md 	|
+| FP MAR 	| mar_harvest_tonnes 	| The tons of mariculture harvest by BHI region and species 	| 15,16,17,18,19 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md 	|
+| FP 	| fp_wildcaught_weight 	| Weighting Factor for MAR and FISH - -Currently based on the global layer 	|  	|  	|
+| FP FIS 	| fis_bbmsy 	| B/Bmsy by stock and yar 	|  	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/FIS.R 	|
+| FP FIS 	| fis_ffmsy 	| F/Fmsy by stock and year 	|  	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/FIS.R 	|
+| FP FIS 	| fis_landings 	| ICES landings by stock and year 	| 20 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/FIS.R 	|
+| BD SPP 	| bd_spp_status 	| BD status based on species biodiversity and threat level. Based on geometric mean of taxa group status. 	| 21, 22 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/SPP/spp_prep.md 	|
+| SP ICO 	| ico_status 	| ICO status based on basin iconic species diversity and threat to iconic species 	| 21, 22 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/ICO/ico_prep.md 	|
+| TR 	| tr_accommodation_stays 	| Number of nights stayed at coastal accommodations in NUTS2 regions associated with each BHI region 	| 11, 23, 24 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/TR/tr_prep.md 	|
+|  	|  	|  	|  	|  	|
+| Pressure 	| cc_sal_surf 	| Surface salinity pressure 	| 25 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/climate_change/salinity_climatechange/salinity_climatechange_prep.md 	|
+| Pressure 	| cc_sal_deep 	| Deep salinity pressure 	| 25 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/climate_change/salinity_climatechange/salinity_climatechange_prep.md 	|
+| Pressure 	| cc_sst 	| Sea surface temperature pressure 	| 25 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/climate_change/temperature_climatechange/temperature_climatechange_prep.md 	|
+| Pressure 	| po_nload 	| Nitrogen load pressure 	| 26 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/nutrient_load/nutrient_load_prep.md 	|
+| Pressure 	| po_atmos_pcb153 	| Atmospheric deposition of PCB 153 pressure 	| 27 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/atmos_contaminants/atmos_con_prep.md 	|
+| Pressure 	| po_atmos_pcddf 	| Atmospheric deposition of PCDD/F pressure 	| 28 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/atmos_contaminants/atmos_con_prep.md 	|
+| Pressure 	| po_pload 	| Phosphorus load pressure 	| 26 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/nutrient_load/nutrient_load_prep.md 	|
+| Pressure 	| po_inverse_secchi 	| Water clarity pressure 	| 3 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/pressure_secchi/pressure_secchi_prep.md 	|
+| Pressure 	| ss_wgi 	| Social pressure 	| 29 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/pressure_secchi/pressure_secchi_prep.md 	|
+| Resilience 	| res_biodiversity 	| Biodiversity resilience 	| 21, 22 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_birds 	| Goal specific regulation resilience  -BIRDS 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_bsap 	| Goal specific regulation resilience  - BSAP 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_bwd 	| Goal specific regulation resilience  - BWD 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_cbd 	| Goal specific regulation resilience  - CBD 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_cfp 	| Goal specific regulation resilience  - CFP 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_cites 	| Goal specific regulation resilience  - CITES 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_cop21 	| Goal specific regulation resilience  - COP21 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_hd 	| Goal specific regulation resilience  - HD 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_helcom 	| Goal specific regulation resilience  - HELCOM 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_ied 	| Goal specific regulation resilience  - IED 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_msfd 	| Goal specific regulation resilience  - MSFD 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_mspd 	| Goal specific regulation resilience  - MSPD 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_nd 	| Goal specific regulation resilience  - ND 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_nec 	| Goal specific regulation resilience  - NEC 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_pop 	| Goal specific regulation resilience  - POP 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_reach 	| Goal specific regulation resilience  - REACH 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_uwwtd 	| Goal specific regulation resilience  - UWWTD 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| res_reg_wfd 	| Goal specific regulation resilience  - WFD 	| 30 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|
+| Resilience 	| wgi_all 	| Social resilience 	| 29 	| https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/resilience/resilience_prep.md 	|

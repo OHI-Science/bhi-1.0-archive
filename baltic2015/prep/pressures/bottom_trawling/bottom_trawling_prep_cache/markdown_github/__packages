@@ -1,0 +1,13 @@
+base
+readr
+dplyr
+tidyr
+ggplot2
+DBI
+RMySQL
+stringr
+rprojroot
+sp
+rgdal
+raster
+rgeos

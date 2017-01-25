@@ -1,0 +1,126 @@
+---
+title: "Prepare BHI inland buffers"
+author: Julie Lowndes // github @jules32 
+date: 04-03-2016
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## SETUP
+
+```{r libraries}
+
+# libraries
+library(dplyr)
+library(tidyr)
+library(readr)
+library(stringr)
+library(rgdal)
+library(raster)
+library(rgeos)
+library(gdalUtils)
+library(maptools)
+
+```
+
+```{r libraries, eval=FALSE}
+
+# directory at NCEAS where spatial files are; can also add something like this for SRC
+dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+           'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+           'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+## read in cleaned BHI shapefiles  
+## BHI shape files cleaned here: github.com/OHI-Science/ohi-webapps/blob/master/custom/bhi/prep_bhi.Rmd
+# rgns <- rgdal:: readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/bhi/spatial/custom'), 
+#                         layer = 'baltic_shp') 
+rgns <- rgdal:: readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/bhi/spatial'), 
+                        layer = 'rgn_offshore_gcs') 
+
+
+rgns = readOGR(dsn = 'baltic2015/spatial','rgn_offshore_gcs')
+  
+x = readOGR(dsn = 'baltic2015/spatial/regions_gcs.geojson', 'OGRGeoJSON')
+
+#SET DESTINATION PATH FOR SHAPEFILE AND LAYER NAME
+      ESRIpath<-paste("C:\\Users\\grw\\GULLS\\OHI_EEZ_GADM\\regions_gcs_",codes[ii],sep="")  
+      layerName<-paste(codes[ii],"_EEZGADM1",sep="")
+
+#WRITE COUNTRY ii FILE AS ESRI SHAPEFILE  
+      writeOGR(x, dsn = 'baltic2015',
+             layer = 'test', driver = 'ESRI Shapefile', overwrite=T)
+
+
+nuts2 <- maptools::readShapePoly(file.path(dir_M, 'git-annex/Baltic/regions_coastal/COAST_NUTS2.shp'),
+                                 proj4string=CRS(rgns@proj4string@projargs))
+
+nuts3 <- readOGR(dsn = file.path(dir_M, 'git-annex/Baltic/regions_coastal'), 
+         layer = 'COAST_NUTS3') 
+
+plot(rgns)
+# plot(nuts2)
+# plot(nuts3)
+
+
+## Intersect BHI and NUTS2 regions
+rgns_nuts2 <- raster::intersect(rgns, nuts2)
+
+```
+
+## Workflow with GYE (smaller shape files)
+
+```{r gye workflow}
+
+## read in regions
+rgns <- readOGR(dsn = file.path(dir_M, 'git-annex/clip-n-ship/gye/spatial/custom'), 
+               layer = 'Regiones') 
+
+## make buffer
+buff_width = 25000 # meters
+rgns_buff <- rgeos::gBuffer(rgns, byid = FALSE, width = buff_width)
+
+rgns_buff <- raster::buffer(rgns, dissolve=FALSE, width = buff_width)
+
+plot(rgns)
+plot(rgns_buff, add=TRUE)
+
+plot(nuts2)
+
+# gdal_buffer, raster::buffer. look for somethign that has theissen polygons by default
+
+## merge buffers/extend rgns to land
+
+```
+
+## Intersect BHI and NUTS2 regions
+
+```{r}
+
+rgns_nuts2 <- raster::intersect(rgns, nuts2)
+
+```
+
+
+
+## Make buffers on land
+
+```{r buffers}
+
+```
+
+## Identify which NUTS2 and NUTS3 are associated with each BHI region
+
+```{r nuts associations}
+
+```
+
+
+
+

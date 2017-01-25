@@ -1,0 +1,540 @@
+---
+title: "atmos_con_prep.rmd"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+params: 
+    datasource: csv
+---
+
+#Preparation of the Atmospheric Contaminants pressure data layer
+
+## 1. Background
+
+## 2. Data  
+
+### 2.1  Atmospheric deposition of PCB-153 on the Baltic Sea  
+Data are provided for nine major Baltic Sea basins:  Archipelago Sea, Baltic Proper, Bothnian Bay, Bothnian Sea, Gulf of Finland, Gulf of Riga, Kattegat, The Sound, Western Baltic.  
+
+[Data downloaded from the HELCOM website](http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcb-153-on-the-baltic-sea/) on 23 June 2016. File name 'PCB-153_deposition_data.xls' Data are provided on the basin level. 
+
+#### 2.1.1 Additional reference information as provided on the HELCOM website
+**Data Source: EMEP/MSC**
+
+2. Description of data:
+Annual atmospheric deposition fluxes of PCB-153 were obtained using the latest version of MSCE-POP model developed at EMEP/MSC-E (Gusev et al., 2005). Assessment of global scale transport and fate of PCBs was made on the basis of the inventory of global PCB emissions [Breivik et al., 2007] and emissions officially reported by the EMEP countries. The inventory of Breivik et al. [2007] provided consistent set of historical and future emissions of 22 individual PCB congeners from 1930 up to 2100. Model simulations for the period 1990 and 2013 were carried out for indicator congener PCB-153. The spatial distribution of PCB-153 emissions within the EMEP region was prepared using gridded PCB emissions officially submitted by 19 EMEP countries, including all HELCOM countries except Russia, and the emission expert estimates worked out by TNO [Denier van der Gon et al., 2005].  
+
+3. Geographical coverage:  
+Annual atmospheric deposition fluxes of PCB-153 were obtained for the EMEP region.  
+
+4. Temporal coverage:  
+Timeseries of annual atmospheric deposition are available for the period 1990 – 2013.  
+
+5. Methodology and frequency of data collection:  
+Atmospheric input and source allocation budgets of PCB-153 to the Baltic Sea and its catchment area were computed using the latest version of MSCE-POP model. MSCE-POP is the regional-scale model operating within the EMEP region. This is a three-dimensional Eulerian model which includes processes of emission, advection, turbulent diffusion, wet and dry deposition, degradation, gaseous exchange with underlying surface, and inflow of pollutant into the model domain. Horizontal grid of the model is defined using stereographic projection with spatial resolution 50 km at 60º latitude. The description of EMEP horizontal grid system can be found in the internet (http://www.emep.int/grid/index.html). Vertical structure of the model consists of 15 non-uniform layers defined in the terrain-following s-coordinates and covers almost the whole troposphere. Detailed description of the model can be found in EMEP reports (Gusev et al., 2005) and in the Internet on EMEP web page (http://www.emep.int/) under the link to information on Persistent Organic Pollutants. Meteorological data used in the calculations for 1990-2013 were obtained using MM5 meteorological data preprocessor on the basis of meteorological analysis of European Centre for Medium-Range Weather Forecasts (ECMWF).  
+
+Results of model simulation of atmospheric transport and annual deposition of PCB-153 are provided on the regular basis annually two years in arrears on the basis of emission data officially submitted by Parties to CLRTAP Convention and available expert estimates of emission.  
+
+ 
+Quality information  
+Strength: annually updated information on atmospheric input of PCB-153 to the Baltic Sea and its sub-basins.  
+Weakness: uncertainties in emissions of PCBs.  
+
+7. Uncertainty:  
+The MSCE-POP model results were compared with measurements of EMEP monitoring network [Gusev et al., 2006, Shatalov et al., 2005]. The model was evaluated through the comparison with available measurements during EMEP TFMM meetings held in 2005. It was concluded that the MSCE-POP model is suitable for the evaluation of the long range transboundary transport and deposition of POPs in Europe.  
+
+References
+
+Breivik K., Sweetman A., Pacyna J.M., Jones K.C. [2007] Towards a global historical emission inventory for selected PCB congeners - A mass balance approach-3. An update. Science of the Total Environment, vol. 377, pp. 296-307.
+
+Denier van der Gon H.A.C., van het Bolscher M., Visschedijk A.J.H. and P.Y.J.Zandveld [2005]. Study to the effectiveness of the UNECE Persistent Organic Pollutants Protocol and costs of possible additional measures. Phase I: Estimation of emission reduction resulting from the implementation of the POP Protocol. TNO-report B&O-A R 2005/194.
+
+Gusev A., I. Ilyin, L.Mantseva, O.Rozovskaya, V. Shatalov, O. Travnikov [2006] Progress in further development of MSCE-HM and MSCE-POP models (implementation of the model review recommendations.  EMEP/MSC-E Technical Report 4/2006. (http://www.msceast.org/reps/4_2006.zip)
+
+Gusev A., E. Mantseva, V. Shatalov, B.Strukov [2005] Regional multicompartment model MSCE-POP EMEP/MSC-E Technical Report 5/2005. (http://www.msceast.org/events/review/pop_description.html)
+
+Shatalov V., Gusev A., Dutchak S., Holoubek I., Mantseva E., Rozovskaya O., Sweetman A., Strukov B. and N.Vulykh [2005] Modelling of POP Contamination in European Region: Evaluation of the Model Performance. Technical Report 7/2005. (http://www.msceast.org/reps/7_2005.zip)"
+
+### 2.2 Atmospheric deposition of PCDD/Fs on the Baltic Sea
+[Data downloaded from the HELCOM website](http://www.helcom.fi/baltic-sea-trends/environment-fact-sheets/hazardous-substances/atmospheric-deposition-of-pcdd-fs-on-the-baltic-sea/) on 23 June 2016. File name 'PCDDF_deposition_data_BSEFS2014.xls' Data are provided on the basin level. 
+
+**We will use the Computed annual atmospheric deposition of PCDD/Fs obtained using scenario with adjusted emissions.**  (see Table 2 below in 2.2.1)
+
+#### 2.2.1 Additional information as provided on the HELCOM website
+
+Data
+Numerical data on computed PCDD/F depositions to the Baltic Sea are given in the following tables and can be found in the attached Microsoft Excel file (PCDDF_deposition_data.xls).  
+
+Table 1. Computed annual atmospheric deposition of PCDD/Fs over the six Baltic Sea sub-basins, the whole Baltic Sea (BAS) and normalized deposition to the Baltic Sea (Norm) for period 1990-2012 obtained using official data on emissions.  
+
+Table 2. Computed annual atmospheric deposition of PCDD/Fs over the six Baltic Sea sub-basins, the whole Baltic Sea (BAS) and normalized deposition to the Baltic Sea (Norm) for period 1990-2012 obtained using scenario with adjusted emissions.  
+
+Table 3. Computed contributions by country to annual total deposition of PCDD/Fs to nine Baltic Sea sub-basins for the year 2012 obtained using official data on emissions.  
+
+Table 4. Computed contributions by country to annual total deposition of PCDD/Fs to nine Baltic Sea sub-basins for the year 2012 obtained using scenario with adjusted emissions.  
+
+Metadata
+1. **Source: EMEP/MSC-E**
+
+2. Description of data:  
+Annual atmospheric deposition fluxes of PCDD/Fs were obtained using the latest version of MSCE-POP model developed at EMEP/MSC-E (Gusev et al., 2005). The latest available official emission data for the HELCOM countries have been used in the model computations. Emissions of PCDD/Fs for each year of this period were officially reported to the UN ECE Secretariat by most of the HELCOM countries. These data are available from the EMEP Centre on Emission Inventories and Projections (CEIP) (http://www.ceip.at/).  
+ 
+3. Geographical coverage: 
+Annual atmospheric deposition fluxes of PCDD/Fs were obtained for the European region.  
+
+4. Temporal coverage:  
+Timeseries of annual atmospheric deposition are available for the period 1990 – 2012.  
+
+5. Methodology and frequency of data collection:  
+Atmospheric input and source allocation budgets of PCDD/Fs to the Baltic Sea and its catchment area were computed using the latest version of MSCE-POP model. MSCE-POP is the regional-scale model operating within the EMEP region. This is a three-dimensional Eulerian model which includes processes of emission, advection, turbulent diffusion, wet and dry deposition, degradation, gaseous exchange with underlying surface, and inflow of pollutant into the model domain. Horizontal grid of the model is defined using stereographic projection with spatial resolution 50 km at 60º latitude. The description of EMEP horizontal grid system can be found in the internet (http://www.emep.int/grid/index.html). Vertical structure of the model consists of 15 non-uniform layers defined in the terrain-following s-coordinates and covers almost the whole troposphere. Detailed description of the model can be found in EMEP reports (Gusev et al., 2005) and in the Internet on EMEP web page (http://www.emep.int/) under the link to information on Persistent Organic Pollutants. Meteorological data used in the calculations for 1990-2012 were obtained using MM5 meteorological data preprocessor on the basis of meteorological analysis of European Centre for Medium-Range Weather Forecasts (ECMWF).  
+
+Results of model simulation of atmospheric transport and annual deposition of PCDD/Fs are provided on the regular basis annually two years in arrears on the basis of emission data officially submitted by Parties to CLRTAP Convention.  
+
+Quality information:  
+Strength: annually updated information on atmospheric input of PCDD/Fs to the Baltic Sea and its sub-basins.  
+Weakness: uncertainties in officially submitted data on emissions of PCDD/Fs.  
+
+Uncertainty:  
+The MSCE-POP model results were compared with measurements of EMEP monitoring network [Gusev et al., 2006, Shatalov et al., 2005]. The model was evaluated through the comparison with available measurements during EMEP TFMM meetings held in 2005. It was concluded that the MSCE-POP model is suitable for the evaluation of the long range transboundary transport and deposition of POPs in Europe.  
+
+References
+
+Gusev A., I. Ilyin, L.Mantseva, O.Rozovskaya, V. Shatalov, O. Travnikov [2006] Progress in further development of MSCE-HM and MSCE-POP models (implementation of the model review recommendations.  EMEP/MSC-E Technical Report 4/2006. (http://www.msceast.org/reps/4_2006.zip)
+
+Gusev A., E. Mantseva, V. Shatalov, B.Strukov [2005] Regional multicompartment model MSCE-POP EMEP/MSC-E Technical Report 5/2005. (http://www.msceast.org/events/review/pop_description.html)
+
+Shatalov V., Gusev A., Dutchak S., Holoubek I., Mantseva E., Rozovskaya O., Sweetman A., Strukov B. and N.Vulykh [2005] Modelling of POP Contamination in European Region: Evaluation of the Model Performance. Technical Report 7/2005. (http://www.msceast.org/reps/7_2005.zip)
+
+ 
+
+
+## 3. Pressure Model
+Will create two separate pressure layers (PCB 153 and PCDDF) which can either be combined into a single pressure layer or only one can be used.  
+
+### 3.1 Current conditions 
+Value in most recent year. 
+PCDDF = 2012  
+PCB 153 = 2013  
+
+### 3.2 Rescaling  
+Min value = 0
+
+Max value = maximum value across all basin 1990 - max year  
+
+
+
+
+## 4. Data layer preparation
+
+```{r setup}
+
+## Libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(RMySQL)
+library(stringr)
+library(tools)
+library(rprojroot) # install.packages('rprojroot')
+
+## source common libraries, directories, functions, etc
+source('~/github/bhi/baltic2015/prep/common.r')
+
+## rprojroot
+root <- rprojroot::is_rstudio_project
+
+
+## make_path() function to 
+make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
+
+
+
+dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
+
+
+# root$find_file("README.md")
+# 
+# root$find_file("ao_need_gl2014.csv")
+# 
+# root <- find_root_file("install_ohicore.r", 
+# 
+# withr::with_dir(
+#   root_file("DESCRIPTION"))
+
+
+
+dir_atmos_con    = file.path(dir_prep,'pressures/atmos_contaminants')
+
+
+## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
+create_readme(dir_atmos_con, 'atmos_con_prep.rmd') 
+```
+
+### 4.1 Read in and organize data
+
+#### 4.1.1 Read in data
+
+```{r read in data}
+pcb153 = read.csv(file.path( dir_atmos_con, "data_database/pcb153.csv"), stringsAsFactors = FALSE)
+str(pcb153)
+
+pcddf = read.csv(file.path( dir_atmos_con, "data_database/pcddf.csv"), stringsAsFactors = FALSE)
+str(pcddf)
+
+atmos_basin_lookup = read.csv(file.path( dir_atmos_con, "data_database/atmos_loading_basin_lookup.csv"), stringsAsFactors = FALSE)
+str(atmos_basin_lookup)
+
+
+bhi_lookup = read.csv(file.path( dir_atmos_con, "bhi_basin_country_lookup.csv"),sep=";", stringsAsFactors = FALSE) %>%
+              select(BHI_ID, Subbasin)%>%
+              dplyr::rename(rgn_id = BHI_ID,
+                            holas_basin = Subbasin)
+str(bhi_lookup)
+```
+
+#### 4.1.2 Transform data to long format
+```{r transform to long format}
+pcb153_long = pcb153 %>%
+              gather(year, value, -basin_loading,-basin_abb,-data_type,-substance,-unit) %>%
+              mutate(year = substr(year,2,5),
+                     year = as.numeric(year),
+                     value = as.numeric(value))
+              
+
+pcddf_long = pcddf %>%
+              gather(year, value, -basin_loading,-basin_abb,-data_type,-substance,-unit) %>%
+              mutate(year = substr(year,2,5),
+                     year = as.numeric(year),
+                     value = as.numeric(value))
+              
+```
+
+#### 4.1.3 Join to HOLAS basin names  
+Data are joined to HOLAS basin names because these are what are associated with BHI regions. This is a slightly indirect approach, could have made a look up table to associated the major basins from the deposition data directly with the BHI regions, but this should have the same result.  
+```{r join to holas basin names}
+pcb153_long1 = pcb153_long %>%
+               full_join(., atmos_basin_lookup,by="basin_loading")
+
+pcddf_long1 = pcddf_long %>%
+               full_join(., atmos_basin_lookup,by="basin_loading")
+```
+
+#### 4.1.4 Plot data by Major basin provided
+```{r plot raw data by major basin provided}
+ggplot(pcb153_long1)+
+  geom_point(aes(year,value))+
+  facet_wrap(~basin_loading)+
+  ylab("PCB 153 kg/year")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                  hjust=.5, vjust=.5, face = "plain"),
+          strip.text.x = element_text(size = 6))+
+  ggtitle("PCB153 Atmospheric Deposition by Major Basin")
+
+ggplot(pcddf_long1)+
+  geom_point(aes(year,value,colour=data_type))+
+  facet_wrap(~basin_loading)+
+  ylab("PCDD/F g TEQ / year")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                  hjust=.5, vjust=.5, face = "plain"),
+          strip.text.x = element_text(size = 6))+
+  ggtitle("PCDD/F Atmospheric Deposition by Major Basin")
+
+
+
+```
+
+
+#### 4.1.5 Plot data by HOLAS basin
+
+```{r plot raw data by holas basin}
+ggplot(pcb153_long1)+
+  geom_point(aes(year,value))+
+  facet_wrap(~holas_basin)+
+  ylab("PCB 153 kg/year")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                  hjust=.5, vjust=.5, face = "plain"),
+          strip.text.x = element_text(size = 6))+
+  ggtitle("PCB153 Atmospheric Deposition by HOLAS Basin")
+
+ggplot(pcddf_long1)+
+  geom_point(aes(year,value,colour=data_type))+
+  facet_wrap(~holas_basin)+
+  ylab("PCDD/F g TEQ / year")+
+  theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                  hjust=.5, vjust=.5, face = "plain"),
+          strip.text.x = element_text(size = 6))+
+  ggtitle("PCDD/F Atmospheric Deposition HOLAS Basin")
+
+
+
+```
+
+#### 4.1.6 Select PCDFF scenario data
+```{r select pcddf scenario data}
+
+
+pcddf_long2 = pcddf_long1 %>%
+              filter(data_type == "scenario with adjusted emissions")
+dim(pcddf_long1); dim(pcddf_long2)
+
+```
+
+
+### 4.2 Current value
+
+#### 4.2.1 Get most recent year for current value
+```{r get current year value}
+max_yr_pcb153 = pcb153_long1 %>%
+                select(year)%>%
+                max()%>%
+                as.numeric()
+
+
+
+max_yr_pcddf = pcddf_long2 %>%
+                select(year)%>%
+                max()%>%
+                as.numeric()
+```
+
+#### 4.2.2 Get current pressure data
+```{r get current pressure data values}
+
+current_pcb153 = pcb153_long1 %>%
+                 filter(year == max_yr_pcb153) %>%
+                 select(holas_basin, value, unit, year)
+
+
+
+current_pcddf =  pcddf_long2%>%
+                 filter(year == max_yr_pcddf) %>%
+                 select(holas_basin, value, unit, year)
+```
+
+#### 4.2.3 Plot current year data
+```{r plot current year data}
+ggplot(current_pcb153)+
+  geom_point(aes(holas_basin, value), size = 2.5)+
+  ylab("PCB 153 kg/year")+
+  ylim(0,8)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                  hjust=.5, vjust=.5, face = "plain"),
+          strip.text.x = element_text(size = 6))+
+  ggtitle("PCB 153 Atmospheric Deposition in 2013")
+
+
+ggplot(current_pcddf)+
+geom_point(aes(holas_basin, value), size = 2.5)+
+ylab("PCDD/F g TEQ / year")+
+ylim(0,150)+
+ theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"),
+        strip.text.x = element_text(size = 6))+
+ggtitle("PCDD/F Atmospheric Deposition in 2012")
+
+
+
+```
+
+
+### 4.3 Rescale data  
+
+#### 4.3.1 Maximum value
+Select maximum value across all basins within each time series. 
+PCB 153:  Baltic Proper in 1990, 21.1 kg/year  
+PCDD/F: Baltic Proper in 1990, 320 g TEQ / year  
+```{r select max values}
+max_pcb153 = pcb153_long1 %>%
+             select(value)%>%
+             max()%>%
+             as.numeric()
+max_pcb153
+
+## which year and basin 
+pcb153_long1 %>% filter(value == max_pcb153) %>% select(basin_loading, year, unit,value)%>% distinct()
+
+
+max_pcddf = pcddf_long2 %>%
+             select(value)%>%
+             max()%>%
+             as.numeric()
+max_pcddf
+
+## which year and basin 
+pcddf_long2 %>% filter(value == max_pcddf) %>% select(basin_loading, year, unit,value)%>% distinct()
+
+
+```
+
+#### 4.3.2 Minimum value
+Minimum value is 0, the value at which there is no pressure 
+```{r select min values}
+min_pcb153 =0
+
+min_pcddf = 0
+
+
+
+
+```
+
+#### 4.3.3 Join current, max, and min values
+```{r join current max and min values}
+pcb153_rescale = current_pcb153%>%
+                 mutate(min = min_pcb153, 
+                        max= max_pcb153) %>% 
+                 dplyr:: rename(current = value)
+
+pcddf_rescale = current_pcddf%>%
+                 mutate(min = min_pcddf, 
+                        max= max_pcddf)%>%
+                  dplyr:: rename(current = value)
+
+
+```
+
+#### 4.3.4 Plot current, max and min
+```{r plot current max and min}
+
+ggplot(gather(pcb153_rescale, type, concentration, -holas_basin,-unit,-year))+
+  geom_point(aes(holas_basin, concentration, colour = type, shape=type), size= 2.5)+
+  ylab("PCB 153 kg/year")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("PCB 153 minimum, maximum, and current pressure value")
+
+
+
+
+ggplot(gather(pcddf_rescale, type, concentration, -holas_basin,-unit,-year))+
+  geom_point(aes(holas_basin, concentration, colour = type, shape=type), size= 2.5)+
+  ylab("PCDD/F g TEQ / year")+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("PCDD/F minimum, maximum, and current pressure value")
+
+```
+
+
+#### 4.3.5 Rescale data
+```{r rescale data}
+
+pcb153_rescale1 = pcb153_rescale %>%
+                  mutate(pcb153_normalize = (current - min)/(max - min))
+
+
+
+pcddf_rescale1 = pcddf_rescale %>%
+                  mutate(pcddf_normalize = (current - min)/(max - min))
+```
+
+#### 4.3.6 Plot rescaled pressure layer
+```{r plot rescales pressure layer}
+ggplot(pcb153_rescale1)+
+  geom_point(aes(holas_basin,pcb153_normalize), size= 2.5)+
+  ylab("Pressure Value")+
+  ylim(0,1)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("PCB 153 pressure value")
+
+
+
+
+ggplot(pcddf_rescale1)+
+  geom_point(aes(holas_basin, pcddf_normalize), size= 2.5) +
+ ylab("Pressure Value")+
+  ylim(0,1)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("PCDD/F Pressure value")
+
+
+
+```
+
+#### 4.3.7 Plot and compare two contaminants rescaled pressure layers  
+**PCB153 is in the open red dots, and PCDDF is in the filled black dots**  
+Higher pressure from PCDDF, but magnitude of difference varies among basins
+```{r plot and compare pcb153 and pcddf}
+
+plot_compare = full_join(
+                select(pcb153_rescale1, holas_basin, pcb153_normalize),
+                select(pcddf_rescale1, holas_basin, pcddf_normalize),
+                by = "holas_basin")
+
+ggplot(plot_compare)+
+  geom_point(aes(holas_basin,pcb153_normalize), size= 2.5, colour = "red", shape = 1)+
+  geom_point(aes(holas_basin, pcddf_normalize), size= 2.5, colour = "black") +
+  ylab("Pressure Value")+
+  ylim(0,1)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("Compare PCB153 and PCDD/F Pressure values")
+
+
+
+```
+
+### 4.4 Pressure layer for BHI regions
+
+#### 4.4.1 Apply basin values to BHI regions
+```{r apply basin values to BHI regions}
+
+pcb153_rgn = pcb153_rescale1 %>%
+            full_join(., bhi_lookup, by = "holas_basin") %>%
+            select(rgn_id, pcb153_normalize)%>%
+            arrange(rgn_id)
+
+pcddf_rgn = pcddf_rescale1 %>%
+            full_join(., bhi_lookup, by = "holas_basin") %>%
+            select(rgn_id, pcddf_normalize)%>%
+            arrange(rgn_id)
+
+```
+
+#### 4.4.2 Plot Pressure layer by BHI regions
+```{r Plot Pressure layer by BHI regions}
+ggplot(pcb153_rgn)+
+  geom_point(aes(rgn_id,pcb153_normalize), size= 2.5)+
+  ylab("Pressure Value")+
+  ylim(0,1)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("PCB 153 pressure value by BHI regions")
+
+
+
+
+ggplot(pcddf_rgn)+
+  geom_point(aes(rgn_id, pcddf_normalize), size= 2.5) +
+ ylab("Pressure Value")+
+  ylim(0,1)+
+   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
+                                hjust=.5, vjust=.5, face = "plain"))+
+  ggtitle("PCDD/F Pressure value by BHI regions")
+
+```
+
+
+### 4.5 Prepare and save object for layers  
+
+#### 4.5.1 Prepare objects
+```{r prepare object for layers}
+po_atmos_pcb153 = pcb153_rgn %>%
+                  dplyr::rename(pressure_score = pcb153_normalize)
+
+
+po_atmos_pcddf = pcddf_rgn %>%
+                  dplyr::rename(pressure_score = pcddf_normalize)
+```
+
+#### 4.5.2 Save objects to layers
+```{r save objects to layers}
+write.csv(po_atmos_pcb153,file.path(dir_layers,"po_atmos_pcb153_bhi2015.csv"), row.names = FALSE)
+
+write.csv(po_atmos_pcddf,file.path(dir_layers,"po_atmos_pcddf_bhi2015.csv"), row.names = FALSE)
+```
+

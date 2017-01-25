@@ -1,0 +1,110 @@
+---
+title: "Status and Trend Method Table"
+output: github_document
+---
+
+
+This document was prepared by Jennifer Griffiths for BHI in July 2016. There are two tables documenting the calculation method for goal status (Table 1) and trend (Table 2) values.
+
+| Goal 	| Subgoal / component 	| Status Equation 	| Variables 	| Use of NA 	| Final Status Year 	| Scale status calculated 	|
+|----|----|-----------------|---------------------------	|----------------------	|-----------------------	|-------------------------	|
+| Food Provision (FP) 	|  	|  	|  	|  	|  	|  	|
+| Food Provision (FP) 	| Fisheries (FIS) 	|  	|  	|  	|  	| ICES region 	|
+| Food Provision (FP) 	| Mariculture (MAR) 	|  	| pc,r = four year running mean of current production in BHI region r 	| NA for regions with no data (this are also regions with no mariculture production) 	| 2014 	| BHI region 	|
+|  	|  	|  	| pr,r = reference production in BHI region r = pc - 5 	|  	|  	|  	|
+| Carbon Storage (CS) 	|  	|  	|  	|  	|  	|  	|
+| Tourism (TR) 	|  	|  	|  	| NA for regions with no data (e.g. Russia) 	| 2014 	| BHI region 	|
+| Livelihoods & Economies (LE) 	|  	|  	| r = BHI regions 	| If there is no data for a country, those BHI regions receive NA values 	|  	| BHI region 	|
+|  	|  	| xr = (XECO, XLIV) 	| n = number of subgoals 	|  	|  	|  	|
+| Livelihoods & Economies (LE) 	| Economies (ECO) 	|  	|  	| If there is no data for a country, those BHI regions receive NA values 	| 2013 	| BHI region 	|
+| Livelihoods & Economies (LE) 	| Livelihoods (LIV) 	|  	|  	| If there is no data for a country, those BHI regions receive NA values 	| 2014 	| BHI region 	|
+| Sense of Place (SP) 	|  	|  	|  	|  	|  	|  	|
+| Sense of Place (SP) 	| Iconic Species (ICO) 	|  	| r = BHI region 	|  	| Only single status point. 2013 is year redlist and checklists were produced. 	| HOLAS basin 	|
+|  	|  	|  	| w = threat weights 	|  	|  	|  	|
+|  	|  	|  	| i = species from the Iconic species list developed by BHI (excludes birds, no distribution data). 	|  	|  	|  	|
+|  	|  	|  	| n =  number of species 	|  	|  	|  	|
+|  	|  	|  	| b =  basin 	|  	|  	|  	|
+| Sense of Place (SP) 	| Lasting Special Places (LSP) 	|  	|  	|  	|  	| Country 	|
+| Clean Water (CW) 	|  	|  	| r = BHI region 	|  	|  	|  	|
+| Clean Water (CW) 	| Nutrients (NUT) 	|  	| b = basin, r = BHI region, 	| NA when there are no data observations in a basin 	| Calculated for 10 year period 	| HOLAS basin 	|
+|  	|  	|  	| m = month, n = number of observations 	|  	|  	|  	|
+|  	|  	|  	| secchi = summer offshore secchi depth observations (Jun, Jul, Aug, Sep) 	|  	|  	|  	|
+|  	|  	|  	| refb = HELCOM basin summer secchi target 	|  	|  	|  	|
+| Clean Water (CW) 	| Contaminants (CON) 	|  	| Basin (b),location(i), date (j), region (r) 	| NA when there are no data observations in a basin 	| Only single status point calculated for period. 2009-2013 for ICES6 and Dioxin; 	| HOLAS basin 	|
+|  	|  	|  	|  	|  	| 2010-2014 for PFOS 	|  	|
+|  	|  	| xb= ( 	|  	|  	|  	|  	|
+|  	|  	|  	| ices6ref = 75 ng g-1 wet weight fish muscle 	|  	|  	|  	|
+|  	|  	| , pfosb) 	|  	|  	|  	|  	|
+|  	|  	|  	|  	|  	|  	|  	|
+|  	|  	| n= number of indicators 	|  	|  	|  	|  	|
+|  	|  	|  	| dioxinref = 0.0065 TEQ µg kg-1 ww fish muscle 	|  	|  	|  	|
+|  	|  	|  	| pfosb = 9.1 μg/kg wet weight (or 9.1 ng/g ww) 	|  	|  	|  	|
+| Clean Water (CW) 	| Trash (TRA) 	|  	| c = country 	|  	| 2010 	| Country 	|
+|  	|  	|  	| tc = mismanaged trash (tonnnes) 	|  	|  	|  	|
+|  	|  	|  	| tmin = 0 	|  	|  	|  	|
+|  	|  	|  	| tmax = maximum modeled mismanaged trash for a European country in 2010 	|  	|  	|  	|
+| Biodiversity (BD) 	| Species (SPP) 	|  	| r = BHI region 	|  	| Only single status point. 2013 is year redlist and checklists were produced. 	| HOLAS basin 	|
+|  	|  	|  	| b = HOLAS basin 	|  	|  	|  	|
+|  	|  	|  	| t = taxa group (invertebrates, fish, macrophytes, mammals). Bird not included, no distribution data. 	|  	|  	|  	|
+|  	|  	|  	| w = threat weights 	|  	|  	|  	|
+|  	|  	|  	| i = species 	|  	|  	|  	|
+|  	|  	|  	| n =  number of species 	|  	|  	|  	|
+| Artisanal Fishing Opportunities (AO) 	|  	| XAO = Xstock 	|  	|  	|  	| HOLAS basin 	|
+| Artisanal Fishing Opportunities (AO) 	| Stock 	|  	| BHI region(r), Basin (b) 	| NA when there are no data observations in a BHI region, even if a status value can be calculated for the basin. 	| Single year status. Data used up to 2013. 	| HOLAS basin 	|
+|  	|  	|  	| GESkey = key species core indicator 	|  	|  	|  	|
+|  	|  	|  	|  	|  	|  	|  	|
+|  	|  	|  	| GESfunc = functional species core indicator 	|  	|  	|  	|
+|  	|  	|  	| GES status = 1; subGES = 0.2 	|  	|  	|  	|
+| Artisanal Fishing Opportunities (AO) 	| Access 	| Not included 	|  	|  	|  	|  	|
+| Artisanal Fishing Opportunities (AO) 	| Need 	| Not included 	|  	|  	|  	|  	|
+| Table 2: BHI Trend Method Table 	|  	|  	|  	|  	|  	|  	|
+|  	|  	|  	|  	|  	|  	|  	|
+| Goal 	| Subgoal / component 	| Trend equation 	| Trend period 	| Trend scale calculated 	|  	|  	|
+| Food Provision (FP) 	|  	|  	|  	|  	|  	|  	|
+| Food Provision (FP) 	| Fisheries (FIS) 	|  	|  	| BHI region 	|  	|  	|
+| Food Provision (FP) 	| Mariculture (MAR) 	| XMAR ~ 	|  	| BHI region 	|  	|  	|
+|  	|  	| TrendMAR = mMAR * 5 	|  	|  	|  	|  	|
+| Carbon Storage (CS) 	|  	|  	|  	|  	|  	|  	|
+| Tourism (TR) 	|  	| XTR ~ 	| 2010-2014 	| BHI region 	|  	|  	|
+|  	|  	| TrendTR = mTR * 5 	|  	|  	|  	|  	|
+| Livelihoods & Economies (LE) 	|  	|  	|  	| BHI region 	|  	|  	|
+|  	|  	| tr = (trendECO, trendLIV) 	|  	|  	|  	|  	|
+| Livelihoods & Economies (LE) 	| Economies (ECO) 	| XECO ~ 	| 2009-2013 	| BHI region 	|  	|  	|
+|  	|  	| trendECO = mECO * 5 	|  	|  	|  	|  	|
+| Livelihoods & Economies (LE) 	| Livelihoods (LIV) 	| XLIV ~ 	| 2010-2014 	| BHI region 	|  	|  	|
+|  	|  	| TrendLIV = mLIV * 5 	|  	|  	|  	|  	|
+| Sense of Place (SP) 	|  	|  	|  	|  	|  	|  	|
+| Sense of Place (SP) 	| Iconic Species (ICO) 	| NA 	|  	|  	|  	|  	|
+| Sense of Place (SP) 	| Lasting Special Places (LSP) 	|  	|  	| Country 	|  	|  	|
+| Clean Water (CW) 	|  	|  	|  	| BHI region 	|  	|  	|
+|  	|  	| xr= (trendNUT, trendCON) 	|  	|  	|  	|  	|
+|  	|  	| r = BHI region 	|  	|  	|  	|  	|
+|  	|  	| n = number of subgoal trends 	|  	|  	|  	|  	|
+| Clean Water (CW) 	| Nutrients (NUT) 	| XNUT ~ 	| 10 year period within 2000-2013, varies by basin, minimum 5 years of data 	| HOLAS basin 	|  	|  	|
+|  	|  	| trendNUT = mNUT * 5 	|  	|  	|  	|  	|
+| Clean Water (CW) 	| Contaminants (CON) 	|  	| Ices6  = 2004 – 2013 	| HOLAS basin for indicators 	|  	|  	|
+|  	|  	| xr = (trendices6,r , trenddioxin,r, trendpfos,r) 	|  	|  	|  	|  	|
+|  	|  	| ~ 	| Dioxin = 2004-2013 	| BHI region for CON overall 	|  	|  	|
+|  	|  	|  	| PFOS = 2005-2014 	|  	|  	|  	|
+|  	|  	| trendices6,b  = 	|  	|  	|  	|  	|
+|  	|  	| trendices6,r   = trendices6,b 	|  	|  	|  	|  	|
+|  	|  	| ~ 	|  	|  	|  	|  	|
+|  	|  	| trenddioxin,,b  = 	|  	|  	|  	|  	|
+|  	|  	| trenddioxin,r   = trenddioxin,b 	|  	|  	|  	|  	|
+|  	|  	| ~ 	|  	|  	|  	|  	|
+|  	|  	| trendpfos,,b  = 	|  	|  	|  	|  	|
+|  	|  	| trendpfos,r   = trendpfos,b 	|  	|  	|  	|  	|
+|  	|  	| Basin (b),location(i), date (j), region (r) 	|  	|  	|  	|  	|
+| Clean Water (CW) 	| Trash (TRA) 	| NA 	|  	|  	|  	|  	|
+| Biodiversity (BD) 	| Species (SPP) 	| NA 	|  	|  	|  	|  	|
+| Artisanal Fishing Opportunities (AO) 	|  	|  	|  	|  	|  	|  	|
+| Artisanal Fishing Opportunities (AO) 	| Stock 	|  	| Linear model fit for data 2004-2013, variable time series length available for each monitoring station. 	| HOLAS basin 	|  	|  	|
+|  	|  	| i= indicator (functional or key species) 	|  	|  	|  	|  	|
+|  	|  	| s = monitoring station 	|  	|  	|  	|  	|
+|  	|  	| b = basin 	|  	|  	|  	|  	|
+|  	|  	| r = basin 	|  	|  	|  	|  	|
+|  	|  	| Time series are square-root transformed and z-scored 	|  	|  	|  	|  	|
+| Artisanal Fishing Opportunities (AO) 	| Access 	| Not assessed 	|  	|  	|  	|  	|
+| Artisanal Fishing Opportunities (AO) 	| Need 	| Not assessed 	|  	|  	|  	|  	|
+
+
