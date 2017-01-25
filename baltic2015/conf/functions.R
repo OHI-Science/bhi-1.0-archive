@@ -160,9 +160,10 @@ FIS = function(layers, status_year){
     ungroup() %>%
     mutate(trend = round(trend, 2))
 
-  ### final formatting of status data:
+  ### final formatting of status data: choosing 2013 as status year coz 2014 data not reliable
   status <- status %>%
-    filter(year == max(year, na.rm = T)) %>%
+    filter(year == 2013) %>%
+    # filter(year == max(year, na.rm = T)) %>%
     mutate(status = round(status * 100, 1)) %>%
     select(region_id, status)
 
