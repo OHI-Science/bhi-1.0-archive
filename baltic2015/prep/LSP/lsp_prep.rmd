@@ -244,6 +244,11 @@ The .csv file includes information: Area per MPA, Date established, MPA status, 
 ## plot on top of each other
 plot(bhi, col = 'light blue', border = "grey", main = "BHI regions and MPAs intercept"); plot(mpa, col = 'blue', add = TRUE); legend('bottomright', c("BHI regions", "BHI borders", "MPA"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c( "light blue", "grey", "blue"), text.font = 1, box.lty = 0 )
 
+
+## save bhi intersected shapefile
+writeOGR(bhi, dsn = path.expand(dir_lsp), layer = 'bhi_mpa_intersect', driver = 'ESRI Shapefile', overwrite=TRUE) 
+
+
 ## system.time({mpa_bhi <- raster::intersect(mpa, bhi)}) # large file size and took hours to run. bhi ~ 45.5 Mb, mpa ~ 8.7 Mb.
 
 #  plot(mpa_bhi, col ="red", border = "black")

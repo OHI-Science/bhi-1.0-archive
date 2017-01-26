@@ -414,7 +414,6 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
 
       ##plot raw spatial
        ##NA
- 
       
       ## plot raw values single time period by staton
       #NA
@@ -445,7 +444,69 @@ dev.off() ## Finish PDF
 
 ```
 
+## NP subgoal
+similar to FIS subgoal
+```{r np subgoal}
 
+## set values and location
+goal_select = "NP"
+
+##space data
+##NA
+
+## value data
+##NA
+
+
+#time_data
+time_data_bbmsy = read.csv(file.path(dir_baltic, 'visualize/np_bbmsy_time_data.csv'), stringsAsFactors=FALSE)
+
+time_data_ffmsy = read.csv(file.path(dir_baltic, 'visualize/np_ffmsy_time_data.csv'), stringsAsFactors=FALSE)
+  
+time_data_landings = read.csv(file.path(dir_baltic, 'visualize/np_landings_time_data.csv'), stringsAsFactors=FALSE)
+
+##scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal== goal_select)
+
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+##plot raw spatial
+##NA
+
+
+## plot raw values single time period by staton
+#NA
+
+##plot raw times series by station
+## NA 
+
+##plot raw time series by basin
+##NA
+
+##plot raw times series by rgn_id
+plot_datatime (time_data_bbmsy, facet_type= "ices", variable =FALSE)
+plot_datatime (time_data_ffmsy, facet_type= "ices", variable =FALSE)
+plot_datatime (time_data_landings, facet_type= "ices", variable =FALSE)
+
+##plot pressure data layers and weights for goal
+plotPressuresResilienceGoal ("pressures", goal_select)
+
+##plot resilience data layers and weights for goal
+plotPressuresResilienceGoal ("resilience", goal_select)
+
+##plot Map of Each score type
+plotScoreTypes(scores,goal_select)
+
+
+dev.off() ## Finish PDF
+
+
+```
 
 ## ICO subgoal
 ```{r ico subgoal}
@@ -910,6 +971,50 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
       ##plot Map of Each score type
       plotScoreTypes(scores_filter,goal_select)
 
+
+dev.off() ## Finish PDF
+
+```
+
+## LSP
+```{r LSP goal, eval=FALSE, echo=FALSE}
+
+##goal_select
+goal_select = "LSP"
+
+##data
+
+##space data
+# no space data
+
+## time data
+## no time series
+
+#value_data
+# no value data
+  
+## scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal==goal_select)
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+
+##plot raw spatial; lifted from https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LSP/lsp_prep.md#43-intersect-bhi-and-helcom_mpa-polygons
+plot(bhi, col = 'light blue', border = "grey", main = "BHI regions and MPAs intercept"); plot(mpa, col = 'blue', add = TRUE); legend('bottomright', c("BHI regions", "BHI borders", "MPA"), lty = c(1,1), lwd = c(2.5, 2.5, 2.5), col = c( "light blue", "grey", "blue"), text.font = 1, box.lty = 0 )
+
+
+##plot pressure data layers and weights for goal
+plotPressuresResilienceGoal("pressures", goal_select)
+
+##plot resilience data layers and weights for goal
+plotPressuresResilienceGoal("resilience", goal_select)
+
+##plot Map of Each score type
+plotScoreTypes(scores,goal_select)
 
 dev.off() ## Finish PDF
 
