@@ -91,7 +91,6 @@ dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
 
 if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
   warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
-  # TODO: @jennifergriffiths reset dir_M to be where the SRC hold your shapefiles
 }
 
 dir_shp <- file.path(dir_M, 'git-annex/Baltic')
@@ -335,5 +334,26 @@ trend_bhi <- full_join(trend_basin, bhi_rgn_lookup, by = 'basin') %>%
   filter(!is.na(rgn_id)) %>% # remove non-bhibasins
   select(rgn_id, score)
   
+```
+
+## Explore raster data 
+
+```{r}
+cs_data_new <- rgdal::readOGR(dsn = path.expand(file.path(dir_cs, 'zostera_raster_raw')),
+                          layer = 'Join_macrophytes')  
+
+head(cs_data_new@data)
+plot(cs_data_new, col = cs_data_new@data$Z_marina)
+
+#  cs_data@proj4string: 
+#  +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
+
+## plot data: bhi regions and Zostera
+bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
+                      layer = 'BHI_MCG_11052016')
+
+bhi_transform = spTransform(bhi, cs_data@proj4string) # transform bhi to the same coordinate system; bhi from lsp_prep. need to expand here. 
+
+plot(bhi_transform, col = 'light blue', border = "grey", main = "BHI regions and Meadows intersect"); plot(cs_data, col = 'blue', add = TRUE) 
 ```
 
