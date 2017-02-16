@@ -15,6 +15,7 @@ Food Provision (FP) - Fisheries (FIS) subgoal & Natural Products (NP) Goal Data 
 -   [4. Trend calculations](#trend-calculations)
 -   [5. Plot results](#plot-results)
 -   [6. Explore and compare FIS status and trend with and without sprat](#explore-and-compare-fis-status-and-trend-with-and-without-sprat)
+    -   [7. Adjustment of Cod scores based on body weight](#adjustment-of-cod-scores-based-on-body-weight)
 
 1. Background
 -------------
@@ -52,6 +53,12 @@ This document prepares data for both Natural Products (NP) and Fisheries (FIS). 
 -   cod\_2224, cod\_2532, her\_3a22, her\_2532, her\_riga, her\_30
 -   NP stocks: Sprat, not for human consumption
 -   spr\_2232
+
+Adjustment of Easter Baltic Cod scores based on low body weight:
+
+\_Casini M et al. 2016 Hypoxic areas, density-dependence and food limitation drive the body condition of a heavily exploited marine sh predator. R. Soc. open sci. 3: 160416. <http://dx.doi.org/10.1098/rsos.160416_>
+
+Data available: 1977 - 2014
 
 ### 2.1 Raw and Prepared data
 
@@ -620,3 +627,28 @@ ggplot(trend, aes(region_id, score, fill = dimension)) +
 ```
 
 ![](fis_np_prep_files/figure-markdown_github/compare%20FIS%20with/without%20sprat-4.png)
+
+### 7. Adjustment of Cod scores based on body weight
+
+Data source: Casini M et al. 2016 Hypoxic areas, density-dependence and food limitation drive the body condition of a heavily exploited marine sh predator. R. Soc. open sci. 3: 160416. <http://dx.doi.org/10.1098/rsos.160416>
+
+Data available: 1977 - 2014 Penalty factor = cod\_condition / mean\_cod\_condition
+
+Added to functions.R FIS function
+
+``` r
+cod_condition <- read_csv(file.path(dir_fis, "data/Condition_cod.csv")) %>% 
+  filter(!is.na(year)) %>% 
+  mutate(mean = mean(cod_condition), 
+         penalty_factor = cod_condition / mean)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   year = col_integer(),
+    ##   cod_condition = col_double()
+    ## )
+
+``` r
+# penalty factor = 0.872, for year 2014
+```

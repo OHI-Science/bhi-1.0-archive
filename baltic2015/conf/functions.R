@@ -123,17 +123,18 @@ FIS = function(layers, status_year){
     select(region_id, year, stock, propCatch, score)        # cleaning data
 
   ###########################################################################
-  ######### TEMPORARY: coz of skinny cod problem, we added a factor of stock condition
-  ######### of 0.6 for Eastern Baltic regions (ICES_subdivision = 2532)
-  ######### by Ning Jiang, 24 Jan, 2016
+  ######### Becaue of bad cod condition in Eastern Baltic(ICES_subdivision = 2532),
+  ######### we added a penalty factor of 0.872 based on historical cod body weight.
+  ######### see FIS prep for full calculation of the penalty factor
+  ######### by Ning Jiang, 16 Feb, 2017
 
   status_with_penalty <- status %>%
-    mutate(scores.with.penal = ifelse(stock == "cod_2532", score*0.6,
+    mutate(scores.with.penal = ifelse(stock == "cod_2532", score*0.872,
                                       score)) %>%
     select(-score) %>%
     dplyr::rename(score = scores.with.penal)
 
-  ### Geometric mean weighted by proportion of catch in each region
+  # ## Geometric mean weighted by proportion of catch in each region
   # status <- status %>%
   #   group_by(region_id, year) %>%
   #   summarize(status = prod(score^propCatch)) %>%
