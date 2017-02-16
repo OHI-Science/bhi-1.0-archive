@@ -8,18 +8,19 @@ Carbon Storage (CS) Goal Data Preparation
     -   [Considerations for *BHI 2.0*](#considerations-for-bhi-2.0)
     -   [Other information](#other-information)
 -   [2. Data](#data)
-    -   [1.1 Download information](#download-information)
-    -   [2.2 Additional background](#additional-background)
+    -   [Download information](#download-information)
+    -   [Additional data sources](#additional-data-sources)
 -   [3. CS goal model overview](#cs-goal-model-overview)
     -   [3.1 Status](#status)
     -   [3.2 Trend](#trend)
--   [4. Layer prep](#layer-prep)
+-   [4. Layer prep - Alternative 1 (NOT USED)](#layer-prep---alternative-1-not-used)
     -   [4.1 Read in data](#read-in-data)
-    -   [4.2 Explore and plot data](#explore-and-plot-data)
+    -   [4.2 Explore and plot data - Alternative 1](#explore-and-plot-data---alternative-1)
     -   [4.3 Intersect the BHI shapefiles and zostera data](#intersect-the-bhi-shapefiles-and-zostera-data)
     -   [4.4 Status Calcuation (Can't do... See 4.3 Problem)](#status-calcuation-cant-do...-see-4.3-problem)
--   [Explore Global CS scores for Baltic regions](#explore-global-cs-scores-for-baltic-regions)
-    -   [Temperary fix: leave all as NA](#temperary-fix-leave-all-as-na)
+-   [5. Alternative 2 - Explore Global CS scores for Baltic regions (NOT USED)](#alternative-2---explore-global-cs-scores-for-baltic-regions-not-used)
+-   [6. Alternative 3: using Carbon burial rate (NOT USED)](#alternative-3-using-carbon-burial-rate-not-used)
+-   [7. Alternative 4 - Zostera polygon data exploration](#alternative-4---zostera-polygon-data-exploration)
 
 1. Background
 -------------
@@ -58,7 +59,21 @@ Related publications:
 2. Data
 -------
 
-### 1.1 Download information
+### Download information
+
+[HELCOM Biodiversity data](http://maps.helcom.fi/website/Biodiversity/index.html) (13 Feb, 2017) Select - Redlist - Macrophytes - Least Concern - Zostera Marina [Metadata](http://62.236.121.188/website/getMetadata/htm/Zostera%20marina%20(LC).htm#ID0EACA)
+
+-   10km grid cell
+
+-   field description:
+-   0 = no observations
+-   1 = present before year 1995 or in 1995
+-   2 = present after year 1995
+-   3 = present before and after year 1995
+
+### Additional data sources
+
+We enventually found it not suitable because it doesn't provide any spatial information. Data observations are accompanies by either "dense" or "sparse." Exploratory analysis shown below.
 
 [HELCOM Marine Spatial Planning Map Service](http://maps.helcom.fi/website/msp/index.html)
 Select - Marine Spatial Planning - Ecology - Ecosystem Health status
@@ -67,32 +82,28 @@ Downloaded on 10 May 2016 by Jennifer Griffiths
 
 [Metadata link](http://maps.helcom.fi/website/getMetadata/htm/All/Zostera%20meadows.htm)
 
-### 2.2 Additional background
-
 *Notes from Joni Kaitaranta (HELCOM)*: According to the Zostera meadows metadata there is many data sources. The dataset was compiled in 2009-2010 for the HOLAS I assessment so the dataset is not very recent. Major source was Boström et al. 2003. In: Spalding et al. World Atlas of Seagrasses but there was also national e.g. from NERI Denmark downloaded in 2009 from a URL that is no longer valid.
-
-*Data Structure*: Is unclear, spatial files need to be reviewed. Is it just points, or does it include areal coverage of Zostera. Data observations are accompanies by either "dense" or "sparse."
 
 3. CS goal model overview
 -------------------------
 
 ### 3.1 Status
 
-X\_cs\_region = Current\_area\_Zostera\_meadows\_region / Reference\_pt\_region
+X\_cs\_region = Current\_Zostera\_condition / Reference\_condition
 
-Reference\_pt\_region = Current\_area\_Zostera\_meadows \* 1.25
-This is based upon ["During the last 50 years the distribution of the Zostera marina biotope has declined &gt;25%. The biotope has declined to varying extents in the different Baltic Sea regions."](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)
+Reference\_condition = field description of 3 (ie. present before and after 1995)
 
-**If data are not areal coverage**: if data are simply points of presence, need to rethink goal model
+*field description of 2 (ie. present after 1995) also gets a score of 100.*
 
+<!-- Reference_pt_region = Current_area_Zostera_meadows * 1.25   -->
+<!-- This is based upon ["During the last 50 years the distribution of the Zostera marina biotope has declined >25%. The biotope has declined to varying extents in the different Baltic Sea regions."](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)   -->
+<!-- **If data are not areal coverage**: if data are simply points of presence, need to rethink goal model -->
 ### 3.2 Trend
 
-Use the trend of NUT subcomponent for CW goal (e.g. secchi status trend).
+Trend is left as NA for now since we don't have data to suggest otherwise.
 
-Read the file in from 'layers' and resave as the CS trend for layers.
-
-4. Layer prep
--------------
+4. Layer prep - Alternative 1 (NOT USED)
+----------------------------------------
 
 ### 4.1 Read in data
 
@@ -111,7 +122,7 @@ if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
 dir_shp <- file.path(dir_M, 'git-annex/Baltic')
 ```
 
-### 4.2 Explore and plot data
+### 4.2 Explore and plot data - Alternative 1
 
 We explored the Zostera data and see how that matches with the BHI region shape files. They seem to overlap well.
 
@@ -128,8 +139,7 @@ cs_data <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'Bostera_meadows'
 
 ``` r
 #plot(cs_data, col = cs_data@data$coverage )
-#head(cs_data@data) 
-
+a = head(cs_data@data) 
 #  cs_data@proj4string: 
 #  +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
 
@@ -210,8 +220,8 @@ cs_with_wt = cs_bhi_data %>%
 # DT::datatable(cs_with_wt)
 ```
 
-Explore Global CS scores for Baltic regions
--------------------------------------------
+5. Alternative 2 - Explore Global CS scores for Baltic regions (NOT USED)
+-------------------------------------------------------------------------
 
 We decided not to use this approach as Global CS scores could be misleading as either 0 or 100. We will leave CS scores as NA's instead to highlight the missing data.
 
@@ -307,18 +317,213 @@ as.data.frame(hab_trend_bhi)
 # 31      Sweden       222 seaice_shoreline -0.7022792023
 ```
 
-### Temperary fix: leave all as NA
+<!-- ### Temperary fix: leave all as NA  -->
+<!-- ```{r leave as NA} -->
+<!-- cs_status_NA = data.frame(rgn_id = seq(1, 42, by = 1),  -->
+<!--                           score = NA, -->
+<!--                           dimension = "status") -->
+<!-- write_csv(cs_status_NA, file.path(dir_layers, "cs_status_placeholder_NA.csv")) -->
+<!-- cs_trend_NA = data.frame(rgn_id = seq(1, 42, by = 1),  -->
+<!--                          score = NA, -->
+<!--                          dimension = "trend") -->
+<!-- write_csv(cs_trend_NA, file.path(dir_layers, "cs_trend_placeholder_NA.csv")) -->
+<!-- ``` -->
+6. Alternative 3: using Carbon burial rate (NOT USED)
+-----------------------------------------------------
+
+Carbon burial rate for 6 out of 16 basins.
+
+Aata included: Kattegat, Danish Straits, **Baltic Proper**, Bothnian Sea, Bothnian Bay, Gulf of Riga, Gulf of Finland, **Entire Baltic Sea** (bolded basin names are not in the bhi basins)
+
+As a result, only 11 out of 42 regions have scores.
 
 ``` r
-cs_status_NA = data.frame(rgn_id = seq(1, 42, by = 1), 
-                          score = NA,
-                          dimension = "status")
+carbon_data <- read_csv(file.path(dir_cs, 'carbon_burial_rate_baltic.csv')) %>% 
+  gather(basin, rate, 2:9) %>% 
+  group_by(basin) %>% 
+  mutate(ref_point = rate[year == 'target']) %>% 
+  filter(!year == 'target') %>% 
+  ungroup
 
-write_csv(cs_status_NA, file.path(dir_layers, "cs_status_placeholder_NA.csv"))
+status_carbon <- carbon_data %>% 
+  mutate(score = rate/ref_point * 100)
 
-cs_trend_NA = data.frame(rgn_id = seq(1, 42, by = 1), 
-                         score = NA,
-                         dimension = "trend")
+# select the most recent year
+status_basin <- status_carbon %>% 
+  filter(year == '2014') %>% 
+  dplyr::select(basin, score)
 
-write_csv(cs_trend_NA, file.path(dir_layers, "cs_trend_placeholder_NA.csv"))
+bhi_rgn_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
+  dplyr::select(basin = Subbasin, rgn_id = BHI_ID)
+
+# status by bhi rgn
+status_bhi <- full_join(status_basin, bhi_rgn_lookup, by = 'basin') %>% 
+  filter(!is.na(rgn_id)) # remove non-bhi-basins that do not have a matched bhi ID
 ```
+
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
+
+``` r
+knitr::kable(status_bhi)
+```
+
+| basin                  |      score|  rgn\_id|
+|:-----------------------|----------:|--------:|
+| Kattegat               |   87.79715|        1|
+| Kattegat               |   87.79715|        2|
+| Bothnian Sea           |  104.34322|       37|
+| Bothnian Sea           |  104.34322|       38|
+| Bothnian Bay           |  101.10497|       41|
+| Bothnian Bay           |  101.10497|       42|
+| Gulf of Riga           |  112.44168|       27|
+| Gulf of Riga           |  112.44168|       28|
+| Gulf of Finland        |  103.75854|       32|
+| Gulf of Finland        |  103.75854|       33|
+| Gulf of Finland        |  103.75854|       34|
+| Great Belt             |         NA|        3|
+| Great Belt             |         NA|        4|
+| The Sound              |         NA|        5|
+| The Sound              |         NA|        6|
+| Kiel Bay               |         NA|        7|
+| Kiel Bay               |         NA|        8|
+| Bay of Mecklenburg     |         NA|        9|
+| Bay of Mecklenburg     |         NA|       10|
+| Arkona Basin           |         NA|       11|
+| Arkona Basin           |         NA|       12|
+| Arkona Basin           |         NA|       13|
+| Bornholm Basin         |         NA|       14|
+| Bornholm Basin         |         NA|       15|
+| Bornholm Basin         |         NA|       16|
+| Bornholm Basin         |         NA|       17|
+| Gdansk Basin           |         NA|       18|
+| Gdansk Basin           |         NA|       19|
+| Eastern Gotland Basin  |         NA|       20|
+| Eastern Gotland Basin  |         NA|       21|
+| Eastern Gotland Basin  |         NA|       22|
+| Eastern Gotland Basin  |         NA|       23|
+| Eastern Gotland Basin  |         NA|       24|
+| Eastern Gotland Basin  |         NA|       25|
+| Western Gotland Basin  |         NA|       26|
+| Northern Baltic Proper |         NA|       29|
+| Northern Baltic Proper |         NA|       30|
+| Northern Baltic Proper |         NA|       31|
+| Aland Sea              |         NA|       35|
+| Aland Sea              |         NA|       36|
+| The Quark              |         NA|       39|
+| The Quark              |         NA|       40|
+
+``` r
+### Trend calculation ###
+trend_basin <- status_carbon %>% 
+  dplyr::select(basin, year, score) %>% 
+  group_by(basin) %>% 
+  do(dml = lm(score~year, data = .)) %>% 
+  summarize(basin = basin,
+            score = coef(dml)[2]*0.05) 
+
+trend_bhi <- full_join(trend_basin, bhi_rgn_lookup, by = 'basin') %>% 
+  filter(!is.na(rgn_id)) %>% # remove non-bhibasins
+  dplyr::select(rgn_id, score)
+```
+
+    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
+    ## factor and character vector, coercing into character vector
+
+7. Alternative 4 - Zostera polygon data exploration
+---------------------------------------------------
+
+Zostera new shape file explore:
+
+-   10km grid cell
+-   field description:
+
+0 = no observations 1 = present before year 1995 or in 1995 2 = present after year 1995 3 = present before and after year 1995
+
+``` r
+####### CS shapefile #############
+cs_data_new <- rgdal::readOGR(dsn = path.expand(file.path(dir_cs, 'zostera_raster')),
+                          layer = 'Join_macrophytes')  
+```
+
+    ## OGR data source with driver: ESRI Shapefile 
+    ## Source: "/home/mendes/github/bhi/baltic2015/prep/CS/zostera_raster", layer: "Join_macrophytes"
+    ## with 51300 features
+    ## It has 24 fields
+
+``` r
+data = cs_data_new@data
+
+## extent:
+extent(cs_data_new)
+```
+
+    ## class       : Extent 
+    ## xmin        : 4e+06 
+    ## xmax        : 5900000 
+    ## ymin        : 2800000 
+    ## ymax        : 5500000
+
+``` r
+# xmin        : 4e+06 
+# xmax        : 5900000 
+# ymin        : 2800000 
+# ymax        : 5500000 
+
+## coordinates: 
+#  cs_data_new@proj4string
+#  +proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs 
+
+######### bhi regions ##########
+bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile')),
+                      layer = 'BHI_MCG_11052016')
+```
+
+    ## OGR data source with driver: ESRI Shapefile 
+    ## Source: "/home/shares/ohi/git-annex/Baltic/BHI_MCG_shapefile", layer: "BHI_MCG_11052016"
+    ## with 42 features
+    ## It has 6 fields
+
+``` r
+bhi_transform = spTransform(bhi, cs_data_new@proj4string) # transform bhi to the same coordinate system; bhi from lsp_prep. need to expand here. 
+
+raster::extent(bhi_transform)
+```
+
+    ## class       : Extent 
+    ## xmin        : 4283762 
+    ## xmax        : 5442611 
+    ## ymin        : 3397830 
+    ## ymax        : 4818369
+
+``` r
+# xmin        : 4283762 
+# xmax        : 5442611 
+# ymin        : 3397830 
+# ymax        : 4818369 
+
+
+#### intersect zostera data and bhi regions ###
+# cs_bhi_intersect_3 <- intersect(cs_data_new, bhi_transform)
+# cs_data_3 <- cs_bhi_intersect_3@data
+# write_csv(cs_data_3, file.path(dir_cs, "zostera_bhi_intersect.csv"))
+
+cs_data_3 <- read.csv(file.path(dir_cs, "zostera_bhi_intersect.csv"))
+
+cs_status <- cs_data_3 %>% 
+  dplyr::select(bhi = BHI_ID, country = rgn_nam, zostera = Z_marina) %>% 
+  mutate(cs_score = ifelse(zostera == 2, 100, zostera/3)) %>% # if zostera = 2, set score to 100
+  group_by(bhi) %>% 
+  summarize(score = mean(cs_score))
+ 
+## plot ##
+cs_plot_new <- ggplot(cs_status) +
+  geom_bar(aes(bhi, score), stat = 'identity') +
+  labs(title = "CS score by region based on Zostera coverage data pre- and post- 1995",
+       x = "BHI region",
+       y = "Score") 
+  
+print(cs_plot_new)
+```
+
+![](cs_prep_files/figure-markdown_github/polygon%20data%20explore-1.png)
