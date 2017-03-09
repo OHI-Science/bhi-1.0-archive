@@ -752,3 +752,87 @@ nut_status = full_join(dplyr::select(bhi_status,
   mutate(nut_status = mean(c(anoxia_score,  secchi_score), na.rm = F) )
 
 ```
+
+# 11. BSEP nutrient data exploration
+
+Reference points came from: 
+_Baltic Marine Environment Protection Commission - Baltic Sea Environment Proceedings No. 143 - Eutrophication status of the Baltic Sea 2007-2011_ Page 12. 
+
+```{r BSEP data}
+# read in data (missing data for 19, 22, 23, 33 - Russia)
+winter_data_raw <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/Nutrients_winter_1980-2016_0-10m_id_assigned.csv'))
+summer_data_raw <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/Summer_1980-2016_chl_0-10m_id_assigned.csv'))
+
+
+
+# select correct columns 
+## year = 2009-2016
+## regions have non-uniform temporal coverage. Some regions have data up to 2016, but most only have up to 2012 or 2013. 
+
+winter_data <- winter_data_raw %>% 
+  select(din = DIN, dip = PO4P.DIP, year = Year, BHI_ID) %>% 
+  filter(year %in% 2009:2016, 
+         !is.na(BHI_ID) )
+
+summer_data <- summer_data_raw %>% 
+  select(chla = CHL, year = Year, BHI_ID) %>% 
+  filter(year %in% 2009:2016, 
+          !is.na(BHI_ID) )
+
+# average for each year in each region 
+
+winter_summary <- winter_data %>% 
+  group_by(BHI_ID, year) %>% 
+  summarize(dip_ave = mean(dip, na.rm = T), din_ave = mean(din, na.rm = T)) %>%
+  mutate(din_ave = as.numeric(str_replace_all(din_ave, "NaN", "" )), 
+         dip_ave = as.numeric(str_replace_all(din_ave, "NaN", "" ))) %>% 
+  ungroup
+
+summer_summary <-  summer_data %>% 
+  group_by(BHI_ID, year) %>% 
+  summarize(chla_ave = mean(chla, na.rm = T)) %>% 
+  ungroup
+
+# combine DIP, DIN, and Chla data 
+
+nut_combined <- left_join(winter_summary, summer_summary, by = c('BHI_ID', 'year'))
+
+####### add reference point ##########
+ref_data <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/BSEP_nutrient_reference.csv')) %>% 
+  select(Basin, din_ref = din, dip_ref = dip, chla_ref = chla)
+
+bhi_basin_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
+  select(Basin = Subbasin, BHI_ID)
+
+ref <- full_join(ref_data, bhi_basin_lookup, by = "Basin") %>% 
+  filter(!is.na(BHI_ID))
+
+# join ref with nutrient data 
+
+nut_data_with_ref <- full_join(nut_combined, ref)
+
+# calculate status 
+## status of indicator = inverse of ave/ref
+## status of nutrient = geometric.mean(status of indicators)
+
+library(psych)
+nut_status_all_years <- nut_data_with_ref %>% 
+  mutate(dip_status = pmin(1, 1/(dip_ave / dip_ref)), 
+         din_status = pmin(1, 1/(din_ave / din_ref)),
+         chla_status = pmin(1, 1/(chla_ave / chla_ref))) %>% 
+  group_by(BHI_ID, year) %>% 
+  mutate(nut_status = geometric.mean(c(dip_status, din_status, chla_status)), 
+         nut_status = as.numeric(str_replace_all(nut_status, "NaN", ""))) %>% 
+  select(BHI_ID, year, dip_status, din_status, chla_status, nut_status)
+
+# choose status year 
+## 2012 as it has relatively most complete data for all regions 
+nut_status <- nut_status_all_years %>% 
+  filter(year == 2012)
+  
+
+     
+  
+
+```
+
