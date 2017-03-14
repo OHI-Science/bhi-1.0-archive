@@ -91,7 +91,7 @@ anox_file_list = list.files(path= file.path(dir_shp, 'anoxia'),
 
   bal_proj = CRS("+init=epsg:32634 +proj=utm +zone=34 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 ")
   bal_res = 1000
-  dir_temp = make_path('baltic2015/prep/pressures/open_sea_anoxia/O2_bottom_files')
+  dir_temp   = file.path(dir_anox, 'O2_bottom_files')
 
 for (anox_file in anox_file_list) {
    
@@ -125,8 +125,7 @@ bhi <- rgdal::readOGR(dsn = path.expand(file.path(dir_shp, 'BHI_MCG_shapefile'))
 
 ## subset Baltic Proper (BP) and Gulf of Finland (GoF) regions, and rasterize them to the same coor system and resolution as O2_bottom files. 
 
-# test:
-# O2_raster = raster::raster(file.path(dir_anox, 'O2_bottom_files', 'CodRVmap_2014.tif'))
+O2_raster = raster::raster(file.path(dir_anox, 'O2_bottom_files', 'CodRVmap_2014.tif'))
 
 BP_list = c("Bornholm Basin", "Western Gotland Basin", "Eastern Gotland Basin", "Northern Baltic Proper")
 
@@ -418,8 +417,7 @@ anoxia_scores_all = rbind(BP_anoxic_area, GoF_anoxic_area) %>%
 
 anoxia_pressure = anoxia_scores_all %>% 
   filter(year == max(year)) %>% 
-  complete(rgn_id = full_seq(c(1, 42), 1), 
-           fill = list(pressure_score = 0)) %>% 
+  complete(rgn_id = full_seq(c(1, 42), 1)) %>% 
   dplyr::select(rgn_id = as.integer((rgn_id)), pressure_score) 
 
 str(anoxia_pressure)
@@ -439,6 +437,8 @@ Anoxia is added to Clean Water goal - Nutrient subgoal as a component. Anoxia st
 anoxia_status_all_years = anoxia_scores_all %>% 
   dplyr::select(rgn_id, year, pressure_score) %>% 
   mutate(status_score = (1 - pressure_score) *100)
+
+write_csv(anoxia_status_all_years, file.path(dir_anox, "cw_nut_anoxia_status_all_years.csv"))
    
 # most recent year 
 anoxia_status = anoxia_status_all_years %>% 
