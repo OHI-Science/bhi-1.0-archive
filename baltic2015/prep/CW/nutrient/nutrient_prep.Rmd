@@ -508,7 +508,7 @@ Status must be calculated in data prep because it's calculated on the basin leve
   
   basin_status = secchi_target %>%
                  mutate(., status =  pmin(1, mean_secchi/target_secchi)) %>%
-      dplyr::select(basin_name, year, status)
+      dplyr::select(basin_name, year, status) 
 
 ## Assign basin status to BHI regions
   
@@ -797,39 +797,94 @@ nut_combined <- left_join(winter_summary, summer_summary, by = c('BHI_ID', 'year
 bhi_basin_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
   select(Basin = Subbasin, BHI_ID)
 
-nut_basin_level <- full_join(nut_combined, bhi_basin_lookup, by = "Basin") %>% 
-  filter(!is.na(BHI_ID))
+nut_basin_level <- full_join(nut_combined, bhi_basin_lookup, by = "BHI_ID") %>% 
+  group_by(Basin, year) %>% 
+  summarize(dip_basin = mean(dip_ave, na.rm = T), 
+         din_basin = mean(din_ave, na.rm = T), 
+         chla_basin = mean(chla_ave, na.rm = T)) %>% 
+  filter(!is.na(year))
 
 ####### add reference point ##########
 ref_data <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/BSEP_nutrient_reference.csv')) %>% 
   select(Basin, din_ref = din, dip_ref = dip, chla_ref = chla)
 
-
-
-
-
 # join ref with nutrient data 
 
-nut_data_with_ref <- full_join(nut_combined, ref)
+nut_data_with_ref <- full_join(nut_basin_level, ref_data)
 
-# calculate status 
+# calculate status at basin level
 ## status of indicator = inverse of ave/ref
 ## status of nutrient = geometric.mean(status of indicators)
 
-library(psych)
 nut_status_all_years <- nut_data_with_ref %>% 
-  mutate(dip_status = pmin(1, 1/(dip_ave / dip_ref)), 
-         din_status = pmin(1, 1/(din_ave / din_ref)),
-         chla_status = pmin(1, 1/(chla_ave / chla_ref))) %>% 
-  group_by(BHI_ID, year) %>% 
-  mutate(nut_status = geometric.mean(c(dip_status, din_status, chla_status)), 
-         nut_status = as.numeric(str_replace_all(nut_status, "NaN", ""))) %>% 
-  select(BHI_ID, year, dip_status, din_status, chla_status, nut_status)
+  mutate(dip_status = pmin(1, 1/(dip_basin / dip_ref))*100, 
+         din_status = pmin(1, 1/(din_basin / din_ref))*100,
+         chla_status = pmin(1, 1/(chla_basin / chla_ref))*100) %>% 
+    select(Basin, year, dip_status, din_status, chla_status) %>% 
+  mutate(dip_status = as.numeric(str_replace_all(dip_status, "NaN", "")),
+         din_status = as.numeric(str_replace_all(din_status, "NaN", "")), 
+         chla_status = as.numeric(str_replace_all(chla_status, "NaN", "")))
 
-# choose status year 
-## 2012 as it has relatively most complete data for all regions 
-nut_status <- nut_status_all_years %>% 
-  filter(year == 2012)
+# disaggregate to region level 2009 - 2013
+chem_status_bhi_region <- full_join(nut_status_all_years, bhi_basin_lookup) %>% 
+  select(-Basin) %>% 
+  filter(year < 2014)
+
+# join with secchi and oxygen 
+
+## secchi 2009 - 2013
+secchi_status_bhi_region <- basin_status %>% 
+  select(Basin = basin_name, year, secchi_status = status) %>% 
+  mutate(secchi_status = secchi_status * 100) %>% 
+  full_join(bhi_basin_lookup) %>% 
+  filter(year %in% 2009:2013) %>% 
+  select(-Basin)
+
+## oxygen 2010 - 2014
+oxygen_status_bhi_region <- read.csv(file.path(dir_prep, 'pressures/open_sea_anoxia/cw_nut_anoxia_status_all_years.csv')) %>% 
+  select(BHI_ID = rgn_id, year, oxy_status = status_score)
+
+## join chemical, secchi, and oxygen status scores
+nut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region, by = c('year', 'BHI_ID')) %>% 
+  full_join(oxygen_status_bhi_region, by = c('year', 'BHI_ID'))
+
+########## NUT status calculation ##########
+# calculate NUT goal status = geometric.mean of all five categories
+library(psych) 
+nut_status_overall <- nut_all_years %>% 
+  group_by(BHI_ID, year) %>% 
+  mutate(nut_status = geometric.mean(c(dip_status, din_status, chla_status, secchi_status, oxy_status), na.rm = T),
+         nut_status = as.numeric(str_replace_all(nut_status, "NaN", ""))) %>%
+  select(BHI_ID, year, nut_status)
+
+# choose status year 2013
+nut_status <- nut_status_overall %>% 
+  filter(year == 2013) %>% 
+  select(rgn_id = BHI_ID, 
+         score = nut_status)
+# plot
+nut_status_plot <- ggplot(nut_status) +
+  geom_point(aes(x = rgn_id, y = score)) +
+  ggtitle("NUT status scores - based on DIN, DIP, CHLA, Secchi, and Oxygen data")
+
+print(nut_status_plot)
+
+######### NUT trend calculation ##########
+nut_trend_new <- nut_status_overall %>% 
+  group_by(BHI_ID) %>% 
+  do(lmd = lm(nut_status~year, data = .)) %>% 
+  summarize(rgn_id = BHI_ID, 
+            score = min(1, max(-1, round(coef(lmd)['year']*0.05, 2)))) 
+
+#plot
+nut_trend_plot <- ggplot(nut_trend_new)+
+  geom_point(aes(x = rgn_id, y = score))+
+  ggtitle("NUT trend scores")
+print(nut_trend_plot)
+
+
+## save as data layers in layers folder 
+
 
 ```
 
