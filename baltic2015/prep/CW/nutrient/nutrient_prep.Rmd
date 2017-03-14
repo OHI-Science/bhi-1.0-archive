@@ -853,7 +853,7 @@ nut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region, by 
 library(psych) 
 nut_status_overall <- nut_all_years %>% 
   group_by(BHI_ID, year) %>% 
-  mutate(nut_status = geometric.mean(c(dip_status, din_status, chla_status, secchi_status, oxy_status), na.rm = T),
+  mutate(nut_status = geometric.mean(c(dip_status, din_status, chla_status, secchi_status,                              oxy_status), na.rm = T),
          nut_status = as.numeric(str_replace_all(nut_status, "NaN", ""))) %>%
   select(BHI_ID, year, nut_status)
 
@@ -883,7 +883,9 @@ nut_trend_plot <- ggplot(nut_trend_new)+
 print(nut_trend_plot)
 
 
-## save as data layers in layers folder 
+# save status and trend as data layers in layers folder 
+write_csv(nut_status, file.path(dir_layers, 'nut_status_score_bhi2015'))
+write_csv(nut_trend_new, file.path(dir_layers, 'nut_trend_score_bhi2015'))
 
 
 ```
