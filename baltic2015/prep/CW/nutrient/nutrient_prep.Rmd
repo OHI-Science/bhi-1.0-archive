@@ -76,16 +76,16 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_cw    = file.path(dir_prep, 'CW')
-dir_secchi    = file.path(dir_prep, 'CW/nutrient')
+dir_nut    = file.path(dir_prep, 'CW/nutrient')
 
 ## add a README.md to the prep directory 
-create_readme(dir_secchi, 'nutrient_prep.rmd')
+create_readme(dir_nut, 'nutrient_prep.rmd')
 ```
 
 ```{r data load}
 ## read in secchi data
-data1 = readr::read_csv(file.path(dir_secchi, 'secchi_data_database/ices_secchi.csv'))
-data2 = readr::read_csv(file.path(dir_secchi, 'secchi_data_database/smhi_secchi.csv'))
+data1 = readr::read_csv(file.path(dir_nut, 'secchi_data_database/ices_secchi.csv'))
+data2 = readr::read_csv(file.path(dir_nut, 'secchi_data_database/smhi_secchi.csv'))
 
 # Data overview
 dim(data1)
@@ -252,7 +252,7 @@ allData %>% filter(is.na(bhi_id))
 ### 4.3 Reference points
 These are the values that will be used as a reference point.
 ```{r helcom target secchi}
-target <- readr::read_csv(file.path(dir_secchi, "eutro_targets_HELCOM.csv"))
+target <- readr::read_csv(file.path(dir_nut, "eutro_targets_HELCOM.csv"))
 head(target)
 
 #select just summer_seccchi target
@@ -266,7 +266,7 @@ These basins are the relevant physical units.
 Secchi data will be first assessed at this level and then assigned to BHI region. EEZ divisions may result in some BHI regions that have no data but they are physically the same basin as a BHI region with data.
 
 ```{r basin lookup}
-basin_lookup = read.csv(file.path(dir_secchi,'bhi_basin_country_lookup.csv'), sep=";")
+basin_lookup = read.csv(file.path(dir_nut,'bhi_basin_country_lookup.csv'), sep=";")
 basin_lookup=basin_lookup %>% dplyr::select(bhi_id = BHI_ID, basin_name=Subbasin)
 
 ```
@@ -760,8 +760,8 @@ _Baltic Marine Environment Protection Commission - Baltic Sea Environment Procee
 
 ```{r BSEP data}
 # read in data (missing data for 19, 22, 23, 33 - Russia)
-winter_data_raw <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/Nutrients_winter_1980-2016_0-10m_id_assigned.csv'))
-summer_data_raw <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/Summer_1980-2016_chl_0-10m_id_assigned.csv'))
+winter_data_raw <- read.csv(file.path(dir_nut, 'BSEP_nutrient_data/Nutrients_winter_1980-2016_0-10m_id_assigned.csv'))
+summer_data_raw <- read.csv(file.path(dir_nut, 'BSEP_nutrient_data/Summer_1980-2016_chl_0-10m_id_assigned.csv'))
 
 # select correct columns 
 ## year = 2009-2016
@@ -804,8 +804,8 @@ nut_basin_level <- full_join(nut_combined, bhi_basin_lookup, by = "BHI_ID") %>%
          chla_basin = mean(chla_ave, na.rm = T)) %>% 
   filter(!is.na(year))
 
-####### add reference point ##########
-ref_data <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/BSEP_nutrient_reference.csv')) %>% 
+# add reference points
+ref_data <- read.csv(file.path(dir_nut, 'BSEP_nutrient_data/BSEP_nutrient_reference.csv')) %>% 
   select(Basin, din_ref = din, dip_ref = dip, chla_ref = chla)
 
 # join ref with nutrient data 
@@ -813,6 +813,7 @@ ref_data <- read.csv(file.path(dir_secchi, 'BSEP_nutrient_data/BSEP_nutrient_ref
 nut_data_with_ref <- full_join(nut_basin_level, ref_data)
 
 # calculate status at basin level
+
 ## status of indicator = inverse of ave/ref
 ## status of nutrient = geometric.mean(status of indicators)
 
@@ -830,7 +831,7 @@ chem_status_bhi_region <- full_join(nut_status_all_years, bhi_basin_lookup) %>%
   select(-Basin) %>% 
   filter(year < 2014)
 
-# join with secchi and oxygen 
+########### Join with secchi and oxygen results ############
 
 ## secchi 2009 - 2013
 secchi_status_bhi_region <- basin_status %>% 
@@ -846,7 +847,11 @@ oxygen_status_bhi_region <- read.csv(file.path(dir_prep, 'pressures/open_sea_ano
 
 ## join chemical, secchi, and oxygen status scores
 nut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region, by = c('year', 'BHI_ID')) %>% 
-  full_join(oxygen_status_bhi_region, by = c('year', 'BHI_ID'))
+  full_join(oxygen_status_bhi_region, by = c('year', 'BHI_ID')) %>% 
+  select(BHI_ID, Basin, year, dip_status, din_status, chla_status, secchi_status,                          oxy_status) %>% 
+  arrange(BHI_ID)
+
+write_csv(nut_all_years, file.path(dir_nut, 'nut_component status_compiled_by_year.csv'))
 
 ########## NUT status calculation ##########
 # calculate NUT goal status = geometric.mean of all five categories
@@ -886,7 +891,6 @@ print(nut_trend_plot)
 # save status and trend as data layers in layers folder 
 write_csv(nut_status, file.path(dir_layers, 'nut_status_score_bhi2015'))
 write_csv(nut_trend_new, file.path(dir_layers, 'nut_trend_score_bhi2015'))
-
 
 ```
 
