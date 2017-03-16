@@ -753,7 +753,9 @@ nut_status = full_join(dplyr::select(bhi_status,
 
 ```
 
-# 11. BSEP nutrient data exploration
+# 11. BSEP nutrient data exploration (Final method of NUT calcualtion)
+
+March, 2017
 
 Reference points came from: 
 _Baltic Marine Environment Protection Commission - Baltic Sea Environment Proceedings No. 143 - Eutrophication status of the Baltic Sea 2007-2011_ Page 12. 
@@ -802,7 +804,8 @@ nut_basin_level <- full_join(nut_combined, bhi_basin_lookup, by = "BHI_ID") %>%
   summarize(dip_basin = mean(dip_ave, na.rm = T), 
          din_basin = mean(din_ave, na.rm = T), 
          chla_basin = mean(chla_ave, na.rm = T)) %>% 
-  filter(!is.na(year))
+  filter(!is.na(year)) %>% 
+  ungroup
 
 # add reference points
 ref_data <- read.csv(file.path(dir_nut, 'BSEP_nutrient_data/BSEP_nutrient_reference.csv')) %>% 
@@ -846,10 +849,15 @@ oxygen_status_bhi_region <- read.csv(file.path(dir_prep, 'pressures/open_sea_ano
   select(BHI_ID = rgn_id, year, oxy_status = status_score)
 
 ## join chemical, secchi, and oxygen status scores
-nut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region, by = c('year', 'BHI_ID')) %>% 
-  full_join(oxygen_status_bhi_region, by = c('year', 'BHI_ID')) %>% 
-  select(BHI_ID, Basin, year, dip_status, din_status, chla_status, secchi_status,                          oxy_status) %>% 
-  arrange(BHI_ID)
+nut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region, 
+                           by = c('year', 'BHI_ID')) %>%
+  full_join(oxygen_status_bhi_region, 
+            by = c('year', 'BHI_ID')) %>% 
+  arrange(BHI_ID) %>% 
+  full_join(bhi_basin_lookup, by = 'BHI_ID') %>% 
+  dplyr::select(BHI_ID, Basin, year,
+         dip_status, din_status, chla_status, 
+         secchi_status, oxy_status) 
 
 write_csv(nut_all_years, file.path(dir_nut, 'nut_component status_compiled_by_year.csv'))
 
@@ -860,13 +868,19 @@ nut_status_overall <- nut_all_years %>%
   group_by(BHI_ID, year) %>% 
   mutate(nut_status = geometric.mean(c(dip_status, din_status, chla_status, secchi_status,                              oxy_status), na.rm = T),
          nut_status = as.numeric(str_replace_all(nut_status, "NaN", ""))) %>%
-  select(BHI_ID, year, nut_status)
-
-# choose status year 2013
+  select(BHI_ID, year, nut_status) %>% 
+  ungroup
+  
+# choose status year of 2013  
 nut_status <- nut_status_overall %>% 
   filter(year == 2013) %>% 
   select(rgn_id = BHI_ID, 
-         score = nut_status)
+         score = nut_status) %>% 
+  ## if BHI_ID = 18, 19 (Russia), should have the same scores as BHI_ID of 21, 22
+  ## status_rgn_21 = 32.4, status_rgn_22 = 27.7, average of two regions = 30.1
+  ## from converstation with Thorsten March 15, 2017
+  mutate(score = ifelse(rgn_id == 18 |rgn_id == 19, 30.1, score))
+
 # plot
 nut_status_plot <- ggplot(nut_status) +
   geom_point(aes(x = rgn_id, y = score)) +
