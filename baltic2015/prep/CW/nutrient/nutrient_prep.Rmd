@@ -784,7 +784,7 @@ winter_summary <- winter_data %>%
   group_by(BHI_ID, year) %>% 
   summarize(dip_ave = mean(dip, na.rm = T), din_ave = mean(din, na.rm = T)) %>%
   mutate(din_ave = as.numeric(str_replace_all(din_ave, "NaN", "" )), 
-         dip_ave = as.numeric(str_replace_all(din_ave, "NaN", "" ))) %>% 
+         dip_ave = as.numeric(str_replace_all(dip_ave, "NaN", "" ))) %>% 
   ungroup
 
 summer_summary <-  summer_data %>% 
