@@ -829,6 +829,8 @@ nut_status_all_years <- nut_data_with_ref %>%
          din_status = as.numeric(str_replace_all(din_status, "NaN", "")), 
          chla_status = as.numeric(str_replace_all(chla_status, "NaN", "")))
 
+# write_csv(nut_status_all_years, file.path(dir_nut, 'nut_chemical_calculations.csv'))
+
 # disaggregate to region level 2009 - 2013
 chem_status_bhi_region <- full_join(nut_status_all_years, bhi_basin_lookup) %>% 
   select(-Basin) %>% 
