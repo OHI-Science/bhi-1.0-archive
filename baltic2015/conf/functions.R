@@ -566,29 +566,15 @@ AO = function(layers){
 
 CS = function(layers){
 
-  ### TO DO......Add layers when finalized
+  cs_status <- layers$data[['cs_status']] %>%
+    dplyr::select(region_id = rgn_id, dimension, score)
 
-  ## Select Layers
+  cs_trend <- data.frame(region_id = seq(1,42,1),
+                         dimension = as.character(rep("trend",42)),
+                         score = rep((NA), 42))
 
-  ## Status
-
-  ## Trend
-
-
-  ## proxy scores: NA as placeholders
-
-  scores = bind_rows(data.frame(region_id = seq(1,42,1),
-                                dimension = as.character(rep("status",42)),
-                                score = rep (NA, 42)),
-                     data.frame(region_id = seq(1,42,1),
-                                dimension = as.character(rep("trend",42)),
-                                score = rep (0, 42))
-  ) %>%
+  scores = rbind(cs_status, cs_trend) %>%
     mutate(goal = 'CS')
-
-
-  # return scores
-
 
   return(scores)
 }## End CS function
@@ -1048,7 +1034,7 @@ CON = function(layers){
   ## ICES6
 
   cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
     mutate(dimension = as.character(dimension))
 
   cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
