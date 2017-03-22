@@ -905,8 +905,8 @@ print(nut_trend_plot)
 
 
 # save status and trend as data layers in layers folder 
-write_csv(nut_status, file.path(dir_layers, 'nut_status_score_bhi2015'))
-write_csv(nut_trend_new, file.path(dir_layers, 'nut_trend_score_bhi2015'))
+write_csv(nut_status, file.path(dir_layers, 'cw_nut_status_score_bhi2015'))
+write_csv(nut_trend_new, file.path(dir_layers, 'cw_nut_trend_score_bhi2015'))
 
 ```
 

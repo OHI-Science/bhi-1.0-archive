@@ -957,50 +957,18 @@ SP = function(scores){
 
 NUT = function(layers){
   #####----------------------######
-  ## NUT Status - Secchi + Anoxia
+  ## NUT Status - Secchi + Anoxia + DIN (dissolved inorganic nitrogen) + DIP (dis. inorg. phophorus) + Chla (Chlor. A)
   #####----------------------######
-  ## UPDATE 5April2016 - Jennifer Griffiths - NUT status calculated in Secchi prep
-  ## UPDATE Sep2-16 - Ning Jiang - Added Anoxia to NUT (Pressures/Anoxia prep)
 
-  ## Secchi status and trend calculated in prep file because calculated for HOLAS basins
-  ## Basin status and trend are then assigned to BHI regions
-  ## Status is calculated for more recent year (prior to 2014). This is 2013 for most regions
-  ## but not for all (some 2012,2011)
-  ## Trend is calculated over a 10 year period with a minimum of 5 years of data
-  ## expect slow response time in secchi observation so use longer time window for trend
+  # updated 21March, 2017 by Ning Jiang
 
-  secchi_status = SelectLayersData(layers, layers='cw_nut_secchi_status') %>%
-    dplyr::select(rgn_id = id_num, sec_status = val_num)
+  nut_status = SelectLayersData(layers, layers='cw_nut_status') %>%
+    dplyr::select(rgn_id = id_num, score = val_num) %>%
+    mutate(dimension = "status")
 
-  secchi_trend  = SelectLayersData(layers, layers='cw_nut_secchi_trend') %>%
-    dplyr::select(rgn_id = id_num, sec_trend = val_num)
-
-  anoxia_status = SelectLayersData(layers, layers='cw_nut_anoxia_status') %>%
-    as.data.frame() %>%
-    dplyr::select(rgn_id = id_num, anox_status = as.numeric(as.character(val_num)))
-
-  anoxia_trend = SelectLayersData(layers, layers='cw_nut_anoxia_trend') %>%
-    dplyr::select(rgn_id = id_num, anox_trend = val_num)
-
-  ## calculate status
-  nut_status = full_join(secchi_status, anoxia_status, by = 'rgn_id') %>%
-    mutate(anox_status = as.numeric(anox_status)) %>%
-    mutate(score = rowMeans(cbind(sec_status, anox_status), na.rm=T),
-           dimension = 'status',
-           score = ifelse(score == "Nan", "NA", score)) %>%
-    dplyr::select(rgn_id,
-                  score,
-                  dimension)
-
-
-## calculate trend
-  nut_trend = full_join(secchi_trend, anoxia_trend, by = 'rgn_id') %>%
-    mutate(score = rowMeans(cbind(sec_trend, anox_trend), na.rm=T),
-           score = ifelse(score == "Nan", "NA", score),
-           dimension = 'trend') %>%
-    dplyr::select(rgn_id,
-                  score,
-                  dimension)
+  nut_trend  = SelectLayersData(layers, layers='cw_nut_trend') %>%
+    dplyr::select(rgn_id = id_num, score = val_num) %>%
+    mutate(dimension = "trend")
 
   # rbind NUT status and trend to one dataframe
   scores =  rbind(nut_status, nut_trend) %>%
@@ -1008,7 +976,7 @@ NUT = function(layers){
     dplyr::select(goal,
                   dimension,
                   region_id = rgn_id,
-                  score = score) %>%
+                  score) %>%
     arrange(dimension, region_id)
 
   return(scores)
@@ -1043,18 +1011,6 @@ TRA = function(layers){
 } ## END TRA function
 
 CON = function(layers){
-  ## UPDATE 30Sep2016 - Ning Jiang -NCEAS ##
-  ## As experts discuss whether to exclude or modify this goal, we will use NA placeholders for this subgoal
-  ## Original data prep and goal function are preserved but commented out for now
-
-  # status = layers$data[['cw_con_status_NA']]
-  # trend = layers$data[['cw_con_trend_NA']]
-  #
-  # scores = rbind(status, trend) %>%
-  #   mutate(score = as.numeric(score)) %>%
-  #   dplyr::select(-layer)
-  #
-  # return(scores)
 
   #####----------------------######
   ## Contaminants
@@ -1081,10 +1037,18 @@ CON = function(layers){
 
   ## 3 indicators will be averaged (arithmetic mean) for status and trend (if trend for more than ICES6)
 
+  ## status of each indicator will be multiplied by a penalty factor based on ratio: # measured / # known contaminants
+
+  ## Penalty factor
+  penalty <- layers$data[['cw_con_penalty']] %>%
+    dplyr::select(-layer,
+                  region_id = rgn_id,
+                  penalty_factor)
+
   ## ICES6
 
   cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
     mutate(dimension = as.character(dimension))
 
   cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%
@@ -1125,11 +1089,8 @@ CON = function(layers){
     dplyr::rename(region_id = rgn_id)%>%
     mutate(indicator = "pfos")
 
-
-
   ##Join all indicators
   cw_con = bind_rows(cw_con_ices6, cw_con_dioxin, cw_con_pfos)
-
 
   ## Average CON indicators for Status and Trend
   cw_con = cw_con %>%
@@ -1140,15 +1101,25 @@ CON = function(layers){
     mutate(subcom = 'CON')%>%
     arrange(dimension,region_id)
 
+  ## Add penalty factor to status scores (21March, 2017, by Ning Jiang)
+  cw_con_status_with_penalty <- full_join(cw_con, penalty,
+                                   by = "region_id") %>%
+    filter(dimension == "status") %>%
+    mutate(score2 = score * penalty_factor) %>%
+    dplyr::select(region_id, dimension, subcom, score = score2)
+
+  cw_con_full_scores <- rbind(cw_con_status_with_penalty,
+                              filter(cw_con, dimension == "trend",
+                                     !is.na(region_id)))
+
   ## create scores variable
-  scores = cw_con %>%
+  scores = cw_con_full_scores %>%
     mutate(goal = 'CON') %>%
     dplyr::select(goal,
                   dimension,
                   region_id,
                   score) %>%
-    arrange(dimension,region_id) %>%
-    mutate(score = score*0.2) ######### Added by Ning Jiang 24 Jan, 2017; a place-holder penalty factor of 0.2
+    arrange(dimension,region_id)
 
   return(scores)
 
