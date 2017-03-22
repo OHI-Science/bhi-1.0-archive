@@ -1168,18 +1168,20 @@ ggplot(ices6_mean) +
 ```
 
 #### 4.5.4 Calculate Status
-Xices6 = 1/ (Mean_ICES6_region / Reference_pt  )
+Xices6 = 1/ (Mean_ICES6_region / Reference_pt  ) * penalty_factor
 Reference_pt = health_threshold=  75ug/kg
 
 Scale between 0 and 1.  If value is below 75, score = 1
 ```{r  status calculation}
+
+## join with basin-specific penalty factor
 health_threshold = 75
 
 ices6_mean = ices6_mean %>%
-              mutate(health_threshold = health_threshold,
-              ices6_ratio = ices6_mean_ug_kg/health_threshold,
-              ices6_status = 1/ ices6_ratio,
-              ices6_status_adj = pmin(1,ices6_status)) ## status calculation, scaled between 0-1
+  mutate(health_threshold = health_threshold,
+         ices6_ratio = ices6_mean_ug_kg/health_threshold,
+         ices6_status = 1/ ices6_ratio,
+         ices6_status_adj = pmin(1,ices6_status)) ## status calculation, scaled between 0-1
 
 ## because no values exceed the human health threshold, status score is 1.      
 
@@ -1214,7 +1216,6 @@ Need to think abou the interpretation of the data treatment.
 ```{r basin trend calculation}
 ## Key constant
 lag_win = 5 ## the value of the future year we are interested in (five years in the future)
-
 
 
 ## number of years of observations ## Check to make sure all 5 or >
@@ -1350,7 +1351,8 @@ status_ices6 = ices6_mean %>%
               mutate(dimension = "status",
                      score = score*100) %>%
               select(rgn_id, dimension,score) %>%
-              arrange(rgn_id)
+              arrange(rgn_id) %>% 
+              filter(!is.na(rgn_id))
   
 
 ## TREND
@@ -2949,12 +2951,11 @@ con_trend_pfos =read.csv(file.path(dir_layers, 'cw_con_pfos_trend_bhi2015.csv'),
 
 ### 7.2 Join into single object
 ```{r join con indicators into single object}
-#STATUS
+# STATUS with penalty factor
 con_stat = bind_rows(
                 mutate(con_stat_pcb, ind= "PCB"),
                 mutate(con_stat_diox, ind= "Dioxin"),
                 mutate(con_stat_pfos, ind= "PFOS"))
-
 
 # trend
 con_trend = bind_rows(
@@ -3045,22 +3046,30 @@ ggplot(con_trend_n)+
 ```
 
 
-## NA Placeholder for Status and Trend
-```{r NA place holder, eval = FALSE}
-# status
-status = data.frame(region_id = full_seq(1:42, 1), 
-                    goal = "CON",
-                    score = as.numeric(NA),
-                    dimension = "status")
+### 7.5 Add penalty factor by basin to calculate status
 
-write_csv(status, file.path(dir_layers, 'cw_con_status_placeholder_NA.csv'))
+```{r}
+## load penalty factor data
+## this will be saved and added to functions.r for final calculations
 
-# trend
-trend = data.frame(region_id = full_seq(1:42, 1), 
-                   goal = "CON",
-                   score = as.numeric(NA),
-                   dimension = "trend")
+penalty <- read_csv(file.path(dir_con, "basin_specefic_penalty_factors.csv")) %>% 
+  select(basin = Basins, penalty_factor) %>% 
+  full_join(lookup_basins) %>% 
+  select( -country, -basin)
 
-write_csv(trend, file.path(dir_layers, 'cw_con_trend_placeholder_NA.csv'))
+write_csv(penalty, file.path(dir_layers, "cw_con_penalty_bhi2015.csv"))
+
+# recalculate status with penalty
+
+con_stat_with_penalty <- full_join(con_stat, penalty, 
+                                   by = "rgn_id") %>% 
+  mutate(status = score * penalty_factor)
+
+con_stat_plot_with_penalty <- ggplot(con_stat_with_penalty) +
+  geom_point(aes(rgn_id, status)) +
+  facet_wrap(~ind)
+
+print(con_stat_plot_with_penalty)
 ```
+
 

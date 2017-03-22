@@ -17,7 +17,7 @@ params:
 
 ### Download information
 [HELCOM Biodiversity data](http://maps.helcom.fi/website/Biodiversity/index.html) (13 Feb, 2017)
-Select - Redlist - Macrophytes - Least Concern - Zostera Marina
+Select: Redlist - Macrophytes - Least Concern - Zostera Marina
 [Metadata](http://62.236.121.188/website/getMetadata/htm/Zostera%20marina%20(LC).htm#ID0EACA)
 
 - 10km grid cell
