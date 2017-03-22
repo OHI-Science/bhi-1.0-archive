@@ -20,7 +20,7 @@ Carbon Storage (CS) Goal Data Preparation
     -   [4.4 Status Calcuation (Can't do... See 4.3 Problem)](#status-calcuation-cant-do...-see-4.3-problem)
 -   [5. Alternative 2 - Explore Global CS scores for Baltic regions (NOT USED)](#alternative-2---explore-global-cs-scores-for-baltic-regions-not-used)
 -   [6. Alternative 3: using Carbon burial rate (NOT USED)](#alternative-3-using-carbon-burial-rate-not-used)
--   [7. Alternative 4 - Zostera polygon data exploration](#alternative-4---zostera-polygon-data-exploration)
+-   [7. Alternative 4 - HELCOM Zostera data exploration](#alternative-4---helcom-zostera-data-exploration)
 
 1. Background
 -------------
@@ -430,8 +430,10 @@ trend_bhi <- full_join(trend_basin, bhi_rgn_lookup, by = 'basin') %>%
     ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
     ## factor and character vector, coercing into character vector
 
-7. Alternative 4 - Zostera polygon data exploration
----------------------------------------------------
+7. Alternative 4 - HELCOM Zostera data exploration
+--------------------------------------------------
+
+**Status**
 
 Zostera new shape file explore:
 
@@ -439,6 +441,12 @@ Zostera new shape file explore:
 -   field description:
 
 0 = no observations 1 = present before year 1995 or in 1995 2 = present after year 1995 3 = present before and after year 1995
+
+Also added one more factor: carbon storage capacity among different regions (from Emilia Röhr, Åbo University. *Röhr et al. 2016*). - for the BHI region 1-3 we use a carbon storage potential of: 4862 ( g C m^-2) - for all others BHI regions where seagrass is growing we use: 578 ( g C m^-2)
+
+These regions have been identified to be unsuitable for eelgrass growth and thus have status of NA: - 12, 15, 17, 19, 21, 22, 23, 24, 37, 38, 39, 40, 41, 42
+
+**Trend** Trend will be NA for all regions.
 
 ``` r
 ####### CS shapefile #############
@@ -510,20 +518,42 @@ raster::extent(bhi_transform)
 
 cs_data_3 <- read.csv(file.path(dir_cs, "zostera_bhi_intersect.csv"))
 
-cs_status <- cs_data_3 %>% 
+cs_status_1 <- cs_data_3 %>% 
   dplyr::select(bhi = BHI_ID, country = rgn_nam, zostera = Z_marina) %>% 
-  mutate(cs_score = ifelse(zostera == 2, 100, zostera/3)) %>% # if zostera = 2, set score to 100
+  mutate(helcom_score = ifelse(zostera == 2, 100, zostera/3)) %>% # if zostera = 2, set score to 100
   group_by(bhi) %>% 
-  summarize(score = mean(cs_score))
+  summarize(score.1 = mean(helcom_score)) %>% 
+  ungroup
+
+### incorporate CS potential
+cs_status_2 <- cs_status_1 %>% 
+  mutate(cs_poten = ifelse(bhi %in% c(1,2,3), 1, 578/4862), 
+         reference = 100 * 1, #helcom score of 100, and highest CS potential
+         score = score.1 * cs_poten / reference *100) 
+  
+
+### identify regions with no eelgrass growth potential and set as NA
+no_eelgrass <-c(12, 15, 17, 19, 21, 22, 23, 24, 37, 38, 39, 40, 41, 42)
+
+cs_status_3 <- cs_status_2 %>% 
+  mutate(score = ifelse(bhi %in% no_eelgrass, NA, score)) %>% 
+  dplyr::select(rgn_id = bhi, 
+                score) %>% 
+  mutate(dimension = "status")
+
+write_csv(cs_status_3, file.path(dir_layers, 'cs_status_bhi2015.csv'))
+  
  
 ## plot ##
-cs_plot_new <- ggplot(cs_status) +
-  geom_bar(aes(bhi, score), stat = 'identity') +
-  labs(title = "CS score by region based on Zostera coverage data pre- and post- 1995",
+cs_plot_new <- ggplot(cs_status_3) +
+  geom_bar(aes(rgn_id, score), stat = 'identity') +
+  labs(title = "CS score based on HELCOM Zostera data & carbon storage capacity",
        x = "BHI region",
        y = "Score") 
   
 print(cs_plot_new)
 ```
+
+    ## Warning: Removed 14 rows containing missing values (position_stack).
 
 ![](cs_prep_files/figure-markdown_github/polygon%20data%20explore-1.png)
