@@ -61,7 +61,7 @@ Related publications:
 
 ### Download information
 
-[HELCOM Biodiversity data](http://maps.helcom.fi/website/Biodiversity/index.html) (13 Feb, 2017) Select - Redlist - Macrophytes - Least Concern - Zostera Marina [Metadata](http://62.236.121.188/website/getMetadata/htm/Zostera%20marina%20(LC).htm#ID0EACA)
+[HELCOM Biodiversity data](http://maps.helcom.fi/website/Biodiversity/index.html) (13 Feb, 2017) Select: Redlist - Macrophytes - Least Concern - Zostera Marina [Metadata](http://62.236.121.188/website/getMetadata/htm/Zostera%20marina%20(LC).htm#ID0EACA)
 
 -   10km grid cell
 
@@ -522,30 +522,30 @@ cs_status_1 <- cs_data_3 %>%
   dplyr::select(bhi = BHI_ID, country = rgn_nam, zostera = Z_marina) %>% 
   mutate(helcom_score = ifelse(zostera == 2, 100, zostera/3)) %>% # if zostera = 2, set score to 100
   group_by(bhi) %>% 
-  summarize(score.1 = mean(helcom_score)) %>% 
+  summarize(score = mean(helcom_score)) %>% 
   ungroup
 
-### incorporate CS potential
-cs_status_2 <- cs_status_1 %>% 
-  mutate(cs_poten = ifelse(bhi %in% c(1,2,3), 1, 578/4862), 
-         reference = 100 * 1, #helcom score of 100, and highest CS potential
-         score = score.1 * cs_poten / reference *100) 
-  
+# ### incorporate CS potential - decided not to incorporate this factor for round 1 of BHI - March2017
+# cs_status_2 <- cs_status_1 %>% 
+#   mutate(cs_poten = ifelse(bhi %in% c(1,2,3), 1, 578/4862), 
+#          reference = 100 * 1, #helcom score of 100, and highest CS potential
+#          score = score.1 * cs_poten / reference *100) 
+#   
 
 ### identify regions with no eelgrass growth potential and set as NA
 no_eelgrass <-c(12, 15, 17, 19, 21, 22, 23, 24, 37, 38, 39, 40, 41, 42)
 
-cs_status_3 <- cs_status_2 %>% 
+cs_status_2 <- cs_status_1 %>% 
   mutate(score = ifelse(bhi %in% no_eelgrass, NA, score)) %>% 
   dplyr::select(rgn_id = bhi, 
                 score) %>% 
   mutate(dimension = "status")
 
-write_csv(cs_status_3, file.path(dir_layers, 'cs_status_bhi2015.csv'))
+write_csv(cs_status_2, file.path(dir_layers, 'cs_status_bhi2015.csv'))
   
  
 ## plot ##
-cs_plot_new <- ggplot(cs_status_3) +
+cs_plot_new <- ggplot(cs_status_2) +
   geom_bar(aes(rgn_id, score), stat = 'identity') +
   labs(title = "CS score based on HELCOM Zostera data & carbon storage capacity",
        x = "BHI region",
