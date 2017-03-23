@@ -94,9 +94,9 @@ output: html_document
 
 ---- 
 
-## Clean Waters: Nutrients
+## Clean Waters: Eutrophication
 
-```{r, child='goals/NUT.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/EUT.Rmd', results='asis', echo=FALSE}
 ```
 
 [**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/nutrient/nutrient_prep.Rmd)

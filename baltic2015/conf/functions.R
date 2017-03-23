@@ -566,29 +566,15 @@ AO = function(layers){
 
 CS = function(layers){
 
-  ### TO DO......Add layers when finalized
+  cs_status <- layers$data[['cs_status']] %>%
+    dplyr::select(region_id = rgn_id, dimension, score)
 
-  ## Select Layers
+  cs_trend <- data.frame(region_id = seq(1,42,1),
+                         dimension = as.character(rep("trend",42)),
+                         score = rep((NA), 42))
 
-  ## Status
-
-  ## Trend
-
-
-  ## proxy scores: NA as placeholders
-
-  scores = bind_rows(data.frame(region_id = seq(1,42,1),
-                                dimension = as.character(rep("status",42)),
-                                score = rep (NA, 42)),
-                     data.frame(region_id = seq(1,42,1),
-                                dimension = as.character(rep("trend",42)),
-                                score = rep (0, 42))
-  ) %>%
+  scores = rbind(cs_status, cs_trend) %>%
     mutate(goal = 'CS')
-
-
-  # return scores
-
 
   return(scores)
 }## End CS function
@@ -955,24 +941,24 @@ SP = function(scores){
 } ## End SP function
 
 
-NUT = function(layers){
+EUT = function(layers){
   #####----------------------######
-  ## NUT Status - Secchi + Anoxia + DIN (dissolved inorganic nitrogen) + DIP (dis. inorg. phophorus) + Chla (Chlor. A)
+  ## EUT Status - Secchi + Anoxia + DIN (dissolved inorganic nitrogen) + DIP (dis. inorg. phophorus) + Chla (Chlor. A)
   #####----------------------######
 
   # updated 21March, 2017 by Ning Jiang
 
-  nut_status = SelectLayersData(layers, layers='cw_nut_status') %>%
+  eut_status = SelectLayersData(layers, layers='cw_eut_status') %>%
     dplyr::select(rgn_id = id_num, score = val_num) %>%
     mutate(dimension = "status")
 
-  nut_trend  = SelectLayersData(layers, layers='cw_nut_trend') %>%
+  eut_trend  = SelectLayersData(layers, layers='cw_eut_trend') %>%
     dplyr::select(rgn_id = id_num, score = val_num) %>%
     mutate(dimension = "trend")
 
-  # rbind NUT status and trend to one dataframe
-  scores =  rbind(nut_status, nut_trend) %>%
-    mutate(goal = 'NUT') %>%
+  # rbind eut status and trend to one dataframe
+  scores =  rbind(eut_status, eut_trend) %>%
+    mutate(goal = 'EUT') %>%
     dplyr::select(goal,
                   dimension,
                   region_id = rgn_id,
@@ -1048,7 +1034,7 @@ CON = function(layers){
   ## ICES6
 
   cw_con_ices6_status   = SelectLayersData(layers, layers='cw_con_ices6_status') %>%
-    dplyr::select(rgn_id = id_num, dimension=category, score = val_num)
+    dplyr::select(rgn_id = id_num, dimension=category, score = val_num) %>%
     mutate(dimension = as.character(dimension))
 
   cw_con_ices6_trend  = SelectLayersData(layers, layers='cw_con_ices6_trend') %>%

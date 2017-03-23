@@ -32,7 +32,7 @@ rgns <- left_join(
                   area_km2_rgn  = Area_km2) %>%
 
     ## for HELCOM sub-basin areas:: create numeric id and calculate area
-    mutate(subbasin_id = as.integer(stringr::str_replace_all(HELCOM_ID, "SEA-0", 5))) %>%
+    mutate(subbasin_id = as.integer(stringr::str_replace_all(HELCOM_ID, "SEA-0", "5"))) %>%
 
     ## for EEZ areas:: create numeric id and calculate area
     mutate(eez_id = as.integer(stringr::str_c("30", eez_lookup[match(rgn_key, names(eez_lookup))]))),
