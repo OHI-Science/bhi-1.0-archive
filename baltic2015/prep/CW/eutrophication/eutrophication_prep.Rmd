@@ -1,5 +1,5 @@
 ---
-title: "Clean Water (CW) - Nutrient (NUT) Subgoal Data Preparation"
+title: "Clean Water (CW) - Eutrophication (EUT) Subgoal Data Preparation"
 output:
   github_document:
     toc: true
@@ -10,7 +10,7 @@ params:
 
 ## 1. Background
 
-```{r, child='../../../conf/goals/NUT.Rmd', results='asis', echo=FALSE}
+```{r, child='../../../conf/goals/eut.Rmd', results='asis', echo=FALSE}
 ```
 
 ## 2. Secchi Data Prep
@@ -76,16 +76,16 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 ## source common libraries, directories, functions, etc
 source('~/github/bhi/baltic2015/prep/common.r')
 dir_cw    = file.path(dir_prep, 'CW')
-dir_nut    = file.path(dir_prep, 'CW/nutrient')
+dir_eut    = file.path(dir_prep, 'CW/eutrophication')
 
 ## add a README.md to the prep directory 
-create_readme(dir_nut, 'nutrient_prep.rmd')
+create_readme(dir_eut, 'eutrophication_prep.rmd')
 ```
 
 ```{r data load}
 ## read in secchi data
-data1 = readr::read_csv(file.path(dir_nut, 'secchi_data_database/ices_secchi.csv'))
-data2 = readr::read_csv(file.path(dir_nut, 'secchi_data_database/smhi_secchi.csv'))
+data1 = readr::read_csv(file.path(dir_eut, 'secchi_data_database/ices_secchi.csv'))
+data2 = readr::read_csv(file.path(dir_eut, 'secchi_data_database/smhi_secchi.csv'))
 
 # Data overview
 dim(data1)
@@ -252,7 +252,7 @@ allData %>% filter(is.na(bhi_id))
 ### 4.3 Reference points
 These are the values that will be used as a reference point.
 ```{r helcom target secchi}
-target <- readr::read_csv(file.path(dir_nut, "eutro_targets_HELCOM.csv"))
+target <- readr::read_csv(file.path(dir_eut, "eutro_targets_HELCOM.csv"))
 head(target)
 
 #select just summer_seccchi target
@@ -266,7 +266,7 @@ These basins are the relevant physical units.
 Secchi data will be first assessed at this level and then assigned to BHI region. EEZ divisions may result in some BHI regions that have no data but they are physically the same basin as a BHI region with data.
 
 ```{r basin lookup}
-basin_lookup = read.csv(file.path(dir_nut,'bhi_basin_country_lookup.csv'), sep=";")
+basin_lookup = read.csv(file.path(dir_eut,'bhi_basin_country_lookup.csv'), sep=";")
 basin_lookup=basin_lookup %>% dplyr::select(bhi_id = BHI_ID, basin_name=Subbasin)
 
 ```
@@ -336,22 +336,22 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
 ## SAVE DATA FOR VISUALIZE
 
-nut_space_data = summer %>%
+eut_space_data = summer %>%
                  dplyr::select(lat,lon)%>%
                  distinct()%>%
                  mutate(data_descrip = "summer secchi unique sampling locations 2000-2013",
-                        bhi_goal = "NUT")
+                        bhi_goal = "eut")
 
-write.csv(nut_space_data, file.path(dir_baltic,'visualize/nut_space_data.csv'),row.names=FALSE)
+write.csv(eut_space_data, file.path(dir_baltic,'visualize/eut_space_data.csv'),row.names=FALSE)
 
-nut_time_data = summer %>%
+eut_time_data = summer %>%
                 dplyr::select(rgn_id=bhi_id,basin=basin_name,year,variable=month,value=secchi)%>%
                 mutate(unit="secchi depth m",
                        data_descrip = "summer secchi observations",
-                       bhi_goal ="NUT")
+                       bhi_goal ="eut")
 
 
-write.csv(nut_time_data, file.path(dir_baltic,'visualize/nut_time_data.csv'),row.names=FALSE)
+write.csv(eut_time_data, file.path(dir_baltic,'visualize/eut_time_data.csv'),row.names=FALSE)
 
 ```
 
@@ -647,7 +647,7 @@ basin_status_rescaled = data.frame(ratio = seq(0, 1, 0.1)) %>%
 
 plot_rescaled = qplot(x = ratio, y = status, color = transformation, data =  basin_status_rescaled, geom = "point") +
   geom_line(stat = "identity", position = "identity") +
-  labs(title = 'Example non-linear transformations of Nutrients status score',
+  labs(title = 'Example non-linear transformations of eutrophications status score',
       x = 'Non-transformed status score (mean_secchi/target_secchi)', 
       y = 'Transformed status score',
       fill = 'Transformation')
@@ -734,9 +734,9 @@ gpclibPermit()
   
 ```
 
-# 10. Add Anoxia data to Nutrient calculations (NUT)
+# 10. Add Anoxia data to eutrophication calculations (eut)
 
-```{r add anoxia to NUT}
+```{r add anoxia to eut}
 
 # will move to functions.R
 
@@ -744,16 +744,16 @@ anoxia_status = read_csv(file.path(dir_layers, 'hab_anoxia_bhi2015.csv')) %>%
     mutate(anoxia_score = (1-pressure_score) *100 ) %>% 
     dplyr::select(rgn_id, anoxia_score)
 
-nut_status = full_join(dplyr::select(bhi_status, 
+eut_status = full_join(dplyr::select(bhi_status, 
                                      rgn_id, 
                                      secchi_score = score), 
                        anoxia_status, 
                        by = 'rgn_id') %>% 
-  mutate(nut_status = mean(c(anoxia_score,  secchi_score), na.rm = F) )
+  mutate(eut_status = mean(c(anoxia_score,  secchi_score), na.rm = F) )
 
 ```
 
-# 11. BSEP nutrient data exploration (Final method of NUT calcualtion)
+# 11. BSEP eutrophication data exploration (Final method of eut calcualtion)
 
 March, 2017
 
@@ -762,8 +762,8 @@ _Baltic Marine Environment Protection Commission - Baltic Sea Environment Procee
 
 ```{r BSEP data}
 # read in data (missing data for 19, 22, 23, 33 - Russia)
-winter_data_raw <- read.csv(file.path(dir_nut, 'BSEP_nutrient_data/Nutrients_winter_1980-2016_0-10m_id_assigned.csv'))
-summer_data_raw <- read.csv(file.path(dir_nut, 'BSEP_nutrient_data/Summer_1980-2016_chl_0-10m_id_assigned.csv'))
+winter_data_raw <- read.csv(file.path(dir_eut, 'BSEP_nutrient_data/nutrients_winter_1980-2016_0-10m_id_assigned.csv'))
+summer_data_raw <- read.csv(file.path(dir_eut, 'BSEP_nutrient_data/Summer_1980-2016_chl_0-10m_id_assigned.csv'))
 
 # select correct columns 
 ## year = 2009-2016
@@ -793,13 +793,13 @@ summer_summary <-  summer_data %>%
   ungroup
 
 # combine DIP, DIN, and Chla data 
-nut_combined <- left_join(winter_summary, summer_summary, by = c('BHI_ID', 'year'))
+eut_combined <- left_join(winter_summary, summer_summary, by = c('BHI_ID', 'year'))
 
 # aggregate to basin level 
 bhi_basin_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
   select(Basin = Subbasin, BHI_ID)
 
-nut_basin_level <- full_join(nut_combined, bhi_basin_lookup, by = "BHI_ID") %>% 
+eut_basin_level <- full_join(eut_combined, bhi_basin_lookup, by = "BHI_ID") %>% 
   group_by(Basin, year) %>% 
   summarize(dip_basin = mean(dip_ave, na.rm = T), 
          din_basin = mean(din_ave, na.rm = T), 
@@ -808,19 +808,19 @@ nut_basin_level <- full_join(nut_combined, bhi_basin_lookup, by = "BHI_ID") %>%
   ungroup
 
 # add reference points
-ref_data <- read.csv(file.path(dir_nut, 'BSEP_nutrient_data/BSEP_nutrient_reference.csv')) %>% 
+ref_data <- read.csv(file.path(dir_eut, 'BSEP_nutrient_data/BSEP_nutrient_reference.csv')) %>% 
   select(Basin, din_ref = din, dip_ref = dip, chla_ref = chla)
 
-# join ref with nutrient data 
+# join ref with eutrophication data 
 
-nut_data_with_ref <- full_join(nut_basin_level, ref_data)
+eut_data_with_ref <- full_join(eut_basin_level, ref_data)
 
 # calculate status at basin level
 
 ## status of indicator = inverse of ave/ref
-## status of nutrient = geometric.mean(status of indicators)
+## status of eutrophication = geometric.mean(status of indicators)
 
-nut_status_all_years <- nut_data_with_ref %>% 
+eut_status_all_years <- eut_data_with_ref %>% 
   mutate(dip_status = pmin(1, 1/(dip_basin / dip_ref))*100, 
          din_status = pmin(1, 1/(din_basin / din_ref))*100,
          chla_status = pmin(1, 1/(chla_basin / chla_ref))*100) %>% 
@@ -829,10 +829,10 @@ nut_status_all_years <- nut_data_with_ref %>%
          din_status = as.numeric(str_replace_all(din_status, "NaN", "")), 
          chla_status = as.numeric(str_replace_all(chla_status, "NaN", "")))
 
-# write_csv(nut_status_all_years, file.path(dir_nut, 'nut_chemical_calculations.csv'))
+# write_csv(eut_status_all_years, file.path(dir_eut, 'eut_chemical_calculations.csv'))
 
 # disaggregate to region level 2009 - 2013
-chem_status_bhi_region <- full_join(nut_status_all_years, bhi_basin_lookup) %>% 
+chem_status_bhi_region <- full_join(eut_status_all_years, bhi_basin_lookup) %>% 
   select(-Basin) %>% 
   filter(year < 2014)
 
@@ -851,7 +851,7 @@ oxygen_status_bhi_region <- read.csv(file.path(dir_prep, 'pressures/open_sea_ano
   select(BHI_ID = rgn_id, year, oxy_status = status_score)
 
 ## join chemical, secchi, and oxygen status scores
-nut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region, 
+eut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region, 
                            by = c('year', 'BHI_ID')) %>%
   full_join(oxygen_status_bhi_region, 
             by = c('year', 'BHI_ID')) %>% 
@@ -861,52 +861,52 @@ nut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region,
          dip_status, din_status, chla_status, 
          secchi_status, oxy_status) 
 
-write_csv(nut_all_years, file.path(dir_nut, 'nut_component status_compiled_by_year.csv'))
+write_csv(eut_all_years, file.path(dir_eut, 'eut_component status_compiled_by_year.csv'))
 
-########## NUT status calculation ##########
-# calculate NUT goal status = geometric.mean of all five categories
+########## eut status calculation ##########
+# calculate eut goal status = geometric.mean of all five categories
 library(psych) 
-nut_status_overall <- nut_all_years %>% 
+eut_status_overall <- eut_all_years %>% 
   group_by(BHI_ID, year) %>% 
-  mutate(nut_status = geometric.mean(c(dip_status, din_status, chla_status, secchi_status,                              oxy_status), na.rm = T),
-         nut_status = as.numeric(str_replace_all(nut_status, "NaN", ""))) %>%
-  select(BHI_ID, year, nut_status) %>% 
+  mutate(eut_status = geometric.mean(c(dip_status, din_status, chla_status, secchi_status,                              oxy_status), na.rm = T),
+         eut_status = as.numeric(str_replace_all(eut_status, "NaN", ""))) %>%
+  select(BHI_ID, year, eut_status) %>% 
   ungroup
   
 # choose status year of 2013  
-nut_status <- nut_status_overall %>% 
+eut_status <- eut_status_overall %>% 
   filter(year == 2013) %>% 
   select(rgn_id = BHI_ID, 
-         score = nut_status) %>% 
+         score = eut_status) %>% 
   ## if BHI_ID = 18, 19 (Russia), should have the same scores as BHI_ID of 21, 22
   ## status_rgn_21 = 32.4, status_rgn_22 = 27.7, average of two regions = 30.1
   ## from converstation with Thorsten March 15, 2017
   mutate(score = ifelse(rgn_id == 18 |rgn_id == 19, 30.1, score))
 
 # plot
-nut_status_plot <- ggplot(nut_status) +
+eut_status_plot <- ggplot(eut_status) +
   geom_point(aes(x = rgn_id, y = score)) +
-  ggtitle("NUT status scores - based on DIN, DIP, CHLA, Secchi, and Oxygen data")
+  ggtitle("eut status scores - based on DIN, DIP, CHLA, Secchi, and Oxygen data")
 
-print(nut_status_plot)
+print(eut_status_plot)
 
-######### NUT trend calculation ##########
-nut_trend_new <- nut_status_overall %>% 
+######### eut trend calculation ##########
+eut_trend_new <- eut_status_overall %>% 
   group_by(BHI_ID) %>% 
-  do(lmd = lm(nut_status~year, data = .)) %>% 
+  do(lmd = lm(eut_status~year, data = .)) %>% 
   summarize(rgn_id = BHI_ID, 
             score = min(1, max(-1, round(coef(lmd)['year']*0.05, 2)))) 
 
 #plot
-nut_trend_plot <- ggplot(nut_trend_new)+
+eut_trend_plot <- ggplot(eut_trend_new)+
   geom_point(aes(x = rgn_id, y = score))+
-  ggtitle("NUT trend scores")
-print(nut_trend_plot)
+  ggtitle("eut trend scores")
+print(eut_trend_plot)
 
 
 # save status and trend as data layers in layers folder 
-write_csv(nut_status, file.path(dir_layers, 'cw_nut_status_score_bhi2015'))
-write_csv(nut_trend_new, file.path(dir_layers, 'cw_nut_trend_score_bhi2015'))
+write_csv(eut_status, file.path(dir_layers, 'cw_eut_status_score_bhi2015'))
+write_csv(eut_trend_new, file.path(dir_layers, 'cw_eut_trend_score_bhi2015'))
 
 ```
 
