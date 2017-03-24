@@ -567,12 +567,12 @@ plotPressuresResilience = function(type){
     po_pload         =read.csv(file.path(dir_layers,'po_pload_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_pload"         )%>% arrange(rgn_id)
     hab_anoxia       =read.csv(file.path(dir_layers,'hab_anoxia_bhi2015.csv'       ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_anoxia"       )%>% arrange(rgn_id)
     hab_illegal_oil  =read.csv(file.path(dir_layers,'hab_illegal_oil_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_illegal_oil"  )%>% arrange(rgn_id)
-    hab_coastal_pop  =read.csv(file.path(dir_layers,'hab_coastal_pop_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_coastal_pop"  )%>% arrange(rgn_id)
+    #hab_coastal_pop  =read.csv(file.path(dir_layers,'hab_coastal_pop_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_coastal_pop"  )%>% arrange(rgn_id)
     hab_bottom_trawl =read.csv(file.path(dir_layers,'hab_bottom_trawl_bhi2015.csv' ),stringsAsFactors =FALSE )  %>% mutate( pressure = "hab_bottom_trawl" )%>% arrange(rgn_id)
     fp_over_harvest  =read.csv(file.path(dir_layers,'fp_over_harvest_bhi2015.csv'  ),stringsAsFactors =FALSE )  %>% mutate( pressure = "fp_over_harvest"  )%>% arrange(rgn_id)
     sp_invasives     =read.csv(file.path(dir_layers,'sp_invasives_bhi2015.csv'     ),stringsAsFactors =FALSE )  %>% mutate( pressure = "sp_invasives"     )%>% arrange(rgn_id)
     po_inverse_secchi=read.csv(file.path(dir_layers,'po_inverse_secchi_bhi2015.csv'),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_inverse_secchi")%>% arrange(rgn_id)
-    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% dplyr::rename(score=pressure_score) %>%arrange(rgn_id)
+    po_trash         =read.csv(file.path(dir_layers,'po_trash_bhi2015.csv'         ),stringsAsFactors =FALSE )  %>% mutate( pressure = "po_trash"         )%>% arrange(rgn_id)
 
     ##
     pressure_plot = bind_rows(cc_sal_surf      ,
@@ -585,7 +585,7 @@ plotPressuresResilience = function(type){
                               po_pload         ,
                               hab_anoxia       ,
                               hab_illegal_oil  ,
-                              hab_coastal_pop  ,
+                              # hab_coastal_pop  ,
                               hab_bottom_trawl ,
                               fp_over_harvest  ,
                               sp_invasives     ,
