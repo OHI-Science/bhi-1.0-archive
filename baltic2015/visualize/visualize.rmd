@@ -61,7 +61,6 @@ source(file.path(dir_baltic, 'PlotMap.r'))
 source(file.path(dir_baltic, 'PrepSpatial.r'))
 source(file.path(dir_vis,'visualize_functions.r'))
 
-
 ```
 
 
@@ -893,6 +892,47 @@ pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
 
 
 dev.off() ## Finish PDF
+
+```
+
+## CS
+
+```{r CS goal}
+
+##goal_select
+goal_select = "CS"
+
+##data
+
+##space data
+# no space data
+
+## time data
+## no time series
+
+#value_data
+# no value data
+  
+## scores
+scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
+              filter(goal==goal_select)
+
+##-------------------------------------------##
+## Save PDF of Plots
+
+pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
+
+##plot pressure data layers and weights for goal
+plotPressuresResilienceGoal("pressures", goal_select)
+
+##plot resilience data layers and weights for goal
+plotPressuresResilienceGoal("resilience", goal_select)
+
+##plot Map of Each score type
+plotScoreTypes(scores,goal_select)
+
+dev.off() ## Finish PDF
+
 
 ```
 
