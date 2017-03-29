@@ -13,7 +13,7 @@ FIS = function(layers, status_year){
 
   ## Call Layers
   bbmsy = SelectLayersData(layers, layers='fis_bbmsy', narrow=T) %>%
-    select(rgn_id = id_num,
+    dplyr::select(rgn_id = id_num,
            stock = category,
            year,
            score= val_num) %>%
@@ -21,7 +21,7 @@ FIS = function(layers, status_year){
     dplyr::rename(region_id = rgn_id)
 
   ffmsy = SelectLayersData(layers, layers='fis_ffmsy', narrow=T) %>%
-    select(rgn_id = id_num,
+    dplyr::select(rgn_id = id_num,
            stock = category,
            year,
            score= val_num) %>%
@@ -29,7 +29,7 @@ FIS = function(layers, status_year){
     dplyr::rename(region_id = rgn_id)
 
   landings = SelectLayersData(layers, layers='fis_landings', narrow=T) %>%
-    select(rgn_id =id_num,
+    dplyr::select(rgn_id =id_num,
            stock = category,
            year,
            landings= val_num)%>%
@@ -39,7 +39,7 @@ FIS = function(layers, status_year){
   ## combine bbmsy and ffmsy to single object
 
   metric.scores = rbind(bbmsy, ffmsy) %>%
-    select(region_id, stock, year, metric, score) %>%
+    dplyr::select(region_id, stock, year, metric, score) %>%
     mutate(metric = as.factor(metric))%>%
     spread(metric, score)
 
@@ -120,7 +120,7 @@ FIS = function(layers, status_year){
   status <- weights %>%
     left_join(status.scores, by=c('region_id', 'year', 'stock'))%>%
     filter(!is.na(score)) %>%                    # remove missing data
-    select(region_id, year, stock, propCatch, score)        # cleaning data
+    dplyr::select(region_id, year, stock, propCatch, score)        # cleaning data
 
   ###########################################################################
   ######### Becaue of bad cod condition in Eastern Baltic(ICES_subdivision = 2532),
@@ -131,7 +131,7 @@ FIS = function(layers, status_year){
   status_with_penalty <- status %>%
     mutate(scores.with.penal = ifelse(stock == "cod_2532", score*0.872,
                                       score)) %>%
-    select(-score) %>%
+    dplyr::select(-score) %>%
     dplyr::rename(score = scores.with.penal)
 
   # ## Geometric mean weighted by proportion of catch in each region
@@ -166,7 +166,7 @@ FIS = function(layers, status_year){
     filter(year == 2013) %>%
     # filter(year == max(year, na.rm = T)) %>%
     mutate(status = round(status * 100, 1)) %>%
-    select(region_id, status)
+    dplyr::select(region_id, status)
 
 
   ############################################################
@@ -174,13 +174,13 @@ FIS = function(layers, status_year){
   ############################################################
 
   scores = status %>%
-    select(region_id,
+    dplyr::select(region_id,
            score = status)%>%
     complete(region_id = full_seq(c(1,42), 1)) %>%
     mutate(dimension='status') %>%
     rbind(
       trend %>%
-        select(region_id,
+        dplyr::select(region_id,
                score = trend) %>%
         complete(region_id = full_seq(c(1,42), 1)) %>%
         mutate(dimension = 'trend')) %>%
@@ -205,17 +205,17 @@ MAR = function(layers){
 
   ## select layers for MAR
   harvest_tonnes = SelectLayersData(layers, layers='mar_harvest_tonnes', narrow=T) %>%
-    select(rgn_id = id_num,
+    dplyr::select(rgn_id = id_num,
            species_code = category,
            year,
            tonnes = val_num)
 
   harvest_species = SelectLayersData(layers, layers='mar_harvest_species', narrow=T) %>%
-    select(species_code = category,
+    dplyr::select(species_code = category,
            species = val_chr)
 
   sustainability_score = SelectLayersData(layers, layers='mar_sustainability_score', narrow=T) %>%
-    select(rgn_id = id_num,
+    dplyr::select(rgn_id = id_num,
            species = category,
            sust_coeff = val_num)
 
@@ -249,7 +249,7 @@ MAR = function(layers){
   ## Calculate status
   mar_status_score = temp %>% group_by(rgn_id)%>%
     mutate(status = pmin(1, tonnes_sust/ref_value) * 100)%>% #calculate status per year
-    select(rgn_id, year, status)%>%
+    dplyr::select(rgn_id, year, status)%>%
     ungroup()
 
   mar_status = mar_status_score %>%
@@ -273,12 +273,12 @@ MAR = function(layers){
   #####----------------------######
   # return MAR scores
   scores = mar_status %>%
-    select(region_id = rgn_id,
+    dplyr::select(region_id = rgn_id,
            score     = score) %>%
     mutate(dimension='status') %>%
     rbind(
       mar_trend %>%
-        select(region_id = rgn_id,
+        dplyr::select(region_id = rgn_id,
                score     = trend_score) %>%
         mutate(dimension = 'trend')) %>%
     mutate(goal='MAR')
@@ -291,7 +291,7 @@ FP = function(layers, scores){
 
   # weights of FIS, MAR by rgn_id
   w <- SelectLayersData(layers, layers='fp_wildcaught_weight', narrow = TRUE) %>%
-    select(region_id = id_num,
+    dplyr::select(region_id = id_num,
            w_FIS = val_num); head(w)
 
   # scores of FIS, MAR with appropriate weight
@@ -332,7 +332,7 @@ FP = function(layers, scores){
     summarize(score = weighted.mean(score, weight, na.rm=TRUE)) %>%
     mutate(goal = "FP") %>%
     ungroup() %>%
-    select(region_id, goal, dimension, score) %>%
+    dplyr::select(region_id, goal, dimension, score) %>%
     data.frame()
 
   ## return all scores
@@ -346,7 +346,7 @@ NP = function(layers){
 
   ## Call Layers
   bbmsy = SelectLayersData(layers, layers='np_bbmsy', narrow=T) %>%
-    select(rgn_id = id_num,
+    dplyr::select(rgn_id = id_num,
            stock = category,
            year,
            score= val_num) %>%
@@ -354,7 +354,7 @@ NP = function(layers){
     dplyr::rename(region_id = rgn_id)
 
   ffmsy = SelectLayersData(layers, layers='np_ffmsy', narrow=T) %>%
-    select(rgn_id = id_num,
+    dplyr::select(rgn_id = id_num,
            stock = category,
            year,
            score= val_num) %>%
@@ -362,7 +362,7 @@ NP = function(layers){
     dplyr::rename(region_id = rgn_id)
 
   landings = SelectLayersData(layers, layers='np_landings', narrow=T) %>%
-    select(rgn_id =id_num,
+    dplyr::select(rgn_id =id_num,
            stock = category,
            year,
            landings= val_num)%>%
@@ -372,7 +372,7 @@ NP = function(layers){
   ## combine bbmsy and ffmsy to single object
 
   metric.scores = rbind(bbmsy, ffmsy) %>%
-    select(region_id, stock, year, metric, score) %>%
+    dplyr::select(region_id, stock, year, metric, score) %>%
     mutate(metric = as.factor(metric))%>%
     spread(metric, score)
 
@@ -452,7 +452,7 @@ NP = function(layers){
   status <- weights %>%
     left_join(status.scores, by=c('region_id', 'year', 'stock'))%>%
     filter(!is.na(score)) %>%                    # remove missing data
-    select(region_id, year, stock, propCatch, score)        # cleaning data
+    dplyr::select(region_id, year, stock, propCatch, score)        # cleaning data
 
 
   ### Geometric mean weighted by proportion of catch in each region
@@ -480,7 +480,7 @@ NP = function(layers){
   status <- status %>%
     filter(year == max(year)) %>%
     mutate(status = round(status * 100, 1)) %>%
-    select(region_id, status)
+    dplyr::select(region_id, status)
 
 
   ############################################################
@@ -488,12 +488,12 @@ NP = function(layers){
   ############################################################
 
   scores = status %>%
-    select(region_id,
+    dplyr::select(region_id,
            score = status)%>%
     mutate(dimension='status') %>%
     rbind(
       trend %>%
-        select(region_id,
+        dplyr::select(region_id,
                score = trend) %>%
         mutate(dimension = 'trend')) %>%
     mutate(goal='NP')
@@ -567,11 +567,13 @@ AO = function(layers){
 CS = function(layers){
 
   cs_status <- layers$data[['cs_status']] %>%
-    dplyr::select(region_id = rgn_id, dimension, score)
+    dplyr::select(region_id = rgn_id, dimension, score) %>%
+    mutate(dimension = as.character(dimension))
 
   cs_trend <- data.frame(region_id = seq(1,42,1),
-                         dimension = as.character(rep("trend",42)),
-                         score = rep((NA), 42))
+                         dimension = rep("trend",42),
+                         score = rep((NA), 42)) %>%
+    mutate(dimension = as.character(dimension))
 
   scores = rbind(cs_status, cs_trend) %>%
     mutate(goal = 'CS')
@@ -588,9 +590,9 @@ TR = function(layers){
   ## updated by Ning Jiang Jan2017
 
 tr_status = layers$data[['tr_status']] %>%
-  select(region_id = rgn_id, score, dimension)
+  dplyr::select(region_id = rgn_id, score, dimension)
 tr_trend = layers$data[['tr_trend']] %>%
-  select(region_id = rgn_id, score, dimension)
+  dplyr::select(region_id = rgn_id, score, dimension)
 
   ## create scores and rbind status and trend scores
   scores = tr_status %>%
@@ -711,11 +713,11 @@ LIV = function(layers){
   ########### updated 10.28.2016 by Ning Jiang from ohi-science ##############
 
   liv_status = layers$data[['liv_status']] %>%
-    select(region_id = rgn_id, score) %>%
+    dplyr::select(region_id = rgn_id, score) %>%
     mutate(dimension = "status")
 
   liv_trend = layers$data[['liv_trend']] %>%
-    select(region_id = rgn_id, score) %>%
+    dplyr::select(region_id = rgn_id, score) %>%
     mutate(dimension = "trend")
 
   scores = liv_status %>%
@@ -822,16 +824,16 @@ ECO = function(layers){
 
   eco_status = layers$data[['eco_status']] %>%
     mutate(dimension = 'status') %>%
-    select(-layer)
+    dplyr::select(-layer)
 
   eco_trend = layers$data[['eco_trend']] %>%
     mutate(dimension = 'trend') %>%
-    select(-layer)
+    dplyr::select(-layer)
 
   ## create scores and rbind to other goal scores
   scores = rbind(eco_status, eco_trend) %>%
     mutate(goal='ECO') %>%
-    select(region_id = rgn_id,
+    dplyr::select(region_id = rgn_id,
            score,
            dimension,
            goal)
@@ -848,7 +850,7 @@ LE = function(scores, layers){
     filter(goal %in% c('LIV','ECO') & dimension %in% c('status','trend','score','future')) %>%
     dcast(region_id + dimension ~ goal, value.var='score') %>%
     mutate(score = rowMeans(cbind(ECO, LIV), na.rm=T)) %>%
-    select(region_id, dimension, score) %>%
+    dplyr::select(region_id, dimension, score) %>%
     mutate(goal  = 'LE')
 
   # rbind to all scores
@@ -933,7 +935,7 @@ SP = function(scores){
     ungroup() %>%
     arrange(region_id) %>%
     mutate(goal = "SP") %>%
-    select(region_id, goal, dimension, score) %>%
+    dplyr::select(region_id, goal, dimension, score) %>%
     data.frame()
 
   # return all scores
@@ -980,12 +982,12 @@ TRA = function(layers){
   ## reference points set and calculated in /prep/CW/trash/trash_prep.rmd
 
   tra_status = layers$data[['cw_tra_status']] %>%
-    select(-layer,
+    dplyr::select(-layer,
            region_id = rgn_id) %>%
     mutate(dimension = 'status')
 
   tra_trend = layers$data[['cw_tra_trend']] %>%
-    select(-layer,
+    dplyr::select(-layer,
            region_id = rgn_id) %>%
     mutate(dimension = 'trend')
 
@@ -1080,7 +1082,7 @@ CON = function(layers){
 
   ## Average CON indicators for Status and Trend
   cw_con = cw_con %>%
-    select(-indicator) %>%
+    dplyr::select(-indicator) %>%
     group_by(region_id,dimension)%>%
     summarise(score = mean_NAall(score))%>% ## If there is an NA, skip over now, if all are NA, NA not NaN returned
     ungroup() %>%
@@ -1169,7 +1171,7 @@ CW = function(scores){
       ungroup()) %>%
     arrange(region_id) %>%
     mutate(goal = "CW") %>%
-    select(region_id, goal, dimension, score) %>%
+    dplyr::select(region_id, goal, dimension, score) %>%
     data.frame()
 
   ## return all scores
@@ -1188,14 +1190,14 @@ BD = function(layers){
   ## Call Layers
   ## status
   status = SelectLayersData(layers, layers='bd_spp_status', narrow=T) %>%
-    select(region_id = id_num,
+    dplyr::select(region_id = id_num,
            dimension = category,
            score= val_num) %>%
     mutate(score = round(score*100))
 
   ##trend
   trend = layers$data[['bd_spp_trend']] %>%
-    select(region_id = rgn_id, score) %>%
+    dplyr::select(region_id = rgn_id, score) %>%
     mutate(dimension = "trend")
 
  # scores
