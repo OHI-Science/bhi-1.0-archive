@@ -200,12 +200,12 @@ dev.off() ## Finish PDF
 
 ```
 
-## NUT subgoal
-```{r NUT subgoal}
+## EUT subgoal
+```{r EUT subgoal}
 
 
 ## set values and location
-goal_select = "NUT"
+goal_select = "EUT"
 
 
 ##data
@@ -227,7 +227,7 @@ scores = read.csv(file.path(dir_baltic,'scores.csv'),stringsAsFactors =FALSE)%>%
 pdf(paste(pdf_dir,"/output_",goal_select,".pdf", sep=""))
 
       ##plot raw spatial
-        plot_datalocation_latlon(space_data)
+        # plot_datalocation_latlon(space_data)
  
       
       ## plot raw values single time period by staton
