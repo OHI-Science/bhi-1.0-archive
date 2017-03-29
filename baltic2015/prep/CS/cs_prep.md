@@ -520,7 +520,7 @@ cs_data_3 <- read.csv(file.path(dir_cs, "zostera_bhi_intersect.csv"))
 
 cs_status_1 <- cs_data_3 %>% 
   dplyr::select(bhi = BHI_ID, country = rgn_nam, zostera = Z_marina) %>% 
-  mutate(helcom_score = ifelse(zostera == 2, 100, zostera/3)) %>% # if zostera = 2, set score to 100
+  mutate(helcom_score = ifelse(zostera == 2, 100, zostera/3*100)) %>% # if zostera = 2, set score to 100
   group_by(bhi) %>% 
   summarize(score = mean(helcom_score)) %>% 
   ungroup
