@@ -5,11 +5,7 @@ From seashells and sponges to aquarium fish, natural products contribute to loca
 
 ### Model & Data Overview
 
-The data used for this goal are composed of total sprat spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated as a function of the ratio (B’) between the single species current biomass at sea (B) and the reference biomass at maximum sustainable yield (BMSY), as well as the ratio (F’) between the single species current fishing mortality (F) and the fishing mortality at maximum sustainable yield (FMSY). B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this [general relationship](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/ffms%3By_bbmsy_2_score.png).
-
-
-- [Sprat data accessed from the ICES homepage](http://www.ices.dk/marine-data/tools/Pages/stock-assessment-graphs.aspx) > search for 'sprat' > specify the ecoregion as Baltic Sea > search for the 2013 assessment. 
-
+The data used for this goal are composed of total sprat spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated exactly as described in the Fisheries goal. The spawning biomass data have been accessed from the [ICES homepage](http://www.ices.dk/marine-data/tools/Pages/stock-assessment-graphs.aspx) by searching for ‘sprat’ > specify the ecoregion as Baltic Sea > search for the 2013 assessment.
 
 ### Reference points
 

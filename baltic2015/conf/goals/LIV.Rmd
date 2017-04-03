@@ -8,19 +8,12 @@ Due to a lack of sector-specific employment information, **for the BHI we used o
 
 ### Model & Data
 
-
-Data for each country were downloaded from the [EU-Study on Blue Growth](https://webgate.ec.europa.eu/maritimeforum/node/3550), Maritime Policy and the EU Strategy for the Baltic Sea Region” identified the potential for Blue Growth in each of the EU Member States (MS) of the Baltic Sea Region (BSR) and at sea basin level. 
-
-<!---Employment rate data was extracted from NUTS2 employment to substitute Baltic regional employment data, and compare that with the country-level employment rate. 
---->
+We downloaded [Eurostat country-level employment rate and target employment rate](http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&plugin=0&language=en&pcode=t2020_10&tableSelection=1) from 2008 to 2012. We chose this time frame because ECO status, based on Blue Growth report, used 2010 data. So we wanted to keep the time frame similar. (Data is not available for Russia.)
 
 ### Reference points
 
-*to be determined*
+Country-specific target employment rate for 2010 from Eurostat (http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&plugin=0&language=en&pcode=t2020_10&tableSelection=1 ) have been used. These data are based on employment rate (in %) by sex, age group (20-64). We used Eurostat data from 2010 (same year as the Blue Growth data) and assumed that the same age employment is true for the blue sectors.    
 
-<!---
-110% of the highest coastal/national employment rate ratio in the most recent five years. 
---->
 
 
 ### Considerations for *BHI 2.0*
