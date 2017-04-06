@@ -9,7 +9,6 @@ source("./_site.R")
 Regions are the fundamental spatial units of analysis for the Ocean Health Index. Scores are calculated for each region individually and then combined (with an offshore area-weighted average) to produce scores for the entire Baltic Sea.  
 There are 42 BHI regions in the Baltic Sea.
 
-
 ```{r}
 if (!'geojson' %in% names(config)) stop(sprintf('Missing geojson path variable in %s/conf/config.R', dir_scenario))
 geojson = normalizePath(file.path(dir_scenario, config$geojson))
@@ -76,3 +75,16 @@ leaflet() %>%
     }
   }")
 ```
+<<<<<<< HEAD
+=======
+
+
+OHI `r study_area` has the following regions, each with a unique identifier (ID):
+
+```{r}
+datatable(
+  rgns@data %>%
+  select(rgn_id, rgn_name))
+```
+
+>>>>>>> 948bf95... trying to merge
