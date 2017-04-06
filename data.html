@@ -343,6 +343,11 @@ div.tocify {
 <p>Current sea surface temperature (SST) rescaled to between historic min and future max</p>
 <p>Modelled Jul-Aug SST using the BALTSEM model, Future projections force by the ECHAM5 global climate model A1b scenario.</p>
 </div>
+<div id="cs_status" class="section level2">
+<h2>cs_status</h2>
+<p>status of CS</p>
+<p>Status of CS based on HELCOM Zostera spatial data &amp; carbon storage capacity</p>
+</div>
 <div id="cw_coastalpopn_trend" class="section level2">
 <h2>cw_coastalpopn_trend</h2>
 <p>Coastal human population as a proxy for trend in trash</p>
@@ -373,6 +378,11 @@ div.tocify {
 <p>Trend of ICES6 con indicator based on the ICES6 pcbs. HELCOM and EU human health threshold used</p>
 <p>Trend calculated on basin time series (2004-2013) with each observation first transformed to a ?status? based on the human health threshold. Basin trends applied to BHI regions</p>
 </div>
+<div id="cw_con_penalty" class="section level2">
+<h2>cw_con_penalty</h2>
+<p>Penalty factor for CON</p>
+<p>Penalty factor for measuring only a percentage of identified toxins</p>
+</div>
 <div id="cw_con_pfos_status" class="section level2">
 <h2>cw_con_pfos_status</h2>
 <p>Status of PFOS contaminants indicator. HELCOM human health threshold.</p>
@@ -383,35 +393,15 @@ div.tocify {
 <p>Trend of PFOS contaminants indicator. HELCOM human health threshold.</p>
 <p>Trend calculated on basin times series (2005-2015) for each HOLAS basin and applied to all BHI regions</p>
 </div>
-<div id="cw_con_status_na" class="section level2">
-<h2>cw_con_status_NA</h2>
-<p>Status of Contaminants NA placeholder</p>
-<p>Status of Contaminants NA placeholder</p>
+<div id="cw_eut_status" class="section level2">
+<h2>cw_eut_status</h2>
+<p>Status of EUT</p>
+<p>Status of eutrophication subgoal based on DIN, DIP, Chla, Secchi, and anoxia data</p>
 </div>
-<div id="cw_con_trend_na" class="section level2">
-<h2>cw_con_trend_NA</h2>
-<p>Trend of Contaminants NA placeholder</p>
-<p>Trend of Contaminants NA placeholder</p>
-</div>
-<div id="cw_nut_anoxia_status" class="section level2">
-<h2>cw_nut_anoxia_status</h2>
-<p>Status of nut component based on anoxic conditions. Inverse of hab_anoxia pressure scores.</p>
-<p>NA</p>
-</div>
-<div id="cw_nut_anoxia_trend" class="section level2">
-<h2>cw_nut_anoxia_trend</h2>
-<p>Trend of nut component based on anoxic conditions.</p>
-<p>NA</p>
-</div>
-<div id="cw_nut_secchi_status" class="section level2">
-<h2>cw_nut_secchi_status</h2>
-<p>Status of nut component based on secchi depth. Calculated for HOLAS basins and HELCOM targets used</p>
-<p>Secchi depths from ICES and SMHI data base, most recent year between 2000-2014 for each region is used for status. This is 2013 for most but not all HOLAS basins</p>
-</div>
-<div id="cw_nut_secchi_trend" class="section level2">
-<h2>cw_nut_secchi_trend</h2>
-<p>Trend of nut component based on secchi depth. Calculated for HOLAS basins and HELCOM targets used</p>
-<p>Trend calculated over most recent 10 years of data (between 2000-2014) with a minimum of 5 years of data need for the trend. Trend calculated for HOLAS basins.</p>
+<div id="cw_eut_trend" class="section level2">
+<h2>cw_eut_trend</h2>
+<p>Trend of EUT</p>
+<p>Trend of eutrofication subgoal based on DIN, DIP, Chla, Secchi, and anoxia data</p>
 </div>
 <div id="cw_tra_status" class="section level2">
 <h2>cw_tra_status</h2>
@@ -504,7 +494,7 @@ div.tocify {
 <div id="liv_national_employ" class="section level2">
 <h2>liv_national_employ</h2>
 <p>Number of people employed nationally based on national employment rates</p>
-<p>Employment percentage by NUTS0 region from Eurostat.</p>
+<p>Employment percentage by eutS0 region from Eurostat.</p>
 <p>Data sources:</p>
 <ul>
 <li><a href="http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&amp;p_p_id=estatsearchportlet_WAR_estatsearchportlet&amp;p_p_lifecycle=1&amp;p_p_state=maximized&amp;p_p_mode=view&amp;_estatsearchportlet_WAR_estatsearchportlet_action=search&amp;text=lfst_r_lfe2emprt">Eurostat database lfst_r_lfe2emprt</a></li>
@@ -512,8 +502,8 @@ div.tocify {
 </div>
 <div id="liv_regional_employ" class="section level2">
 <h2>liv_regional_employ</h2>
-<p>Number of people employed in each BHI region 25km buffer based on NUTS2 employment rates</p>
-<p>Employment percentage by NUTS2 region from Eurostat.</p>
+<p>Number of people employed in each BHI region 25km buffer based on eutS2 employment rates</p>
+<p>Employment percentage by eutS2 region from Eurostat.</p>
 <p>Data sources:</p>
 <ul>
 <li><a href="http://ec.europa.eu/eurostat/data/database?p_auth=BgwyNWIM&amp;p_p_id=estatsearchportlet_WAR_estatsearchportlet&amp;p_p_lifecycle=1&amp;p_p_state=maximized&amp;p_p_mode=view&amp;_estatsearchportlet_WAR_estatsearchportlet_action=search&amp;text=lfst_r_lfe2emprt">Eurostat database lfst_r_lfe2emprt</a></li>
@@ -587,7 +577,7 @@ div.tocify {
 <div id="po_inverse_secchi" class="section level2">
 <h2>po_inverse_secchi</h2>
 <p>Water clarity / transparency pressure</p>
-<p>Inverse of NUT status obtained using secchi data.</p>
+<p>Inverse of eut status obtained using secchi data.</p>
 </div>
 <div id="po_nload" class="section level2">
 <h2>po_nload</h2>
