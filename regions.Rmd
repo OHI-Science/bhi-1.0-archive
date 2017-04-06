@@ -75,16 +75,3 @@ leaflet() %>%
     }
   }")
 ```
-<<<<<<< HEAD
-=======
-
-
-OHI `r study_area` has the following regions, each with a unique identifier (ID):
-
-```{r}
-datatable(
-  rgns@data %>%
-  select(rgn_id, rgn_name))
-```
-
->>>>>>> 948bf95... trying to merge
