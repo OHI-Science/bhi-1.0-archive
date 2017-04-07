@@ -4,18 +4,14 @@ The Economies goal captures the economic value associated with marine industries
 
 ### Model & Data
 
-Data for each country were downloaded from the [EU-Study on Blue Growth](https://webgate.ec.europa.eu/maritimeforum/node/3550), Maritime Policy and the EU Strategy for the Baltic Sea Region” identified the potential for Blue Growth in each of the EU Member States (MS) of the Baltic Sea Region (BSR) and at sea basin level.
+Data for each country were downloaded from the [“EU-Study on Blue Growth, Maritime Policy and the EU Strategy for the Baltic Sea Region”](https://webgate.ec.europa.eu/maritimeforum/node/3550), which provided 2010 sector-specific revenue data, or Gross Value Added (GVA), in the country-specific Appendix. The report also identified the potential for Blue Growth in each of the EU Member States (MS) of the Baltic Sea Region (BSR) as well as at sea-basin level. 
 
-<!---
-Model compares per capita GDP of each region to the national per capita GDP. Both [BHI regional GDP](http://ec.europa.eu/eurostat/data/database?p_auth=EgN81qAf&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10r_3gdp) data and [natinoal GDP](http://ec.europa.eu/eurostat/data/database?p_auth=sHLAepWT&p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=1&p_p_state=maximized&p_p_mode=view&_estatsearchportlet_WAR_estatsearchportlet_action=search&text=nama_10_gdp) data (in _millions of Euros_) were downloaded from Eurostat database. 
---->
+The goal model compares the combined total revenue per country and the reference revenue of that country. Each country receives the same score because the reference point (see below) is a fixed percentage growth of that country's revenue in 2010. Country-level data is then distributed to BHI regions. (Due to a lack of data, Russian regions (19, 22, 33) have NA scores.)
+
 
 ### Reference points
 
-*to be determined*
-<!---
-The reference point is 110% of the highest regional/national GDP per capita within the last 5 years. 
---->
+As reference points we used a 1.5% annual growth between 2010 and 2020, as envisioned in the blue growth report. 
 
 ### Considerations for *BHI 2.0*
 
