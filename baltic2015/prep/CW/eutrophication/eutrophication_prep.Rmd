@@ -795,6 +795,16 @@ summer_summary <-  summer_data %>%
 # combine DIP, DIN, and Chla data 
 eut_combined <- left_join(winter_summary, summer_summary, by = c('BHI_ID', 'year'))
 
+# "the data from nutrients and chlorophyll for the BHI ID 39 and 40 needs to deleted and exchanged with these status data - 10 April, 2017
+# winter DIN: 5.28
+# winter DIP: 0.09
+# Chl a : 0.75
+
+eut_combined <- eut_combined %>% 
+  mutate(dip_ave = ifelse(BHI_ID == 39 | BHI_ID == 40, 0.09, dip_ave),
+         din_ave = ifelse(BHI_ID == 39 | BHI_ID == 40, 5.28, din_ave), 
+         chla_ave = ifelse(BHI_ID == 39 | BHI_ID == 40, 0.75, chla_ave))
+
 # aggregate to basin level 
 bhi_basin_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv'), sep = ";") %>% 
   select(Basin = Subbasin, BHI_ID)
