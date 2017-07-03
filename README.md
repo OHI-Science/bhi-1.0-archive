@@ -1,5 +1,6 @@
 # OHI Shiny app
 
+
 These files provide the template for creating a Shiny app that visualizes a data branch of an Ocean Health Index (OHI) repository.
 
 Normally these files are translated from template files into a live Shiny app using the `ohirepos::deploy_app()` function, like so:
