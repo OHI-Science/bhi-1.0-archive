@@ -5,7 +5,7 @@
 ## See functions.R of CHN (OHI-China) for how those functions are used in OHI+ assessments
 
 
-FIS = function(layers, status_year){
+FIS = function(layers){
   ## FIS code revised by Melanie Fraser
   ## added to functions.r by Jennifer Griffiths 7 June 2016
   ## only Cod and Herrings data are used here. Sprats data moved to NP, by Ning Jiang in Oct 2016.
@@ -89,7 +89,7 @@ FIS = function(layers, status_year){
 
   ##### Subset the data to include only the most recent 10 years
   landings <- landings %>%
-    filter(year %in% (max(landings$year)-9):max(landings$year))
+    dplyr::filter(year %in% (max(year)-9):max(year))
 
   ## we use the average catch for each stock/region across all years
   ## to obtain weights
@@ -421,7 +421,7 @@ NP = function(layers){
 
   ##### Subset the data to include only the most recent 10 years
   landings <- landings %>%
-    filter(year %in% (max(landings$year)-9):max(landings$year))
+    filter(year %in% (max(year)-9):max(year))
 
   ## we use the average catch for each stock/region across all years
   ## to obtain weights
