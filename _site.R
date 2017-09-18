@@ -11,6 +11,7 @@ suppressPackageStartupMessages({
 study_area      <- "Baltic"
 key             <- "bhi"
 dir_scenario_gh <- "https://raw.githubusercontent.com/OHI-Science/bhi/draft/baltic2015"
+app_url         <- "http://ohi-science.nceas.ucsb.edu/bhi"
 
 ## knitr options for all webpages
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
@@ -29,6 +30,10 @@ if (RCurl::url.exists(conf_csv))   weight <- readr::read_csv(conf_csv) %>%
 if ( !all( (!RCurl::url.exists(scores_csv)) | (!RCurl::url.exists(layers_csv)) | (!RCurl::url.exists(conf_csv))) ) {
  message('scores.csv, layers.csv, or conf/goals.Rmd may be missing')
 }
+
+# read config
+config = new.env()
+source(file.path(dir_scenario_gh, 'conf/config.R'), config)
 
 
 ## save local copy of conf/goals.Rmd

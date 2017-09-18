@@ -5,7 +5,7 @@ output:
       - "./_sass/styles_app.css"
 ---
 
-```{r setup, echo=F, warning=FALSE, message=F}
+```{r setup, eval = FALSE, echo=F, warning=FALSE, message=F}
 source("./_site.R")
 ```
 

@@ -9,12 +9,12 @@ source("./_site.R")
 Regions are the fundamental spatial units of analysis for the Ocean Health Index. Scores are calculated for each region individually and then combined (with an offshore area-weighted average) to produce scores for the entire Baltic Sea.  
 There are 42 BHI regions in the Baltic Sea.
 
-```{r}
-if (!'geojson' %in% names(config)) stop(sprintf('Missing geojson path variable in %s/conf/config.R', dir_scenario))
-geojson = normalizePath(file.path(dir_scenario, config$geojson))
+```{r, eval=FALSE}
+if (!'geojson' %in% names(config)) stop(sprintf('Missing geojson path variable in %s/conf/config.R', dir_scenario_gh))
+geojson = normalizePath(file.path(dir_scenario_gh, config$geojson))
 
 # read spatial (can simplify with R package rmapshaper)
-if (!file.exists(geojson)) stop(sprintf('GeoJSON file specified in %s/conf/config.R not found: %s', dir_scenario, geojson))
+if (!file.exists(geojson)) stop(sprintf('GeoJSON file specified in %s/conf/config.R not found: %s', dir_scenario_gh, geojson))
 cat(file=stderr(), 'read rgns from geojson\n')
 rgns = geojsonio::geojson_read(geojson, what="sp")
 if ('rgn_nam' %in% names(rgns@data) & !'rgn_name' %in% names(rgns@data)) rgns@data = rgns@data %>% mutate(rgn_name = rgn_nam)

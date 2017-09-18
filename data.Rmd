@@ -16,8 +16,8 @@ The following data layers are used in Ocean Health Index calculations for goal s
 ----
 
 ```{r layers, results='asis'}
-layers      = read_csv(sprintf('%s/layers.csv', dir_scenario))      # View(layers)
-layers_meta = read_csv(sprintf('%s/layers_meta.csv', dir_scenario)) # View(layers_meta)
+layers      = read_csv(sprintf('%s/layers.csv', dir_scenario_gh))      # View(layers)
+layers_meta = read_csv(sprintf('%s/layers_meta.csv', dir_scenario_gh)) # View(layers_meta)
 
 for (lyr in sort(layers$layer)){ # lyr = sort(layers$layer)[1]
   # get layer data

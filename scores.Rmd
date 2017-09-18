@@ -7,7 +7,7 @@ output:
 #    keep_md: true
 ---
 
-```{r setup, echo=F, warning=FALSE, message=F}
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
 source("./_site.R")
 ```
 
@@ -19,110 +19,35 @@ Additional figures are within the [`BHI_regions`](https://github.com/OHI-Science
 
 ----
 
-```{r plot flowers}
-redo_flowers = F
 
-# vars
-png_res = 72
-scores_csv  = sprintf('%s/scores.csv', dir_scenario)
-goals_csv   = sprintf('%s/conf/goals.csv', dir_scenario)
-regions_csv = sprintf('%s/layers/%s.csv', dir_scenario, config$layer_region_labels)
+<!---
+NOTE: Here the flower plots are displayed for each region and the overall assessment area (rgn_id = 0). Figures will be displayed directly from online in the reports/figures folder: to make sure you're displaying the most recent flower plots here's what to do: 
+1. from the master branch, save new flower plots, and push
+2. from the gh-pages branch, reknit this page or rebuild the website, and push!
+--->
 
-# data
-scores  = read_csv(scores_csv)  # View(scores)
-regions = read_csv(regions_csv) # View(regions)
-goals   = read_csv(goals_csv)   # View(goals)
+```{r plot_flower, results='asis'}
 
-# prep
-# dir.create('images/flowers', showWarnings = F) #this doesn't get used ## JSL TODO: instead of creating these new images, pull from the draft's /figures folder. And have all images deleted before rebuilding this page (they aren't regenerated if they are there.
-regions = bind_rows(
-  data_frame(                # order regions to start with whole study_area
-    rgn_id = 0,
-    label = study_area),
-  regions %>%
-    arrange(label)) %>%   # followed by regions within alphabetically
-  mutate(
-    flower_png = sprintf('images/flower_%s.png', gsub(' ','_', label)))
+## regions info: order regions to start with whole study_area
+regions <- 
+  read_csv(sprintf('%s/spatial/regions_lookup_complete.csv', dir_scenario_gh)) %>%
+    select(region_id, region_name = label)
 
-# get goals for flowers, all and specific to weights
-goals.all = arrange(goals, order_color)[['goal']]
+## path for figures to display
+regions <- regions %>%
+  mutate(flower_png = sprintf('%s/reports/figures/BHI_regions/flower_%s.png',
+                              dir_scenario_gh,
+                              stringr::str_replace_all(region_name, ' - ', '-'))) %>%
+  mutate(flower_png = stringr::str_replace_all(flower_png, ' ', ''))
 
-# get colors for aster, based on 10 colors, but extended to all goals. subselect for goals.wts
-cols.goals.all = colorRampPalette(RColorBrewer::brewer.pal(10, 'Spectral'), space='Lab')(length(goals.all))
-names(cols.goals.all) = goals.all
 
-# get subgoals and goals, not supragoals, for doing flower plot
-goals_supra = na.omit(unique(goals$parent))
-wts = with(
-  subset(goals, !goal %in% goals_supra, c(goal, weight)), 
-  setNames(weight, goal))
-goal_labels = gsub('\\n', '\n', with(
-  goals, setNames(name_flower, goal))[names(wts)], fixed=T)
+## display header, flower ----
 
-# generate flower plots
-for (rid in regions$rgn_id){ # rid = regions$rgn_id[1]
+cat(sprintf('## %s\n\n![](%s)\n\n\n\n', regions$region_name, regions$flower_png), 
+    sep = "")
 
-  # rgn
-  r = filter(regions, rgn_id==rid)
-
-  # skip if flower png exists and not redoing
-  if (file.exists(r$flower_png) & !redo_flowers) next
-
-  # scores
-  g_x = with(
-    subset(scores, dimension=='score' & region_id==rid),
-    setNames(score, goal))[names(wts)]
-  x   = scores %>%
-    filter(dimension=='score', region_id==rid & goal == 'Index') %>%
-    .$score
-  
-  # plot
-  png(r$flower_png, width=400, height=250, res=png_res)
-  par(omi=c(0,0.85,0,0.85))
-  PlotFlower(
-    lengths=ifelse(
-      is.na(g_x),
-      100,
-      g_x),
-    widths=wts,
-    fill.col=ifelse(
-      is.na(g_x),
-      'grey80',
-      cols.goals.all[names(wts)]),
-    labels = '',
-    center=round(x),
-    max.length = 100, disk=0.4, label.cex=0.9, label.offset=0.155, cex=2.2, cex.main=2.5)
-  dev.off()
-}
-```
-
-```{r print scores, results='asis'}
-for (rid in regions$rgn_id){ # r_label = sort(regions$label)[1]
-  
-  # rgn
-  r = filter(regions, rgn_id==rid)
-
-  # header, flower
-  cat(sprintf('## %s\n\n![](%s)\n\n', r$label, r$flower_png))
-  
-  # table
-  kable(
-    data_frame(
-      goal       = names(goal_labels),
-      goal_label = gsub('\\n', '', goal_labels)) %>%
-      left_join(
-        scores %>%
-        filter(
-          region_id == r$rgn_id,
-          dimension %in% c('score','status','future')) %>%
-          spread(dimension, score) %>%
-          select(-region_id),
-        by='goal') %>%
-      select(
-        goal = goal_label, score, status, future)) %>%
-    print()
-  cat('\n\n')
-}
 ```
 
 
+[<img src="https://docs.google.com/drawings/d/1633uvIYgsBhiKBddQAaTlvYDJgOK1uiDB6wkooNyhFc/pub?w=576&h=288" width="100px">](http://ohi-science.org)  
+[ohi-science.org home](http://ohi-science.org)
