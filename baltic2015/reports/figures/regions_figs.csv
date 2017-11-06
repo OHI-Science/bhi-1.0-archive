@@ -1,0 +1,71 @@
+region_id,region_name,flower_png
+0,Baltic Sea,reports/figures/BHI_regions/flower_BalticSea.png
+0,Baltic,reports/figures/BHI_regions/flower_Baltic.png
+1,Swe-Kattegat,reports/figures/BHI_regions/flower_Swe-Kattegat.png
+2,Den-Kattegat,reports/figures/BHI_regions/flower_Den-Kattegat.png
+3,Den-Great Belt,reports/figures/BHI_regions/flower_Den-GreatBelt.png
+4,Ger-Great Belt,reports/figures/BHI_regions/flower_Ger-GreatBelt.png
+5,Swe-The Sound,reports/figures/BHI_regions/flower_Swe-TheSound.png
+6,Den-The Sound,reports/figures/BHI_regions/flower_Den-TheSound.png
+7,Den-Kiel Bay,reports/figures/BHI_regions/flower_Den-KielBay.png
+8,Ger-Kiel Bay,reports/figures/BHI_regions/flower_Ger-KielBay.png
+9,Den-Bay of Mecklenburg,reports/figures/BHI_regions/flower_Den-BayofMecklenburg.png
+10,Ger-Bay of Mecklenburg,reports/figures/BHI_regions/flower_Ger-BayofMecklenburg.png
+11,Swe-Arkona Basin,reports/figures/BHI_regions/flower_Swe-ArkonaBasin.png
+12,Den-Arkona Basin,reports/figures/BHI_regions/flower_Den-ArkonaBasin.png
+13,Ger-Arkona Basin,reports/figures/BHI_regions/flower_Ger-ArkonaBasin.png
+14,Swe-Bornholm Basin,reports/figures/BHI_regions/flower_Swe-BornholmBasin.png
+15,Den-Bornholm Basin,reports/figures/BHI_regions/flower_Den-BornholmBasin.png
+16,Ger-Bornholm Basin,reports/figures/BHI_regions/flower_Ger-BornholmBasin.png
+17,Pol-Bornholm Basin,reports/figures/BHI_regions/flower_Pol-BornholmBasin.png
+18,Pol-Gdansk Basin,reports/figures/BHI_regions/flower_Pol-GdanskBasin.png
+19,Rus-Gdansk Basin,reports/figures/BHI_regions/flower_Rus-GdanskBasin.png
+20,Swe-Eastern Gotland Basin,reports/figures/BHI_regions/flower_Swe-EasternGotlandBasin.png
+21,Pol-Eastern Gotland Basin,reports/figures/BHI_regions/flower_Pol-EasternGotlandBasin.png
+22,Rus-Eastern Gotland Basin,reports/figures/BHI_regions/flower_Rus-EasternGotlandBasin.png
+23,Lit-Eastern Gotland Basin,reports/figures/BHI_regions/flower_Lit-EasternGotlandBasin.png
+24,Lat-Eastern Gotland Basin,reports/figures/BHI_regions/flower_Lat-EasternGotlandBasin.png
+25,Est-Eastern Gotland Basin,reports/figures/BHI_regions/flower_Est-EasternGotlandBasin.png
+26,Swe-Western Gotland Basin,reports/figures/BHI_regions/flower_Swe-WesternGotlandBasin.png
+27,Lat-Gulf of Riga,reports/figures/BHI_regions/flower_Lat-GulfofRiga.png
+28,Est-Gulf of Riga,reports/figures/BHI_regions/flower_Est-GulfofRiga.png
+29,Swe-Northern Baltic Proper,reports/figures/BHI_regions/flower_Swe-NorthernBalticProper.png
+30,Fin-Northern Baltic Proper,reports/figures/BHI_regions/flower_Fin-NorthernBalticProper.png
+31,Est-Northern Baltic Proper,reports/figures/BHI_regions/flower_Est-NorthernBalticProper.png
+32,Fin-Gulf of Finland,reports/figures/BHI_regions/flower_Fin-GulfofFinland.png
+33,Rus-Gulf of Finland,reports/figures/BHI_regions/flower_Rus-GulfofFinland.png
+34,Est-Gulf of Finland,reports/figures/BHI_regions/flower_Est-GulfofFinland.png
+35,Swe-Aland Sea,reports/figures/BHI_regions/flower_Swe-AlandSea.png
+36,Fin-Aland Sea,reports/figures/BHI_regions/flower_Fin-AlandSea.png
+37,Swe-Bothnian Sea,reports/figures/BHI_regions/flower_Swe-BothnianSea.png
+38,Fin-Bothnian Sea,reports/figures/BHI_regions/flower_Fin-BothnianSea.png
+39,Swe-The Quark,reports/figures/BHI_regions/flower_Swe-TheQuark.png
+40,Fin-The Quark,reports/figures/BHI_regions/flower_Fin-TheQuark.png
+41,Swe-Bothnian Bay,reports/figures/BHI_regions/flower_Swe-BothnianBay.png
+42,Fin-Bothnian Bay,reports/figures/BHI_regions/flower_Fin-BothnianBay.png
+301,Sweden,reports/figures/BHI_regions/flower_Sweden.png
+302,Denmark,reports/figures/BHI_regions/flower_Denmark.png
+303,Germany,reports/figures/BHI_regions/flower_Germany.png
+304,Poland,reports/figures/BHI_regions/flower_Poland.png
+305,Russia,reports/figures/BHI_regions/flower_Russia.png
+306,Lithuania,reports/figures/BHI_regions/flower_Lithuania.png
+307,Latvia,reports/figures/BHI_regions/flower_Latvia.png
+308,Estonia,reports/figures/BHI_regions/flower_Estonia.png
+309,Finland,reports/figures/BHI_regions/flower_Finland.png
+501,Kattegat,reports/figures/BHI_regions/flower_Kattegat.png
+502,Great Belt,reports/figures/BHI_regions/flower_GreatBelt.png
+503,The Sound,reports/figures/BHI_regions/flower_TheSound.png
+504,Kiel Bay,reports/figures/BHI_regions/flower_KielBay.png
+505,Bay of Mecklenburg,reports/figures/BHI_regions/flower_BayofMecklenburg.png
+506,Arkona Basin,reports/figures/BHI_regions/flower_ArkonaBasin.png
+507,Bornholm Basin,reports/figures/BHI_regions/flower_BornholmBasin.png
+508,Gdansk Basin,reports/figures/BHI_regions/flower_GdanskBasin.png
+509,Eastern Gotland Basin,reports/figures/BHI_regions/flower_EasternGotlandBasin.png
+510,Western Gotland Basin,reports/figures/BHI_regions/flower_WesternGotlandBasin.png
+511,Gulf of Riga,reports/figures/BHI_regions/flower_GulfofRiga.png
+512,Northern Baltic Proper,reports/figures/BHI_regions/flower_NorthernBalticProper.png
+513,Gulf of Finland,reports/figures/BHI_regions/flower_GulfofFinland.png
+514,Aland Sea,reports/figures/BHI_regions/flower_AlandSea.png
+515,Bothnian Sea,reports/figures/BHI_regions/flower_BothnianSea.png
+516,The Quark,reports/figures/BHI_regions/flower_TheQuark.png
+517,Bothnian Bay,reports/figures/BHI_regions/flower_BothnianBay.png

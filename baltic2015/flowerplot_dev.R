@@ -3,10 +3,10 @@
 #' Assumes you are in the scenario folder, and will rely on scores.csv and conf/goals.csv
 #' will save figs to reports/figures, and list them in regions_figs.csv
 #'
+#' param scores scores dataframe. default = NULL, which then reads in scores.csv
 #' @param region_plot provide region_id to plot, defaults to all regions+overall (region_id = 0)
 #' @param year_plot provide year to plot, defaults to most recent
 #' @param assessment_name name of the overall assessment (region_id = 0)
-#' @param incl_legend show the legend? (default is TRUE)
 #'
 #' @return plot object that can be further modified. Also saves figures as pngs.
 #' @export
@@ -23,7 +23,7 @@ library(RColorBrewer)
 PlotFlower <- function(region_plot     = NA,
                        year_plot       = NA,
                        assessment_name = "OHI Assessment",
-                       incl_legend     = TRUE) {
+                       dir_fig_save    = "reports/figures/flower") {
 
 
   ## scores data ----
@@ -43,7 +43,7 @@ PlotFlower <- function(region_plot     = NA,
   }
 
   ## filters the region of interest, otherwise all goals are printed
-  if(!is.na(region_plot)){
+  if ( !any(is.na(region_plot)) ){
     scores <- scores %>%
       filter(region_id %in% region_plot)
   }
@@ -194,8 +194,9 @@ PlotFlower <- function(region_plot     = NA,
     read_csv('spatial/regions_list.csv') %>%
       dplyr::select(region_id   = rgn_id,
                     region_name = rgn_name)) %>%
-    mutate(flower_png = sprintf('reports/figures/flower_%s.png',
-                                str_replace_all(region_name, ' ', '_')))
+    mutate(flower_png = sprintf('%s/flower_%s.png',
+                                dir_fig_save,
+                                str_replace_all(region_name, ' ', '')))
   ## write out filenames
   readr::write_csv(regions, 'reports/figures/regions_figs.csv')
 
@@ -281,7 +282,7 @@ PlotFlower <- function(region_plot     = NA,
                 hjust = .5, vjust = .5,
                 size = 12,
                 color = dark_line) +
-      labs(title = region_name$region_name)
+      labs(title = str_replace_all(region_name, '-', ' - '))
 
 
     ### clean up the theme
@@ -314,20 +315,15 @@ PlotFlower <- function(region_plot     = NA,
                 size = 3,
                 color = dark_line)
 
-    ### include or exclude the legend
-    if(!incl_legend) {
-      plot_obj <- plot_obj +
-        theme(legend.position = 'none')
-    }
-
 
     ### display/save options: print to graphics, save to file
     print(plot_obj)
 
     ## save plot
     ggsave(filename = fig_save,
-           height = 6, width = 8, units = 'in', dpi = 300,
-           plot = plot_obj)
+           plot = plot_obj,
+           device = "png",
+           height = 6, width = 8, units = 'in', dpi = 300)
 
 
     ### ...then return the plot object for further use
