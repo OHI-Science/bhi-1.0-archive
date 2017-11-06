@@ -62,21 +62,6 @@ PlotFlower <- function(region_plot     = NA,
   ## unique regions to plot
   region_plots <- unique(scores$region_id)
 
-  ## labeling:: regions info
-  region_names <- bind_rows(
-    data_frame(                # order regions to start with whole study_area
-      region_id   = 0,
-      region_name = assessment_name),
-    read_csv('spatial/regions_list.csv') %>%
-      dplyr::select(region_id   = rgn_id,
-                    region_name = rgn_name))
-
-  ## save list of figure names, save object for naming below
-  fig_names <- region_names %>%
-    mutate(flower_png = sprintf('reports/figures/flower_%s.png',
-                                stringr::str_replace_all(region_name, ' ', '_')))
-  readr::write_csv(fig_names, 'reports/figures/regions_figs.csv')
-
 
   ## goals.csv configuration info----
 
@@ -142,8 +127,17 @@ PlotFlower <- function(region_plot     = NA,
       select(rgn_id, w_fis)
     w <- rbind(w, data.frame(rgn_id = 0, w_fis = mean(w$w_fis))) %>%
       arrange(rgn_id)
+
+    ## make sure weight regions match regions_plot regions
+    if ( !any(w$rgn_id %in% region_plot) ) {
+      message('`layers/fp_wildcaught_weight*.csv` missing regions...plotting FIS and MAR with equal weighting\n')
+      w_fn = NULL
+    }
+
   } else {
+
     message('Cannot find `layers/fp_wildcaught_weight*.csv`...plotting FIS and MAR with equal weighting\n')
+
   }
 
 
@@ -186,9 +180,9 @@ PlotFlower <- function(region_plot     = NA,
   myPalette <-   c(reds, blues)
 
 
-  ## filenaming for saving ----
-  regions <- bind_rows(
-    data_frame(                # order regions to start with whole study_area
+  ## filenaming for labeling and saving ----
+  region_names_all <- bind_rows(
+    data_frame(                             ## order regions to start with whole study_area
       region_id   = 0,
       region_name = assessment_name),
     read_csv('spatial/regions_list.csv') %>%
@@ -198,11 +192,16 @@ PlotFlower <- function(region_plot     = NA,
                                 dir_fig_save,
                                 str_replace_all(region_name, ' ', '')))
   ## write out filenames
-  readr::write_csv(regions, 'reports/figures/regions_figs.csv')
+  readr::write_csv(region_names_all, 'reports/figures/regions_figs.csv')
+
+  ## move into for loop only with region_names to plot
+  region_names <- region_names_all %>%
+    filter(region_id %in% region_plot) %>%  ## filter only regions to plot
+    distinct()                              ## in case region_id 0 was included in regions_list.csv
 
 
   ## loop through to save flower plot for each region ----
-  for (region in region_plots) { # region = 3
+  for (region in region_plots) { # region = 301
 
     ## filter region info, setup to plot ----
     plot_df <- score_df %>%
@@ -211,7 +210,7 @@ PlotFlower <- function(region_plot     = NA,
       filter(region_id == region)
 
     ## fig_name to save
-    fig_save <- regions$flower_png[regions$region_id == region]
+    fig_save <- region_names$flower_png[region_names$region_id == region]
 
     ## labeling:: region name for title
     region_name <- region_names %>%
