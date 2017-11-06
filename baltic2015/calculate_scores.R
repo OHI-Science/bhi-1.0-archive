@@ -1,23 +1,17 @@
-## Overview
-## calculate_scores.R calculates scores for all OHI dimensions (status, trend, pressures, resilience, likely future state, and overall Index scores).
+## calculate_scores.R
 
-## When you begin, this script will calculate all dimensions using the 'templated' data and goal models provided.
-## As you develop goal models with your own data, we recommend that you work on one goal at a time with pre_scores.R and functions.R
-## instead of calculating scores for all dimensions using CalculateAll(). Goal and subgoal models are individual R functions
-## in functions.R. You can run them individually from functions.r as you modify them
-## calculate "current status" and "trend".
+## This script calculates OHI scores with the `ohicore` package.
+## - configure_toolbox.r ensures your files are properly configured for `ohicore`.
+## - The `ohicore` function CalculateAll() calculates OHI scores.
 
-## When you are done with all the goal model modifications, you can come back here, and run the following scripts, which combines "current status" and "trend"
-## with pressures and resilience to finish your OHI scores calculations.
+## set working directory for all OHI calculations
+setwd("~/github/bhi/baltic2015")
 
-### To Debug:
-# remove.packages('ohicore') #remove original ohicore
-# devtools::load_all('~/github/ohicore') #load regional ohicore so not to affect the original ohicore accidentally
-
-source('~/github/bhi/baltic2015/pre_scores.R')
+## run the configure_toolbox.r script to check configuration
+source("configure_toolbox.r")
 
 ## calculate scenario scores
-scores = CalculateAll(conf, layers)
+scores <- CalculateAll(conf, layers)
 write.csv(scores, 'scores.csv', na='', row.names=F)
 
 
@@ -84,6 +78,9 @@ PlotFlowerMulti(scores          = readr::read_csv('scores.csv') %>% filter(regio
                 assessment_name = 'Baltic')
 
 
+## Flower plots for each region ----
+source('https://raw.githubusercontent.com/OHI-Science/arc/master/circle2016/plot_flower_local.R')
+PlotFlower(assessment_name = "Main Hawaiian Islands")
 
 
 
