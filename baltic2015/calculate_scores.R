@@ -63,7 +63,7 @@ rgns <- rgns_complete %>%
 rgns_to_plot <- rgns$region_id
 
 PlotFlower(region_plot = rgns_to_plot,
-           assessment_name = "Baltic Sea",
+           assessment_name = "Baltic",
            dir_fig_save    = "reports/figures/EEZ")
 
 
@@ -73,7 +73,7 @@ rgns <- rgns_complete %>%
 rgns_to_plot <- rgns$region_id
 
 PlotFlower(region_plot = rgns_to_plot,
-           assessment_name = "Baltic Sea",
+           assessment_name = "Baltic",
            dir_fig_save    = "reports/figures/SUBBASIN")
 
 
