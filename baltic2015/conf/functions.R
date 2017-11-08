@@ -848,7 +848,7 @@ LE = function(scores, layers){
   # calculate LE scores
   scores.LE = scores %>%
     filter(goal %in% c('LIV','ECO') & dimension %in% c('status','trend','score','future')) %>%
-    dcast(region_id + dimension ~ goal, value.var='score') %>%
+    reshape2::dcast(region_id + dimension ~ goal, value.var='score') %>%
     mutate(score = rowMeans(cbind(ECO, LIV), na.rm=T)) %>%
     dplyr::select(region_id, dimension, score) %>%
     mutate(goal  = 'LE')
