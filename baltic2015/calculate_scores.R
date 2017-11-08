@@ -17,6 +17,10 @@ write.csv(scores, 'scores.csv', na='', row.names=F)
 
 ## visualize scores ----
 
+# ## source
+# source('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez/MappingFunction.R')
+# PlotMap(goal_plot = "AO")
+
 ## source until added to ohicore
 source('PrepSpatial.R')
 source('PlotMap.r')
