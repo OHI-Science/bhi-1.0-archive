@@ -7,9 +7,12 @@
   
 # Project and team
 
+<br>
+
 **The Baltic Health Index is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of an integrative and transparent tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability.**  
 
-The Baltic Health Index is a project jointly led by [Stockholm Resilience Centre (SRC)](http://www.stockholmresilience.org/) and [Baltic Eye](http://www.su.se/ostersjocentrum/baltic-eye) at the Baltic Sea Centre, both at Stockholm University, together with the Ocean Health Index team. The project is funded by [Baltic Ecosystem Adaptive Management](http://www.su.se/ostersjocentrum/english/beam) (BEAM, a research programme on ecosystem-based management of the Baltic Sea), [Baltic Eye](http://www.su.se/ostersjocentrum/english/baltic-eye) and the Johansson Family Foundation.
-The Baltic Health Index formally started in 2015 and will run until mid 2017. A trans-disciplinary project, it involves many international researchers from around the Baltic Sea.  
+The Baltic Health Index is a project jointly led by [Stockholm Resilience Centre (SRC)](http://www.stockholmresilience.org/) and [Baltic Eye](http://www.su.se/ostersjocentrum/baltic-eye) at the Baltic Sea Centre, both at Stockholm University, together with the Ocean Health Index team. The project is funded by [Baltic Ecosystem Adaptive Management](http://www.su.se/ostersjocentrum/english/beam) (BEAM, a research programme on ecosystem-based management of the Baltic Sea), [Baltic Eye](http://www.su.se/ostersjocentrum/english/baltic-eye) and the Johansson Family Foundation.  
 
-The project is led by [Thorsten Blenckner](http://www.stockholmresilience.org/contact-us/staff/2008-06-16-blenckner.html) at SRC. Researchers appointed as Goalkeepers are responsible for one goal each, and work with teams of researchers who are experts on subjects central to each goal. The Steering group includes Johan Rockström (SRC), Tina Elfwing (Baltic Sea Centre), and Thorsten Blenckner), and it is responsible for the over-arching project development and external representation.
+The Baltic Health Index formally started in 2015 and preliminary scores were completed in 2017. Currently, the focus is on communication following this first assessment, including identifying what improvements could be made for future assessments, writing a scientific publication, and continuing communication around the project. 
+
+A trans-disciplinary project, it involves many international researchers from around the Baltic Sea. The project is led by [Thorsten Blenckner](http://www.stockholmresilience.org/contact-us/staff/2008-06-16-blenckner.html) at SRC. Researchers appointed as Goalkeepers are responsible for one goal each, and work with teams of researchers who are experts on subjects central to each goal. The Steering group includes Johan Rockström (SRC), Tina Elfwing (Baltic Sea Centre), and Thorsten Blenckner), and it is responsible for the over-arching project development and external representation.

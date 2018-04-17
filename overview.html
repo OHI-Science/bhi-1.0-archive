@@ -20,8 +20,8 @@
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -30,10 +30,12 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
@@ -212,9 +214,11 @@ $(document).ready(function () {
 --->
 <div id="project-and-team" class="section level1">
 <h1>Project and team</h1>
+<p><br></p>
 <p><strong>The Baltic Health Index is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of an integrative and transparent tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability.</strong></p>
-<p>The Baltic Health Index is a project jointly led by <a href="http://www.stockholmresilience.org/">Stockholm Resilience Centre (SRC)</a> and <a href="http://www.su.se/ostersjocentrum/baltic-eye">Baltic Eye</a> at the Baltic Sea Centre, both at Stockholm University, together with the Ocean Health Index team. The project is funded by <a href="http://www.su.se/ostersjocentrum/english/beam">Baltic Ecosystem Adaptive Management</a> (BEAM, a research programme on ecosystem-based management of the Baltic Sea), <a href="http://www.su.se/ostersjocentrum/english/baltic-eye">Baltic Eye</a> and the Johansson Family Foundation. The Baltic Health Index formally started in 2015 and will run until mid 2017. A trans-disciplinary project, it involves many international researchers from around the Baltic Sea.</p>
-<p>The project is led by <a href="http://www.stockholmresilience.org/contact-us/staff/2008-06-16-blenckner.html">Thorsten Blenckner</a> at SRC. Researchers appointed as Goalkeepers are responsible for one goal each, and work with teams of researchers who are experts on subjects central to each goal. The Steering group includes Johan Rockström (SRC), Tina Elfwing (Baltic Sea Centre), and Thorsten Blenckner), and it is responsible for the over-arching project development and external representation.</p>
+<p>The Baltic Health Index is a project jointly led by <a href="http://www.stockholmresilience.org/">Stockholm Resilience Centre (SRC)</a> and <a href="http://www.su.se/ostersjocentrum/baltic-eye">Baltic Eye</a> at the Baltic Sea Centre, both at Stockholm University, together with the Ocean Health Index team. The project is funded by <a href="http://www.su.se/ostersjocentrum/english/beam">Baltic Ecosystem Adaptive Management</a> (BEAM, a research programme on ecosystem-based management of the Baltic Sea), <a href="http://www.su.se/ostersjocentrum/english/baltic-eye">Baltic Eye</a> and the Johansson Family Foundation.</p>
+<p>The Baltic Health Index formally started in 2015 and preliminary scores were completed in 2017. Currently, the focus is on communication following this first assessment, including identifying what improvements could be made for future assessments, writing a scientific publication, and continuing communication around the project.</p>
+<p>A trans-disciplinary project, it involves many international researchers from around the Baltic Sea. The project is led by <a href="http://www.stockholmresilience.org/contact-us/staff/2008-06-16-blenckner.html">Thorsten Blenckner</a> at SRC. Researchers appointed as Goalkeepers are responsible for one goal each, and work with teams of researchers who are experts on subjects central to each goal. The Steering group includes Johan Rockström (SRC), Tina Elfwing (Baltic Sea Centre), and Thorsten Blenckner), and it is responsible for the over-arching project development and external representation.</p>
 </div>
 
 
