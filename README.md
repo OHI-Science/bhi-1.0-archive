@@ -5,7 +5,7 @@ hi
 ## Learn More about the Baltic Health Index Project
 [BHI at the Stockholm Resilience Centre](http://www.stockholmresilience.org/research/research-themes/marine/baltic-health-index.html)  
 [BHI at the Baltic Sea Center in English](http://www.su.se/ostersjocentrum/english/baltic-eye/research/baltic-health-index)  
-[BHI at the Baltic Sea Center in Swedish] (http://www.su.se/ostersjocentrum/baltic-eye/forskning/baltic-health-index)  
+[BHI at the Baltic Sea Center in Swedish](http://www.su.se/ostersjocentrum/baltic-eye/forskning/baltic-health-index)  
 
 ## BHI overview
 
