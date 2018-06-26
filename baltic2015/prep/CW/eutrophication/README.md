@@ -1,1 +1,1 @@
-View the prep `.md` file rendered [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/secchi/secchi_prep.md).
+View the prep `.md` file rendered [here](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/eutrophication/eutrophication_prep.md).
