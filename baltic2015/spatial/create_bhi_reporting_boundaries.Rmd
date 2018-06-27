@@ -1,0 +1,55 @@
+---
+title: 'Creating BHI reporting boundaries'
+author: "Julie"
+date: "6/27/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse) # install.packages(tidyverse)
+library(stringr) # install.packages(stringr)
+library(sf) # install.packages(sf)
+library(here) # install.package(here)
+
+dir_spatial <- file.path(here::here(), "baltic2015/spatial")
+bhi_filename <- "regions_gcs"
+```
+
+## read in shapefile
+```{r}
+rgns_bhi <- sf::st_read(dsn = dir_spatial, layer=bhi_filename)
+rgns_bhi
+
+nrow(rgns_bhi)
+names(rgns_bhi)
+# plot(rgns_bhi)
+```
+
+## Wrangle attributes
+
+Create EEZ and Subbasin information as separate columns:
+
+[SO](https://stackoverflow.com/questions/4350440/split-data-frame-string-column-into-multiple-columns)
+```{r}
+rgns_bhi <- rgns_bhi %>%
+  mutate(
+    eez      = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,1],
+    subbasin = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,2],)
+```
+
+Dissolve; 
+
+```{r}
+
+```
+
+
+## Plot
+
+```{r}
+# ggplot(rgns_bhi) +
+#   geom_sf(aes(fill = rgn_id))
+```
+
