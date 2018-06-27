@@ -77,13 +77,37 @@ Footnotes from .xls file column headers 1 - Based upon 2010 Gross National Incom
 -------------------------------------
 
 **Status**: 2015 modeled values / ref point 2010
-**Trend**: use projected 2025 data to get 5-year trend? Or just use trend for a different CW component as the trend of the whole goal?
+**Trend**: 5 year liear trend 2010-2015
 
 ``` r
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, results = "hide")
 
 library(readxl) # install.packages('readxl')
+```
+
+    ## Warning: package 'readxl' was built under R version 3.4.4
+
+``` r
 source('~/github/bhi/baltic2015/prep/common.r')
+```
+
+    ## Warning: package 'tidyverse' was built under R version 3.4.2
+
+    ## Warning: package 'tibble' was built under R version 3.4.3
+
+    ## Warning: package 'purrr' was built under R version 3.4.2
+
+    ## Warning: package 'dplyr' was built under R version 3.4.2
+
+    ## Warning: package 'stringr' was built under R version 3.4.4
+
+    ## Warning: package 'forcats' was built under R version 3.4.3
+
+    ## Warning: package 'RMySQL' was built under R version 3.4.4
+
+    ## Warning: package 'DBI' was built under R version 3.4.4
+
+``` r
 dir_tra    = file.path(dir_prep, 'CW/trash')
 
 ## add a README.md to the prep directory

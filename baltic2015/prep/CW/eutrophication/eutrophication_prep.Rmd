@@ -20,31 +20,37 @@ The following sections of the document focuses on Secchi data preparation. Anoxi
 ### 2.1 Data sources
 
 **ICES**  
+
 Data extracted from database and sent by Hjalte Parner.  
-* "extraction from our database classified into HELCOM Assessment Units – HELCOM sub basins with coastal WFD water bodies or water types"
+
+- "extraction from our database classified into HELCOM Assessment Units – HELCOM sub basins with coastal WFD water bodies or water types"
 
 **SMHI**  
+
 Downloaded from [SMHI Shark database](http://www.smhi.se/klimatdata/oceanografi/havsmiljodata/marina-miljoovervakningsdata) on 23 February 2016 by Lena Viktorsson.  
-* Download notes: datatype: Physical and Chemical; Parameter: secchi depth  
-Lena  did not exclude any data when she downloaded it.
+
+- Download notes: datatype: Physical and Chemical; Parameter: secchi depth. Lena did not exclude any data when she downloaded it.
 
 ### 2.2 Data Cleaning and decision-making
 
-**Duplicates in the Data**  
+**Duplicates in the Data** 
+
 ICES data contains profile data (eg temperature,but secchi is only measured once). Need only unique secchi records.  It appears the SMHI also contains profiles. Also check to see if any SMHI data already in the ICES records.
 
 **Coastal data**  
-    - non-coastal (offshore) data are flagged with the code "0" under the column *"HELCOM_COASTAL_CODE"*  
-        - HOLAS basin shape files with coastal and non-coastal areas were overlaid with the secchi sampling locations, all locations were flagged with a code indicating coastal or offshore.  
-    - Coastal data are removed from the analysis.  
-    - This should result in a similar dataset used as Fleming-Lehtinen and Laamanen 2012 (see map).  
+
+- non-coastal (offshore) data are flagged with the code "0" under the column *"HELCOM_COASTAL_CODE"*  
+- HOLAS basin shape files with coastal and non-coastal areas were overlaid with the secchi sampling locations, all locations were flagged with a code indicating coastal or offshore.  
+- Coastal data are removed from the analysis.  
+- This should result in a similar dataset used as Fleming-Lehtinen and Laamanen 2012 (see map).  
 
 **Sampling frequency**
+
 *Can / should these data decisions be implemented?  We have not implemented this so far*  
 Fleming-Lehtinen and Laamanen (2012) do the following:  
-    - If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.  
-    - If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias.  
-    
+- If several observations were made on the same day in the vicinity of one another, they set max observation to 1 per day.  
+- If trips were made with objective to study seasonal algae blooms, a maximum of two observations were accepted to avoid bias.  
+
 ## 3. Goal Model
 
 **Status**
@@ -99,8 +105,8 @@ str(data2)
 ## Initial filtering
 ices <- data1 %>% data.frame()%>%
   dplyr::select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
-         lat= Latitude, lon = Longitude, 
-         cruise= Cruise, station = Station, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
+                lat= Latitude, lon = Longitude, 
+                cruise= Cruise, station = Station, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
   mutate(date = as.Date(date, format= "%Y-%m-%d"))%>%
   mutate(supplier = 'ices')
 head(ices)
@@ -108,37 +114,37 @@ head(ices)
 
 ##which ices data have BHI_ID of NA
 ices.na <- ices %>%
-           filter(is.na(bhi_id))
-  
-    dim(ices.na) # 1684   11
-    ices.na.loc = ices.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
-    dim(ices.na.loc) # 86  2
-    ices.na %>% dplyr::select(coast_code)%>% distinct()  ## at least one location is off shore
-    ices.na %>% filter(coast_code==0)
+  filter(is.na(bhi_id))
 
-    ## will need to manally add BHI id for site with NA and coastal code of 0
+dim(ices.na) # 1684   11
+ices.na.loc = ices.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
+dim(ices.na.loc) # 86  2
+ices.na %>% dplyr::select(coast_code)%>% distinct()  ## at least one location is off shore
+ices.na %>% filter(coast_code==0)
+
+## will need to manally add BHI id for site with NA and coastal code of 0
 
 
 
 smhi <- data2 %>% data.frame()%>%
   rename(secchi = value) %>%
   dplyr::select(bhi_id= BHI_ID, secchi, year= Year, month= Month, 
-        lat= Latitude, lon= Longitude, 
-         cruise = Provtagningstillfaelle.id, 
-         station = Stationsnamn, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
+                lat= Latitude, lon= Longitude, 
+                cruise = Provtagningstillfaelle.id, 
+                station = Stationsnamn, date= Date, coast_code=HELCOM_COASTAL_CODE) %>%
   mutate(supplier = 'smhi', cruise = as.character(cruise))
 head(smhi)
 
 ## is na smhi
 smhi.na <- smhi %>%
-           filter(is.na(bhi_id))
-  
-    dim(smhi.na) # 35034    11
-    smhi.na.loc = smhi.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
-    dim(smhi.na.loc) #615   2
-    smhi.na %>% dplyr::select(coast_code)%>% distinct()  ## none are offshore
-    smhi.na %>% filter(coast_code==0)
-    ## no coastal code of zero
+  filter(is.na(bhi_id))
+
+dim(smhi.na) # 35034    11
+smhi.na.loc = smhi.na %>% dplyr::select(lat,lon) %>% distinct() ## unique locations
+dim(smhi.na.loc) #615   2
+smhi.na %>% dplyr::select(coast_code)%>% distinct()  ## none are offshore
+smhi.na %>% filter(coast_code==0)
+## no coastal code of zero
 
 
 ## Look for duplicate data
@@ -149,8 +155,8 @@ sum(ices.duplicated==TRUE) #181855  ## MANY duplicates
 
 ices.duplicated = duplicated(dplyr::select(ices,-station))
 sum(ices.duplicated==TRUE) #181977 ## more duplicated when remove station columns
-    ## it is not because of multiple cruises on same day and location
-    ## tried by removing lat and lon and keeping station, fewer duplicates detected
+## it is not because of multiple cruises on same day and location
+## tried by removing lat and lon and keeping station, fewer duplicates detected
 
 ## duplicates because ICES table includes deptp
 new_ices = unique(dplyr::select(ices,-station)); nrow(new_ices)  #take only unique records # 33566
@@ -163,7 +169,7 @@ new_smhi = unique(dplyr::select(smhi, -station)); nrow(new_smhi) #take only uniq
 
 ## use setdiff() to indentify data smhi not in ices
 new_smhi = setdiff(dplyr::select(new_smhi,-supplier,-cruise), dplyr::select(new_ices,-supplier,-cruise)) %>%
-            mutate(supplier = "smhi")
+  mutate(supplier = "smhi")
 nrow(new_smhi) #  16627
 ## it appears 461 records are duplicates (if remove cruise and station)
 ## if date, lat, lon, secchi all match, I think they are duplicates
@@ -187,7 +193,7 @@ dim(allData) #[1]  50193    10
 ## Do any observations have NA for coast_code
 allData %>% filter(is.na(coast_code) & is.na(bhi_id)) %>% dim() # 3567   10
 allData %>% filter(is.na(coast_code) & !is.na(bhi_id)) %>% dim() #  3 10
-  
+
 ## 3567 observations with no coast_code or BHI_ID, all from SMHI, are 292 distinct locations
 loc_no_coastcode_nobhi =allData %>% 
   filter(is.na(coast_code) & is.na(bhi_id))%>%
@@ -220,15 +226,15 @@ loc_no_coastcode_bhi =  allData %>%
 ## What are coastal codes for The Sound (BHI regions 5,6)
 ##Region 6
 allData %>% filter(bhi_id %in% 6) %>% dplyr::select(bhi_id,year,date,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
-    ## three observations in BHI region 6 after 2000
-    ## Not summer observations
+## three observations in BHI region 6 after 2000
+## Not summer observations
 allData %>% filter(bhi_id %in% 6) %>% dplyr::select(coast_code, supplier)%>%distinct(.)
 
 #Region 5
 allData %>% filter(bhi_id %in% 5) %>% dplyr::select(bhi_id,year,lat, lon,coast_code, supplier)%>% arrange(desc(year))%>%distinct(.)
 
 allData %>% filter(bhi_id %in% 5) %>% dplyr::select(coast_code, supplier)%>%distinct(.)
-    ## All region 5 codes are coastal
+## All region 5 codes are coastal
 
 
 
@@ -243,7 +249,7 @@ dim(allData)#14019    10
 allData %>% filter(is.na(bhi_id))  ##manual check is just barely within Latvian EEZ so is region 27
 
 allData = allData %>%
-          mutate(bhi_id = ifelse(is.na(bhi_id),27, bhi_id))
+  mutate(bhi_id = ifelse(is.na(bhi_id),27, bhi_id))
 allData %>% filter(is.na(bhi_id))  
 
 ```
@@ -257,7 +263,7 @@ head(target)
 
 #select just summer_seccchi target
 target = target %>% dplyr::select(basin, summer_secchi)%>%
-        mutate(basin = str_replace_all(basin,"_"," "))
+  mutate(basin = str_replace_all(basin,"_"," "))
 
 ```
 
@@ -275,14 +281,14 @@ basin_lookup=basin_lookup %>% dplyr::select(bhi_id = BHI_ID, basin_name=Subbasin
 ### 4.5 Select summer data and plot
 
 We chose Months 6-9 (June, July, August, September)  and Years >= 2000  
-    
+
 Data is sparse for BHI regions 4,22,25.  
 
 No data BHI regions 5 (all coastal), 6 (offshore observations rare after from 2000 and not in summer). 
-    
+
 ```{r dplyr::select summer data}
 summer = allData %>% filter(month %in%c(6:9)) %>%
-        filter(year >=2000)
+  filter(year >=2000)
 head(summer)
 
 
@@ -337,18 +343,18 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 ## SAVE DATA FOR VISUALIZE
 
 eut_space_data = summer %>%
-                 dplyr::select(lat,lon)%>%
-                 distinct()%>%
-                 mutate(data_descrip = "summer secchi unique sampling locations 2000-2013",
-                        bhi_goal = "eut")
+  dplyr::select(lat,lon)%>%
+  distinct()%>%
+  mutate(data_descrip = "summer secchi unique sampling locations 2000-2013",
+         bhi_goal = "eut")
 
 write.csv(eut_space_data, file.path(dir_baltic,'visualize/eut_space_data.csv'),row.names=FALSE)
 
 eut_time_data = summer %>%
-                dplyr::select(rgn_id=bhi_id,basin=basin_name,year,variable=month,value=secchi)%>%
-                mutate(unit="secchi depth m",
-                       data_descrip = "summer secchi observations",
-                       bhi_goal ="eut")
+  dplyr::select(rgn_id=bhi_id,basin=basin_name,year,variable=month,value=secchi)%>%
+  mutate(unit="secchi depth m",
+         data_descrip = "summer secchi observations",
+         bhi_goal ="eut")
 
 
 write.csv(eut_time_data, file.path(dir_baltic,'visualize/eut_time_data.csv'),row.names=FALSE)
@@ -365,8 +371,8 @@ Sometimes lat-lon is not good to use because recording specific ship location wh
 ```{r samples and stations by basin}
 
 basin_summary = summer %>% group_by(basin_name,year,month)%>%
-                dplyr::select(year, month,lat,lon,basin_name)%>%
-                summarise(loc_count = n_distinct(lat,lon))
+  dplyr::select(year, month,lat,lon,basin_name)%>%
+  summarise(loc_count = n_distinct(lat,lon))
 #basin_summary
 
 #plot sampling overview
@@ -387,9 +393,9 @@ basin monthly mean = mean of all samples within month and basin
 ```{r calculate monthly mean secchi}
 
 mean_months = summer %>% dplyr::select(year, month,basin_name,secchi)%>%
-              group_by(year,month,basin_name)%>%
-              summarise(mean_secchi = round(mean(secchi,na.rm=TRUE),1))%>%
-              ungroup()
+  group_by(year,month,basin_name)%>%
+  summarise(mean_secchi = round(mean(secchi,na.rm=TRUE),1))%>%
+  ungroup()
 # head(mean_months)
 
 ```
@@ -399,7 +405,7 @@ mean_months = summer %>% dplyr::select(year, month,basin_name,secchi)%>%
 There are limited July sampling in a number of basins 
 
 The Quark only sampled in June in early part of time series, August later half of time series.  
-    
+
 ```{r plot mean monthly}
 
 ggplot(mean_months) + geom_point(aes(year,mean_secchi, colour=factor(month)))+
@@ -416,9 +422,9 @@ basin summer mean = mean of basin monthly mean values
 ```{r calculate mean summer secchi}
 
 mean_months_summer = mean_months %>% dplyr::select(year, basin_name,mean_secchi) %>%
-                      group_by(year,basin_name)%>%
-                      summarise(mean_secchi = round(mean(mean_secchi,na.rm=TRUE),1)) %>%
-                      ungroup()  #in mean calculation all some months to have NA, ignore for that years calculation
+  group_by(year,basin_name)%>%
+  summarise(mean_secchi = round(mean(mean_secchi,na.rm=TRUE),1)) %>%
+  ungroup()  #in mean calculation all some months to have NA, ignore for that years calculation
 
 ```
 
@@ -439,7 +445,7 @@ Horizontal lines are HELCOM target values.
 ```{r summer secchi with target }
 
 secchi_target = left_join(mean_months_summer,target, by=c("basin_name" = "basin"))%>%
-                dplyr::rename(target_secchi = summer_secchi)
+  dplyr::rename(target_secchi = summer_secchi)
 # head(secchi_target)
 
 ggplot(secchi_target) + geom_point(aes(year,mean_secchi))+
@@ -465,10 +471,10 @@ For these five basins, their most recent year's data is used for current status 
 
 ## get the last year of non-NA data
 last_year = secchi_target%>%
-            filter(!is.na(mean_secchi))%>%
-            group_by(basin_name)%>%
-            summarise(last_year = last(year)) %>%
-            print(n=15)
+  filter(!is.na(mean_secchi))%>%
+  group_by(basin_name)%>%
+  summarise(last_year = last(year)) %>%
+  print(n=15)
 
 ##which are not in 2013
 last_year %>% filter(last_year < 2013)
@@ -479,7 +485,7 @@ last_year %>% filter(last_year < 2013)
 # 3 Gulf of Finland      2012
 # 4    Gulf of Riga      2012
 # 5       The Quark      2012
- 
+
 ```
 
 ### 5.2 Calculate status for each basin
@@ -492,32 +498,32 @@ Status must be calculated in data prep because it's calculated on the basin leve
 
 ## Define constants for status calculation
 
-  min_year = 2000        # earliest year to use as a start for regr_length timeseries
-                          ##data already filtered for 
-  regr_length = 10       # number of years to use for regression
-  future_year = 5        # the year at which we want the likely future status
-  min_regr_length = 5    # min actual number of years with data to use for regression.
+min_year = 2000        # earliest year to use as a start for regr_length timeseries
+##data already filtered for 
+regr_length = 10       # number of years to use for regression
+future_year = 5        # the year at which we want the likely future status
+min_regr_length = 5    # min actual number of years with data to use for regression.
 
-  
+
 ## Basin data with target
-  secchi_target
-  
+secchi_target
+
 ## Calculate basin status = basin_mean/basin_target
-  
-  basin_status = secchi_target %>%
-                 mutate(., status =  pmin(1, mean_secchi/target_secchi)) %>%
-      dplyr::select(basin_name, year, status) 
+
+basin_status = secchi_target %>%
+  mutate(., status =  pmin(1, mean_secchi/target_secchi)) %>%
+  dplyr::select(basin_name, year, status) 
 
 ## Assign basin status to BHI regions
-  
-    bhi_status = basin_status %>%
-                group_by(basin_name) %>%
-      filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
-                mutate(status = round(status*100)) %>% #status is whole number 0-100
-                ungroup() %>%
-                left_join(basin_lookup,.,by="basin_name") %>% #join bhi regions to basins
-                mutate(dimension = 'status') %>%
-                dplyr::select(rgn_id = bhi_id, dimension, score=status)
+
+bhi_status = basin_status %>%
+  group_by(basin_name) %>%
+  filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
+  mutate(status = round(status*100)) %>% #status is whole number 0-100
+  ungroup() %>%
+  left_join(basin_lookup,.,by="basin_name") %>% #join bhi regions to basins
+  mutate(dimension = 'status') %>%
+  dplyr::select(rgn_id = bhi_id, dimension, score=status)
 ```
 
 ## 6. Calculate Trend 
@@ -525,23 +531,23 @@ Status must be calculated in data prep because it's calculated on the basin leve
 ```{r trend calculation}
 
 ## Calculate basin trend
-  
-  basin_trend =
-    basin_status %>%
-    group_by(basin_name) %>%
-    do(tail(. , n = regr_length)) %>%  # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
-    do({if(sum(!is.na(.$status)) >= min_regr_length)
+
+basin_trend =
+  basin_status %>%
+  group_by(basin_name) %>%
+  do(tail(. , n = regr_length)) %>%  # calculate trend only if there is at least X years of data (min_regr_length) in the last Y years of time serie (regr_length)
+  do({if(sum(!is.na(.$status)) >= min_regr_length)
     data.frame(trend_score = 
                  max(-1, min(1, coef(lm(status ~ year, .))['year'] * future_year)))
-         else data.frame(trend_score = NA)}) %>%
-    ungroup() 
+    else data.frame(trend_score = NA)}) %>%
+  ungroup() 
 
-  ## Assign basin trend to BHI regions
-                
-    bhi_trend = left_join(basin_lookup,basin_trend, by="basin_name") %>%
-                 mutate(score = round(trend_score,2),
-                        dimension = "trend")%>%
-                dplyr::select(rgn_id = bhi_id, dimension, score )
+## Assign basin trend to BHI regions
+
+bhi_trend = left_join(basin_lookup,basin_trend, by="basin_name") %>%
+  mutate(score = round(trend_score,2),
+         dimension = "trend")%>%
+  dplyr::select(rgn_id = bhi_id, dimension, score )
 
 ```
 
@@ -557,7 +563,7 @@ ggplot(basin_status) +
   geom_point((aes(year,status))) +
   facet_wrap(~basin_name) +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
-                                    hjust=.5, vjust=.5, face = "plain"))
+                                   hjust=.5, vjust=.5, face = "plain"))
 
 ```
 
@@ -566,7 +572,7 @@ ggplot(basin_status) +
 Status values can range from 0-100 -- this is the status for the *most recent* year. In most cases this is 2013.  
 
 No status or trend for 5 or 6 - these are The Sound, which had no data. 
-    
+
 ```{r bhi status and trend plot}
 
 
@@ -579,31 +585,18 @@ ggplot(rbind(bhi_status, bhi_trend)) + geom_point(aes(rgn_id,score),size=2)+
 ```
 
 
-### Save csv files
-These csv files will be used as a first cut for the secchi status and trend.
-**Files to save**  
-1. Status and trend for each BHI region based on the basin level calculations
-```{r write csv file to layers}
-## Write csv files to layers
-    # readr::write_csv(basin_status,
-    #              file.path(dir_layers, "cw_eut_status_score_bhi2015.csv"))
-    # 
-    # readr::write_csv(bhi_trend,
-    #              file.path(dir_layers, "cw_eut_trend_score_bhi2015.csv"))
-
-```
-
-
 ## 8. Further questions
 
-**Trend calculation**  
+**Trend calculation** 
+
 1. Have calculated the trend using data spanning 10 years (minimum of 5 data points). Is it agreed that we should use the longer time window for the trend?  
 
 **No Observations for The Sound**  
+
 1. The Sound has no summer offshore observations after 2000 in either ICES or SMHI data.  
-    - How is it evaluated by HOLAS?  
-    - BHI regions are 5 & 6.  5 is all coastal, 6 has both coastal and offshore observations before 2000 and from 2000 forward, 3 offshore observations in spring (not summer).  
-  
+- How is it evaluated by HOLAS?  
+- BHI regions are 5 & 6.  5 is all coastal, 6 has both coastal and offshore observations before 2000 and from 2000 forward, 3 offshore observations in spring (not summer).  
+
 
 ## 9. Transform status
 
@@ -647,90 +640,90 @@ basin_status_rescaled = data.frame(ratio = seq(0, 1, 0.1)) %>%
 plot_rescaled = qplot(x = ratio, y = status, color = transformation, data =  basin_status_rescaled, geom = "point") +
   geom_line(stat = "identity", position = "identity") +
   labs(title = 'Example non-linear transformations of eutrophications status score',
-      x = 'Non-transformed status score (mean_secchi/target_secchi)', 
-      y = 'Transformed status score',
-      fill = 'Transformation')
+       x = 'Non-transformed status score (mean_secchi/target_secchi)', 
+       y = 'Transformed status score',
+       fill = 'Transformation')
 
 print(plot_rescaled)
 
 
- ## setup to plot different tranformations using PlotMap function
+## setup to plot different tranformations using PlotMap function
 
- source('~/github/bhi/baltic2015/PlotMap.r')
- source('~/github/bhi/baltic2015/PrepSpatial.R') 
- #install.packages('maptools')
- #install.packages('broom')
+source('~/github/bhi/baltic2015/PlotMap.r')
+source('~/github/bhi/baltic2015/PrepSpatial.R') 
+#install.packages('maptools')
+#install.packages('broom')
 
 ## transformation 1: status = (mean_secchi/target_secchi) ^ 2
 
- basin_status_orig = secchi_target %>%
-                 mutate(ratio =  pmin(1, mean_secchi/target_secchi)) %>%
-      dplyr::select(basin_name, year, ratio)
+basin_status_orig = secchi_target %>%
+  mutate(ratio =  pmin(1, mean_secchi/target_secchi)) %>%
+  dplyr::select(basin_name, year, ratio)
 
- bhi_status_1 = basin_status_orig %>%
-                group_by(basin_name) %>%
-   filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
-                mutate(status = round(ratio^2*100))%>% #status is whole number 0-100
-                ungroup()%>%
-                left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
-                # mutate(dimension = 'status') %>%
-                dplyr::select(rgn_id = bhi_id, score=status)
- 
- if (!require(gpclib)) install.packages("gpclib", type="source")
+bhi_status_1 = basin_status_orig %>%
+  group_by(basin_name) %>%
+  filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
+  mutate(status = round(ratio^2*100))%>% #status is whole number 0-100
+  ungroup()%>%
+  left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
+  # mutate(dimension = 'status') %>%
+  dplyr::select(rgn_id = bhi_id, score=status)
+
+if (!require(gpclib)) install.packages("gpclib", type="source")
 gpclibPermit()
 
- plot_transf_1 =  PlotMap(bhi_status_1, map_title = expression('Transformation 1: status = (mean/target)' ^ 2), 
-                           rgn_poly        = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
-                          # fig_path       = path.expand('~/github/bhi/baltic2015/prep/CW/secchi/transformation_figs')) 
-                      
-  
- ## transformation 2: status =  (mean_secchi/target_secchi) ^ 4
-
-  bhi_status_2 = basin_status_orig %>%
-                group_by(basin_name) %>%
-    filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
-                mutate(status = round(ratio^4*100))%>% #status is whole number 0-100
-                ungroup()%>%
-                left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
-                # mutate(dimension = 'status') %>%
-                dplyr::select (rgn_id = bhi_id, score=status)
-
- plot_transf_2 =  PlotMap(bhi_status_2, map_title = expression('Transforamtion 2: status = (mean/target)' ^ 4), 
-                           rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
+plot_transf_1 =  PlotMap(bhi_status_1, map_title = expression('Transformation 1: status = (mean/target)' ^ 2), 
+                         rgn_poly        = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
+# fig_path       = path.expand('~/github/bhi/baltic2015/prep/CW/secchi/transformation_figs')) 
 
 
- ## transformation 3: status = 1/(1+ exp(-(mean/target - 0.5)/0.1))
+## transformation 2: status =  (mean_secchi/target_secchi) ^ 4
 
- bhi_status_3 = basin_status_orig %>%
-                group_by(basin_name) %>%
-                filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
-                mutate(status = round(1/(1+ exp(-(ratio - 0.5)/0.1)) *100))%>% #status is whole number 0-100
-                ungroup()%>%
-                left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
-                # mutate(dimension = 'status') %>%
-                dplyr::select (rgn_id = bhi_id, score=status)
+bhi_status_2 = basin_status_orig %>%
+  group_by(basin_name) %>%
+  filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
+  mutate(status = round(ratio^4*100))%>% #status is whole number 0-100
+  ungroup()%>%
+  left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
+  # mutate(dimension = 'status') %>%
+  dplyr::select (rgn_id = bhi_id, score=status)
 
- plot_transf_3 =  PlotMap(bhi_status_3, 
-                          map_title = 'Transformation 3: \n status = 1/(1+ exp(-(mean/target - 0.5)/0.1))', 
-                          rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
+plot_transf_2 =  PlotMap(bhi_status_2, map_title = expression('Transforamtion 2: status = (mean/target)' ^ 4), 
+                         rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
+
+
+## transformation 3: status = 1/(1+ exp(-(mean/target - 0.5)/0.1))
+
+bhi_status_3 = basin_status_orig %>%
+  group_by(basin_name) %>%
+  filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
+  mutate(status = round(1/(1+ exp(-(ratio - 0.5)/0.1)) *100))%>% #status is whole number 0-100
+  ungroup()%>%
+  left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
+  # mutate(dimension = 'status') %>%
+  dplyr::select (rgn_id = bhi_id, score=status)
+
+plot_transf_3 =  PlotMap(bhi_status_3, 
+                         map_title = 'Transformation 3: \n status = 1/(1+ exp(-(mean/target - 0.5)/0.1))', 
+                         rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
 
 
 
 ## transformation 4: status = 1/(1+ exp(-(mean/target - 0.7)/0.08))
 
- bhi_status_4 = basin_status_orig %>%
-                group_by(basin_name) %>%
-                filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
-                mutate(status = round(1/(1+ exp(-(ratio - 0.7)/0.08)) *100))%>% #status is whole number 0-100
-                ungroup()%>%
-                left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
-                # mutate(dimension = 'status') %>%
-                dplyr::select (rgn_id = bhi_id, score=status)
+bhi_status_4 = basin_status_orig %>%
+  group_by(basin_name) %>%
+  filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
+  mutate(status = round(1/(1+ exp(-(ratio - 0.7)/0.08)) *100))%>% #status is whole number 0-100
+  ungroup()%>%
+  left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
+  # mutate(dimension = 'status') %>%
+  dplyr::select (rgn_id = bhi_id, score=status)
 
- plot_transf_4 =  PlotMap(bhi_status_4,  
-                          map_title = 'Transformation 4: \n status = 1/(1+ exp(-(mean/target - 0.7)/0.08))', 
-                           rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
-  
+plot_transf_4 =  PlotMap(bhi_status_4,  
+                         map_title = 'Transformation 4: \n status = 1/(1+ exp(-(mean/target - 0.7)/0.08))', 
+                         rgn_poly = PrepSpatial(path.expand('~/github/bhi/baltic2015/spatial/regions_gcs.geojson')))
+
 ```
 
 # 10. Add Anoxia data to eutrophication calculations (eut)
@@ -740,8 +733,8 @@ gpclibPermit()
 # will move to functions.R
 
 anoxia_status = read_csv(file.path(dir_layers, 'hab_anoxia_bhi2015.csv')) %>% 
-    mutate(anoxia_score = (1-pressure_score) *100 ) %>% 
-    dplyr::select(rgn_id, anoxia_score)
+  mutate(anoxia_score = (1-pressure_score) *100 ) %>% 
+  dplyr::select(rgn_id, anoxia_score)
 
 eut_status = full_join(dplyr::select(bhi_status, 
                                      rgn_id, 
@@ -776,7 +769,7 @@ winter_data <- winter_data_raw %>%
 summer_data <- summer_data_raw %>% 
   select(chla = CHL, year = Year, BHI_ID) %>% 
   filter(year %in% 2009:2016, 
-          !is.na(BHI_ID) )
+         !is.na(BHI_ID) )
 
 # average for each year in each region 
 winter_summary <- winter_data %>% 
@@ -811,8 +804,8 @@ bhi_basin_lookup <- read.csv(file.path(dir_prep, 'bhi_basin_country_lookup.csv')
 eut_basin_level <- full_join(eut_combined, bhi_basin_lookup, by = "BHI_ID") %>% 
   group_by(Basin, year) %>% 
   summarize(dip_basin = mean(dip_ave, na.rm = T), 
-         din_basin = mean(din_ave, na.rm = T), 
-         chla_basin = mean(chla_ave, na.rm = T)) %>% 
+            din_basin = mean(din_ave, na.rm = T), 
+            chla_basin = mean(chla_ave, na.rm = T)) %>% 
   filter(!is.na(year)) %>% 
   ungroup
 
@@ -833,7 +826,7 @@ eut_status_all_years <- eut_data_with_ref %>%
   mutate(dip_status = pmin(1, 1/(dip_basin / dip_ref))*100, 
          din_status = pmin(1, 1/(din_basin / din_ref))*100,
          chla_status = pmin(1, 1/(chla_basin / chla_ref))*100) %>% 
-    select(Basin, year, dip_status, din_status, chla_status) %>% 
+  select(Basin, year, dip_status, din_status, chla_status) %>% 
   mutate(dip_status = as.numeric(str_replace_all(dip_status, "NaN", "")),
          din_status = as.numeric(str_replace_all(din_status, "NaN", "")), 
          chla_status = as.numeric(str_replace_all(chla_status, "NaN", "")))
@@ -867,8 +860,8 @@ eut_all_years <- full_join(chem_status_bhi_region, secchi_status_bhi_region,
   arrange(BHI_ID) %>% 
   full_join(bhi_basin_lookup, by = 'BHI_ID') %>% 
   dplyr::select(BHI_ID, Basin, year,
-         dip_status, din_status, chla_status, 
-         secchi_status, oxy_status) 
+                dip_status, din_status, chla_status, 
+                secchi_status, oxy_status) 
 
 write_csv(eut_all_years, file.path(dir_eut, 'eut_component status_compiled_by_year.csv'))
 
@@ -881,7 +874,7 @@ eut_status_overall <- eut_all_years %>%
          eut_status = as.numeric(str_replace_all(eut_status, "NaN", ""))) %>%
   select(BHI_ID, year, eut_status) %>% 
   ungroup
-  
+
 # choose status year of 2013  
 eut_status <- eut_status_overall %>% 
   filter(year == 2013) %>% 

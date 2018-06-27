@@ -11,27 +11,24 @@ For this goal, sub-components will be prepped from the raw data to status and tr
 ### Contaminants
 [See `contaminants_prep.rmd` for information on indicators, data, and data prep.](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md)  
 
-Our intention is to use three equally weighted indicators to capture different dimensions of toxicity: total 6-PCB concentration, dioxin and dioxin-like toxicity equivalent, PFOS.  
+For this goal we will use three equally weighted indicators to capture different dimensions of toxicity: total 6-PCB concentration, dioxin and dioxin-like toxicity equivalent, PFOS.  
 
+### Eutrophication
 
-### Nutrients
-[See `secchi_prep.rmd` for information on indicators, data, and data prep.](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/secchi/secchi_prep.md)  
-
-[See `anoixa_prep.rmd` for information on data and data prep](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/pressures/open_sea_anoxia/open_sea_anoxia_prep.md)
+[See `eutrophication_prep.rmd` for information on indicators, data, and data prep.](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/eutrophication/eutrophication_prep.md)  
 
 For this goal we will use mean summer secchi (relative to the HELCOM target) and open sea anoxia to measure the nutrient sub-component status and trend.  
 
 ### Trash
-[See `trash/README.rmd` `trash_prep.rmd` for more details.](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/trash_prep.rmd)  
+[See `tra_prep.rmd` for more details.](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)  
 
 For this goal we use modelled estimates of mismanaged trash entering the ocean to assess the trash sub-component.  
 
 
 ### Sub-components not included
+
 **Pathogens**
+
 Not identified as a wide-spread problem in the Baltic and not included.  
 
-
-
-# Pressure layers currently prepped in CW folder
 
