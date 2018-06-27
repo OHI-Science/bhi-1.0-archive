@@ -1,0 +1,271 @@
+---
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+## url setup
+dir_scenario_gh <- "https://raw.githubusercontent.com/OHI-Science/bhi/draft/baltic2015"
+layers_web <- 'http://ohi-science.org/bhi/layers.html'
+short_goal_web <- file.path(dir_scenario_gh, "conf/web/goals")
+```
+
+
+## Food Provision: Fisheries
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "FIS.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/fis_np_prep.md).   
+<!--- 
+Could also link to data used in model, would take some more work but could modify this from ohi-global:
+
+### Data used in model
+
+**Status & trend**
+
+```{r, echo=FALSE, warning=FALSE, error=FALSE, results="asis"}
+#st <- layers_csv %>%
+#  filter(targets %in% "FIS") %>%
+#  mutate(web_name = gsub(" ", "_", name)) %>%
+#  mutate(web_name = tolower(web_name)) %>%
+#  mutate(web_name = gsub("/", "", web_name)) %>%
+#  mutate(info = sprintf("[%s](%s#%s) (%s): %s", name, layers_web, web_name, layer, #description))
+
+#cat(paste(st$info, collapse="\n\n"))
+```
+--->  
+
+---- 
+
+## Food Provision: Mariculture
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "MAR.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md)
+
+---- 
+
+## Artisanal Fishing Opportunity 
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "AO.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/AO/ao_prep.md)
+
+---- 
+
+## Natural Products
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "NP.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
+<!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
+
+---- 
+
+## Carbon Storage
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "CS.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CS/cs_prep.md)
+
+---- 
+
+## Tourism & Recreation
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "TR.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/TR/tr_prep.md)
+
+---- 
+
+## Livelihoods & Economies: Livelihoods
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "LIV.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LIV/liv_prep.md)
+
+---- 
+
+## Livelihoods & Economies: Economies
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "ECO.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/ECO/eco_prep.md)
+
+---- 
+
+## Sense of Place: Iconic Species
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "ICO.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/prep/ICO)
+
+---- 
+
+## Sense of Place: Lasting Special Places
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "LSP.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LSP/lsp_prep.md)
+
+---- 
+
+## Clean Waters: Eutrophication
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "EUT.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/eutrophication/eutrophication_prep.md)
+
+---- 
+
+## Clean Waters: Trash
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "TRA.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)
+
+---- 
+
+## Clean Waters: Contaminants
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "CON.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md)
+
+---- 
+
+## Biodiversity
+
+```{r, echo=FALSE, results='hide'}
+
+        x <- tempfile(fileext = 'Rmd')
+        on.exit(unlink(x))
+        download.file(file.path(short_goal_web, "BD.Rmd"), x) 
+```
+ 
+```{r, child = x, echo=FALSE, results='asis'} 
+ 
+``` 
+
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/SPP/spp_prep.md)

@@ -19,22 +19,13 @@ layers <- readr::read_csv(file.path(dir_scenario_gh, 'layers.csv'))
 weight <- readr::read_csv(file.path(dir_scenario_gh, 'conf/goals.csv')) %>%
   select(goal, weight)
 
-#
-# # read config
-# config = new.env()
-# source(file.path(dir_scenario_gh, 'conf/config.R'), config)
-
-
 ## save local copies of Rmds to knit-child ----
-
-dir_raw_draft <- 'https://raw.githubusercontent.com/OHI-Science/mhi/master'
 
 to_copy <- c('conf/web/goals.Rmd')
 
+for (f in to_copy) { # f <- 'conf/web/goals.Rmd'
 
-for (f in to_copy) { # f <-  'region2017/conf/web/goals.Rmd'
-
-  fp <- file.path(dir_raw_draft, f)
+  fp <- file.path(dir_scenario_gh, f)
 
   ## if the url exists, save a copy.
   if (RCurl::url.exists(fp)) {
