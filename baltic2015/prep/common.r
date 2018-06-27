@@ -6,7 +6,7 @@
 
 ## Libraries
 library(tidyverse) # install.packages('tidyverse') # installs dplyr, tidyr, ggplot2 and more
-library(RMySQL)
+library(RMySQL) # install.packages('RMySQL')
 library(stringr)
 library(tools)
 library(ggmap) # install.packages('ggmap')

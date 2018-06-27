@@ -25,7 +25,7 @@ Data extracted from database and sent by Hjalte Parner.
 
 **SMHI**  
 Downloaded from [SMHI Shark database](http://www.smhi.se/klimatdata/oceanografi/havsmiljodata/marina-miljoovervakningsdata) on 23 February 2016 by Lena Viktorsson.  
-* Download notes: datatyp: Physical and Chemical; Parameter: secchi depth  
+* Download notes: datatype: Physical and Chemical; Parameter: secchi depth  
 Lena  did not exclude any data when she downloaded it.
 
 ### 2.2 Data Cleaning and decision-making
@@ -35,7 +35,7 @@ ICES data contains profile data (eg temperature,but secchi is only measured once
 
 **Coastal data**  
     - non-coastal (offshore) data are flagged with the code "0" under the column *"HELCOM_COASTAL_CODE"*  
-        - HOLAS basin shape files with coastal and non-coastal areas were overlayed with the secchi sampling locations, all locations were flagged with a code indicating coastal or offshore.  
+        - HOLAS basin shape files with coastal and non-coastal areas were overlaid with the secchi sampling locations, all locations were flagged with a code indicating coastal or offshore.  
     - Coastal data are removed from the analysis.  
     - This should result in a similar dataset used as Fleming-Lehtinen and Laamanen 2012 (see map).  
 
@@ -51,7 +51,7 @@ Fleming-Lehtinen and Laamanen (2012) do the following:
 
 Status = Summer Mean Secchi values / Reference point
 
-- Summar Mean Secchi values = mean secchi values June - September
+- Summer Mean Secchi values = mean secchi values June - September
 - Reference point = HELCOM-set target values
 
 **Trend**
@@ -64,7 +64,7 @@ The trend value is the slope (m) of the linear regression multiplied by the year
 ## 4. Data Prep 
 
 ### 4.1 Read in data
-Prelimary filtering to remove duplicate values within datasets (eg profiles) and between datasets.  
+Preliminary filtering to remove duplicate values within datasets (eg profiles) and between datasets.  
 
 Check initial smhi and ices datasets for observations from BHI regions 5 & 6 (The Sound) - region 5 all have a coastal designation. ICES data for region 6 includes both coastal and offshore but only 3 data points offshore from 2000- present. SMHI data contains no observations from region 6.
 
@@ -324,7 +324,7 @@ ggplot(summer) + geom_point(aes(year,secchi, colour=supplier))+
 
 The Sound does not appear in the plot because there is no data. 
 
-There are still basins with limited or not data from 2010 onwards (*Great Belt*) but this at least removes the potential for not having data reported in the past 2 years. 
+There are still basins with limited or not data from 2010 onward (*Great Belt*) but this at least removes the potential for not having data reported in the past 2 years. 
 
 ```{r restrict data before 2014}
 summer = summer %>% filter(year < 2014)
@@ -434,7 +434,6 @@ ggplot(mean_months_summer) + geom_point(aes(year,mean_secchi))+
 ```
 
 
-
 #### Plot summer secchi with target values indicated
 Horizontal lines are HELCOM target values.  
 ```{r summer secchi with target }
@@ -503,7 +502,6 @@ Status must be calculated in data prep because it's calculated on the basin leve
 ## Basin data with target
   secchi_target
   
-  
 ## Calculate basin status = basin_mean/basin_target
   
   basin_status = secchi_target %>%
@@ -513,11 +511,11 @@ Status must be calculated in data prep because it's calculated on the basin leve
 ## Assign basin status to BHI regions
   
     bhi_status = basin_status %>%
-                group_by(basin_name)%>%
-                summarise_each(funs(last), basin_name, status)%>% #select last year of data for status in each basin (this means status year differs by basin)
-                mutate(status = round(status*100))%>% #status is whole number 0-100
-                ungroup()%>%
-                left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
+                group_by(basin_name) %>%
+      filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
+                mutate(status = round(status*100)) %>% #status is whole number 0-100
+                ungroup() %>%
+                left_join(basin_lookup,.,by="basin_name") %>% #join bhi regions to basins
                 mutate(dimension = 'status') %>%
                 dplyr::select(rgn_id = bhi_id, dimension, score=status)
 ```
@@ -544,8 +542,6 @@ Status must be calculated in data prep because it's calculated on the basin leve
                  mutate(score = round(trend_score,2),
                         dimension = "trend")%>%
                 dplyr::select(rgn_id = bhi_id, dimension, score )
-               
-
 
 ```
 
@@ -557,7 +553,8 @@ Basin status is initially a value between 0 - 1.  Calculated for each year betwe
 
 ```{r plot basin status}
 
-ggplot(basin_status) + geom_point((aes(year,status)))+
+ggplot(basin_status) + 
+  geom_point((aes(year,status))) +
   facet_wrap(~basin_name) +
   theme(axis.text.x = element_text(colour="grey20", size=8, angle=90, 
                                     hjust=.5, vjust=.5, face = "plain"))
@@ -572,7 +569,9 @@ No status or trend for 5 or 6 - these are The Sound, which had no data.
     
 ```{r bhi status and trend plot}
 
-ggplot(full_join(bhi_status,bhi_trend, by=c("rgn_id","dimension","score"))) + geom_point(aes(rgn_id,score),size=2)+
+
+
+ggplot(rbind(bhi_status, bhi_trend)) + geom_point(aes(rgn_id,score),size=2)+
   facet_wrap(~dimension, scales="free_y")+
   xlab("BHI region")
 
@@ -586,11 +585,11 @@ These csv files will be used as a first cut for the secchi status and trend.
 1. Status and trend for each BHI region based on the basin level calculations
 ```{r write csv file to layers}
 ## Write csv files to layers
-    # readr::write_csv(bhi_status, 
-    #              file.path(dir_layers, "cw_nu_status_bhi2015.csv"))
+    # readr::write_csv(basin_status,
+    #              file.path(dir_layers, "cw_eut_status_score_bhi2015.csv"))
     # 
-    # readr::write_csv(bhi_trend, 
-    #              file.path(dir_layers, "cw_nu_trend_bhi2015.csv"))
+    # readr::write_csv(bhi_trend,
+    #              file.path(dir_layers, "cw_eut_trend_score_bhi2015.csv"))
 
 ```
 
@@ -670,7 +669,7 @@ print(plot_rescaled)
 
  bhi_status_1 = basin_status_orig %>%
                 group_by(basin_name) %>%
-                summarise_each(funs(last), basin_name, ratio) %>% #select last year of data for status in each basin (this means status year differs by basin)
+   filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
                 mutate(status = round(ratio^2*100))%>% #status is whole number 0-100
                 ungroup()%>%
                 left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
@@ -689,7 +688,7 @@ gpclibPermit()
 
   bhi_status_2 = basin_status_orig %>%
                 group_by(basin_name) %>%
-                summarise_each(funs(last), basin_name, ratio) %>% #select last year of data for status in each basin (this means status year differs by basin)
+    filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
                 mutate(status = round(ratio^4*100))%>% #status is whole number 0-100
                 ungroup()%>%
                 left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
@@ -704,7 +703,7 @@ gpclibPermit()
 
  bhi_status_3 = basin_status_orig %>%
                 group_by(basin_name) %>%
-                summarise_each(funs(last), basin_name, ratio) %>% #select last year of data for status in each basin (this means status year differs by basin)
+                filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
                 mutate(status = round(1/(1+ exp(-(ratio - 0.5)/0.1)) *100))%>% #status is whole number 0-100
                 ungroup()%>%
                 left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
@@ -721,7 +720,7 @@ gpclibPermit()
 
  bhi_status_4 = basin_status_orig %>%
                 group_by(basin_name) %>%
-                summarise_each(funs(last), basin_name, ratio) %>% #select last year of data for status in each basin (this means status year differs by basin)
+                filter(year == max(year)) %>% #select last year of data for status in each basin (this means status year differs by basin)
                 mutate(status = round(1/(1+ exp(-(ratio - 0.7)/0.08)) *100))%>% #status is whole number 0-100
                 ungroup()%>%
                 left_join(basin_lookup,.,by="basin_name")%>% #join bhi regions to basins
@@ -753,7 +752,7 @@ eut_status = full_join(dplyr::select(bhi_status,
 
 ```
 
-# 11. BSEP eutrophication data exploration (Final method of eut calcualtion)
+# 11. BSEP eutrophication data exploration (Final method of eut calculation)
 
 March, 2017
 
@@ -913,10 +912,12 @@ eut_trend_plot <- ggplot(eut_trend_new)+
   ggtitle("eut trend scores")
 print(eut_trend_plot)
 
+```
 
+## Save status and trend in /layers folder
+```{r}
 # save status and trend as data layers in layers folder 
-write_csv(eut_status, file.path(dir_layers, 'cw_eut_status_score_bhi2015'))
-write_csv(eut_trend_new, file.path(dir_layers, 'cw_eut_trend_score_bhi2015'))
-
+write_csv(eut_status, file.path(dir_layers, 'cw_eut_status_score_bhi2015.csv'))
+write_csv(eut_trend_new, file.path(dir_layers, 'cw_eut_trend_score_bhi2015.csv'))
 ```
 
