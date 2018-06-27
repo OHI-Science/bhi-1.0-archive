@@ -23,8 +23,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -33,10 +33,12 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
@@ -659,29 +661,42 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 <h2>Clean Waters: Eutrophication</h2>
 <div id="goal-description-10" class="section level3">
 <h3>Goal Description</h3>
-<p>The Lasting Special Places sub-goal focuses on those geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons, and assesses how well they are protected. <strong>For the BHI, the designation and management of marine protected areas (MPAs) captures the commitment of a country to preserving areas of biological, aesthetic or ecosystem service value.</strong> The designation of MPAs is also included in international agreements, such as the <a href="https://www.cbd.int/sp/targets/rationale/target-11/">Convention on Biodiversity’s target</a> for the designation of 10% of exclusive economic zones (EEZs) to be in MPAs.</p>
+<p>The Nutrient sub-goal of the Clean Water goal captures the degree to which local waters are affected by eutrophication. For the BHI four eutrophication indicators were included:</p>
+<ul>
+<li>winter (December-February) dissolved inorganic nitrogen (DIN)</li>
+<li>dissolved inorganic phosphorus (DIP) concentrations in the surface layer (0 - 10 m depth)</li>
+<li>summer (June-September) chlorophyll a concentration in the surface layer (0 - 10 m depth)</li>
+<li>summer (June-September) Secchi depth,</li>
+<li>hypoxic area below the halocline.</li>
+</ul>
+<p>The first three indicators are HELCOM core indicators (Baltic Sea Environmental Proceedings No 143). Hypoxic area is taken from Carstensen et al 2014.</p>
 </div>
 <div id="model-data-9" class="section level3">
 <h3>Model &amp; Data</h3>
-<p>The model assesses the area of MPAs in each country in relation to its EEZs, and their management status. Management status are broken down to three categories and weighted on a 0-1 scale:</p>
+<p>The geometric mean of the status of all five indicators have been calculated for Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland. For the other basins only four indicators (without hypoxic area) have been used to calculate the eutrophication status.</p>
 <ul>
-<li>0.1 = designated</li>
-<li>0.4 = designated and partly managed<br />
-</li>
-<li>1.0 = designated and managed</li>
+<li>Mean Summer Secchi depth (June-September) data from ICES database.</li>
+<li>Hypoxic area data published by Carstensen et al. 2014. Deep water anoxia are defined as O2 level &lt;2 mg⋅L−1. It represents the long-term effects of human activities on nutrient levels and water quality. We used deep water anoxia only for the following basins: Bornholm Basin, Western Gotland Basin, Eastern Gotland Basin, Northern Baltic Proper and Gulf of Finland.</li>
+<li>Winter (DIN), (DIP), and summer chorophyll a data have been downloaded from the Baltic Nest Institute database (DAS and NEST) with help from Miguel Rodriguez Medina.</li>
 </ul>
-<p>Both MPA area and management status data were downloaded from the <a href="http://mpas.helcom.fi">HELCOM MPA</a> website.</p>
 </div>
 <div id="reference-points-10" class="section level3">
 <h3>Reference points</h3>
-<p>The target is for 10% of a country’s EEZs is designated as MPAs, and are fully managed.</p>
+<p><em>Secchi depth</em> reference points are set based on the results obtained in the TARGREV project (HELCOM 2013a), taking advantage of the work carried out during the EUTRO PRO project (HELCOM 2009) and national work for WFD. The final targets were set through an expert evaluation process done by the intersessional activity on development of core eutrophication indicators (HELCOM CORE EUTRO) and the targets were adopted by the HELCOM Heads of Delegations. More information:</p>
+<ul>
+<li>Approaches and methods for eutrophication target setting in the Baltic Sea region</li>
+<li>Fleming-Lehtinen and Laamanen. 2012. Long-term changes in Secchi depth and the role of phytoplankton in explaining light attenuation in the Baltic Sea. Estuarine, Coastal, and Shelf Science 102-103:1-10</li>
+<li>EUTRO-OPER. Included on this page is a link to the Eutrophication Assessment Manual</li>
+</ul>
+<p>The <em>hypoxic</em> area reference point is set to be the hypoxic area of each basin in 1906.</p>
+<p>Reference points for the <em>winter (DIN), (DIP), and summer chlorophyll</em> a have been assessed from the Baltic Sea Environmental Proceedings No 143.</p>
 </div>
 <div id="considerations-for-bhi-2.0-10" class="section level3">
 <h3>Considerations for <em>BHI 2.0</em></h3>
 </div>
 <div id="other-information-10" class="section level3">
 <h3>Other information</h3>
-<p><em>external advisors/goalkeepers: Sofia Wikström</em></p>
+<p><em>external advisors/goalkeepers: Christoph Humborg</em></p>
 <p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/nutrient/nutrient_prep.Rmd"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
