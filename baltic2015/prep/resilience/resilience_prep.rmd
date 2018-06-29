@@ -10,7 +10,7 @@ params:
 
 # Preparation of Resilience Data Layers
 
-```{r setup}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 
 ## Libraries
 library(readr)
@@ -104,12 +104,12 @@ Two Baltic Region agreements will be assessed for *existence* and *compliance* f
 By country for each level assessed for each regulation  
 
 #### 1.2.2.1 Existence
-Scored as yes (1) or no (0)  
-Score_Existence = Score / Max
-Max = 1
+Scored as yes (1) or no (0)   
+Score_Existence = Score / Max  
+Max = 1  
 
 #### 1.2.2.2 Compliance
-Fail (0), Partial (1), Full (3)  
+Fail (0), Partial (1), Full (3)    
 Not equal increments because Full compliance rewarded more here.
 
 Country_compliance_directive = Mean (compliance score)_all_compliance_components
@@ -235,6 +235,7 @@ goal_spec_compli = goal_spec %>%
 
 #### 1.2.5.6 How many compliance components assessed?
 Some directives have no components assessed. Others have a subset that could not be assessed - these might differ by country. Minimal differences by country. WDF not assessed for Denmark. Germany assessed for one more POP component. Poland asssesse for one fewer UWWTD component.  
+
 **Gray bars are components not assessed**
 ```{r}
 
@@ -367,13 +368,15 @@ ggplot(goal_spec_overall)+
 ### 1.2.6 Exploring alternative mapping and weighting outcomes
 **Mapping**  
 Mapping the directives to goals can be done with different criteria. We explore 2 alternative mapping critera.  
-(1) Direct effect of directive on goal status - expert opinion  
-(2) Direct or indirect effect directive on goal status - expert opinion and key word search of the directives  
+
+1. Direct effect of directive on goal status - expert opinion  
+2. Direct or indirect effect directive on goal status - expert opinion and key word search of the directives  
 
 *Note* for this exploration this is done at the subgoal level. NUT, CON, TRA are treated as subgoals (not subcomponents) here.  
 
 
 **Weights**  
+
 Weights among different directives can be set using different criteria.  We calculate *G* in the resilience equation for two different mapping criteria.  
 
 G = sum(w_i * G_i) / sum(wi_i) ;  G_i = specific regulatory dataset, w_i = weight for each i dataset used to assess G  
@@ -863,16 +866,15 @@ write.csv(res_reg_cop21 , file.path(dir_layers,'res_reg_cop21_bhi2015.csv'),row.
 ## 2. Social
 The [Worldwide Governance Indicators (WGI) project](http://info.worldbank.org/governance/wgi/index.aspx#home) reports aggregate and individual governance indicators for 215 economies over the period 1996–2014, for six dimensions of governance: 
 
-Voice and Accountability  
-Political Stability and Absence of Violence/Terrorism  
-Government Effectiveness  
-Regulatory Quality  
-Rule of Law  
-Control of Corruption  
+- Voice and Accountability  
+- Political Stability and Absence of Violence/Terrorism  
+- Government Effectiveness  
+- Regulatory Quality  
+- Rule of Law  
+- Control of Corruption  
 
 ### 2.1 Data  
-OHI has already extracted these data by country.  For BHI, we obtained these data on 13 July 
-2016 from [the file 'wgi_combined_scores_by_country.csv' on the OHI github site](https://github.com/OHI-Science/ohiprep/tree/master/globalprep/worldbank_wgi/intermediate).
+OHI has already extracted these data by country.  For BHI, we obtained these data on 13 July 2016 from [the file 'wgi_combined_scores_by_country.csv' on the OHI github site](https://github.com/OHI-Science/ohiprep/tree/master/globalprep/worldbank_wgi/intermediate).
 
 #### 2.1.1 Data attributes  
 Colname names in 'wgi_combined_scores_by_country.csv'

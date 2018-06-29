@@ -1,0 +1,47 @@
+---
+title: 'Manuscript figures'
+author: "Julie"
+date: "6/27/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+
+## Figure 2. Flower Plot for Whole Baltic
+
+<add text here>
+
+![](reports/figures/BHI_regions/flower_Baltic.png)
+
+
+## Figure 3. Maps for Index at 3 different scales
+
+
+a) 42 BHI regions
+![](reports/figures/BHI_regions/map_Index.png)
+
+b) 9 EEZs
+
+![](reports/figures/EEZ/map_Index.png)
+
+c) 17 Subbasins
+
+![](reports/figures/SUBBASIN/map_Index.png)
+
+## sf
+st_union
+st_dissolve
+https://rawgit.com/jafflerbach/spatial-analysis-R/gh-pages/intro_to_sf.html
+
+
+
+## Resilience Table or Figure
+
+## Trend figure like Fig 3 in West Coast
+
+
+

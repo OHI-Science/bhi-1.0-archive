@@ -12,7 +12,7 @@ source("configure_toolbox.r")
 
 ## calculate scenario scores
 scores <- CalculateAll(conf, layers)
-write.csv(scores, 'scores.csv', na='', row.names=F)
+write_csv(scores, 'scores.csv', na='')
 
 
 ## visualize scores ----

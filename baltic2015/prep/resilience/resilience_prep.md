@@ -22,89 +22,6 @@ resilience\_prep
 Preparation of Resilience Data Layers
 =====================================
 
-``` r
-## Libraries
-library(readr)
-```
-
-    ## Warning: package 'readr' was built under R version 3.2.4
-
-``` r
-library(dplyr)
-```
-
-    ## Warning: package 'dplyr' was built under R version 3.2.5
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
-library(tidyr)
-```
-
-    ## Warning: package 'tidyr' was built under R version 3.2.5
-
-``` r
-library(ggplot2)
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.2.4
-
-``` r
-library(RMySQL)
-```
-
-    ## Warning: package 'RMySQL' was built under R version 3.2.5
-
-    ## Loading required package: DBI
-
-    ## Warning: package 'DBI' was built under R version 3.2.5
-
-``` r
-library(stringr)
-library(tools)
-library(rprojroot) # install.packages('rprojroot')
-```
-
-    ## Warning: package 'rprojroot' was built under R version 3.2.4
-
-``` r
-## rprojroot
-root <- rprojroot::is_rstudio_project
-
-## make_path() function to 
-make_path <- function(...) rprojroot::find_root_file(..., criterion = is_rstudio_project)
-
-
-dir_layers = make_path('baltic2015/layers') # replaces  file.path(dir_baltic, 'layers')
-
-
-# root$find_file("README.md")
-# 
-# root$find_file("ao_need_gl2014.csv")
-# 
-# root <- find_root_file("install_ohicore.r", 
-# 
-# withr::with_dir(
-#   root_file("DESCRIPTION"))
-
-source('~/github/bhi/baltic2015/prep/common.r')
-dir_res    = file.path(dir_prep, 'resilience')
-
-dir_wgi    = file.path(dir_prep,'pressures/wgi_social') ## to source wgi data
-
-## add a README.md to the prep directory with the rawgit.com url for viewing on GitHub
-create_readme(dir_res, 'resilience_prep.rmd') 
-```
-
 1. Ecological
 -------------
 
@@ -163,7 +80,8 @@ By country for each level assessed for each regulation
 #### 1.2.2.1 Existence
 
 Scored as yes (1) or no (0)
-Score\_Existence = Score / Max Max = 1
+Score\_Existence = Score / Max
+Max = 1
 
 #### 1.2.2.2 Compliance
 
@@ -205,7 +123,7 @@ str(eu_baltic_scores)
 ```
 
     ## 'data.frame':    879 obs. of  13 variables:
-    ##  $ DirectiveName                     : Factor w/ 18 levels "Commission Implementing Regulation 792/2012 of 23 August 2012 laying down rules for the design of permits, certificates and oth"| __truncated__,..: 12 12 12 12 12 12 12 12 12 12 ...
+    ##  $ DirectiveName                     : Factor w/ 18 levels "Commission Implementing Regulation 792/2012 of 23 August 2012 laying down rules for the design of permits, cert"| __truncated__,..: 12 12 12 12 12 12 12 12 12 12 ...
     ##  $ DirectiveAbbreviation             : Factor w/ 16 levels "BIRDS","BSAP",..: 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ ReportYear                        : int  2014 2014 2014 2014 2014 2014 2014 2014 2014 2014 ...
     ##  $ CountryName                       : Factor w/ 9 levels "Denmark","Estonia",..: 1 1 1 1 1 1 1 1 2 2 ...
@@ -216,8 +134,8 @@ str(eu_baltic_scores)
     ##  $ ComplianceText                    : Factor w/ 77 levels "","\" As the balance is done in accordance with WFD requirements, it is clear how much less water needs to be abstracted.\"",..: 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ ComplianceTextReference           : Factor w/ 193 levels "","Art. 10","Art. 11 (Annexes IV and VII)",..: 129 135 186 130 131 171 174 178 129 135 ...
     ##  $ Notes_UncertainitiesInECreport    : Factor w/ 10 levels ""," ","German plans to reduce this pressure showed a list of links to legislation and did not introduced the measures (unknown).",..: 1 1 1 1 1 1 1 1 1 1 ...
-    ##  $ Notes_AreasForFurtherInvestigation: Factor w/ 28 levels "","\"Finland has an extensive hydrological monitoring network in place, providing daily information about the water levels and rat"| __truncated__,..: 1 1 1 1 1 1 1 1 1 1 ...
-    ##  $ Comments                          : Factor w/ 75 levels "","11 threats or pressures were considered: i) Agriculture, ii) Sylviculture, foresty, iii) Mining, extraction of materials and en"| __truncated__,..: 1 1 1 1 7 73 28 1 1 1 ...
+    ##  $ Notes_AreasForFurtherInvestigation: Factor w/ 28 levels "","\"Finland has an extensive hydrological monitoring network in place, providing daily information about the wate"| __truncated__,..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ Comments                          : Factor w/ 75 levels "","11 threats or pressures were considered: i) Agriculture, ii) Sylviculture, foresty, iii) Mining, extraction of "| __truncated__,..: 1 1 1 1 7 73 28 1 1 1 ...
 
 ``` r
 dim(eu_baltic_scores)
@@ -237,7 +155,7 @@ str(international_scores)
     ##  $ CountryName                       : Factor w/ 9 levels "Denmark","Estonia",..: 1 2 3 4 5 6 7 9 8 8 ...
     ##  $ Existence                         : Factor w/ 1 level "Yes": 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ ExistenceLevel                    : Factor w/ 4 levels "Acceptance","Continuation",..: 3 3 1 3 3 3 3 3 3 2 ...
-    ##  $ ExistenceNotes                    : Factor w/ 2 levels "All terms, \"ratification\" (rtf), \"accession\" (acs), \"approval\" (apv) and \"acceptance\" (acp), signify the consent of a S"| __truncated__,..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ ExistenceNotes                    : Factor w/ 2 levels "All terms, \"ratification\" (rtf), \"accession\" (acs), \"approval\" (apv) and \"acceptance\" (acp), signify th"| __truncated__,..: 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ ComplianceComponent               : logi  NA NA NA NA NA NA ...
     ##  $ ComplianceComponentScore          : logi  NA NA NA NA NA NA ...
     ##  $ NAexplanation                     : Factor w/ 1 level "Currently will not assess for compliance": 1 1 1 1 1 1 1 1 1 1 ...
@@ -300,6 +218,8 @@ goal_spec = rbind(eu_baltic_scores, international_scores) %>%
             arrange(DirectiveAbbreviation, CountryName)
 ```
 
+    ## Warning: package 'bindrcpp' was built under R version 3.4.4
+
 #### 1.2.5.3 assign numeric score
 
 ``` r
@@ -354,6 +274,7 @@ goal_spec_compli = goal_spec %>%
 #### 1.2.5.6 How many compliance components assessed?
 
 Some directives have no components assessed. Others have a subset that could not be assessed - these might differ by country. Minimal differences by country. WDF not assessed for Denmark. Germany assessed for one more POP component. Poland asssesse for one fewer UWWTD component.
+
 **Gray bars are components not assessed**
 
 ``` r
@@ -513,12 +434,14 @@ ggplot(goal_spec_overall)+
 
 **Mapping**
 Mapping the directives to goals can be done with different criteria. We explore 2 alternative mapping critera.
-(1) Direct effect of directive on goal status - expert opinion
-(2) Direct or indirect effect directive on goal status - expert opinion and key word search of the directives
+
+1.  Direct effect of directive on goal status - expert opinion
+2.  Direct or indirect effect directive on goal status - expert opinion and key word search of the directives
 
 *Note* for this exploration this is done at the subgoal level. NUT, CON, TRA are treated as subgoals (not subcomponents) here.
 
 **Weights**
+
 Weights among different directives can be set using different criteria. We calculate *G* in the resilience equation for two different mapping criteria.
 
 G = sum(w\_i \* G\_i) / sum(wi\_i) ; G\_i = specific regulatory dataset, w\_i = weight for each i dataset used to assess G
@@ -594,8 +517,8 @@ map_direct_wi_importance = left_join(map_direct_long, weights_importance,
                         by=c("regulation"="layer"))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `regulation`/`layer` joining character vector and factor,
+    ## coercing into character vector
 
 ``` r
 ## join country scoring to mapping and weights
@@ -607,8 +530,8 @@ map_direct_wi_importance_score = inner_join(goal_spec_overall, map_direct_wi_imp
                            arrange(country,goal)
 ```
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `DirectiveAbbreviation`/`regulation` joining factor and
+    ## character vector, coercing into character vector
 
 ``` r
 ## calculate country G
@@ -655,8 +578,8 @@ map_direct_wi_quality = left_join(map_direct_long, weights_quality,
                         by=c("regulation"="layer"))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `regulation`/`layer` joining character vector and factor,
+    ## coercing into character vector
 
 ``` r
 ## join country scoring to mapping and weights
@@ -668,8 +591,8 @@ map_direct_wi_quality_score = inner_join(goal_spec_overall, map_direct_wi_qualit
                            arrange(country,goal)
 ```
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `DirectiveAbbreviation`/`regulation` joining factor and
+    ## character vector, coercing into character vector
 
 ``` r
 ## calculate country G
@@ -763,8 +686,8 @@ map_indirect_direct_wi_importance = left_join(map_indirect_direct_long, weights_
                         by=c("regulation"="layer"))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `regulation`/`layer` joining character vector and factor,
+    ## coercing into character vector
 
 ``` r
 ## join country scoring to mapping and weights
@@ -777,8 +700,8 @@ map_indirect_direct_wi_importance_score = inner_join(goal_spec_overall,
                            arrange(country,goal)
 ```
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `DirectiveAbbreviation`/`regulation` joining factor and
+    ## character vector, coercing into character vector
 
 ``` r
 ## calculate country G
@@ -825,8 +748,8 @@ map_indirect_direct_wi_quality = left_join(map_indirect_direct_long, weights_qua
                         by=c("regulation"="layer"))
 ```
 
-    ## Warning in left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `regulation`/`layer` joining character vector and factor,
+    ## coercing into character vector
 
 ``` r
 ## join country scoring to mapping and weights
@@ -839,8 +762,8 @@ map_indirect_direct_wi_quality_score = inner_join(goal_spec_overall,
                            arrange(country,goal)
 ```
 
-    ## Warning in inner_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## factor and character vector, coercing into character vector
+    ## Warning: Column `DirectiveAbbreviation`/`regulation` joining factor and
+    ## character vector, coercing into character vector
 
 ``` r
 ## calculate country G
@@ -956,8 +879,8 @@ goal_spec_overall1 = goal_spec_overall1  %>%
                       full_join(., bhi_lookup, by= c("CountryName"="country"))
 ```
 
-    ## Warning in full_join_impl(x, y, by$x, by$y, suffix$x, suffix$y): joining
-    ## character vector and factor, coercing into character vector
+    ## Warning: Column `CountryName`/`country` joining factor and character
+    ## vector, coercing into character vector
 
 ``` r
 dim(goal_spec_overall1)
@@ -1119,12 +1042,12 @@ TO DO
 
 The [Worldwide Governance Indicators (WGI) project](http://info.worldbank.org/governance/wgi/index.aspx#home) reports aggregate and individual governance indicators for 215 economies over the period 1996–2014, for six dimensions of governance:
 
-Voice and Accountability
-Political Stability and Absence of Violence/Terrorism
-Government Effectiveness
-Regulatory Quality
-Rule of Law
-Control of Corruption
+-   Voice and Accountability
+-   Political Stability and Absence of Violence/Terrorism
+-   Government Effectiveness
+-   Regulatory Quality
+-   Rule of Law
+-   Control of Corruption
 
 ### 2.1 Data
 
