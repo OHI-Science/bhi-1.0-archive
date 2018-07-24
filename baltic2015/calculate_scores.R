@@ -23,11 +23,14 @@ write_csv(scores, 'scores.csv', na='')
 
 # ## source
 # source('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez/MappingFunction.R')
-# PlotMap(goal_plot = "AO")
 
 ## source until added to ohicore
 source('PlotMap.r')
 source('PlotMapMulti.r')
+
+##TODO::: instead of PlotMapMulti, should be able to do pmap(scores, PlotMap)??
+## make the scores object a list for each goal, and then make PlotMap able to do one list or many lists
+## or use pmap_df
 
 ## BHI regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
