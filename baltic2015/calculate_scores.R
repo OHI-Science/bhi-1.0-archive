@@ -5,7 +5,7 @@
 ## - The `ohicore` function CalculateAll() calculates OHI scores.
 
 ## set working directory for all OHI calculations
-setwd("~/github/bhi/baltic2015")
+setwd(here::here('baltic2015'))
 
 ## run the configure_toolbox.r script to check configuration
 source("configure_toolbox.r")
@@ -22,7 +22,6 @@ write_csv(scores, 'scores.csv', na='')
 # PlotMap(goal_plot = "AO")
 
 ## source until added to ohicore
-source('PrepSpatial.R')
 source('PlotMap.r')
 source('PlotMapMulti.r')
 
@@ -30,17 +29,18 @@ source('PlotMapMulti.r')
 
 ## BHI regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
-             spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'),
+             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs.geojson'),
              path_figures = 'reports/figures/BHI_regions')
 
 ## EEZ regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
-             spatial_poly = PrepSpatial('spatial/BHI_EEZ_regions.shp'),
+             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_EEZ') %>%
+               dplyr::rename(rgn_id = eez_id),
              path_figures = 'reports/figures/EEZ')
 
 ## SUBBASIN regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 500),
-             spatial_poly = PrepSpatial('spatial/BHI_SUBBASIN_regions.shp'),
+             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'BHI_SUBBASIN_regions.shp'),
              path_figures = 'reports/figures/SUBBASIN')
 
 

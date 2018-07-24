@@ -19,7 +19,7 @@
 #' @examples PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id < 300), spatial_poly = PrepSpatial('spatial/regions_gcs.geojson'), path_figures = 'reports/figures/BHI_regions')
 
 PlotMapMulti <- function(scores          = read.csv('scores.csv'),
-                         spatial_poly    = PrepSpatial('spatial/regions_gcs.geojson'),
+                         spatial_poly,
                          fld_value_id    = 'region_id',
                          fld_value_score = 'score',
                          dim_choice      = 'score',
@@ -64,7 +64,7 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'),
 
     ## plot map!
     PlotMap(scores       = scores_g,
-            rgn_poly     = spatial_poly,
+            spatial_poly = spatial_poly,
             fld_rgn      = fld_value_id,
             fld_score    = fld_value_score,
             print_fig    = print_fig,

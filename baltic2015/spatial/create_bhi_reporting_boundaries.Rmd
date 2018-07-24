@@ -8,42 +8,102 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(tidyverse) # install.packages(tidyverse)
-library(stringr) # install.packages(stringr)
-library(sf) # install.packages(sf)
-library(here) # install.package(here)
+library(tidyverse) # install.packages("tidyverse")
+library(stringr) # install.packages("stringr")
+library(sf) # install.packages("sf")
+library(mapview) # install.packages("mapview")
+library(here) # install.packages("here")
+library(smoothr) # install.packages("smoothr")
 
+## shapefile information
 dir_spatial <- file.path(here::here(), "baltic2015/spatial")
-bhi_filename <- "regions_gcs"
+bhi_filename <- "rgn_offshore_gcs"
+
+## regions_lookup
+regions_lookup <- read_csv(file.path(dir_spatial, "regions_lookup_complete_wide.csv"))
+
 ```
+Also investigated these but they all have terrible lines that would be nice to drop
+
+- bhi_filename <- "BHI_EEZ_regions"  
+- bhi_filename <- "BHI_SUBBASIN_regions"
 
 ## read in shapefile
 ```{r}
 rgns_bhi <- sf::st_read(dsn = dir_spatial, layer=bhi_filename)
-rgns_bhi
-
-nrow(rgns_bhi)
-names(rgns_bhi)
+rgns_bhi %>% mapview
 # plot(rgns_bhi)
+
+names(rgns_bhi)
+nrow(rgns_bhi) # 42
+rgns_bhi
 ```
 
-## Wrangle attributes
+## Join dataframe
+Join dataframe with eez and subbasin ids as well
 
-Create EEZ and Subbasin information as separate columns:
-
-[SO](https://stackoverflow.com/questions/4350440/split-data-frame-string-column-into-multiple-columns)
 ```{r}
+rgns_bhi <- rgns_bhi %>%
+  left_join(regions_lookup %>%
+              select(rgn_id = region_id, 
+                     eez_id, 
+                     subbasin_id), 
+            by = "rgn_id")
+```
+
+Note: how to [split string column into multiple columns](https://stackoverflow.com/questions/4350440/split-data-frame-string-column-into-multiple-columns)
+
+Not necessary but this is how it was done:
 rgns_bhi <- rgns_bhi %>%
   mutate(
     eez      = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,1],
     subbasin = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,2],)
-```
 
-Dissolve; 
+
+## Dissolve, i.e. group_by summarize
+
+https://github.com/r-spatial/sf/issues/290
+
+franconia %>% 
+  group_by(district) %>% 
+  summarise(m = mean(SHAPE_LEN)) %>% 
+  st_cast() %>% 
+  mapview(zcol = "m")
+
 
 ```{r}
+rgns_eez <- rgns_bhi %>%
+  group_by(cntry_name, eez_id) %>% 
+  summarize(area_km2 = sum(area_km2)) # trie st_is_valid, all are valid
+
+nrow(rgns_eez)
+  
+mapview::mapview(rgns_eez)
+# plot(rgns_eez)
+```
+
+**Try to clean up errant lines**
+
+There are a bunch of errant lines, but they are a part of the original shapefile. Try cleaning them up a bit, this didn't work
+
+http://strimas.com/smoothr/reference/drop_crumbs.html
+smoothr::drop_crumbs
+
+```{r}
+# rgns_eez2 <- 
+#   smoothr::drop_crumbs(rgns_eez, units::set_units(50, km^2)) %>%
+#   mapview::mapview()
+```
+
+## Save shapefile
+
+```{r}
+## save EEZ
+st_write(rgns_eez, dsn = dir_spatial, layer = "regions_EEZ", 
+         driver = "ESRI Shapefile", update = TRUE)
 
 ```
+
 
 
 ## Plot
