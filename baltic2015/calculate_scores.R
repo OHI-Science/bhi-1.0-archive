@@ -17,6 +17,10 @@ write_csv(scores, 'scores.csv', na='')
 
 ## visualize scores ----
 
+
+## Maps for Each Goal ----
+# Note: these spatial files are in baltic2015/spatial; `create_bhi_reporting_boundaries.Rmd` creates EEZ and SUBBASIN
+
 # ## source
 # source('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez/MappingFunction.R')
 # PlotMap(goal_plot = "AO")
@@ -25,11 +29,9 @@ write_csv(scores, 'scores.csv', na='')
 source('PlotMap.r')
 source('PlotMapMulti.r')
 
-## Make Maps ----
-
 ## BHI regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
-             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs.geojson'),
+             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
              path_figures = 'reports/figures/BHI_regions')
 
 ## EEZ regions
@@ -40,7 +42,8 @@ PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id >
 
 ## SUBBASIN regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 500),
-             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'BHI_SUBBASIN_regions.shp'),
+             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_SUBBASIN') %>%
+               dplyr::rename(rgn_id = basin_id),
              path_figures = 'reports/figures/SUBBASIN')
 
 

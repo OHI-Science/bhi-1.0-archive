@@ -17,11 +17,10 @@ library(smoothr) # install.packages("smoothr")
 
 ## shapefile information
 dir_spatial <- file.path(here::here(), "baltic2015/spatial")
-bhi_filename <- "rgn_offshore_gcs"
+bhi_filename <- "regions_gcs"
 
 ## regions_lookup
-regions_lookup <- read_csv(file.path(dir_spatial, "regions_lookup_complete_wide.csv"))
-
+regions_lookup <- read_csv(file.path(dir_spatial, "regions_lookup_complete_wide.csv")) 
 ```
 Also investigated these but they all have terrible lines that would be nice to drop
 
@@ -39,25 +38,32 @@ nrow(rgns_bhi) # 42
 rgns_bhi
 ```
 
-## Join dataframe
-Join dataframe with eez and subbasin ids as well
-
-```{r}
-rgns_bhi <- rgns_bhi %>%
-  left_join(regions_lookup %>%
-              select(rgn_id = region_id, 
-                     eez_id, 
-                     subbasin_id), 
-            by = "rgn_id")
-```
+## Wrangle and join dataframe
 
 Note: how to [split string column into multiple columns](https://stackoverflow.com/questions/4350440/split-data-frame-string-column-into-multiple-columns)
 
 Not necessary but this is how it was done:
 rgns_bhi <- rgns_bhi %>%
-  mutate(
-    eez      = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,1],
-    subbasin = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,2],)
+ 
+
+
+
+Join dataframe with eez and subbasin ids as well
+
+
+
+```{r}
+rgns_bhi <- rgns_bhi %>%
+   mutate(
+    eez_nam   = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,1],
+    basin_nam = str_split_fixed(rgns_bhi$rgn_nam, " - ", 2)[,2],) %>%
+  left_join(regions_lookup %>%
+              select(rgn_id = region_id, 
+                     eez_id, 
+                     basin_id = subbasin_id, # otherwise too long for shapefile header
+                     area_km2 = area_km2_rgn),
+            by = "rgn_id")
+```
 
 
 ## Dissolve, i.e. group_by summarize
@@ -72,14 +78,23 @@ franconia %>%
 
 
 ```{r}
+## EEZs
 rgns_eez <- rgns_bhi %>%
-  group_by(cntry_name, eez_id) %>% 
-  summarize(area_km2 = sum(area_km2)) # trie st_is_valid, all are valid
+  group_by(eez_nam, eez_id) %>% 
+  summarize(area_km2 = sum(area_km2)) # tried st_is_valid, all are valid
 
 nrow(rgns_eez)
   
 mapview::mapview(rgns_eez)
-# plot(rgns_eez)
+
+## SUBBASINS
+rgns_subbasin <- rgns_bhi %>%
+  group_by(basin_name, basin_id) %>% 
+  summarize(area_km2 = sum(area_km2)) 
+
+nrow(rgns_subbasin)
+  
+mapview::mapview(rgns_subbasin)
 ```
 
 **Try to clean up errant lines**
@@ -89,10 +104,13 @@ There are a bunch of errant lines, but they are a part of the original shapefile
 http://strimas.com/smoothr/reference/drop_crumbs.html
 smoothr::drop_crumbs
 
-```{r}
-# rgns_eez2 <- 
-#   smoothr::drop_crumbs(rgns_eez, units::set_units(50, km^2)) %>%
-#   mapview::mapview()
+http://data.bshc.pro/metadata/crs/
+http://spatialreference.org/ref/epsg/3035/
+```{r, eval=FALSE}
+## this did not help so didn't save it as an object. Threshold setting is likely the problem: played around with many thresholds, crs, and can't change to km (always km^2)...
+st_transform(rgns_subbasin, crs = 3035)
+smoothr::drop_crumbs(rgns_subbasin, units::set_units(200, km2)) %>%
+  mapview::mapview()
 ```
 
 ## Save shapefile
@@ -100,7 +118,11 @@ smoothr::drop_crumbs
 ```{r}
 ## save EEZ
 st_write(rgns_eez, dsn = dir_spatial, layer = "regions_EEZ", 
-         driver = "ESRI Shapefile", update = TRUE)
+         driver = "ESRI Shapefile", update = TRUE, delete_layer = TRUE)
+
+## save SUBBASIN
+st_write(rgns_subbasin, dsn = dir_spatial, layer = "regions_SUBBASIN", 
+         driver = "ESRI Shapefile", update = TRUE, delete_layer = TRUE)
 
 ```
 
