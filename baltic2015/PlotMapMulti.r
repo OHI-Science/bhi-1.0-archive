@@ -26,7 +26,7 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'),
                          print_fig       = FALSE,
                          save_fig        = TRUE,
                          # active_plotly   = FALSE, ## takes too long, causes RStudio to crash
-                         path_figures    = 'reports/figures',
+                         dir_figures     = 'reports/figures',
                          scale_label     = 'score',
                          scale_limits    = c(0, 100)) {
                          # TODO: interactive = FALSE
@@ -68,11 +68,11 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'),
             fld_rgn      = fld_value_id,
             fld_score    = fld_value_score,
             print_fig    = print_fig,
-            fig_path     = sprintf('%s/map_%s.png', path_figures, g),
+            dir_figures     = sprintf('%s/map_%s.png', path_figures, g),
             map_title    = sprintf('Ocean Health Index: %s', g),
             scale_label  = scale_label,
             scale_limits = scale_limits)
-    #DEBUG scores = scores_g; rgn_poly = spatial_poly; fld_rgn= fld_value_id;fld_score = fld_value_score;print_fig = print_fig; fig_path = sprintf('%s/map_%s.png', path_figures, g); map_title = map_title;scale_label = scale_label;scale_limits = scale_limits
+    #DEBUG scores = scores_g; rgn_poly = spatial_poly; fld_rgn= fld_value_id;fld_score = fld_value_score;print_fig = print_fig; dir_figures = sprintf('%s/map_%s.png', path_figures, g); map_title = map_title;scale_label = scale_label;scale_limits = scale_limits
 
   }
 

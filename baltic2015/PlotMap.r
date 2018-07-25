@@ -5,12 +5,12 @@
 #' @param spatial_poly dataframe of spatial boundaries; prepared by PrepSpatial()
 #' @param map_title optional title for map
 #' @param include_land whether or not to map land behind OHI regions. SEE TODOs BELOW
-#' @param fld_rgn usually rgn_id or region_id; default 'region_id'
-#' @param fld_score column name of value to plot; default 'score'
+#' @param fld_value_id usually rgn_id or region_id; default 'region_id'
+#' @param fld_value_score column name of value to plot; default 'score'
 #' @param scale_label default to 'score' TODO: necessary?
 #' @param scale_limits default to c(0, 100)
 #' @param print_fig logical to print to display; default TRUE
-#' @param fig_path file path to save png; default NULL
+#' @param dir_figures file path to save png; default NULL
 #'
 #' @return (invisible) ggplot object
 #' @export
@@ -22,30 +22,53 @@
 ##### temporary (until added to ohicore)
 library(ggplot2) # install.packages('ggplot2')
 library(RColorBrewer) # install.packages('RColorBrewer')
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 
 ## see: https://github.com/hadley/ggplot2/wiki/plotting-polygon-shapefiles
 
 PlotMap <- function(scores,
                     spatial_poly,
                     map_title       = element_blank(),
-                    fld_rgn         = 'region_id',
-                    fld_score       = 'score',
+                    fld_value_id    = 'region_id',
+                    fld_value_score = 'score',
+                    dim_choice      = 'score',
                     scale_label     = 'score',
+                    save_fig        = TRUE,
                     scale_limits    = c(0, 100),
                     print_fig       = TRUE, ### print to display
-                    fig_path        = NULL) { ### path to save the plot as an image
+                    dir_figures     = NULL) { ### path to save the plot as an image
                     # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on {
-  ## DEBUG: fld_rgn <- 'region_id'; fld_score <- 'score'; scale_limits <- c(0, 100);
+  ## DEBUG: fld_value_id <- 'region_id'; fld_value_score <- 'score'; scale_limits <- c(0, 100);
   ## PlotMap(scores, spatial_poly = spatial_poly, scale_label = 'test1', map_title = 'test2')
 
 
+   ## setup ----
+
+  ## check field values in scores column names
+  # if ( !fld_value_score %in% names(scores) | !fld_value_id %in% names(scores) ) {
+  #   stop(sprintf('Column name "%s" or "%s" not found in scores variable, please modify PlotMap() function call.',
+  #                fld_value_score, fld_value_id))
+  # }
+
+  ## if exists, remove region_id == 0 for mapping
+  if (0 %in% scores[[fld_value_id]]){
+    scores <- scores[scores[[fld_value_id]] != 0, ] # figure this out with filter() someday
+  }
+
+  ## if exists, filter dimension for 'score'
+  if ( 'dimension' %in% names(scores) ) {
+    scores <- scores %>%
+      filter(dimension == dim_choice)
+  }
+
 
   ### rename columns for convenience...
-  names(scores)[names(scores) == fld_rgn]   <- 'rgn_id'
-  names(spatial_poly)[names(spatial_poly) == fld_rgn]   <- 'rgn_id'
-  names(scores)[names(scores) == fld_score] <- 'score'
+  names(scores)[names(scores) == fld_value_id]   <- 'rgn_id'
+  names(spatial_poly)[names(spatial_poly) == fld_value_id]   <- 'rgn_id'
+  names(scores)[names(scores) == fld_value_score] <- 'score'
+
+  ## extract goal information
+  goal <- scores$goal[1]
 
   ### join polygon with scores
   score_rgn <- spatial_poly %>%
@@ -88,8 +111,12 @@ PlotMap <- function(scores,
     print(df_plot)
   }
 
-  if(!is.null(fig_path)) {
-    ggsave(fig_path, plot = df_plot, width = 7, height = 7)
+  if(!is.null(dir_figures)) {
+
+    file_save <- sprintf('%s/map_%s.png', dir_figures, goal)
+
+    ggsave(file_save, plot = df_plot, width = 7, height = 7)
+    cowplot::save_plot(file_save, plot = df_plot)
   }
 
   # tested July 2016: plotly super super slow, causes RStudio to crash.

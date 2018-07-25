@@ -26,7 +26,8 @@ write_csv(scores, 'scores.csv', na='')
 
 ## source until added to ohicore
 source('PlotMap.r')
-source('PlotMapMulti.r')
+# source('PlotMapMulti.r')
+library(purrr)
 
 ##TODO::: instead of PlotMapMulti, should be able to do pmap(scores, PlotMap)??
 ## make the scores object a list for each goal, and then make PlotMap able to do one list or many lists
@@ -35,19 +36,36 @@ source('PlotMapMulti.r')
 ## BHI regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
              spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
-             path_figures = 'reports/figures/BHI_regions')
+             dir_figures = 'reports/figures/BHI_regions')
+
+
+## test with purrr
+scores <- readr::read_csv('scores.csv') %>%
+  filter(region_id < 300) %>%
+  filter(goal == "AO") %>%
+  list()
+
+PlotMap(scores,
+        spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
+        dir_figures = 'reports/figures/BHI_regions')
+
+
+purrr::map(.x = scores,
+           .f = PlotMap,
+           spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
+           dir_figures = 'reports/figures/BHI_regions')
+
 
 ## EEZ regions
-PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
-             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_EEZ') %>%
-               dplyr::rename(rgn_id = eez_id),
-             path_figures = 'reports/figures/EEZ')
+PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
+             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_EEZ') %>% dplyr::rename(rgn_id = eez_id),
+             dir_figures = 'reports/figures/EEZ')
 
 ## SUBBASIN regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 500),
              spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_SUBBASIN') %>%
                dplyr::rename(rgn_id = basin_id),
-             path_figures = 'reports/figures/SUBBASIN')
+             dir_figures = 'reports/figures/SUBBASIN')
 
 
 ## Flower plots for each region ----
