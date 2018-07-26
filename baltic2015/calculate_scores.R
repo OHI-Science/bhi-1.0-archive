@@ -65,6 +65,14 @@ purrr::map(.x = scores,
            spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
            dir_figures = 'reports/figures/BHI_regions')
 
+# or:
+
+scores %>% purrr::map(.f = PlotMap,
+                      spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
+                      dir_figures = 'reports/figures/BHI_regions')
+
+
+
 ## test 2 with purrr::pmap: IN PROGRESS!
 #https://speakerdeck.com/jennybc/row-oriented-workflows-in-r-with-the-tidyverse?slide=49
 scores <- readr::read_csv('scores.csv') %>%
@@ -76,7 +84,7 @@ scores <- readr::read_csv('scores.csv') %>%
 # scores
 # scores$data[[1]]
 
-purrr::map(.x = scores,
+scores %>% purrr::map(.x = data,
            .f = PlotMap,
            spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
            dir_figures = 'reports/figures/BHI_regions')
