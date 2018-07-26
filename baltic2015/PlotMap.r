@@ -44,11 +44,11 @@ PlotMap <- function(scores,
 
    ## setup ----
 
-  ## check field values in scores column names
-  # if ( !fld_value_score %in% names(scores) | !fld_value_id %in% names(scores) ) {
-  #   stop(sprintf('Column name "%s" or "%s" not found in scores variable, please modify PlotMap() function call.',
-  #                fld_value_score, fld_value_id))
-  # }
+  # check field values in scores column names
+  if ( !fld_value_score %in% names(scores) | !fld_value_id %in% names(scores) ) {
+    stop(sprintf('Column name "%s" or "%s" not found in scores variable, please modify PlotMap() function call.',
+                 fld_value_score, fld_value_id))
+  }
 
   ## if exists, remove region_id == 0 for mapping
   if (0 %in% scores[[fld_value_id]]){
@@ -116,7 +116,7 @@ PlotMap <- function(scores,
     file_save <- sprintf('%s/map_%s.png', dir_figures, goal)
 
     ggsave(file_save, plot = df_plot, width = 7, height = 7)
-    cowplot::save_plot(file_save, plot = df_plot)
+    #cowplot::save_plot(file_save, plot = df_plot)
   }
 
   # tested July 2016: plotly super super slow, causes RStudio to crash.

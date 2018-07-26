@@ -33,13 +33,23 @@ library(purrr)
 ## make the scores object a list for each goal, and then make PlotMap able to do one list or many lists
 ## or use pmap_df
 
+## super helpful resources:
+# https://github.com/jenniferthompson/RLadiesIntroToPurrr/blob/master/intro_purrr.pdf
+# http://r4ds.had.co.nz/iteration.html#the-map-functions
+# https://speakerdeck.com/jennybc/row-oriented-workflows-in-r-with-the-tidyverse
+
+## TODO:
+# 1. turn scores into a list of goals instead of a list of one goal
+# 2. change map to pmap
+
+
 ## BHI regions
 PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
              spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
              dir_figures = 'reports/figures/BHI_regions')
 
 
-## test with purrr
+## test 1 with purrr::map
 scores <- readr::read_csv('scores.csv') %>%
   filter(region_id < 300) %>%
   filter(goal == "AO") %>%
@@ -55,6 +65,24 @@ purrr::map(.x = scores,
            spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
            dir_figures = 'reports/figures/BHI_regions')
 
+## test 2 with purrr::pmap: IN PROGRESS!
+#https://speakerdeck.com/jennybc/row-oriented-workflows-in-r-with-the-tidyverse?slide=49
+scores <- readr::read_csv('scores.csv') %>%
+  filter(region_id < 300) %>%
+  group_by(goal) %>%
+  tidyr::nest() %>%
+  list()
+
+# scores
+# scores$data[[1]]
+
+purrr::map(.x = scores,
+           .f = PlotMap,
+           spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
+           dir_figures = 'reports/figures/BHI_regions')
+
+
+# ---------
 
 ## EEZ regions
 PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
