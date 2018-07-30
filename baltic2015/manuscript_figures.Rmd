@@ -74,5 +74,58 @@ resil %>%
 
 ## Trend figure like Fig 3 in West Coast
 
+Quickly exploring potential figures: 
 
+```{r}
+## scores wrangle 
+scores <- readr::read_csv('scores.csv') %>%
+  filter(dimension == "status" | dimension == "future") %>%
+  spread(key = dimension, value = score) %>%
+  mutate(lfs_minus_status = future - status)
+
+## manual colors
+# https://ggplot2.tidyverse.org/reference/scale_manual.html#examples
+cols <- c("FIS" = "red", "MAR" = "red", "FP" = "red",
+          "BD" = "blue",
+          "CON" = "orange", "EUT" = "orange", "TRA" = "orange", "CW" = "orange",
+          "LIV" = "darkgreen", "ECO" = "darkgreen", "LE" = "darkgreen",
+          "LSP" = "cyan", "ICO" = "cyan", "SP" = "cyan",
+          "AO" = "yellow",
+          "TR" = "pink", 
+          "CS" = "darkorange", 
+          "NP" = "darkpink",
+          "Index" = "gray")
+          
+```
+
+
+For all BHI regions
+```{r}
+## scores for BHI regions
+ggplot(data = scores %>% filter(region_id < 300), 
+       aes(x = status, y = lfs_minus_status)) + 
+  geom_point() + 
+  facet_wrap(~region_id) + 
+```
+
+This is too many. How about by EEZ?
+```{r}
+## scores for EEZ regions
+ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
+       aes(x = status, y = lfs_minus_status)) + 
+  geom_point() + 
+  # geom_text(aes(label = goal)) + 
+  scale_colour_manual(values = cols, aesthetics = c("colour", "fill")) + 
+  facet_wrap(~region_id) 
+  
+```
+
+Subbasin:
+```{r}
+## scores for Subbasin regions
+ggplot(data = scores %>% filter(region_id > 500), 
+       aes(x = status, y = lfs_minus_status)) + 
+  geom_point() + 
+  facet_wrap(~region_id)
+```
 

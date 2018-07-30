@@ -29,7 +29,7 @@ PlotMapMulti <- function(scores          = read.csv('scores.csv'),
                          dir_figures     = 'reports/figures',
                          scale_label     = 'score',
                          scale_limits    = c(0, 100)) {
-                         # TODO: interactive = FALSE
+  # TODO: interactive = FALSE
 
   ## setup ----
 

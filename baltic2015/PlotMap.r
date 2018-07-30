@@ -37,12 +37,12 @@ PlotMap <- function(scores,
                     scale_limits    = c(0, 100),
                     print_fig       = TRUE, ### print to display
                     dir_figures     = NULL) { ### path to save the plot as an image
-                    # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on {
+  # allow fig_png to be NULL and then pass it back as a list of ggplot objects so that you could modify it more on {
   ## DEBUG: fld_value_id <- 'region_id'; fld_value_score <- 'score'; scale_limits <- c(0, 100);
   ## PlotMap(scores, spatial_poly = spatial_poly, scale_label = 'test1', map_title = 'test2')
 
 
-   ## setup ----
+  ## setup ----
 
   # check field values in scores column names
   if ( !fld_value_score %in% names(scores) | !fld_value_id %in% names(scores) ) {

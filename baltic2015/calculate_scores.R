@@ -42,9 +42,15 @@ library(purrr)
 # 1. turn scores into a list of goals instead of a list of one goal
 # 2. change map to pmap
 
+# PlotMap example call
+PlotMap(scores = readr::read_csv('scores.csv') %>% filter(region_id < 300),
+        spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'))
+
 
 ## BHI regions
-PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id < 300),
+
+## original call, using a second function PlotMapMulti
+PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id < 300),
              spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
              dir_figures = 'reports/figures/BHI_regions')
 
@@ -73,7 +79,7 @@ scores %>% purrr::map(.f = PlotMap,
 
 
 
-## test 2 with purrr::pmap: IN PROGRESS!
+## test 2 with purrr::pmap: NEST
 #https://speakerdeck.com/jennybc/row-oriented-workflows-in-r-with-the-tidyverse?slide=49
 scores <- readr::read_csv('scores.csv') %>%
   filter(region_id < 300) %>%
@@ -81,14 +87,23 @@ scores <- readr::read_csv('scores.csv') %>%
   tidyr::nest() %>%
   list()
 
+## test 2 with purrr::pmap: SPLIT
+# http://r4ds.had.co.nz/iteration.html#shortcuts
+# Hadley: "Here I’ve used . as a pronoun: it refers to the current list element (in the same way that i referred to the current index in the for loop)."
+scores <- readr::read_csv('scores.csv') %>%
+  filter(region_id < 300) %>%
+  # group_by(goal) %>%
+  split(.$goal) %>%
+  list()
+
 # scores
-# scores$data[[1]]
+# scores$data[1]
 
-scores %>% purrr::map(.x = data,
-           .f = PlotMap,
-           spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
-           dir_figures = 'reports/figures/BHI_regions')
-
+scores %>% purrr::map(
+  .f = PlotMap,
+  spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
+  dir_figures = 'reports/figures/BHI_regions')
+# warning: Adding missing grouping variables: `goal`
 
 # ---------
 
