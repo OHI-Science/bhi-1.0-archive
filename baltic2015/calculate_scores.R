@@ -21,102 +21,43 @@ write_csv(scores, 'scores.csv', na='')
 ## Maps for Each Goal ----
 # Note: these spatial files are in baltic2015/spatial; `create_bhi_reporting_boundaries.Rmd` creates EEZ and SUBBASIN
 
-# ## source
-# source('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez/MappingFunction.R')
-
 ## source until added to ohicore
-source('PlotMap.r')
-# source('PlotMapMulti.r')
-library(purrr)
-
-##TODO::: instead of PlotMapMulti, should be able to do pmap(scores, PlotMap)??
-## make the scores object a list for each goal, and then make PlotMap able to do one list or many lists
-## or use pmap_df
+source('https://raw.githubusercontent.com/OHI-Science/bhi/draft/baltic2015/PlotMap.r')
 
 ## super helpful resources:
 # https://github.com/jenniferthompson/RLadiesIntroToPurrr/blob/master/intro_purrr.pdf
 # http://r4ds.had.co.nz/iteration.html#the-map-functions
 # https://speakerdeck.com/jennybc/row-oriented-workflows-in-r-with-the-tidyverse
 
-## TODO:
-# 1. turn scores into a list of goals instead of a list of one goal
-# 2. change map to pmap
-
-# PlotMap example call
-PlotMap(scores = readr::read_csv('scores.csv') %>% filter(region_id < 300),
-        spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'))
-
 
 ## BHI regions
-
-## original call, using a second function PlotMapMulti
-PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id < 300),
-             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
-             dir_figures = 'reports/figures/BHI_regions')
-
-
-## test 1 with purrr::map
 scores <- readr::read_csv('scores.csv') %>%
   filter(region_id < 300) %>%
-  filter(goal == "AO") %>%
-  list()
+  split(.$goal)
 
-PlotMap(scores,
-        spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
-        dir_figures = 'reports/figures/BHI_regions')
-
-
-purrr::map(.x = scores,
-           .f = PlotMap,
+purrr::map(scores, PlotMap,
            spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
            dir_figures = 'reports/figures/BHI_regions')
 
-# or:
-
-scores %>% purrr::map(.f = PlotMap,
-                      spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
-                      dir_figures = 'reports/figures/BHI_regions')
-
-
-
-## test 2 with purrr::pmap: NEST
-#https://speakerdeck.com/jennybc/row-oriented-workflows-in-r-with-the-tidyverse?slide=49
-scores <- readr::read_csv('scores.csv') %>%
-  filter(region_id < 300) %>%
-  group_by(goal) %>%
-  tidyr::nest() %>%
-  list()
-
-## test 2 with purrr::pmap: SPLIT
-# http://r4ds.had.co.nz/iteration.html#shortcuts
-# Hadley: "Here I’ve used . as a pronoun: it refers to the current list element (in the same way that i referred to the current index in the for loop)."
-scores <- readr::read_csv('scores.csv') %>%
-  filter(region_id < 300) %>%
-  # group_by(goal) %>%
-  split(.$goal) %>%
-  list()
-
-# scores
-# scores$data[1]
-
-scores %>% purrr::map(
-  .f = PlotMap,
-  spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_gcs'),
-  dir_figures = 'reports/figures/BHI_regions')
-# warning: Adding missing grouping variables: `goal`
-
-# ---------
 
 ## EEZ regions
-PlotMapMulti(scores = readr::read_csv('scores.csv') %>% filter(region_id > 300 & region_id < 500),
-             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_EEZ') %>% dplyr::rename(rgn_id = eez_id),
-             dir_figures = 'reports/figures/EEZ')
+scores <- readr::read_csv('scores.csv') %>%
+  filter(region_id > 300 & region_id < 500) %>%
+  split(.$goal)
+
+purrr::map(scores, PlotMap,
+           spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_EEZ'),
+           dir_figures = 'reports/figures/EEZ')
+
 
 ## SUBBASIN regions
-PlotMapMulti(scores       = readr::read_csv('scores.csv') %>% filter(region_id > 500),
-             spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_SUBBASIN') %>%
-               dplyr::rename(rgn_id = basin_id),
-             dir_figures = 'reports/figures/SUBBASIN')
+scores <- readr::read_csv('scores.csv') %>%
+  filter(region_id > 500) %>%
+  split(.$goal)
+
+purrr::map(scores, PlotMap,
+           spatial_poly = sf::st_read(dsn = 'spatial', layer = 'regions_SUBBASIN'),
+           dir_figures = 'reports/figures/SUBBASIN')
 
 
 ## Flower plots for each region ----

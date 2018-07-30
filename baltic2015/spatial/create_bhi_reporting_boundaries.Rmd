@@ -42,15 +42,7 @@ rgns_bhi
 
 Note: how to [split string column into multiple columns](https://stackoverflow.com/questions/4350440/split-data-frame-string-column-into-multiple-columns)
 
-Not necessary but this is how it was done:
-rgns_bhi <- rgns_bhi %>%
- 
-
-
-
 Join dataframe with eez and subbasin ids as well
-
-
 
 ```{r}
 rgns_bhi <- rgns_bhi %>%
@@ -81,7 +73,9 @@ franconia %>%
 ## EEZs
 rgns_eez <- rgns_bhi %>%
   group_by(eez_nam, eez_id) %>% 
-  summarize(area_km2 = sum(area_km2)) # tried st_is_valid, all are valid
+  summarize(area_km2 = sum(area_km2)) %>% # tried st_is_valid, all are valid
+  dplyr::rename(rgn_nam = eez_nam,  # rename will make PlotMap easier
+                rgn_id = eez_id)
 
 nrow(rgns_eez)
   
@@ -89,8 +83,11 @@ mapview::mapview(rgns_eez)
 
 ## SUBBASINS
 rgns_subbasin <- rgns_bhi %>%
-  group_by(basin_name, basin_id) %>% 
-  summarize(area_km2 = sum(area_km2)) 
+  group_by(basin_nam, basin_id) %>% 
+  summarize(area_km2 = sum(area_km2)) %>%
+  dplyr::rename(rgn_nam = basin_nam,  # rename will make PlotMap easier
+                rgn_id = basin_id)
+
 
 nrow(rgns_subbasin)
   
