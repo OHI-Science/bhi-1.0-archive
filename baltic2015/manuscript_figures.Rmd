@@ -93,7 +93,7 @@ cols <- c("FIS" = "red", "MAR" = "red", "FP" = "red",
           "AO" = "yellow",
           "TR" = "pink", 
           "CS" = "darkorange", 
-          "NP" = "darkpink",
+          "NP" = "red",
           "Index" = "gray")
           
 ```
@@ -112,11 +112,13 @@ This is too many. How about by EEZ?
 ```{r}
 ## scores for EEZ regions
 ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
-       aes(x = status, y = lfs_minus_status)) + 
+       aes(x = status, y = lfs_minus_status, color = goal)) + 
   geom_point() + 
-  # geom_text(aes(label = goal)) + 
-  scale_colour_manual(values = cols, aesthetics = c("colour", "fill")) + 
-  facet_wrap(~region_id) 
+  # geom_text(aes(label = goal), position = "jitter") + 
+  scale_colour_manual(values = cols) + 
+  facet_wrap(~region_id) +
+  theme_bw() +
+  geom_hline(yintercept = 0, color = "darkgray")
   
 ```
 
