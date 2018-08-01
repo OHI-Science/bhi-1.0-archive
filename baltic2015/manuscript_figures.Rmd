@@ -2,27 +2,31 @@
 title: 'Manuscript figures'
 author: "Julie"
 date: "6/27/2018"
-output: html_document
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
-
 ```
+
+## Figure 1. BHI schematic
 
 ## Figure 2. Flower Plot for Whole Baltic
 
-<add text here>
+add figure legend text
 
-<!---
 ![](reports/figures/BHI_regions/flower_Baltic.png)
---->
+
 
 ## Figure 3. Maps for Index at 3 different scales
 
-<!---
+figure legend text, these will be arranged as subplots
+
 a) 42 BHI regions
 ![](reports/figures/BHI_regions/map_Index.png)
 
@@ -34,47 +38,13 @@ c) 17 Subbasins
 
 ![](reports/figures/SUBBASIN/map_Index.png)
 
---->
-sf
-st_union
-st_dissolve
-https://rawgit.com/jafflerbach/spatial-analysis-R/gh-pages/intro_to_sf.html
 
+## Figure 4: Trend
 
+We want to create something like Fig 3 in OHI West Coast (Halpern et al. 2014)
 
-## Resilience Tables
+![](temp/halpern_et_al_2014_fig3.png)
 
-Resilience info
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-layers_csv <- read_csv("layers.csv")
-
-layers_csv %>%
-  filter(targets == "resilience") %>%
-  select(layer, description) %>%
-  knitr::kable()
-
-```
-
-Resilience matrix
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-resil <- read.csv("conf/resilience_matrix.csv")
-
-resil %>%
-  rownames_to_column() %>% 
-  select(-element) %>%
-  gather(goal, value, -rowname) %>% 
-  spread(rowname, value) %>%
-  knitr::kable()
-
-```
-
-
-
-## Trend figure like Fig 3 in West Coast
-
-![](halpern_et_al_2014_fig3.png)
 
 Quickly exploring potential figures: 
 
@@ -83,7 +53,10 @@ Quickly exploring potential figures:
 scores <- readr::read_csv('scores.csv') %>%
   filter(dimension == "status" | dimension == "future") %>%
   spread(key = dimension, value = score) %>%
-  mutate(lfs_minus_status = future - status)
+  mutate(lfs_minus_status = future - status) %>%
+  left_join(read_csv("spatial/regions_list.csv") %>%
+              select(region_id = rgn_id, region_name = rgn_name), 
+            by = "region_id")
 
 ## manual colors
 # https://ggplot2.tidyverse.org/reference/scale_manual.html#examples
@@ -108,42 +81,81 @@ shps <- c("FIS" = 16, "MAR" = 17, "FP" = 15,
           "CS" = 15, 
           "NP" = 15,
           "Index" = 15)
-          
 ```
 
+## EEZ regions
 
-For all BHI regions
-```{r plot BHI regions}
-## plot BHI regions
-ggplot(data = scores %>% filter(region_id < 300), 
-       aes(x = status, y = lfs_minus_status)) + 
-  geom_point() + 
-  facet_wrap(~region_id) + 
-```
+We'll probably want to do this figure for EEZs because there are too many BHI regions
 
-This is too many. How about by EEZ?
+TODO/TODISCUSS:
+
+- is this plot even a good idea? 
+- better colors
+- legend group by color
+- clean up theme
+- ylims?
+
 ```{r plot EEZ}
 ## plot EEZ regions
 ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
        aes(x = status, y = lfs_minus_status, color = goal, shape = goal)) + 
   geom_point(position = "jitter", size = 3) + 
-  # geom_text(aes(label = goal), position = "jitter") + 
+  ylim(-40, 40) +
   scale_colour_manual(values = cols) + 
   scale_shape_manual(values = shps) +
-  facet_wrap(~region_id) +
+  facet_wrap(~region_name) +
   theme_bw() +
   geom_hline(yintercept = 0, color = "darkgray") + 
-  scale_fill_discrete(name = "Title",
-labels = c("A", "B", "C"))
-  
+  scale_fill_discrete(name = "Title")
+# labels = c("A", "B", "C"))
 ```
 
-Subbasin:
+
+### For all BHI regions
+```{r plot BHI regions}
+## plot BHI regions
+ggplot(data = scores %>% filter(region_id < 300), 
+       aes(x = status, y = lfs_minus_status)) + 
+  geom_point() + 
+  facet_wrap(~region_id)
+```
+
+This is too many. 
+
+### Subbasin:
 ```{r plot subbasin}
 ## scores for Subbasin regions
 ggplot(data = scores %>% filter(region_id > 500), 
        aes(x = status, y = lfs_minus_status)) + 
   geom_point() + 
   facet_wrap(~region_id)
+```
+
+## Table 1: Goals
+
+## Table 2: Resilience
+
+### resilience info
+
+```{r resilience info}
+layers_csv <- read_csv("layers.csv")
+
+layers_csv %>%
+  filter(targets == "resilience") %>%
+  select(layer, description) %>%
+  knitr::kable()
+```
+
+### resilience matrix
+
+```{r resilience matrix}
+resil <- read.csv("conf/resilience_matrix.csv")
+
+resil %>%
+  rownames_to_column() %>% 
+  select(-element) %>%
+  gather(goal, value, -rowname) %>% 
+  spread(rowname, value) %>%
+  knitr::kable()
 ```
 
