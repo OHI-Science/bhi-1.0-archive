@@ -74,9 +74,11 @@ resil %>%
 
 ## Trend figure like Fig 3 in West Coast
 
+![](halpern_et_al_2014_fig3.png)
+
 Quickly exploring potential figures: 
 
-```{r}
+```{r scores wrangle}
 ## scores wrangle 
 scores <- readr::read_csv('scores.csv') %>%
   filter(dimension == "status" | dimension == "future") %>%
@@ -93,15 +95,26 @@ cols <- c("FIS" = "red", "MAR" = "red", "FP" = "red",
           "AO" = "yellow",
           "TR" = "pink", 
           "CS" = "darkorange", 
-          "NP" = "red",
-          "Index" = "gray")
+          "NP" = "purple",
+          "Index" = "darkgray")
+
+shps <- c("FIS" = 16, "MAR" = 17, "FP" = 15,
+          "BD" = 15,
+          "CON" = 16, "EUT" = 17, "TRA" = 18, "CW" = 15,
+          "LIV" = 16, "ECO" = 17, "LE" = 15,
+          "LSP" = 16, "ICO" = 17, "SP" = 15,
+          "AO" = 15,
+          "TR" = 15, 
+          "CS" = 15, 
+          "NP" = 15,
+          "Index" = 15)
           
 ```
 
 
 For all BHI regions
-```{r}
-## scores for BHI regions
+```{r plot BHI regions}
+## plot BHI regions
 ggplot(data = scores %>% filter(region_id < 300), 
        aes(x = status, y = lfs_minus_status)) + 
   geom_point() + 
@@ -109,21 +122,24 @@ ggplot(data = scores %>% filter(region_id < 300),
 ```
 
 This is too many. How about by EEZ?
-```{r}
-## scores for EEZ regions
+```{r plot EEZ}
+## plot EEZ regions
 ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
-       aes(x = status, y = lfs_minus_status, color = goal)) + 
-  geom_point() + 
+       aes(x = status, y = lfs_minus_status, color = goal, shape = goal)) + 
+  geom_point(position = "jitter", size = 3) + 
   # geom_text(aes(label = goal), position = "jitter") + 
   scale_colour_manual(values = cols) + 
+  scale_shape_manual(values = shps) +
   facet_wrap(~region_id) +
   theme_bw() +
-  geom_hline(yintercept = 0, color = "darkgray")
+  geom_hline(yintercept = 0, color = "darkgray") + 
+  scale_fill_discrete(name = "Title",
+labels = c("A", "B", "C"))
   
 ```
 
 Subbasin:
-```{r}
+```{r plot subbasin}
 ## scores for Subbasin regions
 ggplot(data = scores %>% filter(region_id > 500), 
        aes(x = status, y = lfs_minus_status)) + 
