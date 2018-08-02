@@ -29,6 +29,8 @@ add figure legend text
 
 figure legend text, these will be arranged as subplots
 
+Check out Alexa's tweet, Jarrett ggmaps idea. Casey put one in BC
+
 a) 42 BHI regions
 ![](reports/figures/BHI_regions/map_Index.png)
 
@@ -46,6 +48,8 @@ c) 17 Subbasins
 We want to create something like Fig 3 in OHI West Coast (Halpern et al. 2014)
 
 ![](temp/halpern_et_al_2014_fig3.png)
+
+talk to casey and courtney: we tend to underweight resil and overweight pressure so trend isn't great
 
 
 Quickly exploring potential figures: 
@@ -96,6 +100,12 @@ TODO/TODISCUSS:
 - legend group by color
 - clean up theme
 - ylims?
+
+Message here: CW not doing great and doesn't look like it will do great in the future, opposite of other goals
+Could simplify: grey out non-interesting, simplify to goal-level
+This plot looks like it's going through time, not a good way to plot: could do a quadrant so that it's good doing better, bad doing better, bad doing worse. 
+
+Try flipping it by goal: do we want each country to have its own color
 
 ```{r plot EEZ}
 ## plot EEZ regions
