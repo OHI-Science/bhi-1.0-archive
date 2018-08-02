@@ -14,16 +14,18 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 ```
 
-## Figure 1. BHI schematic
+## Figures {.tabset}
 
-## Figure 2. Flower Plot for Whole Baltic
+### Figure 1. BHI schematic
+
+### Figure 2. Baltic Flower Plot
 
 add figure legend text
 
 ![](reports/figures/BHI_regions/flower_Baltic.png)
 
 
-## Figure 3. Maps for Index at 3 different scales
+### Figure 3. Index Maps
 
 figure legend text, these will be arranged as subplots
 
@@ -39,7 +41,7 @@ c) 17 Subbasins
 ![](reports/figures/SUBBASIN/map_Index.png)
 
 
-## Figure 4: Trend
+### Figure 4: Trend
 
 We want to create something like Fig 3 in OHI West Coast (Halpern et al. 2014)
 
@@ -83,7 +85,7 @@ shps <- c("FIS" = 16, "MAR" = 17, "FP" = 15,
           "Index" = 15)
 ```
 
-## EEZ regions
+#### EEZ regions
 
 We'll probably want to do this figure for EEZs because there are too many BHI regions
 
@@ -111,7 +113,7 @@ ggplot(data = scores %>% filter(region_id > 300 & region_id < 500),
 ```
 
 
-### For all BHI regions
+#### BHI regions
 ```{r plot BHI regions}
 ## plot BHI regions
 ggplot(data = scores %>% filter(region_id < 300), 
@@ -122,7 +124,7 @@ ggplot(data = scores %>% filter(region_id < 300),
 
 This is too many. 
 
-### Subbasin:
+#### Subbasin:
 ```{r plot subbasin}
 ## scores for Subbasin regions
 ggplot(data = scores %>% filter(region_id > 500), 
@@ -131,11 +133,15 @@ ggplot(data = scores %>% filter(region_id > 500),
   facet_wrap(~region_id)
 ```
 
-## Table 1: Goals
+## Tables {.tabset}
 
-## Table 2: Resilience
+### Table 1: Goals
 
-### resilience info
+### Table 2: Resilience
+
+Combine these tables
+
+#### resilience info
 
 ```{r resilience info}
 layers_csv <- read_csv("layers.csv")
@@ -146,7 +152,7 @@ layers_csv %>%
   knitr::kable()
 ```
 
-### resilience matrix
+#### resilience matrix
 
 ```{r resilience matrix}
 resil <- read.csv("conf/resilience_matrix.csv")
