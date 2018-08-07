@@ -13,9 +13,10 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
 library(viridis) # install.packages('viridis')
+library(cowplot)
 ```
 
-## Figures
+## Figures {.tabset}
 
 ### Figure 1. BHI schematic
 
@@ -26,13 +27,9 @@ add figure legend text
 ![](reports/figures/BHI_regions/flower_Baltic.png)
 
 
-### Figure 3. Index Maps
+### Figure 3. Index Score Maps
 
 figure legend text, these will be arranged as subplots
-
-Check out Alexa's tweet, Jarrett ggmaps idea. Casey put one in BC
-ohibc/calc_ohibc/ms_figures/1_flower_plot_map
-cowplot for bundling plots
 
 a) 42 BHI regions
 ![](reports/figures/BHI_regions/map_Index.png)
@@ -46,18 +43,9 @@ c) 17 Subbasins
 ![](reports/figures/SUBBASIN/map_Index.png)
 
 
-### Figure 4: Trend
+### Figure 4: Trend *Options*
 
-We want to create something like Fig 3 in OHI West Coast (Halpern et al. 2014)
-
-![](temp/halpern_et_al_2014_fig3.png)
-
-talk to casey and courtney: we tend to underweight resil and overweight pressure so trend isn't great
-
-
-Quickly exploring potential figures: 
-
-```{r scores wrangle and colors}
+```{r scores and conf wrangle}
 ## scores wrangle 
 scores <- readr::read_csv('scores.csv') %>%
   filter(dimension == "status" | dimension == "future") %>%
@@ -91,24 +79,39 @@ supra_lookup <- conf %>%
     inner_join(conf, by="goal") %>%
     arrange(order_color) %>%
     mutate(goal = fct_inorder(goal), 
-           goal_group_color = fct_inorder(goal_group_color)) 
+           goal_group_color = fct_inorder(goal_group_color))
+```
 
-goal_order <- c("AO", "BD", "CS", "CON", "EUT", "TRA", "CW", "LIV", "ECO", "LE", "FIS", "MAR", "FP", "NP", "LSP", "ICO", "SP", "TR", "Index")
-  
-  
-## manual colors
-# https://ggplot2.tidyverse.org/reference/scale_manual.html#examples
-cols <- c("FIS" = "red", "MAR" = "red", "FP" = "red",
-          "BD" = "blue",
-          "CON" = "orange", "EUT" = "orange", "TRA" = "orange", "CW" = "orange",
-          "LIV" = "darkgreen", "ECO" = "darkgreen", "LE" = "darkgreen",
-          "LSP" = "cyan", "ICO" = "cyan", "SP" = "cyan",
-          "AO" = "yellow",
-          "TR" = "pink", 
-          "CS" = "darkorange", 
-          "NP" = "purple",
-          "Index" = "darkgray")
 
+#### Arrow plot
+
+This is probably a better way of visualizing the information we want: status and trend indication for each goal, by EEZ.
+
+Right now the line is the actual trend value...could also just represent with a line of the same length to focus attention on direction, not magnitude.
+
+```{r plot EEZ trend}
+## figured out arrow from http://sape.inf.usi.ch/quick-reference/ggplot2/geom_segment
+
+ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
+       aes(x = fct_rev(goal), y = status, color = goal_group_color)) + 
+  geom_point(size = 2) + 
+  geom_segment(aes(x = goal, y = status, xend = goal, yend = status + lfs_minus_status), arrow=arrow(length = unit(0.25, "cm"), ends = "last")) +
+  scale_color_viridis(discrete=TRUE) +
+  facet_wrap(~region_name) +
+  coord_flip() +
+  theme_bw()  # use casey's theme in common.R
+
+```
+
+I tried create something like Fig 3 in OHI West Coast (Halpern et al. 2014):
+
+![](temp/halpern_et_al_2014_fig3.png)
+
+But it is not a great visualization of what we care about... 
+
+#### EEZ regions
+
+```{r set shapes}
 shps <- c("FIS" = 16, "MAR" = 17, "FP" = 15,
           "BD" = 15,
           "CON" = 16, "EUT" = 17, "TRA" = 18, "CW" = 15,
@@ -121,43 +124,45 @@ shps <- c("FIS" = 16, "MAR" = 17, "FP" = 15,
           "Index" = 15)
 ```
 
-#### EEZ regions
 
-We'll probably want to do this figure for EEZs because there are too many BHI regions
+We'll probably want to do this figure for EEZs because there are too many BHI regions. This is not a great visualization. Could simplify: grey out non-interesting, simplify to goal-level. But ultimately, this visualization looks like it's going through time, so it's not a good way to plot: could do a quadrant so that it's good doing better, bad doing better, bad doing worse. 
 
-TODO/TODISCUSS:
 
-- is this plot even a good idea? 
-- better colors
-- legend group by color
-- clean up theme
-- ylims?
+Message here: CW not doing great and doesn't look like it will do great in the future, opposite of other goals?
 
-Message here: CW not doing great and doesn't look like it will do great in the future, opposite of other goals
-Could simplify: grey out non-interesting, simplify to goal-level
-This plot looks like it's going through time, not a good way to plot: could do a quadrant so that it's good doing better, bad doing better, bad doing worse. 
 
-Try flipping it by goal: do we want each country to have its own color
-
-Try with an error bar only in one direction, with an arrow tip or a geom_linerange: make a line from status to status+10
-
-```{r plot EEZ}
+```{r plot EEZ facet region_name}
 ## plot EEZ regions
 ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
        aes(x = status, y = lfs_minus_status, color = goal, shape = goal)) + 
   geom_point(position = "jitter", size = 3) + 
   ylim(-40, 40) +
-  scale_colour_manual(values = cols) + 
+  scale_color_viridis(discrete=TRUE) +
   scale_shape_manual(values = shps) +
   facet_wrap(~region_name) +
   theme_bw() + # use casey's theme in common.R
-  geom_hline(yintercept = 0, color = "darkgray") + 
-  scale_fill_discrete(name = "Title")
-# labels = c("A", "B", "C"))
+  geom_hline(yintercept = 0, color = "darkgray")
+```
+
+We could try flipping it by goal, with each country to have its own color. 
+
+```{r plot EEZ facet goal}
+## plot EEZ regions
+ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
+       aes(x = status, y = lfs_minus_status, color = region_name)) + 
+  geom_point(position = "jitter", size = 3) + 
+  ylim(-40, 40) +
+  scale_color_viridis(discrete=TRUE) +
+  facet_wrap(~goal) +
+  theme_bw() + # use casey's theme in common.R
+  geom_hline(yintercept = 0, color = "darkgray") 
 ```
 
 
 #### BHI regions
+
+Too many regions to plot usefully. 
+
 ```{r plot BHI regions}
 ## plot BHI regions
 ggplot(data = scores %>% filter(region_id < 300), 
@@ -166,9 +171,10 @@ ggplot(data = scores %>% filter(region_id < 300),
   facet_wrap(~region_id)
 ```
 
-This is too many. 
-
 #### Subbasin:
+
+Still too many subplots, also, is this the scale the people care about? 
+
 ```{r plot subbasin}
 ## scores for Subbasin regions
 ggplot(data = scores %>% filter(region_id > 500), 
@@ -177,28 +183,16 @@ ggplot(data = scores %>% filter(region_id > 500),
   facet_wrap(~region_id)
 ```
 
-## Arrow plot
-This is probably a better way of visualizing the information we want
 
-```{r plot EEZ trend}
-## figured out arrow from http://sape.inf.usi.ch/quick-reference/ggplot2/geom_segment
-
-ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
-       aes(x = fct_rev(goal), y = status, color = goal_group_color)) + 
-  geom_pointrange(aes(ymin = ymin, ymax = ymax)) + 
-  geom_segment(aes(x = goal, y = status, xend = goal, yend = status + lfs_minus_status), arrow=arrow(length = unit(0.25, "cm"), ends = "last")) +
-  scale_color_viridis(discrete=TRUE) +
-  facet_wrap(~region_name) +
-  coord_flip() +
-  theme_bw()  # use casey's theme in common.R
-
-```
-
-
-
-## Tables
+## Tables {.tabset}
 
 ### Table 1: Goals
+
+```{r}
+read.csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/global_supplement/tables/ten_goals.csv') %>%
+  knitr::kable()
+```
+
 
 ### Table 2: Resilience
 
@@ -213,6 +207,9 @@ layers_csv %>%
   filter(targets == "resilience") %>%
   select(layer, description) %>%
   knitr::kable()
+
+write_csv(layers_csv, "reports/manuscript/resil_table.csv")
+
 ```
 
 #### resilience matrix
@@ -220,11 +217,54 @@ layers_csv %>%
 ```{r resilience matrix}
 resil <- read.csv("conf/resilience_matrix.csv")
 
-resil %>%
-  rownames_to_column() %>% 
+resil <- resil %>%
+  tibble::rownames_to_column() %>% 
   select(-element) %>%
-  gather(goal, value, -rowname) %>% 
-  spread(rowname, value) %>%
+  gather(goal, value, -rowname) %>%
+  # select(-rowname)
+  spread(rowname, value) 
+
+## clean up table
+names(resil) <- resil %>% filter(goal == "goal")
+
+
+## substitute
+goal_list <- names(resil)[-1]
+
+resil <- resil %>%
+  mutate(AO = str_replace_all(AO, "x", "AO"), 
+         LSP = str_replace_all(LSP, "x", "LSP"),
+         MAR = str_replace_all(MAR, "x", "MAR"),
+         BD = str_replace_all(BD, "x", "BD"),
+         TR = str_replace_all(TR, "x", "TR"),
+         NP = str_replace_all(NP, "x", "NP"),
+         CS = str_replace_all(CS, "x", "CS"),
+         CON = str_replace_all(CON, "x", "CON"),
+         EUT = str_replace_all(EUT, "x", "EUT"),
+         TRA = str_replace_all(TRA, "x", "TRA"),
+         ECO = str_replace_all(ECO, "x", "ECO"),
+         FIS = str_replace_all(FIS, "x", "FIS"),
+         ICO = str_replace_all(ICO, "x", "ICO"),
+         LIV = str_replace_all(LIV, "x", "LIV")) %>%
+  filter(goal != "goal")
+
+# data_frame(resil_layer, 
+# for (g in goal_list) {
+#   
+#   
+# }
+
+# 
+# a <- glue::glue_collapse(resil, ", ")
+# glue::glue_collapse(resil[2,], ", ")
+# x <- glue::glue_collapse(resil[1,], ", ")
+# y <- paste0(resil[1,], "")
+
+
+resil %>% 
   knitr::kable()
+
+
+
 ```
 
