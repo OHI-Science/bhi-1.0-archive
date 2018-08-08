@@ -18,18 +18,23 @@ library(cowplot)
 
 ## Figures {.tabset}
 
-### Figure 1. BHI schematic
+Figure drafts for the [BHI manuscript](https://docs.google.com/document/d/1b68Gur82Vpqzv9Wd1iPNvdpEg8b-isiKuGGKQIRe3p4/edit?ts=5b2babdf#heading=h.z31blqteqiqo). 
 
-### Figure 2. Baltic Flower Plot
+### Fig 1. BHI schematic
 
-add figure legend text
+(Thorsten is creating BHI schematic)
+
+### Fig 2. Flower Plot
+
+Scores by goal for the Baltic Sea, which has an overall Index score of 73. Each petal in this flower plot represents an individual goal, and the petal length and color convey the score of the goal (i.e. longer petals are closer to achieving their target).
 
 ![](reports/figures/BHI_regions/flower_Baltic.png)
 
 
-### Figure 3. Index Score Maps
+### Fig 3. Maps
 
-figure legend text, these will be arranged as subplots
+Scores by region for the Baltic Sea, on three different spatial scales. BHI regions (a) are the 42 areas resulting from the intesection of the exclusive economic zones (EEZ)s of 9 Baltic countries (b) with the 17 Baltic subbasins (c). 
+(*these will be arranged as subplots*)
 
 a) 42 BHI regions
 ![](reports/figures/BHI_regions/map_Index.png)
@@ -43,7 +48,7 @@ c) 17 Subbasins
 ![](reports/figures/SUBBASIN/map_Index.png)
 
 
-### Figure 4: Trend *Options*
+### Fig 4: Trend *Options*
 
 ```{r scores and conf wrangle}
 ## scores wrangle 
@@ -85,15 +90,18 @@ supra_lookup <- conf %>%
 
 #### Arrow plot
 
-This is probably a better way of visualizing the information we want: status and trend indication for each goal, by EEZ.
+Status and trend for each goal for every Baltic EEZ. Most goals had high scores and increasing trends. However, the clean waters goal (and subgoals) tended to have lower scores, particularly for contaminants (CON). See Table 1 for goal codes. 
 
-Right now the line is the actual trend value...could also just represent with a line of the same length to focus attention on direction, not magnitude.
+Notes: 
+
+- *This is probably a better way of visualizing the information we want: status and trend indication for each goal, by EEZ. But scroll down for other options.*
+- Right now the line is the actual trend value...could also just represent with a line of the same length to focus attention on direction, not magnitude.
 
 ```{r plot EEZ trend}
 ## figured out arrow from http://sape.inf.usi.ch/quick-reference/ggplot2/geom_segment
 
 ggplot(data = scores %>% filter(region_id > 300 & region_id < 500), 
-       aes(x = fct_rev(goal), y = status, color = goal_group_color)) + 
+       aes(x = fct_rev(goal), y = status, color = str_replace(goal_group_color, "\n", ""))) + 
   geom_point(size = 2) + 
   geom_segment(aes(x = goal, y = status, xend = goal, yend = status + lfs_minus_status), arrow=arrow(length = unit(0.25, "cm"), ends = "last")) +
   scale_color_viridis(discrete=TRUE) +
@@ -107,7 +115,7 @@ I tried create something like Fig 3 in OHI West Coast (Halpern et al. 2014):
 
 ![](temp/halpern_et_al_2014_fig3.png)
 
-But it is not a great visualization of what we care about... 
+But it is not a the best way to visualize this information and piece out what is interesting...
 
 #### EEZ regions
 
@@ -188,24 +196,28 @@ ggplot(data = scores %>% filter(region_id > 500),
 
 ### Table 1: Goals
 
-```{r}
-read.csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/global_supplement/tables/ten_goals.csv') %>%
-  knitr::kable()
+See table in the [BHI manuscript](https://docs.google.com/document/d/1b68Gur82Vpqzv9Wd1iPNvdpEg8b-isiKuGGKQIRe3p4/edit?ts=5b2babdf#heading=h.4o0ykp2rgoc3). Alternative goal description text available
+
+```{r, eval=FALSE}
+# read.csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/global_supplement/tables/ten_goals.csv') %>%
+#   knitr::kable()
 ```
 
 
 ### Table 2: Resilience
 
-Combine these tables
+Combine these tables: add a 3rd column to the first table, listing the goals affected.
 
 #### resilience info
 
 ```{r resilience info}
 layers_csv <- read_csv("layers.csv")
 
-layers_csv %>%
+layers_csv <- layers_csv %>%
   filter(targets == "resilience") %>%
-  select(layer, description) %>%
+  select(layer, description) 
+
+layers_csv %>%
   knitr::kable()
 
 write_csv(layers_csv, "reports/manuscript/resil_table.csv")
@@ -264,7 +276,9 @@ resil <- resil %>%
 resil %>% 
   knitr::kable()
 
-
+write_csv(resil, "reports/manuscript/resil_mtx.csv")
 
 ```
 
+### Table 3 
+Spatial overall scores from the North to the South. The lowest and highest goal scores are named. [See manuscript](https://docs.google.com/document/d/1b68Gur82Vpqzv9Wd1iPNvdpEg8b-isiKuGGKQIRe3p4/edit?ts=5b2babdf#heading=h.fcglywpdew0z)
