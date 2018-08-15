@@ -116,13 +116,15 @@ We can get ideas for style from this figure (Thanks Casey!)
 ![](temp/wapo_election.png)
 
 
+#### Like West Coast Fig 3
+
 I tried create something like Fig 3 in OHI West Coast (Halpern et al. 2014):
 
 ![](temp/halpern_et_al_2014_fig3.png)
 
 But it is not a the best way to visualize this information and piece out what is interesting...
 
-#### EEZ regions
+##### EEZ regions
 
 ```{r set shapes}
 shps <- c("FIS" = 16, "MAR" = 17, "FP" = 15,
@@ -172,7 +174,7 @@ ggplot(data = scores %>% filter(region_id > 300 & region_id < 500),
 ```
 
 
-#### BHI regions
+##### BHI regions
 
 Too many regions to plot usefully. 
 
@@ -184,7 +186,7 @@ ggplot(data = scores %>% filter(region_id < 300),
   facet_wrap(~region_id)
 ```
 
-#### Subbasin:
+##### Subbasin:
 
 Still too many subplots, also, is this the scale the people care about? 
 
