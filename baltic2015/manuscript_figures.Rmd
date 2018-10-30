@@ -3,9 +3,9 @@ title: 'Manuscript figures'
 author: "Julie"
 date: "6/27/2018"
 output:
-  html_document:
-    toc: yes
-    toc_float: yes
+  github_document:
+    toc: true
+    toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
 library(viridis) # install.packages('viridis')
-library(cowplot)
+library(cowplot) # install.packages('cowplot')
 ```
 
 ## Figures {.tabset}
