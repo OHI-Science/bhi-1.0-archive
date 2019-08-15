@@ -26,7 +26,7 @@ The Baltic Health Index is a regional study applying the Ocean Health Index fram
 <div class="tile">
 <h2 class="post-title"><i class="fa fa-cubes fa-2x"></i> Our team</h2>
 <p class="post-excerpt">
-The Baltic Health Index is a project jointly led by [Stockholm Resilience Centre (SRC)](http://www.stockholmresilience.org/) and [Baltic Eye](http://www.su.se/ostersjocentrum/baltic-eye) at the Baltic Sea Centre, both at Stockholm University.
+The Baltic Health Index is a project jointly led by [Stockholm Resilience Centre (SRC)](http://www.stockholmresilience.org/) and [Baltic Eye](http://www.su.se/ostersjocentrum/english/baltic-eye) at the Baltic Sea Centre, both at Stockholm University.
 
 </p>
 </div>
