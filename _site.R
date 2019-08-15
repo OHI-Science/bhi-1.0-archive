@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
 ## brewed vars
 study_area      <- "Baltic"
 key             <- "bhi"
-dir_scenario_gh <- "https://raw.githubusercontent.com/OHI-Science/bhi/draft/baltic2015"
+dir_scenario_gh <- "https://raw.githubusercontent.com/OHI-Science/bhi-1.0-archive/draft/baltic2015"
 
 ## knitr options for all webpages
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
