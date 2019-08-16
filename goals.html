@@ -94,8 +94,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -111,7 +117,6 @@ body {
   padding-top: 50px;
   margin-top: -50px;
 }
-
 .section h2 {
   padding-top: 50px;
   margin-top: -50px;
@@ -131,6 +136,43 @@ body {
 .section h6 {
   padding-top: 50px;
   margin-top: -50px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -152,18 +194,77 @@ $(document).ready(function () {
 });
 </script>
 
-
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -285,9 +386,6 @@ div.tocify {
 <li>
   <a href="goals.html">Goals</a>
 </li>
-<li>
-  <a href="workshop.html">Workshop</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -341,7 +439,7 @@ Likely Future State is a combination of status, trend, pressures and resilience 
 </div>
 <div id="model-data" class="section level3">
 <h3>Model &amp; Data</h3>
-<p>The data used for this goal are composed of cod and herring spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated as a function of the ratio (B’) between the single species current biomass at sea (B) and the reference biomass at maximum sustainable yield (BMSY), as well as the ratio (F’) between the single species current fishing mortality (F) and the fishing mortality at maximum sustainable yield (FMSY). B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/ffms%3By_bbmsy_2_score.png">general relationship</a>.</p>
+<p>The data used for this goal are composed of cod and herring spawning biomass (SSB) and fishing mortality (F) data. The current status is calculated as a function of the ratio (B’) between the single species current biomass at sea (B) and the reference biomass at maximum sustainable yield (BMSY), as well as the ratio (F’) between the single species current fishing mortality (F) and the fishing mortality at maximum sustainable yield (FMSY). B/Bmsy and F/Fmsy data are converted to scores between 0 and 1 using this <a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/FIS/ffms%3By_bbmsy_2_score.png">general relationship</a>.</p>
 <ul>
 <li><a href="http://www.ices.dk/marine-data/tools/Pages/stock-assessment-graphs.aspx">Cod and herring data accessed from the ICES homepage</a> &gt; search for ‘cod’ or ‘herring’ &gt; specify the ecoregion as Baltic Sea &gt; search for the 2013 assessment.</li>
 </ul>
@@ -356,7 +454,7 @@ Likely Future State is a combination of status, trend, pressures and resilience 
 <div id="other-information" class="section level3">
 <h3>Other information</h3>
 <p><em>external advisors/goalkeepers are Christian Möllmann &amp; Stefan Neuenfeldt</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/fis_np_prep.md"><strong>Full data preparation information and code</strong></a>.<br />
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/FIS/fis_np_prep.md"><strong>Full data preparation information and code</strong></a>.<br />
 <!--- 
 Could also link to data used in model, would take some more work but could modify this from ohi-global:
 
@@ -395,7 +493,7 @@ Could also link to data used in model, would take some more work but could modif
 <div id="other-information-1" class="section level3">
 <h3>Other information</h3>
 <p><em>Data were compiled primarily by Ginnette Flores Carmenate.</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/MAR/mar_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -426,7 +524,7 @@ Could also link to data used in model, would take some more work but could modif
 </div>
 <div id="other-information-2" class="section level3">
 <h3>Other information</h3>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/AO/ao_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/AO/ao_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -450,7 +548,7 @@ Could also link to data used in model, would take some more work but could modif
 <div id="other-information-3" class="section level3">
 <h3>Other information</h3>
 <p><em>External advisors/goalkeepers are Christian Möllmann &amp; Stefan Neuenfeldt</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md"><strong>Full data preparation information and code</strong></a>.<br />
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/NP/np_prep.md"><strong>Full data preparation information and code</strong></a>.<br />
 <!--- For goal model code, click [here](link to functions.r in specific commit/release). ---></p>
 <hr />
 </div>
@@ -485,7 +583,7 @@ Could also link to data used in model, would take some more work but could modif
 <div id="other-information-4" class="section level3">
 <h3>Other information</h3>
 <p><em>external advisors/goalkeepers: Christoffer Boström and Markku Viitasalo.</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CS/cs_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CS/cs_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -515,7 +613,7 @@ We used Eurostat dataset on [nights spent at tourist accommodation establishment
 </div>
 <div id="other-information-5" class="section level3">
 <h3>Other information</h3>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/TR/tr_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/TR/tr_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -549,7 +647,7 @@ Regions with no coast line have no status because not joined to a NUTS region (3
 <div id="other-information-6" class="section level3">
 <h3>Other information</h3>
 <p><em>external advisors/goalkeepers: Martin Quaas and Wilfried Rickels.</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LIV/liv_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/LIV/liv_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -579,7 +677,7 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 <div id="other-information-7" class="section level3">
 <h3>Other information</h3>
 <p><em>external advisors/goalkeepers: Martin Quaas and Wilfried Rickels.</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/ECO/eco_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/ECO/eco_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -630,7 +728,7 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 </div>
 <div id="other-information-8" class="section level3">
 <h3>Other information</h3>
-<p><a href="https://github.com/OHI-Science/bhi/tree/draft/baltic2015/prep/ICO"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/tree/draft/baltic2015/prep/ICO"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -661,7 +759,7 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 <div id="other-information-9" class="section level3">
 <h3>Other information</h3>
 <p><em>external advisors/goalkeepers: Sofia Wikström</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LSP/lsp_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/LSP/lsp_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -705,7 +803,7 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 <div id="other-information-10" class="section level3">
 <h3>Other information</h3>
 <p><em>external advisors/goalkeepers: Christoph Humborg</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/eutrophication/eutrophication_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CW/eutrophication/eutrophication_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -732,7 +830,7 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 </div>
 <div id="other-information-11" class="section level3">
 <h3>Other information</h3>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CW/trash/tra_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -771,7 +869,7 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 <div id="other-information-12" class="section level3">
 <h3>Other information</h3>
 <p><em>external advisors/goalkeepers: Anna Sobek</em></p>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md"><strong>Full data preparation information and code</strong></a></p>
 <hr />
 </div>
 </div>
@@ -794,7 +892,7 @@ Population data was not extracted for the entire NUTS3 area, only for the buffer
 </div>
 <div id="other-information-13" class="section level3">
 <h3>Other information</h3>
-<p><a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/SPP/spp_prep.md"><strong>Full data preparation information and code</strong></a></p>
+<p><a href="https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/SPP/spp_prep.md"><strong>Full data preparation information and code</strong></a></p>
 </div>
 </div>
 
