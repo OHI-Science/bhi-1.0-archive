@@ -1,9 +1,9 @@
-<!---
 <figure>
-<p align = 'center'>
-<img src="images/bhi_baltic-eye.jpg" height="200px" />
+<img src="images/baltic-eye-double.png" height="80px" />
 </figure>
---->
+
+<br>
+
   
 # Project and team
 
