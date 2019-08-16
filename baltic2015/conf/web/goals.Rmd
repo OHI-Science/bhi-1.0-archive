@@ -9,8 +9,8 @@ output:
 library(tidyverse)
 
 ## url setup
-dir_scenario_gh <- "https://raw.githubusercontent.com/OHI-Science/bhi/draft/baltic2015"
-layers_web <- 'http://ohi-science.org/bhi/layers.html'
+dir_scenario_gh <- "https://raw.githubusercontent.com/OHI-Science/bhi-1.0-archive/draft/baltic2015"
+layers_web <- 'http://ohi-science.org/bhi-1.0-archive/layers.html'
 short_goal_web <- file.path(dir_scenario_gh, "conf/web/goals")
 ```
 
@@ -28,7 +28,7 @@ short_goal_web <- file.path(dir_scenario_gh, "conf/web/goals")
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/FIS/fis_np_prep.md).   
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/FIS/fis_np_prep.md).   
 <!--- 
 Could also link to data used in model, would take some more work but could modify this from ohi-global:
 
@@ -63,7 +63,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/MAR/mar_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/MAR/mar_prep.md)
 
 ---- 
 
@@ -80,7 +80,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/AO/ao_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/AO/ao_prep.md)
 
 ---- 
 
@@ -97,7 +97,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/NP/np_prep.md).   
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/NP/np_prep.md).   
 <!--- For goal model code, click [here](link to functions.r in specific commit/release). --->  
 
 ---- 
@@ -115,7 +115,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CS/cs_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CS/cs_prep.md)
 
 ---- 
 
@@ -132,7 +132,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/TR/tr_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/TR/tr_prep.md)
 
 ---- 
 
@@ -149,7 +149,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LIV/liv_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/LIV/liv_prep.md)
 
 ---- 
 
@@ -166,7 +166,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/ECO/eco_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/ECO/eco_prep.md)
 
 ---- 
 
@@ -183,7 +183,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/tree/draft/baltic2015/prep/ICO)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/tree/draft/baltic2015/prep/ICO)
 
 ---- 
 
@@ -200,7 +200,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/LSP/lsp_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/LSP/lsp_prep.md)
 
 ---- 
 
@@ -217,7 +217,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/eutrophication/eutrophication_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CW/eutrophication/eutrophication_prep.md)
 
 ---- 
 
@@ -234,7 +234,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CW/trash/tra_prep.md)
 
 ---- 
 
@@ -251,7 +251,7 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/CW/contaminants/contaminants_prep.md)
 
 ---- 
 
@@ -268,4 +268,4 @@ Could also link to data used in model, would take some more work but could modif
  
 ``` 
 
-[**Full data preparation information and code**](https://github.com/OHI-Science/bhi/blob/draft/baltic2015/prep/SPP/spp_prep.md)
+[**Full data preparation information and code**](https://github.com/OHI-Science/bhi-1.0-archive/blob/draft/baltic2015/prep/SPP/spp_prep.md)
