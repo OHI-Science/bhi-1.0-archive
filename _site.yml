@@ -12,8 +12,8 @@ navbar:
       href: data.html
     - text: "Goals"
       href: goals.html
-    - text: "Workshop"
-      href: workshop.html
+#    - text: "Workshop"
+#      href: workshop.html
 #    - text: "Scores"
 #      href: scores.html
 output_dir: "."
